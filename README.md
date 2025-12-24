@@ -1361,8 +1361,9 @@ This would give you the content of the script for review
 
 
 **Working Example**
+```
 https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts/c7cd4ba5-ccbf-4c9a-9be5-e22cda7379b0?$select=scriptContent
-
+```
 
 # Microsoft Graph `$select` Query Option
 
