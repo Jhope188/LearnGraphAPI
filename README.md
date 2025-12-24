@@ -1344,12 +1344,19 @@ Understanding Intune metadata + OData gives you **portal-level automation withou
 
 Pulling all powershell scripts from Intune using the API
 
+```
 https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts
+```
+
+![Get Avaialable Intune Platform Scripts](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/GetScriptfromIntunePlatformScripts.png)
+
 
 ```
 https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts/{deviceManagementScript-id}$select=scriptContent
 
 ```
+
+![Get Script Platform Script Content](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/SortScriptContent.png)
 
 Here you would copy the script content from its base64 encoding into an editor
 
@@ -1359,6 +1366,7 @@ https://www.base64decode.org/
 
 This would give you the content of the script for review
 
+![Decode content in Base64 decoder](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/ConvertfromBase64.png)
 
 **Working Example**
 ```
