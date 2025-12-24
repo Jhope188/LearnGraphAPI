@@ -1,4 +1,4 @@
-# Entra ID → Microsoft Graph API Cheat Sheet
+# Learn Microsoft Graph API → Microsoft Graph API Cheat Sheet
 
 > **Purpose**: A practical, engineer-focused reference for discovering and using Microsoft Graph endpoints that return Entra ID data.
 >
