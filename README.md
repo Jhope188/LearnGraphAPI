@@ -79,7 +79,7 @@ At a high level, Microsoft Graph allows you to:
 
 ## The Microsoft Graph Endpoint
 
-![Graph API Breakdown](https://github.com/Jhope188/Documentation/blob/main/GraphAPI/Images/APIBreakdown.png)
+![Graph API Breakdown](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/APIBreakdown.png)
 
 All Microsoft Graph calls use a **single base URL**:
 
