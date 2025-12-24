@@ -263,7 +263,7 @@ It is used when the resource represents:
 * A **primitive value** (string, number)
 * A **collection of primitive values**
 
-![GraphExplorerMe](https://github.com/Jhope188/Documentation/blob/main/GraphAPI/Images/MyPhoto.png)
+![GraphExplorerMe](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/MyPhoto.png)
 
 ---
 
