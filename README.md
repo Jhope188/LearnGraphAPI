@@ -734,6 +734,8 @@ GET /v1.0/subscribedSkus
 - `$metadata` is always authoritative
 - Portal network calls reveal undocumented APIs
 
+![Beta vs V1 Endpoint with FIDO2](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/V1vsBetaEndpoint.png)
+
 ---
 
 **Audience**: Entra ID engineers, identity architects, security engineers
