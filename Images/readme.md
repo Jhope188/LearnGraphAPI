@@ -1,1 +1,1 @@
-#Collection of Images for the learn Graph API Walkthroughs
+# Collection of Images for the learn Graph API Walkthroughs
