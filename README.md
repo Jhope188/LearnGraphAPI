@@ -31,6 +31,7 @@
   - [Identity Core](#identity-core)
   - [Common User Queries](#common-user-queries)
   - [Groups](#groups)
+  - [What does `/any(c:c eq 'DynamicMembership')` do?](#What-does-`/any-(c:c eq 'DynamicMembership')`-do?)
   - [Applications & Enterprise Apps](#applications--enterprise-apps)
   - [Conditional Access & Protection](#conditional-access--protection)
 
