@@ -451,7 +451,7 @@ https://graph.microsoft.com/beta/groups/0e4b5629-83d8-4aae-a5cb-5f0c31836116?$ex
 ```
 ##Grab the user account object ID: Cant patch a group owner with UserPrincipalName
 
-https://graph.microsoft.com/beta/users/jhope@ssvabaseline.onmicrosoft.com?$select=id
+https://graph.microsoft.com/beta/users/jhope@acmebaseline.onmicrosoft.com?$select=id
 
 ```
 
