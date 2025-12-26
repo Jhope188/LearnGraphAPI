@@ -33,7 +33,7 @@
   - [Groups](#groups)
   - [What does `/any(c:c eq 'DynamicMembership')` do?](#understanding-the-any-function-in-microsoft-graph-queries)
   - [Applications & Enterprise Apps](#applications-and-enterprise-apps)
-  - [Conditional Access & Protection](#conditional-access-and-protection)
+  - [🛡️Conditional Access & Protection](#conditional-access-and-protection)
 
 - [Authentication & Passwordless](#authentication--passwordless)
   - [Tenant-wide Authentication Policies](#tenant-wide-authentication-policies)
@@ -645,7 +645,7 @@ GET /v1.0/servicePrincipals/{id}/oauth2PermissionGrants
 
 ---
 
-## 🛡️ Conditional Access and Protection
+## Conditional Access and Protection
 
 ```http
 GET /v1.0/identity/conditionalAccess/policies
