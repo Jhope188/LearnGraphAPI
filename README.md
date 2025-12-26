@@ -35,16 +35,16 @@
   - [🧩 Applications & Enterprise Apps](#applications-and-enterprise-apps)
   - [🛡️ Conditional Access & Protection](#conditional-access-and-protection)
 
-- [Authentication & Passwordless](#authentication--passwordless)
+- [🔑 Authentication & Passwordless](#authentication-and-passwordless)
   - [Tenant-wide Authentication Policies](#tenant-wide-authentication-policies)
   - [FIDO2 & Passkeys](#fido2--passkeys)
   - [Per-user Authentication Methods](#per-user-authentication-methods)
 
-- [📜 Audit Logs & Reports](#audit-logs-&-Reports)
+- [📜 Audit Logs & Reports](#audit-logs-and-Reports)
 
-- [Identity Governance](#access-reviews)
+- [🧭 Identity Governance](#access-reviews)
 
-- [Tenant & Directory Settings](#tenant--directory-settings)
+- [⚙️ Tenant & Directory Settings](#tenant-and-directory-settings)
 
 - [Entra Portal → Graph Mapping Rules](#entra-portal--graph-mapping-rules)
 
@@ -685,7 +685,7 @@ There is currently no 100% reliable server-side way to return only CA policies w
 
 ---
 
-## 🔑 Authentication & Passwordless
+## Authentication and Passwordless
 
 ### Tenant-wide Authentication Policies
 ```http
@@ -762,7 +762,7 @@ GET /v1.0/users/{id}/authentication/methods
 
 ---
 
-## Audit Logs & Reports
+## Audit Logs and Reports
 
 ### Audit Logs
 ```http
@@ -779,7 +779,7 @@ GET /v1.0/reports/signInActivity
 
 ---
 
-## 🧭 Identity Governance
+## Identity Governance
 
 ### Access Reviews
 ```http
@@ -795,7 +795,7 @@ GET /v1.0/identityGovernance/entitlementManagement/accessPackages
 
 ---
 
-## ⚙️ Tenant & Directory Settings
+##  Tenant and Directory Settings
 
 ```http
 GET /v1.0/organization
