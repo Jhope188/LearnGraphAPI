@@ -505,6 +505,128 @@ REQUEST BODY:
 
 ---
 
+## Understanding the `any()` Function in Microsoft Graph Queries
+
+### What does `/any(c:c eq 'DynamicMembership')` do?
+
+### Example Query
+
+```http
+https://graph.microsoft.com/beta/groups?$select=displayName,groupTypes&$filter=groupTypes/any(c:c eq 'DynamicMembership')
+```
+
+### Plain English Explanation
+This filter means:
+
+- Return only groups where the `groupTypes` collection contains the value `DynamicMembership`.
+- This query retrieves only **dynamic groups** from Microsoft Entra ID.
+
+### Why is `any()` Required?
+- The `groupTypes` property is **not a single value**, it is a **collection (array)**.
+- Examples of values returned by Microsoft Graph:
+
+```json
+"groupTypes": []
+```
+```json
+"groupTypes": ["Unified"]
+```
+```json
+"groupTypes": ["DynamicMembership"]
+```
+```json
+"groupTypes": ["Unified", "DynamicMembership"]
+```
+- Because `groupTypes` is a collection, you **cannot filter it like this**:
+
+```http
+groupTypes eq 'DynamicMembership'
+```
+- OData requires evaluating **each element in the collection**, which is why the `any()` function is required.
+
+### Breaking Down the Syntax
+
+```text
+groupTypes/any(c:c eq 'DynamicMembership')
+```
+
+| Component | Description |
+|-----------|-------------|
+| groupTypes | The collection property on the group object |
+| any(...)  | OData function that evaluates elements in a collection |
+| c         | Temporary variable representing each element |
+| c eq 'DynamicMembership' | Condition applied to each element |
+
+**How to read this expression:**
+- For each value `c` in `groupTypes`, return the group **if any value equals `DynamicMembership`**.
+- If at least one element matches, the group is included in the response.
+
+### What Groups Does This Query Return?
+This query returns:
+
+- Dynamic Security Groups
+- Dynamic Microsoft 365 Groups
+
+Both group types include the following value:
+
+```json
+"groupTypes": ["DynamicMembership"]
+```
+
+Microsoft 365 dynamic groups may also include:
+
+```json
+"groupTypes": ["Unified", "DynamicMembership"]
+```
+
+### Common Filter Variations
+
+**All Dynamic Groups**
+```http
+groupTypes/any(c:c eq 'DynamicMembership')
+```
+
+**Microsoft 365 (Unified) Groups Only**
+```http
+groupTypes/any(c:c eq 'Unified')
+```
+
+**Dynamic Microsoft 365 Groups Only**
+```http
+groupTypes/any(c:c eq 'Unified') and groupTypes/any(c:c eq 'DynamicMembership')
+```
+
+**Non-Dynamic Groups**
+```http
+not(groupTypes/any(c:c eq 'DynamicMembership'))
+```
+
+### Why This Matters in Real-World Graph Usage
+The `any()` function is used throughout Microsoft Graph when filtering **collection properties**, including:
+
+- `assignedLicenses/any(...)`
+- `proxyAddresses/any(...)`
+- `members/any(...)`
+- `authenticationMethods/any(...)`
+
+Understanding `any()` allows you to:
+
+- Reverse engineer Entra ID, Intune, and Microsoft 365 portal behavior
+- Write precise and safe Microsoft Graph queries
+- Avoid targeting unintended objects
+- Confidently filter large datasets at scale
+
+### Key Takeaways
+
+- `groupTypes` is a **collection**, not a single value
+- `any()` checks whether **at least one element matches a condition**
+- This query returns **only dynamic groups**
+- Mastering `any()` is essential for effective Microsoft Graph filtering
+
+
+
+---
+
 ## 🧩 Applications & Enterprise Apps
 
 ### App Registrations
