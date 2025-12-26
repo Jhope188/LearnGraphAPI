@@ -31,7 +31,7 @@
   - [Identity Core](#identity-core)
   - [Common User Queries](#common-user-queries)
   - [Groups](#groups)
-  - [What does `/any(c:c eq 'DynamicMembership')` do?](#Understanding-the-`any()`-Function-in-Microsoft-Graph-Queries)
+  - [What does `/any(c:c eq 'DynamicMembership')` do?](#understanding-the-any-function-in-microsoft-graph-queries)
   - [Applications & Enterprise Apps](#applications--enterprise-apps)
   - [Conditional Access & Protection](#conditional-access--protection)
 
