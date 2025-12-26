@@ -8,9 +8,9 @@
 
 - [Entra ID → Microsoft Graph API Cheat Sheet](#entra-id--microsoft-graph-api-cheat-sheet)
   - [What is Microsoft Graph](#what-is-microsoft-graph)
-  - [How is Graph Structured](#How-Microsoft-Graph-Is-Structured)
-  - [Ways to learn Graph](#Ways-to-Interact-and-Keep-up-to-date-with-Graph)
-  - [Ways to call Graph](#Ways-to-Call-Microsoft-Graph)
+  - [How is Graph Structured](#the-microsoft-graph-endpoint)
+  - [Ways to learn Graph](#ways-to-interact-and-keep-up-to-date-with-graph)
+  - [Ways to call Graph](#ways-to-call-microsoft-graph)
  
     
 
