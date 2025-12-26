@@ -666,7 +666,8 @@ Authentication strength requirements
 
 ?$select=id,displayName,state
 ?$filter=state eq 'enabled'
-
+```
+```
 (https://graph.microsoft.com/beta/identity/conditionalAccess/policies?$select=id,displayName,state&$filter=startswith(displayName,'ACME')&$orderby=displayName)
 ```
 > You’re running into a Microsoft Graph beta limitation / bug, not a syntax issue on your side.
