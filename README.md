@@ -32,15 +32,15 @@
   - [Common User Queries](#common-user-queries)
   - [Groups](#groups)
   - [What does `/any(c:c eq 'DynamicMembership')` do?](#understanding-the-any-function-in-microsoft-graph-queries)
-  - [Applications & Enterprise Apps](#applications-and-enterprise-apps)
-  - [🛡️Conditional Access & Protection](#conditional-access-and-protection)
+  - [🧩 Applications & Enterprise Apps](#applications-and-enterprise-apps)
+  - [🛡️ Conditional Access & Protection](#conditional-access-and-protection)
 
 - [Authentication & Passwordless](#authentication--passwordless)
   - [Tenant-wide Authentication Policies](#tenant-wide-authentication-policies)
   - [FIDO2 & Passkeys](#fido2--passkeys)
   - [Per-user Authentication Methods](#per-user-authentication-methods)
 
-- [Audit Logs & Reports](#audit-logs)
+- [📜 Audit Logs & Reports](#audit-logs-&-Reports)
 
 - [Identity Governance](#access-reviews)
 
@@ -627,7 +627,7 @@ Understanding `any()` allows you to:
 
 ---
 
-## 🧩 Applications and Enterprise Apps
+## Applications and Enterprise Apps
 
 ### App Registrations
 ```http
@@ -762,7 +762,7 @@ GET /v1.0/users/{id}/authentication/methods
 
 ---
 
-## 📜 Audit Logs & Reports
+## Audit Logs & Reports
 
 ### Audit Logs
 ```http
