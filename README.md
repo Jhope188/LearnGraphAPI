@@ -32,8 +32,8 @@
   - [Common User Queries](#common-user-queries)
   - [Groups](#groups)
   - [What does `/any(c:c eq 'DynamicMembership')` do?](#understanding-the-any-function-in-microsoft-graph-queries)
-  - [Applications & Enterprise Apps](#applications--enterprise-apps)
-  - [Conditional Access & Protection](#conditional-access--protection)
+  - [Applications & Enterprise Apps](#applications-enterprise-apps)
+  - [Conditional Access & Protection](#conditional-access-protection)
 
 - [Authentication & Passwordless](#authentication--passwordless)
   - [Tenant-wide Authentication Policies](#tenant-wide-authentication-policies)
