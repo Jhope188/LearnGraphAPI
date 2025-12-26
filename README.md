@@ -11,7 +11,7 @@
   - [How is Graph Structured](#How-Microsoft-Graph-Is-Structured)
   - [Ways to learn Graph](#Ways-to-Interact-and-Keep-up-to-date-with-Graph)
   - [Ways to call Graph](#Ways-to-Call-Microsoft-Graph)
-  - [Getting familiar with upcoming Microsoft Changes](#getting-familiar-with-upcoming-microsoft-changes)
+ 
     
 
 - [Microsoft Graph `/me` and `/$value` – Quick Reference](#microsoft-graph-me-and-value--quick-reference)
