@@ -408,6 +408,8 @@ Get https://graph.microsoft.com/v1.0/groups/$count?$filter=startswith(displayNam
 HEADER:
 ConsistencyLevel: eventual
 ```
+
+![Consistency Level Example](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/ConsistencyLevel.png)
 >**NOTE** This is a more real world scenario to pull back the count for total groups that meet a naming convention
 
 ### Return all Groups by DisplayName
