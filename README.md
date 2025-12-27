@@ -46,7 +46,7 @@
 
 - [⚙️ Tenant & Directory Settings](#tenant-and-directory-settings)
 
-- [Entra Portal → Graph Mapping Rules](#entra-portal--graph-mapping-rules)
+- [🔎 Entra Portal → Graph Mapping Rules](#entra-portal-graph-mapping-rules)
 
 - [Graph Discovery Workflow (Reusable)](#graph-discovery-workflow-reusable)
 
@@ -808,7 +808,7 @@ GET /v1.0/subscribedSkus
 
 ---
 
-## 🔎 Entra Portal → Graph Mapping Rules
+## Entra Portal → Graph Mapping Rules
 
 | Entra Portal Area | Likely Graph Root |
 |------------------|------------------|
