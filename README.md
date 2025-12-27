@@ -822,7 +822,7 @@ GET /v1.0/subscribedSkus
 
 ---
 
-## 🧠 Graph Discovery Workflow (Reusable)
+## Graph Discovery Workflow (Reusable)
 
 1. Identify the Entra blade (Users, Protection, Identity, Policies)
 2. Open **Graph Explorer** and start with `/beta`
