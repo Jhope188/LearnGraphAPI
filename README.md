@@ -14,7 +14,7 @@
  
     
 
-- [Microsoft Graph `/me` and `/$value` – Quick Reference](#microsoft-graph-me-and-value--quick-reference)
+- [👨🏻‍💻 Microsoft Graph `/me` and `/$value` – Quick Reference](#microsoft-graph-me-and-value--quick-reference)
   - [Base `/me` endpoint](#base-me-endpoint)
   - [What does `/$value` mean?](#what-does-value-mean)
   - [Where `/$value` works with `/me`](#where-value-works-with-me)
@@ -48,15 +48,15 @@
 
 - [🔎 Entra Portal → Graph Mapping Rules](#entra-portal-to-graph-mapping-rules)
 
-- [Graph Discovery Workflow (Reusable)](#graph-discovery-workflow-reusable)
+- [💡 Graph Discovery Workflow (Reusable)](#graph-discovery-workflow-reusable)
 
-- [Reverse-Engineering Entra Portal Calls](#reverse-engineering-entra-portal-calls)
+- [🧪 Reverse-Engineering Entra Portal Calls](#reverse-engineering-entra-portal-calls)
 
-- [Common Read Permissions](#common-read-permissions)
+- [🔑 Common Read Permissions](#common-read-permissions)
 
 - [Microsoft Graph OData Metadata – Reference & Usage Guide](#microsoft-graph-odata-metadata--reference--usage-guide)
 
-- [Microsoft Graph Intune Device Management – Metadata & OData Usage Guide](#microsoft-graph-intune-device-management--metadata--odata-usage-guide)
+- [📱 Microsoft Graph Intune Device Management – Metadata & OData Usage Guide](#microsoft-graph-intune-device-management--metadata--odata-usage-guide)
 
 - [Microsoft Graph `$select` Query Option](#microsoft-graph-select-query-option)
 
@@ -834,7 +834,7 @@ GET /v1.0/subscribedSkus
 
 ---
 
-## 🧪 Reverse-Engineering Entra Portal Calls
+## Reverse-Engineering Entra Portal Calls
 
 1. Open **https://entra.microsoft.com**
 2. Open Browser DevTools → Network
@@ -845,7 +845,7 @@ GET /v1.0/subscribedSkus
 
 ---
 
-## 🔑 Common Read Permissions
+## Common Read Permissions
 
 | Data Type | Permission |
 |---------|------------|
