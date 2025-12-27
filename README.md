@@ -31,9 +31,10 @@
   - [Identity Core](#identity-core)
   - [Common User Queries](#common-user-queries)
   - [Groups](#groups)
+  - [Consistency Level-Eventual](#consistencylevel-eventual-in-microsoft-graph)
   - [What does `/any(c:c eq 'DynamicMembership')` do?](#understanding-the-any-function-in-microsoft-graph-queries)
-  - [🧩 Applications & Enterprise Apps](#applications-and-enterprise-apps)
-  - [🛡️ Conditional Access & Protection](#conditional-access-and-protection)
+  - [Applications & Enterprise Apps](#applications-and-enterprise-apps)
+  - [Conditional Access & Protection](#conditional-access-and-protection)
 
 - [🔑 Authentication & Passwordless](#authentication-and-passwordless)
   - [Tenant-wide Authentication Policies](#tenant-wide-authentication-policies)
@@ -504,6 +505,96 @@ REQUEST BODY:
 }  
 ```
 > **Group SOA** <https://learn.microsoft.com/en-us/entra/identity/hybrid/how-to-group-source-of-authority-configure>
+
+---
+
+## ConsistencyLevel Eventual in Microsoft Graph
+
+### What Is `ConsistencyLevel: eventual`?
+
+`ConsistencyLevel: eventual` is an HTTP request header that enables advanced queries in Microsoft Graph by allowing slightly delayed data.
+
+```http
+ConsistencyLevel: eventual
+```
+
+### Why It Exists
+
+Microsoft Graph runs across globally distributed services. To support scalability, some queries require eventual consistency.
+
+### What It Enables
+
+- `$count`
+- `startswith()`
+- `endswith()`
+- `contains()`
+- Advanced `$filter` queries
+
+### Example
+
+```http
+GET https://graph.microsoft.com/v1.0/groups?$filter=startswith(displayName,'ACME')&$count=true
+ConsistencyLevel: eventual
+```
+
+### Practical Meaning
+
+- Data may lag briefly
+- Results converge quickly
+- Ideal for reporting, auditing, and inventory
+
+### Security Impact
+
+None. Permissions and authorization remain unchanged.
+
+### Key Takeaways
+
+- Required for `$count` and advanced filters
+- Trades immediacy for scalability
+- Essential for tenant-wide analysis
+
+
+---
+
+## Common Use Cases
+
+Typical scenarios where these Microsoft Graph query patterns are used:
+
+- Tenant-wide reporting and inventory
+- Auditing Entra ID objects (users, groups, devices)
+- Conditional Access and security posture reviews
+- License usage and assignment analysis
+- CI/CD validation and drift detection
+- Large-scale automation across tenants
+
+---
+
+## Common Mistakes
+
+Common pitfalls when working with Microsoft Graph queries:
+
+- Forgetting to include `ConsistencyLevel: eventual` when using `$count`
+- Assuming real-time accuracy when using eventual consistency
+- Treating collection properties as single values instead of using `any()`
+- Over-fetching data instead of using `$select`
+- Not testing queries in both `v1.0` and `beta` endpoints
+
+---
+
+## Why `$count` Requires Eventual Consistency
+
+Counting objects in Microsoft Graph often requires:
+
+- Scanning multiple partitions
+- Aggregating results across regions
+- Querying large, distributed datasets
+
+Strong consistency cannot guarantee performance at this scale.
+
+By using `ConsistencyLevel: eventual`, Microsoft Graph can efficiently compute counts while maintaining global scalability.
+
+This tradeoff enables accurate reporting while preserving service reliability.
+
 
 ---
 
