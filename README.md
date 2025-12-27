@@ -27,7 +27,7 @@
   - [Permissions](#permissions)
   - [TL;DR](#tldr)
 
-- [Microsoft Graph Identity – Quick Reference](#microsoft-graph-identity--quick-reference)
+- [👥 Microsoft Graph Identity – Quick Reference](#microsoft-graph-identity--quick-reference)
   - [Identity Core](#identity-core)
   - [Common User Queries](#common-user-queries)
   - [Groups](#groups)
@@ -46,6 +46,7 @@
 - [🧭 Identity Governance](#access-reviews)
 
 - [⚙️ Tenant & Directory Settings](#tenant-and-directory-settings)
+  - [Microsoft Graph `/beta/settings` Endpoint](#microsoft-graph-betasettings-endpoint)
 
 - [🔎 Entra Portal → Graph Mapping Rules](#entra-portal-to-graph-mapping-rules)
 
@@ -895,7 +896,183 @@ GET /v1.0/organization
 GET /v1.0/domains
 GET /v1.0/directoryRoles
 GET /v1.0/subscribedSkus
+GET /beta/settings
+GET /beta/directorySettingTemplates
 ```
+
+## Microsoft Graph `/beta/settings` Endpoint
+
+### What Does /beta/settings Show?
+
+**GET** `https://graph.microsoft.com/beta/settings`
+
+The `/settings` endpoint in Microsoft Graph exposes tenant-wide directory settings in Microsoft Entra ID (Azure AD).
+
+These settings control global identity and directory behavior and are represented as **directorySetting** objects.
+
+They are not the same as users, groups, Conditional Access policies, or Intune configurations.
+
+---
+
+### What Types of Settings Live Here?
+
+The endpoint returns objects of type **directorySetting**.
+
+Each setting:
+
+- Is created from a **directorySettingTemplate**
+- Has a **displayName**
+- Contains configurable **name/value pairs**
+
+---
+
+### Common Categories of Settings
+
+Depending on what has been explicitly configured in the tenant, you may see settings related to:
+
+#### Security & Identity
+- User consent behavior
+- Password and sign-in related defaults
+- Guest access restrictions
+
+#### Group Behavior
+- Microsoft 365 group creation permissions
+- Naming policies
+- Classification enforcement
+- Guest ownership rules
+
+#### App Consent & Governance
+- User consent to applications
+- Admin consent workflow configuration
+
+#### Feature Flags
+- Preview or legacy tenant-wide features
+- Settings enabled before appearing in the portal UI
+
+---
+
+### Why /beta/settings Often Returns Nothing
+
+Many tenants see this response:
+
+```json
+{
+  "value": []
+}
+```
+
+This is expected behavior.
+
+Important behavior to understand:
+
+- Directory settings only exist if they have been explicitly configured
+- Default settings → ❌ not returned
+- Explicitly configured settings → ✅ returned
+- No object exists until a template is instantiated
+
+---
+
+### How to Discover All Available Settings
+
+To see every possible setting that could exist, query the templates:
+
+**GET** `https://graph.microsoft.com/beta/directorySettingTemplates`
+
+This endpoint returns:
+
+- All supported directory setting templates
+- Setting names
+- Descriptions
+- Allowed values
+
+This is the authoritative way to understand:
+
+- What settings are available
+- What can be configured
+- What the portal may be modifying behind the scenes
+
+---
+
+### How Settings and Templates Relate
+
+```
+directorySettingTemplate
+        ↓
+directorySetting (instance)
+        ↓
+Configured name/value pairs
+```
+
+You only see `/settings` entries after:
+
+- A template is instantiated
+- Values are explicitly set
+
+---
+
+### Example Directory Setting Object
+
+```json
+{
+  "id": "abcd-1234",
+  "displayName": "Group.Unified",
+  "values": [
+    {
+      "name": "EnableGroupCreation",
+      "value": "false"
+    },
+    {
+      "name": "AllowGuestsToBeGroupOwner",
+      "value": "false"
+    }
+  ]
+}
+```
+
+---
+
+**Required Permissions**
+
+Typically required permissions include:
+
+- **Directory.Read.All** — read-only
+- **Directory.ReadWrite.All** — create or update settings
+
+---
+
+### When Should You Use /beta/settings?
+
+This endpoint is especially useful for:
+
+- Auditing tenant-wide identity configuration
+- Detecting hidden configuration drift
+- Automating security baselines
+- Reverse engineering Entra ID portal behavior
+- Comparing settings across multiple tenants
+
+---
+
+### What /beta/settings Does NOT Contain
+
+This endpoint does not include:
+
+- Conditional Access policies
+- Authentication method policies
+- Intune configuration profiles
+- Per-user or per-group settings
+
+Those live in other Microsoft Graph namespaces.
+
+---
+
+### Key Takeaways
+
+- `/beta/settings` shows only explicitly configured directory settings
+- Empty results are normal in many tenants
+- `/directorySettingTemplates` shows everything that can exist
+- These settings control global Entra ID behavior
+
+
 
 ---
 
