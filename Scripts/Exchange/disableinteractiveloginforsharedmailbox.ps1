@@ -61,15 +61,3 @@ foreach ($mailbox in $sharedMailboxes) {
     Write-Output "Allowed sign-in for: $($mailbox.DisplayName) ($($mailbox.UserPrincipalName))"
 }
 
-# Connect to Exchange/Security & Compliance PowerShell PowerShell
-Connect-ExchangeOnline
-Connect-IPPSSession
-
-# Check if Unified Audit Log ingestion is enabled
-Get-AdminAuditLogConfig | Format-List UnifiedAuditLogIngestionEnabled
-
-# Enable Unified Audit Log ingestion
-Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true
-
-# Create a new policy to retain all records for 1 year
-New-UnifiedAuditLogRetentionPolicy -Name "All Records - 1 Year" -RetentionDuration "TwelveMonths" -Priority 10
