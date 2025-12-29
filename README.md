@@ -64,6 +64,9 @@
 
 - [HTTP Methods Overview for Microsoft Graph API](#http-methods-overview-for-microsoft-graph-api)
 
+- [Conditional Access and CAE Graph Calls](#continuous-access-evaluation-and-microsoft-graph)
+
+
 
 ## What Is Microsoft Graph?
 
@@ -2035,4 +2038,222 @@ DELETE /v1.0/groups/{id}
 - Idempotent methods are safe for retries.
 - POST is used for creation and actions that may have side effects.
 - PATCH is preferred for partial updates to reduce payload and avoid overwriting unchanged properties.
-- Always check required permissions for each operation in Microso
+- Always check required permissions for each operation in Microsoft
+
+
+
+
+# Continuous Access Evaluation and Microsoft Graph
+
+## Overview
+
+Continuous Access Evaluation (CAE) is one of the most misunderstood features in Microsoft Entra ID because it behaves differently than most policy-driven features exposed through Microsoft Graph.
+
+A common point of confusion is:
+
+> “I thought CAE was enabled by default — so why does the Graph endpoint return `ResourceNotFound`?”
+
+Both statements can be true at the same time.
+
+This document explains **what CAE actually is**, **how it works**, and **why the Graph API behaves the way it does**.
+
+---
+
+## What Is Continuous Access Evaluation (CAE)?
+
+Continuous Access Evaluation is a **runtime enforcement capability** that allows Microsoft services to re-evaluate access **during an active session**, rather than waiting for token expiration.
+
+Instead of relying solely on token lifetime, CAE allows services to react immediately to security-relevant events.
+
+Examples include:
+- Password reset
+- Account disabled
+- User or sign-in risk change
+- Conditional Access policy updates
+- Role or group membership changes
+
+When these events occur, CAE-enabled workloads can invalidate access **mid-session** and force reauthentication.
+
+---
+
+## Is CAE Enabled by Default?
+
+Yes — **CAE is enabled by default**, but not in the way most people expect.
+
+### What “enabled by default” actually means
+- Microsoft workloads automatically use CAE where supported
+- No tenant-level configuration is required
+- No admin action is needed to activate baseline CAE behavior
+
+### What it does **not** mean
+- There is no default CAE policy object
+- There is no visible tenant-wide CAE toggle
+- There is no Graph resource created automatically
+
+---
+
+## CAE Enforcement vs CAE Configuration
+
+This distinction is critical.
+
+### CAE Enforcement
+- Built into Microsoft services
+- Always active where supported
+- Driven by service-side logic
+- Requires no policy object
+
+### CAE Configuration
+- Optional
+- Exposed through Microsoft Graph
+- Represented by a singleton policy resource
+- Only exists if explicitly created or configured
+
+> **CAE enforcement exists without CAE configuration.**
+
+---
+
+## The Microsoft Graph CAE Endpoint
+
+```http
+GET https://graph.microsoft.com/beta/identity/continuousAccessEvaluationPolicy
+```
+
+If the policy has never been configured, Microsoft Graph returns:
+
+```json
+{
+  "error": {
+    "code": "ResourceNotFound",
+    "message": "CAE settings not found."
+  }
+}
+```
+
+This response is **expected behavior**.
+
+It does **not** mean:
+- The endpoint is invalid
+- CAE is disabled
+- You lack permissions
+
+It means:
+- The CAE policy object does not exist in the tenant
+
+---
+
+## Why the CAE Policy Object Does Not Exist by Default
+
+The `continuousAccessEvaluationPolicy` is a **singleton resource**.
+
+Characteristics of singleton identity policies:
+- Only one instance per tenant
+- Not automatically created
+- Materialized only when configured
+
+Microsoft designed CAE as:
+- Implicit
+- Service-driven
+- Feature-gated
+- Lazy-created
+
+Graph only returns objects that exist.  
+If the CAE policy has never been initialized, Graph correctly returns **404**.
+
+---
+
+## What the CAE Policy Actually Controls
+
+The CAE policy does **not** turn CAE on or off.
+
+It exists primarily to:
+- Control migration behavior
+- Manage compatibility scenarios
+- Configure advanced CAE participation settings
+
+Example response once the policy exists:
+
+```json
+{
+  "id": "continuousAccessEvaluationPolicy",
+  "migrate": false
+}
+```
+
+This configuration fine-tunes how workloads interact with CAE — it does not enable it.
+
+---
+
+## Permissions Required
+
+To read or manage the CAE policy (if it exists), you typically need one of the following permissions:
+
+- `Policy.Read.All`
+- `Policy.ReadWrite.ConditionalAccess`
+- `Directory.Read.All`
+
+Admin consent is required.
+
+> Permissions alone will **not** create the policy object.
+
+---
+
+## Why This Confuses Graph Learners
+
+Most Graph features follow a predictable pattern:
+1. Feature exists  
+2. Policy exists  
+3. Graph returns an object  
+
+CAE breaks this assumption.
+
+It behaves more like:
+- Token issuance logic
+- Risk evaluation pipelines
+- Service-side enforcement mechanisms
+
+Graph exposes only a **thin configuration layer**, not the enforcement engine itself.
+
+---
+
+## How to Validate That CAE Is Working
+
+CAE is **not** validated by querying the policy endpoint.
+
+Instead, validate CAE by observing behavior:
+- Sign-in logs
+- Mid-session access revocation
+- Forced reauthentication after:
+  - Password reset
+  - Account disablement
+  - Risk elevation
+  - Conditional Access changes
+
+That is where CAE truly operates.
+
+---
+
+## Key Takeaways
+
+- CAE is enabled by default at the service level
+- There is no default CAE policy object
+- The Graph endpoint returns 404 if the policy does not exist
+- CAE enforcement is not policy-driven
+- The policy endpoint represents optional configuration only
+- This is expected and correct Graph behavior
+
+---
+
+## Why This Matters for Learning Microsoft Graph
+
+This is a textbook example of how Microsoft Graph exposes APIs:
+- Before GUI controls exist
+- Before objects are created
+- Sometimes only as optional configuration layers
+
+Understanding this behavior:
+- Prevents misdiagnosing 404 errors
+- Helps reverse engineer portal behavior
+- Improves confidence when exploring new Graph endpoints
+
+CAE is a perfect example of why learning Graph teaches you how Microsoft actually builds and ships features.
+
