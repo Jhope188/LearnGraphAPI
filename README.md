@@ -389,6 +389,20 @@ GET /v1.0/users/{id}/registeredDevices
 GET /v1.0/users/{id}/ownedDevices
 GET /v1.0/users/{id}/authentication/methods
 ```
+> Get the Users Object ID
+```
+https://graph.microsoft.com/v1.0/users/user1@acme.com
+```
+> Get the users Roles Assigned
+```
+https://graph.microsoft.com/beta/roleManagement/directory/roleAssignments?$filter=principalId eq 'userobjectid'
+```
+
+> Get the Role ID Name for the User
+```
+https://graph.microsoft.com/v1.0/roleManagement/directory/roleDefinitions/{roleDefinitionId}?$select=id,displayName,description
+```
+
 
 ### Groups
 ```http
