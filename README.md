@@ -803,7 +803,20 @@ There is currently no 100% reliable server-side way to return only CA policies w
 GET /v1.0/authenticationMethodsPolicy
 GET /beta/authenticationMethodsPolicy
 GET /beta/policies/authenticationMethodsPolicy
+GET /beta/policies/authorizationPolicy
 ```
+
+`Policies/AuthorizationsPolicy`
+- defaultUserRolePermissions (create apps, security groups, tenants)
+- allowInvitesFrom (guest invite restrictions)
+- allowUserConsentForRiskyApps
+- blockMsolPowerShell
+- allowedToUseSSPR
+- allowEmailVerifiedUsersToJoinOrganization
+- guestUserRoleId
+> `Permissions required: Policy.Read.All`
+
+
 `Policies/AuthenticationMethodsPolicy`
 ```
 **This endpoint returns a single singleton policy, not a collection.**
