@@ -391,7 +391,7 @@ GET /v1.0/users/{id}/authentication/methods
 ```
 > Get the Users Object ID
 ```
-https://graph.microsoft.com/v1.0/users/user1@acme.com
+https://graph.microsoft.com/v1.0/users/user1@acme.com?$select=userPrincipalName,id
 ```
 > Get the users Roles Assigned
 ```
