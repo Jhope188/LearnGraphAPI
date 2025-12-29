@@ -2160,6 +2160,7 @@ Graph only returns objects that exist.
 If the CAE policy has never been initialized, Graph correctly returns **404**.
 
 ![CAEGraphResponse](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/CAEGraphCallResponse.png)
+
 ---
 
 ## What the CAE Policy Actually Controls
