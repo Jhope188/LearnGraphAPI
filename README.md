@@ -1488,7 +1488,7 @@ Everything funnels through Graph — `$batch` is just the **transport optimizati
 - Understanding `$batch` is essential for reverse-engineering Graph
 
 
-![Batch API Calls](#https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/DevToolsBatchAPI.png)
+![BatchAPICalls](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/DevToolsBatchAPI.png)
 
 ---
 
