@@ -1158,24 +1158,24 @@ Filtering to XHR removes UI noise and surfaces only **data-fetching requests**.
 ---
 
 
-## Step-by-step: Finding the correct Graph query
+### Step-by-step: Finding the correct Graph query
 
-### 1. Open a Microsoft portal
+#### 1. Open a Microsoft portal
 - https://entra.microsoft.com
 - https://intune.microsoft.com
 - https://admin.microsoft.com
 
-### 2. Open DevTools
+#### 2. Open DevTools
 - Press **F12**
 - Go to **Network**
 - Enable **Preserve log**
 
-### 3. Filter by XHR
+#### 3. Filter by XHR
 Click **Fetch/XHR** to isolate Graph calls.
 
 ---
 
-## What to look for in XHR requests
+### What to look for in XHR requests
 
 | Signal | Why it matters |
 |-----|-----|
@@ -1207,7 +1207,7 @@ This is the exact API call the portal uses.
 
 ---
 
-## How to extract a reusable API call
+### How to extract a reusable API call
 
 1. Click the XHR request
 2. Copy the **Request URL**
@@ -1220,9 +1220,9 @@ This is the exact API call the portal uses.
 
 ---
 
-## Server-side vs client-side filtering
+### Server-side vs client-side filtering
 
-### Server-side (preferred)
+#### Server-side (preferred)
 - `$filter`
 - `$count`
 - `$orderby`
@@ -1237,7 +1237,7 @@ This distinction is critical for performance and scale.
 
 ---
 
-## Why this matters
+### Why this matters
 
 Reverse-engineering Graph via XHR allows you to:
 - Discover undocumented endpoints
@@ -1248,31 +1248,31 @@ Reverse-engineering Graph via XHR allows you to:
 
 ---
 
-## Common Graph patterns seen in portals
+### Common Graph patterns seen in portals
 
-### Count
+#### Count
 ```http
 /{resource}/$count
 ```
 
-### Filter
+#### Filter
 ```http
 ?$filter=startswith(displayName,'ACME')
 ```
 
-### Expand
+#### Expand
 ```http
 ?$expand=owners($select=id,displayName)
 ```
 
-### Beta-only features
+#### Beta-only features
 ```http
 /beta/identity/...
 ```
 
 ---
 
-## Mental model
+### Mental model
 
 ```text
 Portal UI
@@ -1288,7 +1288,7 @@ The portal is simply a Graph client.
 
 ---
 
-## Key takeaway
+### Key takeaway
 
 If the portal can display it, Graph can return it.  
 XHR is the fastest and most reliable way to discover the correct endpoint, headers, and query parameters.
