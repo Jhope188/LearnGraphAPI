@@ -1134,12 +1134,168 @@ Those live in other Microsoft Graph namespaces.
 
 ## Reverse-Engineering Entra Portal Calls
 
-1. Open **https://entra.microsoft.com**
-2. Open Browser DevTools → Network
-3. Filter for `graph.microsoft.com`
-4. Navigate to the blade
-5. Copy the `GET` request backing the UI
-6. Paste into Graph Explorer or PowerShell
+## Why sorting by **XHR** is the best way to reverse Graph API calls
+
+When you open **DevTools → Network** in Entra, Microsoft 365, or Intune portals, you’ll see hundreds of requests:
+- JavaScript bundles
+- Fonts
+- Images
+- CSS
+- Telemetry
+- API calls
+
+### Why XHR matters
+
+All Microsoft Graph REST calls are sent as **XHR / Fetch** requests. This includes:
+- List queries
+- `$count` calls
+- Policy reads
+- Portal data loads
+- Validation checks
+
+Filtering to XHR removes UI noise and surfaces only **data-fetching requests**.
+
+---
+
+
+## Step-by-step: Finding the correct Graph query
+
+### 1. Open a Microsoft portal
+- https://entra.microsoft.com
+- https://intune.microsoft.com
+- https://admin.microsoft.com
+
+### 2. Open DevTools
+- Press **F12**
+- Go to **Network**
+- Enable **Preserve log**
+
+### 3. Filter by XHR
+Click **Fetch/XHR** to isolate Graph calls.
+
+---
+
+## What to look for in XHR requests
+
+| Signal | Why it matters |
+|-----|-----|
+| `graph.microsoft.com` | Actual Graph call |
+| `/v1.0/` or `/beta/` | API version |
+| `$count` | Server-side counting |
+| `$filter=` | Server-side filtering |
+| `$select=` | Payload shaping |
+| `ConsistencyLevel` | Advanced query support |
+
+---
+
+## Example: Discovering a group count query
+
+Portal shows:
+> “123 Groups”
+
+XHR request:
+```http
+GET https://graph.microsoft.com/v1.0/groups/$count?$filter=securityEnabled eq true
+```
+
+Headers:
+```http
+ConsistencyLevel: eventual
+```
+
+This is the exact API call the portal uses.
+
+---
+
+## How to extract a reusable API call
+
+1. Click the XHR request
+2. Copy the **Request URL**
+3. Note required headers:
+   - `ConsistencyLevel`
+4. Ignore:
+   - `client-request-id`
+   - `x-ms-*` headers
+   - Telemetry values
+
+---
+
+## Server-side vs client-side filtering
+
+### Server-side (preferred)
+- `$filter`
+- `$count`
+- `$orderby`
+
+Appears directly in the URL.
+
+### Client-side
+- No filters in the URL
+- Data processed in JavaScript after retrieval
+
+This distinction is critical for performance and scale.
+
+---
+
+## Why this matters
+
+Reverse-engineering Graph via XHR allows you to:
+- Discover undocumented endpoints
+- Identify real count queries
+- Understand Graph limitations
+- Reproduce portal behavior in automation
+- Avoid unsupported query patterns
+
+---
+
+## Common Graph patterns seen in portals
+
+### Count
+```http
+/{resource}/$count
+```
+
+### Filter
+```http
+?$filter=startswith(displayName,'ACME')
+```
+
+### Expand
+```http
+?$expand=owners($select=id,displayName)
+```
+
+### Beta-only features
+```http
+/beta/identity/...
+```
+
+---
+
+## Mental model
+
+```text
+Portal UI
+  ↓
+XHR request
+  ↓
+Microsoft Graph endpoint
+  ↓
+Same call you can automate
+```
+
+The portal is simply a Graph client.
+
+---
+
+## Key takeaway
+
+If the portal can display it, Graph can return it.  
+XHR is the fastest and most reliable way to discover the correct endpoint, headers, and query parameters.
+
+
+
+![Reverse Engineering API with DevTools](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/SecurityRisk%20user.png)
 
 ---
 
