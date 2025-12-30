@@ -53,7 +53,7 @@
 - [💡 Graph Discovery Workflow (Reusable)](#graph-discovery-workflow-reusable)
 
 - [🧪 Reverse-Engineering Entra Portal Calls](#reverse-engineering-entra-portal-calls)
-  - [Microsoft Graph $batch API Request](#microsoft-graph-$batch-api-request)
+  - [Microsoft Graph $batch API Request](#microsoft-graph-batch-api-request)
 
 - [🔑 Common Read Permissions](#common-read-permissions)
 
@@ -1300,7 +1300,7 @@ XHR is the fastest and most reliable way to discover the correct endpoint, heade
 
 ---
 
-## Microsoft Graph $batch API Request
+## Microsoft Graph Batch API Request
 
 ### What Is https://graph.microsoft.com/beta/$batch?
 
