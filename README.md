@@ -53,6 +53,7 @@
 - [💡 Graph Discovery Workflow (Reusable)](#graph-discovery-workflow-reusable)
 
 - [🧪 Reverse-Engineering Entra Portal Calls](#reverse-engineering-entra-portal-calls)
+  - [Microsoft Graph $batch API Request](#microsoft-graph-$batch-api-request)
 
 - [🔑 Common Read Permissions](#common-read-permissions)
 
@@ -1298,6 +1299,196 @@ XHR is the fastest and most reliable way to discover the correct endpoint, heade
 ![Reverse Engineering API with DevTools](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/SecurityRisk%20user.png)
 
 ---
+
+## Microsoft Graph $batch API Request
+
+### What Is https://graph.microsoft.com/beta/$batch?
+
+`$batch` is a Microsoft Graph batching endpoint that allows the client (portal, admin center, or your code) to send multiple Graph requests in a single HTTP call.
+
+Instead of issuing dozens of individual REST calls, the UI bundles them together and sends them as one request.
+
+---
+
+### Why the Entra / M365 Portal Uses $batch
+
+When you open something like:
+
+- Users blade
+- Groups overview
+- Conditional Access
+- Authentication methods
+- Intune pages
+
+…the portal often needs many different pieces of data at once:
+
+- Object details
+- Counts
+- Policy state
+- Related objects
+- Feature flags
+
+Rather than making multiple calls like:
+
+```http
+GET /users
+GET /users/$count
+GET /directory/settings
+GET /policies/conditionalAccessPolicies
+```
+
+The portal sends **one `$batch` call** containing all of them.
+
+---
+
+### What a $batch Request Looks Like
+
+#### Request (Simplified)
+
+```http
+POST https://graph.microsoft.com/beta/$batch
+Content-Type: application/json
+```
+
+```json
+{
+  "requests": [
+    {
+      "id": "1",
+      "method": "GET",
+      "url": "/users?$select=id,displayName"
+    },
+    {
+      "id": "2",
+      "method": "GET",
+      "url": "/groups/$count?$consistencyLevel=eventual"
+    }
+  ]
+}
+```
+
+#### Response
+
+```json
+{
+  "responses": [
+    {
+      "id": "1",
+      "status": 200,
+      "body": {
+        "value": [ ... ]
+      }
+    },
+    {
+      "id": "2",
+      "status": 200,
+      "body": 412
+    }
+  ]
+}
+```
+
+Each response maps back to its request by **ID**.
+
+---
+
+### Why $batch Is Important When Reverse-Engineering Graph
+
+### 1. You Rarely See Clean Single Calls in DevTools
+
+Most modern portal blades use `$batch`, so the real API endpoints are nested inside the request body.
+
+### 2. $batch Hides the Real Endpoints
+
+When you expand the payload, you’ll find entries like:
+
+```json
+"url": "/policies/conditionalAccessPolicies?$filter=..."
+```
+
+That `url` value is the **exact endpoint** you can call directly.
+
+---
+
+### How to Extract the Real API Endpoint
+
+In **DevTools → Network → XHR**:
+
+1. Click the `$batch` request
+2. Open the **Request Payload**
+3. Expand `requests[]`
+4. Look for:
+   - `method`
+   - `url`
+5. Copy the `url` value
+6. Prepend:
+
+```text
+https://graph.microsoft.com/beta
+```
+
+✅ That’s the real API call.
+
+---
+
+### Why $batch Is Not Just for the Portal
+
+You can use `$batch` yourself to:
+
+- Reduce API throttling
+- Improve performance
+- Make atomic-style read operations
+- Query multiple related resources efficiently
+
+---
+
+### Limits to Know
+
+| Limit | Value |
+|------|------|
+| Requests per batch | 20 |
+| Same tenant only | Yes |
+| Mixed methods | GET, POST, PATCH, DELETE |
+| Cross-request dependency | Limited |
+
+---
+
+### When NOT to Use $batch
+
+Avoid `$batch` for:
+
+- Large exports
+- Pagination-heavy queries
+- Long-running reports
+- Simple single-object calls
+
+For those scenarios, direct endpoints are cleaner and easier to manage.
+
+---
+
+### How This Ties Back to Your Graph Learning Journey
+
+This explains why:
+
+- Sorting by XHR works
+- Portal actions feel “magic”
+- Graph looks imperative in PowerShell
+- Lokka and MCP tools are so powerful
+
+Everything funnels through Graph — `$batch` is just the **transport optimization layer**.
+
+---
+
+### TL;DR
+
+- `$batch` bundles multiple Graph calls into one
+- The portal uses it everywhere
+- The real endpoints are inside the request body
+- Copy the `url` value to reproduce the call
+- Understanding `$batch` is essential for reverse-engineering Graph
+
+---
+
 
 ## Common Read Permissions
 
