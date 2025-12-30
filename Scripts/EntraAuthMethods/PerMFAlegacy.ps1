@@ -18,6 +18,6 @@ Foreach ($user in $allusers){
 }
 
 #output in grid view
-$allUsersPerUserMFAState | Export-Csv -Path "C:\clientapps\RMGPerMFASetting.csv" -NoTypeInformation
+$allUsersPerUserMFAState | Export-Csv -Path "C:\clientapps\ACMEPerMFASetting.csv" -NoTypeInformation
 
 Write-Output "Export completed successfully."
