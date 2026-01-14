@@ -1,1 +1,1 @@
-##Scripts to disable settings in Admin Center
+## Scripts to disable settings in Admin Center
