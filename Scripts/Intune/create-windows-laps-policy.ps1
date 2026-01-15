@@ -24,22 +24,34 @@ try {
     Write-Host "   You may need to enable this manually in Entra ID > Devices > Device settings`n" -ForegroundColor Yellow
 }
 
-Write-Host "`n🔐 Step 2: Creating Windows LAPS Policy...`n" -ForegroundColor Cyan
+Write-Host "`n🔐 Step 2: Creating Windows LAPS Custom Configuration Policy...`n" -ForegroundColor Cyan
 
-# Define the Windows LAPS Policy
-$policyBody = @{
+# Define the Windows LAPS Custom Policy using OMA-URI
+$lapsPolicy = @{
     "@odata.type" = "#microsoft.graph.windows10CustomConfiguration"
     displayName = "IaC - Windows - LAPS - Policy"
     description = "Windows Local Administrator Password Solution (LAPS) configuration"
-    
-    # OMA-URI settings for Windows LAPS
     omaSettings = @(
         @{
             "@odata.type" = "#microsoft.graph.omaSettingInteger"
-            displayName = "Password Age (Days)"
+            displayName = "Backup Directory"
+            description = "Backup the password to Microsoft Entra ID only"
+            omaUri = "./Device/Vendor/MSFT/LAPS/Policies/BackupDirectory"
+            value = 1
+        },
+        @{
+            "@odata.type" = "#microsoft.graph.omaSettingInteger"
+            displayName = "Password Age Days"
             description = "Maximum password age in days before rotation"
             omaUri = "./Device/Vendor/MSFT/LAPS/Policies/PasswordAgeDays"
-            value = 30
+            value = 10
+        },
+        @{
+            "@odata.type" = "#microsoft.graph.omaSettingInteger"
+            displayName = "Password Complexity"
+            description = "Large letters + small letters + numbers + special characters"
+            omaUri = "./Device/Vendor/MSFT/LAPS/Policies/PasswordComplexity"
+            value = 4
         },
         @{
             "@odata.type" = "#microsoft.graph.omaSettingInteger"
@@ -50,23 +62,9 @@ $policyBody = @{
         },
         @{
             "@odata.type" = "#microsoft.graph.omaSettingInteger"
-            displayName = "Password Complexity"
-            description = "Password complexity: 1=Large letters, 2=Large+Small, 3=Large+Small+Numbers, 4=Large+Small+Numbers+Special"
-            omaUri = "./Device/Vendor/MSFT/LAPS/Policies/PasswordComplexity"
-            value = 4
-        },
-        @{
-            "@odata.type" = "#microsoft.graph.omaSettingInteger"
-            displayName = "Administrator Account Name"
-            description = "Specifies which account to manage: 1=Administrator SID, 2=Custom account name"
-            omaUri = "./Device/Vendor/MSFT/LAPS/Policies/AdministratorAccountName"
-            value = 1
-        },
-        @{
-            "@odata.type" = "#microsoft.graph.omaSettingInteger"
-            displayName = "Backup Directory"
-            description = "Where to backup passwords: 1=Azure AD only, 2=AD only, 3=Azure AD and AD"
-            omaUri = "./Device/Vendor/MSFT/LAPS/Policies/BackupDirectory"
+            displayName = "Post Authentication Actions"
+            description = "Reset password upon expiry of the grace period"
+            omaUri = "./Device/Vendor/MSFT/LAPS/Policies/PostAuthenticationActions"
             value = 1
         },
         @{
@@ -78,54 +76,53 @@ $policyBody = @{
         },
         @{
             "@odata.type" = "#microsoft.graph.omaSettingInteger"
-            displayName = "Post Authentication Actions"
-            description = "Actions after authentication: 1=Reset password, 3=Reset password and logoff"
-            omaUri = "./Device/Vendor/MSFT/LAPS/Policies/PostAuthenticationActions"
-            value = 3
+            displayName = "Enable Administrator Account"
+            description = "Enable the built-in Administrator account"
+            omaUri = "./Device/Vendor/MSFT/Policy/Config/LocalPoliciesSecurityOptions/Accounts_EnableAdministratorAccountStatus"
+            value = 1
         }
     )
 }
 
 try {
-    # Create the policy
-    $policy = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations" -Body ($policyBody | ConvertTo-Json -Depth 10)
+    # Create the LAPS Custom Configuration policy
+    $policy = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations" -Body ($lapsPolicy | ConvertTo-Json -Depth 20)
     
-    Write-Host "✅ LAPS Policy created successfully!" -ForegroundColor Green
+    Write-Host "✅ LAPS Custom Configuration Policy created successfully!" -ForegroundColor Green
     Write-Host "   Policy Name: $($policy.displayName)" -ForegroundColor White
     Write-Host "   Policy ID: $($policy.id)" -ForegroundColor White
     Write-Host "`n📋 Configuration Summary:" -ForegroundColor Yellow
-    Write-Host "   Password Age: 30 days" -ForegroundColor White
+    Write-Host "   Backup Directory: Azure AD only" -ForegroundColor White
+    Write-Host "   Password Age: 10 days" -ForegroundColor White
     Write-Host "   Password Length: 14 characters" -ForegroundColor White
     Write-Host "   Password Complexity: Large+Small+Numbers+Special" -ForegroundColor White
-    Write-Host "   Backup Location: Azure AD" -ForegroundColor White
-    Write-Host "   Post-Auth Actions: Reset password and logoff" -ForegroundColor White
+    Write-Host "   Post-Auth Actions: Reset password upon expiry" -ForegroundColor White
     Write-Host "   Post-Auth Delay: 24 hours" -ForegroundColor White
+    Write-Host "   Local Administrator Account: Enabled" -ForegroundColor White
     
-    # Ask if user wants to assign the policy
-    Write-Host "`n❓ Would you like to assign this policy to All Devices? (Y/N): " -ForegroundColor Yellow -NoNewline
+    # Ask if user wants to assign the LAPS policy
+    Write-Host "`n❓ Would you like to assign the LAPS policy to All Devices? (Y/N): " -ForegroundColor Yellow -NoNewline
     $assign = Read-Host
     
     if ($assign -eq 'Y' -or $assign -eq 'y') {
         # Create assignment for all devices
         $assignmentBody = @{
-            assignments = @(
+            deviceConfigurationGroupAssignments = @(
                 @{
-                    target = @{
-                        "@odata.type" = "#microsoft.graph.allDevicesAssignmentTarget"
-                    }
+                    targetGroupId = "all_devices"
                 }
             )
         }
         
-        Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations/$($policy.id)/assign" -Body ($assignmentBody | ConvertTo-Json -Depth 10)
+        Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations/$($policy.id)/assign" -Body (@{ assignments = @(@{ target = @{ "@odata.type" = "#microsoft.graph.allDevicesAssignmentTarget" } }) } | ConvertTo-Json -Depth 10)
         
-        Write-Host "✅ Policy assigned to All Devices" -ForegroundColor Green
+        Write-Host "✅ LAPS policy assigned to All Devices" -ForegroundColor Green
     } else {
-        Write-Host "⏭️  Skipped assignment. You can assign this policy manually in the Intune portal." -ForegroundColor Yellow
+        Write-Host "⏭️  Skipped assignment." -ForegroundColor Yellow
     }
     
 } catch {
-    Write-Host "❌ Failed to create policy: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "❌ Failed to create LAPS policy: $($_.Exception.Message)" -ForegroundColor Red
     Write-Host "   Error Details: $($_.Exception)" -ForegroundColor Red
 }
 
