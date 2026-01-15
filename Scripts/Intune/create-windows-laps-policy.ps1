@@ -86,8 +86,6 @@ $policyBody = @{
     )
 }
 
-Write-Host "`n🔐 Creating Windows LAPS Policy...`n" -ForegroundColor Cyan
-
 try {
     # Create the policy
     $policy = Invoke-MgGraphRequest -Method POST -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceConfigurations" -Body ($policyBody | ConvertTo-Json -Depth 10)
