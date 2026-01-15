@@ -1,5 +1,30 @@
 # Connect to Microsoft Graph with required permissions
-Connect-MgGraph -Scopes "DeviceManagementConfiguration.ReadWrite.All"
+Connect-MgGraph -Scopes "DeviceManagementConfiguration.ReadWrite.All", "Policy.ReadWrite.DeviceConfiguration"
+
+Write-Host "`n🔧 Step 1: Enabling LAPS in Entra ID Device Settings...`n" -ForegroundColor Cyan
+
+try {
+    # Get current device registration policy
+    $currentPolicy = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/policies/deviceRegistrationPolicy"
+    
+    # Enable LAPS for Azure AD joined devices
+    $deviceRegistrationBody = @{
+        localAdminPassword = @{
+            isEnabled = $true
+        }
+    }
+    
+    Invoke-MgGraphRequest -Method PATCH -Uri "https://graph.microsoft.com/beta/policies/deviceRegistrationPolicy" -Body ($deviceRegistrationBody | ConvertTo-Json -Depth 10)
+    
+    Write-Host "✅ LAPS enabled in Entra ID Device Settings" -ForegroundColor Green
+    Write-Host "   Local Admin Password backup: Enabled`n" -ForegroundColor White
+    
+} catch {
+    Write-Host "⚠️  Warning: Could not enable LAPS in Entra ID: $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "   You may need to enable this manually in Entra ID > Devices > Device settings`n" -ForegroundColor Yellow
+}
+
+Write-Host "`n🔐 Step 2: Creating Windows LAPS Policy...`n" -ForegroundColor Cyan
 
 # Define the Windows LAPS Policy
 $policyBody = @{
