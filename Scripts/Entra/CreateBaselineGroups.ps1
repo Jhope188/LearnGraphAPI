@@ -3,23 +3,61 @@ Connect-MgGraph -Scopes "Group.ReadWrite.All"
 
 # Define the groups to create
 $groupsToCreate = @(
-    @{ Name = "CA-DeviceExclusions"; Description = "Conditional Access - Device Exclusions" }
-    @{ Name = "CA-GlobalExclusions"; Description = "Conditional Access - Global Exclusions" }
-    @{ Name = "CA-GuestExclusions"; Description = "Conditional Access - Guest Exclusions" }
-    @{ Name = "CA-ServiceAccounts"; Description = "Conditional Access - Service Accounts" }
-    @{ Name = "CA-TravelingUsers"; Description = "Conditional Access - Traveling Users" }
-    @{ Name = "CA-Azure-DevOps-Users"; Description = "Conditional Access - Azure DevOps Users" }
-    @{ Name = "CA-P1InternalLicensedUsers"; Description = "Conditional Access - P1 Internal Licensed Users" }
-    @{ Name = "CA-P2InternalLicensedUsers"; Description = "Conditional Access - P2 Internal Licensed Users" }
-    @{ Name = "Azure-Breakglass"; Description = "Emergency Break Glass Accounts" }
-    @{ Name = "MFA-AUTH-SMS"; Description = "MFA Authentication - SMS" }
-    @{ Name = "MFA-AUTH-Call"; Description = "MFA Authentication - Phone Call" }
-    @{ Name = "MFA-AUTH-Passkey"; Description = "MFA Authentication - Passkey" }
-    @{ Name = "ADM-Users-Dynamic"; Description = "Dynamic group for Admin Users" }
-    @{ Name = "Executives-Users-Dynamic"; Description = "Dynamic group for Executive Users" }
-    @{ Name = "Guest-Users-Dynamic"; Description = "Dynamic group for Guest Users" }
-    @{ Name = "AVD-Host-Dynamic"; Description = "Dynamic group for AVD Hosts" }
-    @{ Name = "Azure-Resources-Dynamic"; Description = "Dynamic group for Azure Resources" }
+    # Static Security Groups
+    @{ Name = "CA-DeviceExclusions"; Description = "Conditional Access - Device Exclusions"; IsDynamic = $false }
+    @{ Name = "CA-GlobalExclusions"; Description = "Conditional Access - Global Exclusions"; IsDynamic = $false }
+    @{ Name = "CA-GuestExclusions"; Description = "Conditional Access - Guest Exclusions"; IsDynamic = $false }
+    @{ Name = "CA-ServiceAccounts"; Description = "Conditional Access - Service Accounts"; IsDynamic = $false }
+    @{ Name = "CA-TravelingUsers"; Description = "Conditional Access - Traveling Users"; IsDynamic = $false }
+    @{ Name = "CA-Azure-DevOps-Users"; Description = "Conditional Access - Azure DevOps Users"; IsDynamic = $false }
+    @{ Name = "Azure-Breakglass"; Description = "Emergency Break Glass Accounts"; IsDynamic = $false }
+    @{ Name = "MFA-AUTH-SMS"; Description = "MFA Authentication - SMS"; IsDynamic = $false }
+    @{ Name = "MFA-AUTH-EAM"; Description = "MFA Authentication - EAM"; IsDynamic = $false }
+    @{ Name = "MFA-AUTH-Passkey"; Description = "MFA Authentication - Passkey"; IsDynamic = $false }
+    
+    # Dynamic Security Groups
+    @{ 
+        Name = "CA-P1InternalLicensedUsers"
+        Description = "Conditional Access - P1 Internal Licensed Users (Dynamic)"
+        IsDynamic = $true
+        MembershipRule = '(user.assignedPlans -any (assignedPlan.servicePlanId -eq "41781fb2-bc02-4b7c-bd55-b576c07bb09d" and assignedPlan.capabilityStatus -eq "Enabled"))'
+    }
+    @{ 
+        Name = "CA-P2InternalLicensedUsers"
+        Description = "Conditional Access - P2 Internal Licensed Users (Dynamic)"
+        IsDynamic = $true
+        MembershipRule = '(user.assignedPlans -any (assignedPlan.servicePlanId -eq "eec0eb4f-6444-4f95-aba0-50c24d67f998" and assignedPlan.capabilityStatus -eq "Enabled"))'
+    }
+    @{ 
+        Name = "ADM-Users-Dynamic"
+        Description = "Dynamic group for Admin Users"
+        IsDynamic = $true
+        MembershipRule = '(user.userPrincipalName -contains ".adm")'
+    }
+    @{ 
+        Name = "Disabled-Users-Dynamic"
+        Description = "Dynamic group for Disabled Users"
+        IsDynamic = $true
+        MembershipRule = '(user.accountEnabled -eq false)'
+    }
+    @{ 
+        Name = "Guest-Users-Dynamic"
+        Description = "Dynamic group for Guest Users"
+        IsDynamic = $true
+        MembershipRule = '(user.userType -eq "Guest")'
+    }
+    @{ 
+        Name = "AVD-Host-Dynamic"
+        Description = "Dynamic group for AVD Hosts"
+        IsDynamic = $true
+        MembershipRule = '(device.displayName -startsWith "AVD-")'
+    }
+    @{ 
+        Name = "W365-Devices-Dynamic"
+        Description = "Dynamic group for Azure Cloud PC Devices"
+        IsDynamic = $true
+        MembershipRule = '(device.deviceModel -contains "Cloud PC")'
+    }
 )
 
 Write-Host "`n🔍 Checking which groups already exist...`n" -ForegroundColor Cyan
@@ -48,8 +86,20 @@ foreach ($group in $groupsToCreate) {
                 securityEnabled = $true
             }
             
+            # Add dynamic membership settings if this is a dynamic group
+            if ($group.IsDynamic) {
+                $params.groupTypes = @("DynamicMembership")
+                $params.membershipRule = $group.MembershipRule
+                $params.membershipRuleProcessingState = "On"
+            }
+            
             New-MgGroup -BodyParameter $params | Out-Null
-            Write-Host "✅ Created: $groupName" -ForegroundColor Green
+            
+            if ($group.IsDynamic) {
+                Write-Host "✅ Created (Dynamic): $groupName" -ForegroundColor Green
+            } else {
+                Write-Host "✅ Created (Static): $groupName" -ForegroundColor Green
+            }
             $created++
         } catch {
             Write-Host "❌ Failed to create: $groupName - $($_.Exception.Message)" -ForegroundColor Red
@@ -70,3 +120,5 @@ Get-MgGroup -All | Where-Object {
     $_.DisplayName -like "*-Dynamic" -or 
     $_.DisplayName -eq "Azure-Breakglass"
 } | Select-Object DisplayName, Id, Description | Format-Table -AutoSize
+
+
