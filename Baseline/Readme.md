@@ -12,7 +12,13 @@
 2. [Entra ID (Identity & Access)](#entra-id-identity--access)
    - [Conditional Access Policies](#conditional-access-policies)
    - [Named Locations](#named-locations)
-3. [Microsoft Intune (Device Management)](#microsoft-intune-device-management)
+3. [Defender for Office 365 (Email Security)](#defender-for-office-365-email-security)
+   - [Anti-Phishing Policies](#anti-phishing-policies)
+   - [Anti-Spam Policies](#anti-spam-policies)
+   - [Anti-Malware Policies](#anti-malware-policies)
+   - [Safe Links Policies](#safe-links-policies)
+   - [Safe Attachments Policies](#safe-attachments-policies)
+4. [Microsoft Intune (Device Management)](#microsoft-intune-device-management)
    - [Device Configuration Policies](#device-configuration-policies)
    - [Settings Catalog Policies](#settings-catalog-policies)
    - [Compliance Policies](#compliance-policies)
@@ -21,16 +27,25 @@
    - [Scripts](#scripts)
    - [Autopilot Profiles](#autopilot-profiles)
 
+
 ---
 
 ## Executive Summary
 
-This master documentation provides a comprehensive overview of all Infrastructure as Code (IAC) policies deployed across the organization. These policies are organized into two main categories:
+This master documentation provides a comprehensive overview of all Infrastructure as Code (IAC) policies deployed across the organization. These policies are organized into three main categories:
 
 ### Entra ID (Identity & Access Management)
 Identity and access control policies that govern how users authenticate and access resources:
 - **Conditional Access Policies**: Dynamic access controls based on conditions
 - **Named Locations**: Trusted network locations and IP ranges
+
+### Defender for Office 365 (Email Security)
+Email security policies that protect against malicious content and phishing attacks:
+- **Anti-Phishing**: Protection against impersonation and spoofing attempts
+- **Anti-Spam**: Content filtering for inbound and outbound email
+- **Anti-Malware**: Attachment scanning and malware protection
+- **Safe Links**: URL detonation and time-of-click protection
+- **Safe Attachments**: File sandboxing and zero-day protection
 
 ### Microsoft Intune (Device & Endpoint Management)
 Device configuration and compliance policies that ensure endpoints meet security standards:
@@ -611,6 +626,72 @@ Microsoft Intune policies manage device configuration, compliance, and security 
 - **Autopilot Profiles:** 0
 
 ---
+
+## Defender for Office 365 (Email Security)
+
+
+Defender for Office 365 policies provide advanced threat protection for email and collaboration tools.
+
+### Anti-Phishing Policies
+
+Anti-phishing policies protect against impersonation attacks and spoofing attempts.
+
+#### IAC - DfO - [Anti-Phishing] for [All Domains] 🟢
+
+**Enabled:** True
+**Priority:** 0
+**Phishing Threshold:** 1
+**Mailbox Intelligence:** Enabled
+**Applies To Domains:** M365x37845673.onmicrosoft.com
+
+### Anti-Spam Policies
+
+Anti-spam policies define actions for different types of spam and bulk email.
+
+#### IAC - DfO - [Anti-Spam] [Inbound] [All Domains]
+
+**Priority:** 0
+**Spam Action:** MoveToJmf
+**High Confidence Spam Action:** MoveToJmf
+**Bulk Threshold:** 7
+**Applies To Domains:** M365x37845673.onmicrosoft.com
+
+### Anti-Malware Policies
+
+Anti-malware policies scan attachments and provide zero-hour auto purge (ZAP) for malware.
+
+#### IAC - DfO - [Anti-Malware] for [All Domains] 🟢
+
+**ZAP Enabled:** True
+**Priority:** 0
+**File Filter:** Enabled
+**Applies To Domains:** M365x37845673.onmicrosoft.com
+
+### Safe Links Policies
+
+Safe Links policies provide time-of-click protection and URL rewriting for malicious links.
+
+#### IAC - DfO - [Safe Links] for [All Domains]
+
+**Priority:** 0
+**Scan URLs:** True
+**Internal Senders:** True
+
+### Safe Attachments Policies
+
+Safe Attachments policies sandbox unknown attachments in a virtual environment before delivery.
+
+#### IAC - DfO - [Safe Attachments] for [All Domains] 🔴
+
+**Enabled:** False
+**Priority:** 0
+**Action:** Allow
+
+
+---
+
+
+
 
 ## Policy Management
 
