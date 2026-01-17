@@ -2,7 +2,7 @@
 
 **Complete Infrastructure as Code Policy Documentation**
 
-**Generated:** January 16, 2026 21:16:00
+**Generated:** January 16, 2026 21:27:18
 
 ---
 
@@ -314,31 +314,283 @@ Named Locations define trusted network locations used in Conditional Access poli
 Microsoft Intune policies manage device configuration, compliance, and security across Windows, iOS, Android, and macOS platforms.
 
 ### Settings Catalog Policies
-*Folder not found*
+
+#### IAC - Intune - Config Refresh
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **{providerid}**
+
+</details>
+
+
+#### IAC - macOS - OS Updates Configuration Profile
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **com.apple.softwareupdate**
+
+</details>
+
+
+#### IAC - macOS - Platform SSO
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **com.apple.extensiblesso**
+
+</details>
+
+
+#### IAC - Windows - Baseline Workstation Configuration Profile
+**Settings Configured:** 7
+
+<details>
+<summary>View Settings</summary>
+
+- **devicepasswordenabled**: 0
+- **allowcortana**: 0
+- **donotshowfeedbacknotifications**: 1
+- **showpdfdefaultrecommendationsenabled**: 0
+- **hiderecentlyaddedapps**: 1
+- **simplifyquicksettings**: 1
+- **configuretimezone**: `Eastern Standard Time`
+
+</details>
+
+
+#### IAC - Windows - Bitlocker Encryption Policy
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- Group: bb8dd9b9-0c9c-4af9-a5b3-5e632f8066ca
+
+**Settings Configured:** 11
+
+<details>
+<summary>View Settings</summary>
+
+- **requiredeviceencryption**: 1
+- **allowwarningforotherdiskencryption**: 0
+- **encryptionmethodbydrivetype**: 1
+- **systemdrivesencryptiontype**: 1
+- **systemdrivesrequirestartupauthentication**: 1
+- **systemdrivesminimumpinlength**: 0
+- **systemdrivesenhancedpin**: 0
+- **systemdrivesrecoveryoptions**: 1
+- **fixeddrivesencryptiontype**: 1
+- **fixeddrivesrecoveryoptions**: 1
+- **removabledrivesconfigurebde**: 1
+
+</details>
+
+
+#### IAC - Windows - Block - WindowsStore
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **2**: 0
+
+</details>
+
+
+#### IAC - Windows - Edge Configuration Profile
+**Settings Configured:** 25
+
+*Too many settings to display inline. See detailed documentation or JSON export for full configuration.*
+
+
+#### IAC - Windows - Edge Favorites Profile
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- Group: 656e073b-f717-4a5d-9f5a-d4d35783bca9
+
+**Settings Configured:** 2
+
+<details>
+<summary>View Settings</summary>
+
+- **managedfavorites**: 1
+- **favoritesbarenabled**: 1
+
+</details>
+
+
+#### IAC - Windows - Edge Homepage Profile
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- Group: 0a496479-9067-4b42-b4f7-4c144151e8e1
+
+**Settings Configured:** 3
+
+<details>
+<summary>View Settings</summary>
+
+- **restoreonstartup**: 1
+- **homepagelocation**: 1
+- **restoreonstartupurls**: 1
+
+</details>
+
+
+#### IAC - Windows - Google Chrome Extensions Profile
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **extensioninstallforcelist**: 1
+
+</details>
+
+
+#### IAC - Windows - LAPs Configuration Profile
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **enableadministratoraccountstatus**: 1
+
+</details>
+
+
+#### IAC - Windows - LAPs Policy
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- All Devices
+
+**Settings Configured:** 5
+
+<details>
+<summary>View Settings</summary>
+
+- **backupdirectory**: 1
+- **passwordcomplexity**: 4
+- **passwordlength**: `14`
+- **postauthenticationactions**: 1
+- **postauthenticationresetdelay**: `24`
+
+</details>
+
+
+#### IAC - Windows - OneDrive Profile
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- All Devices
+
+**Settings Configured:** 3
+
+<details>
+<summary>View Settings</summary>
+
+- **disablepersonalsync**: 1
+- **kfmoptinnowizard**: 1
+- **silentaccountconfig**: 1
+
+</details>
+
+
+#### IAC - Windows - Removable Storage Access
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **2**: 1
+
+</details>
+
+
+#### IAC - Windows365 - DailyReboot
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- Group: 9b355cc3-68a2-4c3e-b94b-4d7192b12011
+
+**Settings Configured:** 1
+
+<details>
+<summary>View Settings</summary>
+
+- **dailyrecurrent**: `03/31/2024 02:30:00`
+
+</details>
+
+
+#### IAC - Windows365 - SessionTimeout
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- Group: 9b355cc3-68a2-4c3e-b94b-4d7192b12011
+
+**Settings Configured:** 2
+
+<details>
+<summary>View Settings</summary>
+
+- **2**: 0
+- **devicepasswordenabled**: 0
+
+</details>
 
 
 ### Compliance Policies
-*Folder not found*
+*No policies in this category*
 
 
 ### Endpoint Security
-*Folder not found*
+*No policies in this category*
 
 
 ### Scripts
-*Folder not found*
+*No policies in this category*
 
 
 ### Device Configuration Policies
-*Folder not found*
 
+#### IAC - Chrome - GeminiSettings
+
+#### IAC - Windows - Autopilot Hybrid Domain Join Configuration Profile
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- Group: 132d08c7-0a4b-4ded-aefb-aa4a92923539
+
+
+#### IAC - Windows - Autopilot SkipUserStatusPage Configuration Profile
+**Assignments:** 1 assignment(s)
+
+**Assigned To:**
+- Group: 132d08c7-0a4b-4ded-aefb-aa4a92923539
+
+
+#### IAC - Windows - Data Collection Configuration Profile
+
+#### IAC - Windows - Disable access to Windows Update Configuration Profile
 
 ### Administrative Templates
-*Folder not found*
 
+#### IAC - Windows - Google Chrome Local Network Access
 
 ### Autopilot Profiles
-*Folder not found*
+*No policies in this category*
 
 
 ---
@@ -350,12 +602,12 @@ Microsoft Intune policies manage device configuration, compliance, and security 
 - **Named Locations:** 0
 
 ### Intune Policies
-- **Settings Catalog Policies:** 0
+- **Settings Catalog Policies:** 16
 - **Compliance Policies:** 0
 - **Endpoint Security:** 0
 - **Scripts:** 0
-- **Device Configuration Policies:** 0
-- **Administrative Templates:** 0
+- **Device Configuration Policies:** 5
+- **Administrative Templates:** 1
 - **Autopilot Profiles:** 0
 
 ---
@@ -365,7 +617,7 @@ Microsoft Intune policies manage device configuration, compliance, and security 
 ### Export Locations
 
 **Entra Policies JSON:** `/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON`
-**Intune Policies JSON:** `/Users/jon/Desktop/BaslineSetup/IAC-Policies-JSON`
+**Intune Policies JSON:** `/Users/jon/Desktop/BaslineSetup/IAC-Intune-Policies-JSON`
 
 ### Documentation Scripts
 
