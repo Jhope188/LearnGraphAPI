@@ -1,0 +1,54 @@
+{
+  "ExportDate": "2026-01-16 18:38:18",
+  "Settings": {
+    "settingInstance": {
+      "auditRuleInformation": null,
+      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+      "settingDefinitionId": "device_vendor_msft_policy_config_chromeintunev1~policy~googlechrome~extensions_extensioninstallforcelist",
+      "settingInstanceTemplateReference": null,
+      "choiceSettingValue": {
+        "children": [
+          {
+            "auditRuleInformation": null,
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingCollectionInstance",
+            "settingDefinitionId": "device_vendor_msft_policy_config_chromeintunev1~policy~googlechrome~extensions_extensioninstallforcelist_extensioninstallforcelistdesc",
+            "settingInstanceTemplateReference": null,
+            "simpleSettingCollectionValue": [
+              {
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+                "value": "cnepdmlonnfpdpkkglplkpcgdpjkobkc",
+                "settingValueTemplateReference": null
+              }
+            ]
+          }
+        ],
+        "value": "device_vendor_msft_policy_config_chromeintunev1~policy~googlechrome~extensions_extensioninstallforcelist_1",
+        "settingValueTemplateReference": null
+      }
+    },
+    "id": "0"
+  },
+  "Assignments": null,
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "Add extension ID to silently install extension to Google Chrome.",
+    "createdDateTime": "2026-01-16T14:49:53.1224517Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:16.663909Z",
+    "id": "247556e5-6185-462f-8f2d-8b6dfb038fd0",
+    "platforms": "windows10",
+    "settingCount": 1,
+    "name": "IAC - Windows - Google Chrome Extensions Profile"
+  }
+}

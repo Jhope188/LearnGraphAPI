@@ -1,0 +1,104 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "33a0d7cd-c3b2-4252-b441-3697e7453046",
+        "DisplayName": "CA - DeviceExclusions"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:12",
+  "PolicyConfig": {
+    "sessionControls": {
+      "secureSignInSession": null,
+      "disableResilienceDefaults": null,
+      "persistentBrowser": null,
+      "cloudAppSecurity": {
+        "cloudAppSecurityType": "blockDownloads",
+        "isEnabled": true
+      },
+      "signInFrequency": null,
+      "applicationEnforcedRestrictions": null
+    },
+    "state": "disabled",
+    "grantControls": null,
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "33a0d7cd-c3b2-4252-b441-3697e7453046"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "authenticationFlows": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "devices": {
+        "deviceFilter": {
+          "rule": "device.isCompliant -eq True -or device.trustType -eq \"AzureAD\" -or device.trustType -eq \"ServerAD\"",
+          "mode": "exclude"
+        }
+      },
+      "platforms": {
+        "includePlatforms": [
+          "all"
+        ],
+        "excludePlatforms": [
+          "android",
+          "iOS",
+          "windows",
+          "macOS"
+        ]
+      },
+      "locations": {
+        "excludeLocations": [
+          "AllTrusted"
+        ],
+        "includeLocations": [
+          "All"
+        ]
+      },
+      "insiderRiskLevels": null,
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "Office365"
+        ]
+      },
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - INTUNE – SESSION – Block File Downloads On Unmanaged Devices",
+    "templateId": null
+  },
+  "SourcePolicyId": "c9f17d79-f902-47eb-8209-d86cb926970f",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

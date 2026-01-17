@@ -1,0 +1,33 @@
+{
+  "ExportDate": "2026-01-16 18:38:03",
+  "Assignments": null,
+  "PolicyType": "DeviceConfiguration",
+  "Policy": {
+    "deviceManagementApplicabilityRuleOsVersion": null,
+    "deviceManagementApplicabilityRuleDeviceMode": null,
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "displayName": "IAC - Chrome - GeminiSettings",
+    "deviceManagementApplicabilityRuleOsEdition": null,
+    "createdDateTime": "2026-01-16T14:47:23.4129755Z",
+    "lastModifiedDateTime": "2026-01-16T23:26:11.5934284Z",
+    "description": ".\\Device\\Vendor\\MSFT\\Policy\\Config\\Chrome~Policy~googlechrome~GenerativeAI\\GeminiSettings",
+    "@odata.type": "#microsoft.graph.windows10CustomConfiguration",
+    "omaSettings": [
+      {
+        "isReadOnly": false,
+        "secretReferenceValueId": null,
+        "displayName": "GeminiSettings",
+        "omaUri": ".\\Device\\Vendor\\MSFT\\Policy\\Config\\Chrome~Policy~googlechrome~GenerativeAI\\GeminiSettings",
+        "description": "Block for Gemini",
+        "@odata.type": "#microsoft.graph.omaSettingInteger",
+        "value": 1,
+        "isEncrypted": false
+      }
+    ],
+    "supportsScopeTags": true,
+    "id": "ceb2d5e0-9a62-4d74-acea-0fb8492ebe3a",
+    "version": 2
+  }
+}

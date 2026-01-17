@@ -1,0 +1,14 @@
+{
+  "ExportPath": "/Users/jon/Desktop/BaslineSetup/IAC-Policies-JSON",
+  "PolicyTypes": {
+    "AdminTemplates": 1,
+    "Autopilot": 0,
+    "DeviceConfiguration": 5,
+    "Scripts": 0,
+    "Compliance": 0,
+    "SettingsCatalog": 16,
+    "EndpointSecurity": 0
+  },
+  "ExportDate": "2026-01-16 18:38:22",
+  "TotalPolicies": 22
+}

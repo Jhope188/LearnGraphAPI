@@ -1,0 +1,111 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "6064391a-c4b7-4991-b87f-e7a98fcd23aa",
+        "DisplayName": "CA - GlobalExclusions"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:13",
+  "PolicyConfig": {
+    "sessionControls": {
+      "signInFrequency": {
+        "frequencyInterval": "everyTime",
+        "isEnabled": true,
+        "value": null,
+        "authenticationType": "primaryAndSecondaryAuthentication",
+        "type": null
+      },
+      "secureSignInSession": null,
+      "disableResilienceDefaults": null,
+      "cloudAppSecurity": null,
+      "persistentBrowser": null,
+      "applicationEnforcedRestrictions": null
+    },
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [],
+      "authenticationStrength": {
+        "combinationConfigurations@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('294c064e-758e-4001-a5f1-5c0005b40f1a')/grantControls/authenticationStrength/combinationConfigurations",
+        "allowedCombinations": [
+          "windowsHelloForBusiness",
+          "fido2",
+          "x509CertificateMultiFactor",
+          "temporaryAccessPassOneTime",
+          "temporaryAccessPassMultiUse"
+        ],
+        "requirementsSatisfied": "mfa",
+        "modifiedDateTime": "2026-01-16T14:37:21.7388692Z",
+        "id": "abe3fdf2-dfd3-4606-b31d-dc95b4df53af",
+        "createdDateTime": "2026-01-16T14:37:21.7388692Z",
+        "description": "",
+        "policyType": "custom",
+        "displayName": "Modern MFA + TAP",
+        "combinationConfigurations": []
+      },
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('294c064e-758e-4001-a5f1-5c0005b40f1a')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "6064391a-c4b7-4991-b87f-e7a98fcd23aa"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": [
+        "high"
+      ]
+    },
+    "displayName": "IAC - P2 - GLOBAL – GRANT – High-Risk Sign-Ins",
+    "templateId": null
+  },
+  "SourcePolicyId": "294c064e-758e-4001-a5f1-5c0005b40f1a",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

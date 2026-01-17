@@ -1,0 +1,24 @@
+{
+  "ExportDate": "2026-01-16 18:38:04",
+  "Assignments": null,
+  "PolicyType": "DeviceConfiguration",
+  "Policy": {
+    "deviceManagementApplicabilityRuleOsVersion": null,
+    "deviceManagementApplicabilityRuleDeviceMode": null,
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "displayName": "IAC - Windows - Data Collection Configuration Profile",
+    "deviceManagementApplicabilityRuleOsEdition": null,
+    "createdDateTime": "2026-01-16T14:47:46.3436845Z",
+    "lastModifiedDateTime": "2026-01-16T23:26:12.995372Z",
+    "description": null,
+    "@odata.type": "#microsoft.graph.windowsHealthMonitoringConfiguration",
+    "allowDeviceHealthMonitoring": "enabled",
+    "configDeviceHealthMonitoringCustomScope": null,
+    "configDeviceHealthMonitoringScope": "bootPerformance,windowsUpdates",
+    "supportsScopeTags": true,
+    "id": "288abacc-e402-4486-9833-eeb5a2be4784",
+    "version": 2
+  }
+}
