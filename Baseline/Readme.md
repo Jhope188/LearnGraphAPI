@@ -18,7 +18,11 @@
    - [Anti-Malware Policies](#anti-malware-policies)
    - [Safe Links Policies](#safe-links-policies)
    - [Safe Attachments Policies](#safe-attachments-policies)
-4. [Microsoft Intune (Device Management)](#microsoft-intune-device-management)
+4. [Admin Center Configuration (Tenant Settings)](#admin-center-configuration-tenant-settings)
+   - [Authorization Policy Settings](#authorization-policy-settings)
+   - [Self-Service Purchase Policies](#self-service-purchase-policies)
+   - [Default User Role Permissions](#default-user-role-permissions)
+5. [Microsoft Intune (Device Management)](#microsoft-intune-device-management)
    - [Device Configuration Policies](#device-configuration-policies)
    - [Settings Catalog Policies](#settings-catalog-policies)
    - [Compliance Policies](#compliance-policies)
@@ -32,7 +36,7 @@
 
 ## Executive Summary
 
-This master documentation provides a comprehensive overview of all Infrastructure as Code (IAC) policies deployed across the organization. These policies are organized into three main categories:
+This master documentation provides a comprehensive overview of all Infrastructure as Code (IAC) policies deployed across the organization. These policies are organized into four main categories:
 
 ### Entra ID (Identity & Access Management)
 Identity and access control policies that govern how users authenticate and access resources:
@@ -46,6 +50,12 @@ Email security policies that protect against malicious content and phishing atta
 - **Anti-Malware**: Attachment scanning and malware protection
 - **Safe Links**: URL detonation and time-of-click protection
 - **Safe Attachments**: File sandboxing and zero-day protection
+
+### Admin Center Configuration (Tenant Settings)
+Tenant-wide administrative settings that control user capabilities and security features:
+- **Authorization Policy**: Controls for email-based subscriptions, tenant creation, and legacy MSOL PowerShell
+- **Self-Service Purchases**: Management of user-initiated product purchases (27 products)
+- **Default User Permissions**: User capabilities for app registration, security group creation, Bitlocker key access, and directory reading
 
 ### Microsoft Intune (Device & Endpoint Management)
 Device configuration and compliance policies that ensure endpoints meet security standards:
