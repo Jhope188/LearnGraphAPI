@@ -1,0 +1,37 @@
+{
+  "AntiPhishingPolicies": [
+    {
+      "FileName": "IAC - DfO - _Anti-Phishing_ for _All Domains_.json",
+      "Name": "IAC - DfO - [Anti-Phishing] for [All Domains]",
+      "Enabled": true
+    }
+  ],
+  "AntiSpamPolicies": [
+    {
+      "Name": "IAC - DfO - [Anti-Spam] [Inbound] [All Domains]",
+      "FileName": "IAC - DfO - _Anti-Spam_ _Inbound_ _All Domains_.json"
+    }
+  ],
+  "Organization": "M365x37845673.onmicrosoft.com",
+  "ConnectionFilterPolicies": [],
+  "SafeLinksPolicies": [
+    {
+      "Name": "IAC - DfO - [Safe Links] for [All Domains]",
+      "FileName": "IAC - DfO - _Safe Links_ for _All Domains_.json"
+    }
+  ],
+  "OutboundSpamPolicies": [],
+  "SafeAttachmentsPolicies": [
+    {
+      "Name": "IAC - DfO - [Safe Attachments] for [All Domains]",
+      "FileName": "IAC - DfO - _Safe Attachments_ for _All Domains_.json"
+    }
+  ],
+  "AntiMalwarePolicies": [
+    {
+      "Name": "IAC - DfO - [Anti-Malware] for [All Domains]",
+      "FileName": "IAC - DfO - _Anti-Malware_ for _All Domains_.json"
+    }
+  ],
+  "ExportDate": "2026-01-16 21:48:21"
+}
