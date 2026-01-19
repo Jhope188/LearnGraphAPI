@@ -666,6 +666,16 @@ Anti-spam policies define actions for different types of spam and bulk email.
 **Bulk Threshold:** 7
 **Applies To Domains:** M365x37845673.onmicrosoft.com
 
+#### IAC - DfO - [Anti-Spam] [Outbound] [All Domains]
+
+**Priority:** 1
+**Recipient Limit (External/Hour):** 500
+**Recipient Limit (Internal/Hour):** 1000
+**Recipient Limit (Per Day):** 1000
+**Action When Threshold Reached:** BlockUserForToday
+**Auto-Forwarding Mode:** Off
+**Applies To Domains:** M365x37845673.onmicrosoft.com
+
 ### Anti-Malware Policies
 
 Anti-malware policies scan attachments and provide zero-hour auto purge (ZAP) for malware.
