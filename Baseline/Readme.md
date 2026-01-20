@@ -672,11 +672,11 @@ Anti-phishing policies protect against impersonation attacks and spoofing attemp
 
 #### IAC - DfO - [Anti-Phishing] for [All Domains] 🟢
 
-**Enabled:** True
-**Priority:** 0
-**Phishing Threshold:** 1
-**Mailbox Intelligence:** Enabled
-**Applies To Domains:** M365x37845673.onmicrosoft.com
+- **Enabled:** True
+- **Priority:** 0
+- **Phishing Threshold:** 1
+- **Mailbox Intelligence:** Enabled
+- **Applies To Domains:** M365x37845673.onmicrosoft.com
 
 ### Anti-Spam Policies
 
@@ -684,21 +684,21 @@ Anti-spam policies define actions for different types of spam and bulk email.
 
 #### IAC - DfO - [Anti-Spam] [Inbound] [All Domains]
 
-**Priority:** 0
-**Spam Action:** MoveToJmf
-**High Confidence Spam Action:** MoveToJmf
-**Bulk Threshold:** 7
-**Applies To Domains:** M365x37845673.onmicrosoft.com
+- **Priority:** 0
+- **Spam Action:** MoveToJmf
+- **High Confidence Spam Action:** MoveToJmf
+- **Bulk Threshold:** 7
+- **Applies To Domains:** M365x37845673.onmicrosoft.com
 
 #### IAC - DfO - [Anti-Spam] [Outbound] [All Domains]
 
-**Priority:** 1
-**Recipient Limit (External/Hour):** 500
-**Recipient Limit (Internal/Hour):** 1000
-**Recipient Limit (Per Day):** 1000
-**Action When Threshold Reached:** BlockUserForToday
-**Auto-Forwarding Mode:** Off
-**Applies To Domains:** M365x37845673.onmicrosoft.com
+- **Priority:** 1
+- **Recipient Limit (External/Hour):** 500
+- **Recipient Limit (Internal/Hour):** 1000
+- **Recipient Limit (Per Day):** 1000
+- **Action When Threshold Reached:** BlockUserForToday
+- **Auto-Forwarding Mode:** Off
+- **Applies To Domains:** M365x37845673.onmicrosoft.com
 
 ### Anti-Malware Policies
 
@@ -706,10 +706,10 @@ Anti-malware policies scan attachments and provide zero-hour auto purge (ZAP) fo
 
 #### IAC - DfO - [Anti-Malware] for [All Domains] 🟢
 
-**ZAP Enabled:** True
-**Priority:** 0
-**File Filter:** Enabled
-**Applies To Domains:** M365x37845673.onmicrosoft.com
+- **ZAP Enabled:** True
+- **Priority:** 0
+- **File Filter:** Enabled
+- **Applies To Domains:** M365x37845673.onmicrosoft.com
 
 ### Safe Links Policies
 
@@ -717,9 +717,9 @@ Safe Links policies provide time-of-click protection and URL rewriting for malic
 
 #### IAC - DfO - [Safe Links] for [All Domains]
 
-**Priority:** 0
-**Scan URLs:** True
-**Internal Senders:** True
+- **Priority:** 0
+- **Scan URLs:** True
+- **Internal Senders:** True
 
 ### Safe Attachments Policies
 
@@ -727,9 +727,9 @@ Safe Attachments policies sandbox unknown attachments in a virtual environment b
 
 #### IAC - DfO - [Safe Attachments] for [All Domains] 🔴
 
-**Enabled:** False
-**Priority:** 0
-**Action:** Allow
+- **Enabled:** False
+- **Priority:** 0
+- **Action:** Allow
 
 
 ---
