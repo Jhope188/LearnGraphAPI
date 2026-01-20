@@ -2,7 +2,8 @@
 
 **Complete Infrastructure as Code Policy Documentation**
 
-**Generated:** January 16, 2026 
+**Last Updated:** January 20, 2026  
+**Deployed to Tenant:** 44176a9d-4a62-469c-a336-ad1f8e30927c (M365x93722695.onmicrosoft.com) 
 
 ---
 
@@ -40,8 +41,9 @@ This master documentation provides a comprehensive overview of all Infrastructur
 
 ### Entra ID (Identity & Access Management)
 Identity and access control policies that govern how users authenticate and access resources:
-- **Conditional Access Policies**: Dynamic access controls based on conditions
-- **Named Locations**: Trusted network locations and IP ranges
+- **Conditional Access Policies**: 27 policies - Dynamic access controls based on conditions
+- **Named Locations**: 4 locations - Trusted network locations and IP ranges
+- **Custom Authentication Strengths**: 1 custom strength - Advanced MFA methods
 
 ### Defender for Office 365 (Email Security)
 Email security policies that protect against malicious content and phishing attacks:
@@ -76,285 +78,349 @@ Microsoft Entra ID (formerly Azure Active Directory) policies control authentica
 
 Conditional Access policies evaluate signals such as user, device, location, and risk to make real-time access decisions.
 
-#### IAC - APP - BLOCK - SharePoint-OneDrive-NonTrustedLocations 🔴
+**Total Policies:** 27  
+**Deployment Date:** January 20, 2026  
+**Target Tenant:** 44176a9d-4a62-469c-a336-ad1f8e30927c (M365x93722695.onmicrosoft.com)
 
-**State:** `disabled`
-**Applies To:** All users
+---
 
-**Applications:** 1 app(s)
+#### 1. IAC - APP - BLOCK - SharePoint-OneDrive-NonTrustedLocations 🔴
 
-**Controls:** Block Access
+**Policy ID:** `109d4155-3d19-4f57-9814-3c5afad470aa`  
+**State:** Disabled  
+**Category:** Application Protection  
+**Purpose:** Block SharePoint and OneDrive access from non-trusted locations
 
+---
 
-#### IAC - APP - SESSION - O365 - Timeoutsettings 🔴
+#### 2. IAC - APP - SESSION - O365 - Timeoutsettings 🔴
 
-**State:** `disabled`
-**Applies To:** All users
+**Policy ID:** `6756b8f6-def1-49c5-a04d-89ea91597cb5`  
+**State:** Disabled  
+**Category:** Session Management  
+**Purpose:** Configure session timeout settings for Office 365 applications
 
-**Applications:** Office 365
+---
 
+#### 3. IAC - APP – BLOCK – AVD - Exclude - AllowedAVDUsers 🔴
 
-#### IAC - APP – BLOCK – AVD - Exclude - AllowedAVDUsers 🔴
+**Policy ID:** `a291c604-da60-4967-9102-5e8a067f74d1`  
+**State:** Disabled  
+**Category:** Azure Virtual Desktop Protection  
+**Purpose:** Block AVD access except for allowed users
 
-**State:** `disabled`
-**Applies To:** All users
+---
 
-**Applications:** 2 app(s)
+#### 4. IAC - APP – BLOCK – AVD - NonTrustedLocations 🔴
 
-**Controls:** Block Access
+**Policy ID:** `70f46445-89e8-43c0-b5e6-c7ca504137b8`  
+**State:** Disabled  
+**Category:** Azure Virtual Desktop Protection  
+**Purpose:** Block AVD access from non-trusted network locations
 
+---
 
-#### IAC - APP – BLOCK – AVD - NonTrustedLocations 🔴
+#### 5. IAC - GLOBAL - BLOCK - Authentication Transfer 🔴
 
-**State:** `disabled`
-**Applies To:** All users
+**Policy ID:** `6f37138a-a838-4b2d-bade-f81cbec243a7`  
+**State:** Disabled  
+**Category:** Security Baseline  
+**Purpose:** Block authentication transfer attacks
 
-**Applications:** 2 app(s)
+---
 
-**Controls:** Block Access
+#### 6. IAC - GLOBAL - BLOCK - Device Code Auth Flow 🔴
 
+**Policy ID:** `e34f605a-c20e-451c-bfd3-62e3693868ba`  
+**State:** Disabled  
+**Category:** Security Baseline  
+**Purpose:** Block device code authentication flow to prevent phishing attacks
 
-#### IAC - GLOBAL - BLOCK - Authentication Transfer 🔴
+---
 
-**State:** `disabled`
-**Applies To:** All users
+#### 7. IAC - GLOBAL - BLOCK - Unsupported Device Platforms 🔴
 
-**Applications:** All cloud apps
+**Policy ID:** `403645fd-9e97-4d6b-a66e-9c863586241e`  
+**State:** Disabled  
+**Category:** Device Management  
+**Purpose:** Block access from unsupported device platforms
 
-**Controls:** Block Access
+---
 
+#### 8. IAC - GLOBAL - GRANT - MFA - AllAdmins 🔴
 
-#### IAC - GLOBAL - BLOCK - Device Code Auth Flow 🔴
+**Policy ID:** `a138dcd3-f878-4f0d-a9ad-45e6c38e9c09`  
+**State:** Disabled  
+**Category:** Administrator Protection  
+**Purpose:** Require MFA for all administrative roles
 
-**State:** `disabled`
-**Applies To:** All users
+---
 
-**Applications:** All cloud apps
+#### 9. IAC - GLOBAL - GRANT - MFA - External-Guest-Users 🔴
 
-**Controls:** Block Access
+**Policy ID:** `0dad2669-ecfc-41e0-9488-f898001006ea`  
+**State:** Disabled  
+**Category:** Guest User Protection  
+**Purpose:** Require MFA for external and guest users
 
+---
 
-#### IAC - GLOBAL - BLOCK - Unsupported Device Platforms 🔴
+#### 10. IAC - GLOBAL – BLOCK - Legacy Authentication 🔴
 
-**State:** `disabled`
-**Applies To:** All users
+**Policy ID:** `d210a4e3-c9ac-44de-b13-e045743983f5`  
+**State:** Disabled  
+**Category:** Security Baseline  
+**Purpose:** Block legacy authentication protocols
 
-**Applications:** All cloud apps
+---
 
-**Controls:** Block Access
+#### 11. IAC - GLOBAL – BLOCK – Countries not Allowed 🔴
 
+**Policy ID:** `6bfbd7ba-fb48-424a-bdfb-b0934275c980`  
+**State:** Disabled  
+**Category:** Geographic Restriction  
+**Purpose:** Block access from restricted countries (with exclusions)
 
-#### IAC - GLOBAL - GRANT - MFA - AllAdmins 🔴
+---
 
-**State:** `disabled`
-**Applies To:** 14 role(s)
+#### 12. IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions 🔴
 
-**Applications:** All cloud apps
+**Policy ID:** `d9fe9d51-f837-479c-90f0-446b57939ac1`  
+**State:** Disabled  
+**Category:** Geographic Restriction  
+**Purpose:** Block access from restricted countries (no exclusions)
 
-**Controls:** MFA
+---
 
+#### 13. IAC - GLOBAL – BLOCK – Service Accounts 🔴
 
-#### IAC - GLOBAL - GRANT - MFA - External-Guest-Users 🔴
+**Policy ID:** `ee06dc06-7f8f-42e7-9948-0eeeb829fa79`  
+**State:** Disabled  
+**Category:** Service Account Protection  
+**Purpose:** Block service accounts from non-trusted locations
 
-**State:** `disabled`
-**Applies To:** 
+---
 
-**Applications:** All cloud apps
+#### 14. IAC - GLOBAL – SESSION – Admin Persistence (1 Hours) 🔴
 
-**Controls:** MFA
+**Policy ID:** `ae7669ef-8ce7-4473-9b7a-c91e8071c53f`  
+**State:** Disabled  
+**Category:** Session Management  
+**Purpose:** Set 1-hour session persistence for administrators
 
+---
 
-#### IAC - GLOBAL – BLOCK - Legacy Authentication 🔴
+#### 15. IAC - GLOBAL – SESSION – All Users Persistence (9-12 Hours) 🔴
 
-**State:** `disabled`
-**Applies To:** All users
+**Policy ID:** `f610c72d-e0de-4328-b3ed-4f88cbeea4e5`  
+**State:** Disabled  
+**Category:** Session Management  
+**Purpose:** Set 9-12 hour session persistence for all users
 
-**Applications:** All cloud apps
+---
 
-**Controls:** Block Access
+#### 16. IAC - INTUNE - BLOCK - RequireCompliantDevice - NonTrustedLocations 🔴
 
+**Policy ID:** `0a5ccb36-ae98-4cce-95e8-29590509444b`  
+**State:** Disabled  
+**Category:** Device Compliance  
+**Purpose:** Block non-compliant devices from non-trusted locations
 
-#### IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions 🔴
+---
 
-**State:** `disabled`
-**Applies To:** All users
+#### 17. IAC - INTUNE - GRANT - RequireCompliantDevice 🔴
 
-**Applications:** All cloud apps
+**Policy ID:** `0e7033c0-6543-4be2-948c-93596700fae2`  
+**State:** Disabled  
+**Category:** Device Compliance  
+**Purpose:** Require compliant or hybrid Azure AD joined devices
 
-**Controls:** Block Access
+---
 
+#### 18. IAC - INTUNE – GRANT – Device Registration from trusted location 🔴
 
-#### IAC - GLOBAL – BLOCK – Countries not Allowed 🔴
+**Policy ID:** `dff33769-98c3-4c58-85b3-7e1e59774e6d`  
+**State:** Disabled  
+**Category:** Device Registration  
+**Purpose:** Require MFA for device registration from trusted locations  
+**Authentication Strength:** Multifactor authentication (Built-in)
 
-**State:** `disabled`
-**Applies To:** All users
+---
 
-**Applications:** All cloud apps
+#### 19. IAC - INTUNE – GRANT – Mobile Apps and Desktop Clients 🔴
 
-**Controls:** Block Access
+**Policy ID:** `a77f93c3-8ea1-44fe-b2f2-ff093949e8e1`  
+**State:** Disabled  
+**Category:** Device Compliance  
+**Purpose:** Require compliant devices for mobile and desktop clients
 
+---
 
-#### IAC - GLOBAL – BLOCK – Service Accounts 🔴
+#### 20. IAC - INTUNE – GRANT – Mobile Device Access Requirements 🔴
 
-**State:** `disabled`
-**Applies To:** 1 group(s)
+**Policy ID:** `f4a8ac7b-4106-498a-9376-36afdf429a7f`  
+**State:** Disabled  
+**Category:** Mobile Device Management  
+**Purpose:** Require compliant devices for Office 365 mobile access
 
-**Applications:** All cloud apps
+---
 
-**Controls:** Block Access
+#### 21. IAC - INTUNE – SESSION – Block File Downloads On Unmanaged Devices 🔴
 
+**Policy ID:** `76f93b1d-d34c-40aa-a10c-193c7214d3c8`  
+**State:** Disabled  
+**Category:** Data Protection  
+**Purpose:** Block file downloads on unmanaged devices
 
-#### IAC - GLOBAL – SESSION – Admin Persistence (1 Hours) 🔴
+---
 
-**State:** `disabled`
-**Applies To:** 11 role(s)
+#### 22. IAC - INTUNE – SESSION – BYOD Persistence 🔴
 
-**Applications:** All cloud apps
+**Policy ID:** `5b4c6c9d-4960-4b1e-997f-7d155483053a`  
+**State:** Disabled  
+**Category:** Session Management  
+**Purpose:** Configure session persistence for BYOD devices
 
+---
 
-#### IAC - GLOBAL – SESSION – All Users Persistence (9-12 Hours) 🔴
+#### 23. IAC - P2 - GLOBAL - BLOCK - RiskyUsers - RegisterSecurityInfoRequirements 🔴
 
-**State:** `disabled`
-**Applies To:** All users
+**Policy ID:** `f14f2321-e8b9-413f-b313-2357925e13ce`  
+**State:** Disabled  
+**Category:** Identity Protection  
+**Purpose:** Block risky users from registering security information  
+**Requires:** Entra ID P2 license
 
-**Applications:** All cloud apps
+---
 
+#### 24. IAC - P2 - GLOBAL – GRANT – High-Risk Sign-Ins 🔴
 
-#### IAC - INTUNE - BLOCK - RequireCompliantDevice - NonTrustedLocations 🔴
+**Policy ID:** `80c58aa4-2fe4-42a0-983a-df2b8b8c6978`  
+**State:** Disabled  
+**Category:** Identity Protection  
+**Purpose:** Require strong authentication for high-risk sign-ins  
+**Authentication Strength:** Modern MFA + TAP (Custom)  
+**Requires:** Entra ID P2 license
 
-**State:** `disabled`
-**Applies To:** All users
+---
 
-**Applications:** All cloud apps
+#### 25. IAC - P2 - GLOBAL – GRANT – High-Risk Users 🔴
 
-**Controls:** Block Access
+**Policy ID:** `ea8a2827-e3f1-49b6-a042-766c2a692ad8`  
+**State:** Disabled  
+**Category:** Identity Protection  
+**Purpose:** Require MFA and password change for high-risk users  
+**Requires:** Entra ID P2 license
 
+---
 
-#### IAC - INTUNE - GRANT - RequireCompliantDevice 🔴
+#### 26. IAC - P2 - GLOBAL – GRANT – Medium-Risk Sign-Ins 🔴
 
-**State:** `disabled`
-**Applies To:** All users
+**Policy ID:** `1c1bd898-4011-486f-89c6-f73137df3d87`  
+**State:** Disabled  
+**Category:** Identity Protection  
+**Purpose:** Require MFA for medium-risk sign-ins  
+**Requires:** Entra ID P2 license
 
-**Applications:** All cloud apps
+---
 
-**Controls:** Compliant Device, Hybrid Azure AD Join
+#### 27. IAC - P2 - GLOBAL – GRANT – Medium-Risk Users 🔴
 
+**Policy ID:** `d1cbbdd9-ee1f-4582-9970-59560e1ff378`  
+**State:** Disabled  
+**Category:** Identity Protection  
+**Purpose:** Require MFA for medium-risk users  
+**Requires:** Entra ID P2 license
 
-#### IAC - INTUNE – GRANT – Device Registration from trusted location 🔴
+---
 
-**State:** `disabled`
-**Applies To:** All users
+### Custom Authentication Strengths
 
+Custom authentication strengths define specific combinations of authentication methods required for access.
 
-#### IAC - INTUNE – GRANT – Mobile Apps and Desktop Clients 🔴
+#### Modern MFA + TAP
 
-**State:** `disabled`
-**Applies To:** All users
+**Authentication Strength ID:** `3c62472b-475e-4674-b63d-1cabdf66e656`  
+**Type:** Custom  
+**Purpose:** Enhanced MFA with Temporary Access Pass support  
+**Allowed Methods:** 5 authentication combinations
 
-**Applications:** All cloud apps
+<details>
+<summary>View Allowed Combinations</summary>
 
-**Controls:** Compliant Device
+- **Windows Hello for Business** - Biometric or PIN-based authentication
+- **FIDO2 Security Key** - Hardware security key authentication
+- **X.509 Certificate (Multi-Factor)** - Certificate-based authentication
+- **Temporary Access Pass (One-Time)** - Single-use time-limited pass
+- **Temporary Access Pass (Multi-Use)** - Reusable time-limited pass
 
+</details>
 
-#### IAC - INTUNE – GRANT – Mobile Device Access Requirements 🔴
+**Used By Policies:**
+- IAC - P2 - GLOBAL – GRANT – High-Risk Sign-Ins
 
-**State:** `disabled`
-**Applies To:** All users
 
-**Applications:** Office 365
-
-**Controls:** Compliant Device, compliantApplication
-
-
-#### IAC - INTUNE – SESSION – Block File Downloads On Unmanaged Devices 🔴
-
-**State:** `disabled`
-**Applies To:** All users
-
-**Applications:** Office 365
-
-
-#### IAC - INTUNE – SESSION – BYOD Persistence 🔴
-
-**State:** `disabled`
-**Applies To:** All users
-
-**Applications:** All cloud apps
-
-
-#### IAC - P2 - GLOBAL - BLOCK - RiskyUsers - RegisterSecurityInfoRequirements 🔴
-
-**State:** `disabled`
-**Applies To:** All users
-
-**Controls:** Block Access
-
-
-#### IAC - P2 - GLOBAL – GRANT – High-Risk Sign-Ins 🔴
-
-**State:** `disabled`
-**Applies To:** All users
-
-**Applications:** All cloud apps
-
-
-#### IAC - P2 - GLOBAL – GRANT – High-Risk Users 🔴
-
-**State:** `disabled`
-**Applies To:** All users
-
-**Applications:** All cloud apps
-
-**Controls:** MFA, passwordChange
-
-
-#### IAC - P2 - GLOBAL – GRANT – Medium-Risk Sign-Ins 🔴
-
-**State:** `disabled`
-**Applies To:** All users
-
-**Applications:** All cloud apps
-
-**Controls:** MFA
-
-
-#### IAC - P2 - GLOBAL – GRANT – Medium-Risk Users 🔴
-
-**State:** `disabled`
-**Applies To:** All users
-
-**Applications:** 1 app(s)
-
-**Controls:** MFA
-
+---
 
 ### Named Locations
 
-Named Locations define trusted network locations used in Conditional Access policies.
+Named Locations define trusted network locations and geographic regions used in Conditional Access policies.
+
+**Total Locations:** 4  
+**Deployment Date:** January 20, 2026  
+**Target Tenant:** 44176a9d-4a62-469c-a336-ad1f8e30927c (M365x93722695.onmicrosoft.com)
+
+---
 
 #### IP-Based Named Locations (3)
 
-##### IAC - Trusted Locations (IP)
-**Type:** IP Named Location  
-**Trusted:** Yes  
-**Purpose:** Trusted IP ranges for IAC infrastructure
+##### 1. IAC - Trusted Locations (IP)
 
-##### IAC - Inforcer (IP)
+**Location ID:** `06eef006-9dac-4711-a42c-4203e381251a`  
 **Type:** IP Named Location  
 **Trusted:** Yes  
-**Purpose:** IAC Inforcer service IP ranges
+**Purpose:** Trusted IP ranges for IAC infrastructure and office locations  
+**Used By Policies:**
+- IAC - GLOBAL – BLOCK – Service Accounts (exclusion)
+- Other location-based access policies
 
-##### IAC - EntraConnect(IP)
+---
+
+##### 2. IAC - Inforcer (IP)
+
+**Location ID:** `06569a1d-f02c-477e-a9e8-2e20d9f9221b`  
 **Type:** IP Named Location  
 **Trusted:** Yes  
-**Purpose:** IAC Entra Connect synchronization servers
+**Purpose:** IP ranges for IAC Inforcer service infrastructure  
+**Used By Policies:**
+- Service account authentication policies
+- Infrastructure access policies
+
+---
+
+##### 3. IAC - EntraConnect(IP)
+
+**Location ID:** `00b95f30-bd7f-4a93-b1f9-0b70101f66e8`  
+**Type:** IP Named Location  
+**Trusted:** Yes  
+**Purpose:** IP addresses for IAC Entra Connect synchronization servers  
+**Used By Policies:**
+- Directory synchronization access policies
+- Service account authentication policies
+
+---
 
 #### Country-Based Named Locations (1)
 
-##### IAC - Blocked Countries
+##### 4. IAC - Blocked Countries
+
+**Location ID:** `18abd940-3aa0-4903-9457-8c8ff9ace93d`  
 **Type:** Country Named Location  
-**Purpose:** Countries blocked for IAC security policies  
-**Include Unknown Regions:** Configurable
+**Purpose:** List of countries blocked for security and compliance reasons  
+**Include Unknown Regions:** Configurable  
+**Used By Policies:**
+- IAC - GLOBAL – BLOCK – Countries not Allowed
+- IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions
 
 ---
 
