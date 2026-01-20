@@ -332,6 +332,30 @@ Conditional Access policies evaluate signals such as user, device, location, and
 
 Named Locations define trusted network locations used in Conditional Access policies.
 
+#### IP-Based Named Locations (3)
+
+##### IAC - Trusted Locations (IP)
+**Type:** IP Named Location  
+**Trusted:** Yes  
+**Purpose:** Trusted IP ranges for IAC infrastructure
+
+##### IAC - Inforcer (IP)
+**Type:** IP Named Location  
+**Trusted:** Yes  
+**Purpose:** IAC Inforcer service IP ranges
+
+##### IAC - EntraConnect(IP)
+**Type:** IP Named Location  
+**Trusted:** Yes  
+**Purpose:** IAC Entra Connect synchronization servers
+
+#### Country-Based Named Locations (1)
+
+##### IAC - Blocked Countries
+**Type:** Country Named Location  
+**Purpose:** Countries blocked for IAC security policies  
+**Include Unknown Regions:** Configurable
+
 ---
 
 ## Microsoft Intune (Device Management)
@@ -624,7 +648,7 @@ Microsoft Intune policies manage device configuration, compliance, and security 
 
 ### Entra ID Policies
 - **Conditional Access Policies:** 27
-- **Named Locations:** 0
+- **Named Locations:** 4 (3 IP-based, 1 Country-based)
 
 ### Intune Policies
 - **Settings Catalog Policies:** 16
@@ -648,11 +672,11 @@ Anti-phishing policies protect against impersonation attacks and spoofing attemp
 
 #### IAC - DfO - [Anti-Phishing] for [All Domains] 🟢
 
-- **Enabled:** True
-- **Priority:** 0
-- **Phishing Threshold:** 1
-- **Mailbox Intelligence:** Enabled
-- **Applies To Domains:** M365x37845673.onmicrosoft.com
+**Enabled:** True
+**Priority:** 0
+**Phishing Threshold:** 1
+**Mailbox Intelligence:** Enabled
+**Applies To Domains:** M365x37845673.onmicrosoft.com
 
 ### Anti-Spam Policies
 
@@ -660,21 +684,21 @@ Anti-spam policies define actions for different types of spam and bulk email.
 
 #### IAC - DfO - [Anti-Spam] [Inbound] [All Domains]
 
-- **Priority:** 0
-- **Spam Action:** MoveToJmf
-- **High Confidence Spam Action:** MoveToJmf
-- **Bulk Threshold:** 7
-- **Applies To Domains:** M365x37845673.onmicrosoft.com
+**Priority:** 0
+**Spam Action:** MoveToJmf
+**High Confidence Spam Action:** MoveToJmf
+**Bulk Threshold:** 7
+**Applies To Domains:** M365x37845673.onmicrosoft.com
 
 #### IAC - DfO - [Anti-Spam] [Outbound] [All Domains]
 
-- **Priority:** 1
-- **Recipient Limit (External/Hour):** 500
-- **Recipient Limit (Internal/Hour):** 1000
-- **Recipient Limit (Per Day):** 1000
-- **Action When Threshold Reached:** BlockUserForToday
-- **Auto-Forwarding Mode:** Off
-- **Applies To Domains:** M365x37845673.onmicrosoft.com
+**Priority:** 1
+**Recipient Limit (External/Hour):** 500
+**Recipient Limit (Internal/Hour):** 1000
+**Recipient Limit (Per Day):** 1000
+**Action When Threshold Reached:** BlockUserForToday
+**Auto-Forwarding Mode:** Off
+**Applies To Domains:** M365x37845673.onmicrosoft.com
 
 ### Anti-Malware Policies
 
