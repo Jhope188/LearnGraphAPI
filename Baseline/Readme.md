@@ -42,7 +42,7 @@ This master documentation provides a comprehensive overview of all Infrastructur
 ### Entra ID (Identity & Access Management)
 Identity and access control policies that govern how users authenticate and access resources:
 - **Conditional Access Policies**: 27 policies - Dynamic access controls based on conditions
-- **Named Locations**: 4 locations - Trusted network locations and IP ranges
+- **Named Locations**: 5 locations - Trusted network locations, IP ranges, and geographic restrictions
 - **Custom Authentication Strengths**: 1 custom strength - Advanced MFA methods
 
 ### Defender for Office 365 (Email Security)
@@ -179,7 +179,16 @@ Conditional Access policies evaluate signals such as user, device, location, and
 **Policy ID:** `6bfbd7ba-fb48-424a-bdfb-b0934275c980`  
 **State:** Disabled  
 **Category:** Geographic Restriction  
-**Purpose:** Block access from restricted countries (with exclusions)
+**Purpose:** Block access from ALL locations except IAC - AllowedCountries
+
+**Location Configuration:**
+- **Include:** All (blocks all locations globally)
+- **Exclude:** IAC - AllowedCountries (Named Location: `1fe18182-5167-4fb6-8fd7-e092917b97bc`)
+
+**How It Works:**  
+This policy blocks sign-ins from all geographic locations worldwide, EXCEPT for countries/regions defined in the "IAC - AllowedCountries" named location. Users accessing from allowed countries will not be blocked by this policy.
+
+**Export Location:** `/IAC-Entra-Policies-JSON/ConditionalAccess/IAC-GLOBAL-BLOCK-Countries-not-Allowed.json`
 
 ---
 
@@ -366,8 +375,9 @@ Custom authentication strengths define specific combinations of authentication m
 
 Named Locations define trusted network locations and geographic regions used in Conditional Access policies.
 
-**Total Locations:** 4  
+**Total Locations:** 5  
 **Deployment Date:** January 20, 2026  
+**Last Updated:** January 25, 2026  
 **Target Tenant:** 44176a9d-4a62-469c-a336-ad1f8e30927c (M365x93722695.onmicrosoft.com)
 
 ---
@@ -410,17 +420,31 @@ Named Locations define trusted network locations and geographic regions used in 
 
 ---
 
-#### Country-Based Named Locations (1)
+#### Country-Based Named Locations (2)
 
 ##### 4. IAC - Blocked Countries
 
 **Location ID:** `18abd940-3aa0-4903-9457-8c8ff9ace93d`  
 **Type:** Country Named Location  
-**Purpose:** List of countries blocked for security and compliance reasons  
-**Include Unknown Regions:** Configurable  
+**Purpose:** List of high-risk countries blocked for security and compliance reasons  
+**Countries Included:** 17 countries (AF, DZ, BY, BR, CN, CU, IR, IQ, NL, NG, KP, PK, RU, SD, SY, VE, VN)  
+**Include Unknown Regions:** Yes  
+**Export Location:** `/IAC-Entra-Policies-JSON/NamedLocations/IAC-Blocked-Countries.json`  
 **Used By Policies:**
-- IAC - GLOBAL – BLOCK – Countries not Allowed
 - IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions
+
+---
+
+##### 5. IAC - AllowedCountries
+
+**Location ID:** `1fe18182-5167-4fb6-8fd7-e092917b97bc`  
+**Type:** Country Named Location  
+**Purpose:** List of approved countries where access is permitted  
+**Countries Included:** Configurable based on organization's approved regions  
+**Include Unknown Regions:** No  
+**Export Location:** `/IAC-Entra-Policies-JSON/NamedLocations/IAC-AllowedCountries.json`  
+**Used By Policies:**
+- IAC - GLOBAL – BLOCK – Countries not Allowed (as exclusion - allows access from these countries)
 
 ---
 
@@ -738,7 +762,7 @@ Standard Windows compliance policy that enforces baseline security requirements 
 
 ### Entra ID Policies
 - **Conditional Access Policies:** 27
-- **Named Locations:** 4 (3 IP-based, 1 Country-based)
+- **Named Locations:** 5 (3 IP-based, 2 Country-based)
 
 ### Intune Policies
 - **Settings Catalog Policies:** 16
