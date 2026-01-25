@@ -1,0 +1,36 @@
+{
+  "ExportDate": "2026-01-16 18:38:04",
+  "Assignments": {
+    "sourceId": "cb098daa-9d76-4d30-88fe-b09f6b83d30d",
+    "id": "cb098daa-9d76-4d30-88fe-b09f6b83d30d_132d08c7-0a4b-4ded-aefb-aa4a92923539",
+    "source": "direct",
+    "intent": "apply",
+    "target": {
+      "@odata.type": "#microsoft.graph.groupAssignmentTarget",
+      "deviceAndAppManagementAssignmentFilterId": null,
+      "groupId": "132d08c7-0a4b-4ded-aefb-aa4a92923539",
+      "deviceAndAppManagementAssignmentFilterType": "none"
+    }
+  },
+  "PolicyType": "DeviceConfiguration",
+  "Policy": {
+    "deviceManagementApplicabilityRuleOsVersion": null,
+    "deviceManagementApplicabilityRuleDeviceMode": null,
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "displayName": "IAC - Windows - Autopilot Hybrid Domain Join Configuration Profile",
+    "deviceManagementApplicabilityRuleOsEdition": null,
+    "activeDirectoryDomainName": "acme.local",
+    "createdDateTime": "2026-01-16T14:47:25.6667402Z",
+    "organizationalUnit": " CN=Computers,DC=acme,DC=local",
+    "lastModifiedDateTime": "2026-01-16T23:26:11.9890458Z",
+    "description": null,
+    "@odata.type": "#microsoft.graph.windowsDomainJoinConfiguration",
+    "computerNameSuffixRandomCharCount": 7,
+    "computerNameStaticPrefix": "ACME-WKS",
+    "supportsScopeTags": true,
+    "id": "cb098daa-9d76-4d30-88fe-b09f6b83d30d",
+    "version": 2
+  }
+}

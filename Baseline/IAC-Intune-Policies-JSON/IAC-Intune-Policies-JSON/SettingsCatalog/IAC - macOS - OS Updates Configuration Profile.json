@@ -1,0 +1,119 @@
+{
+  "ExportDate": "2026-01-16 18:38:13",
+  "Settings": {
+    "settingInstance": {
+      "auditRuleInformation": null,
+      "@odata.type": "#microsoft.graph.deviceManagementConfigurationGroupSettingCollectionInstance",
+      "settingDefinitionId": "com.apple.softwareupdate_com.apple.softwareupdate",
+      "groupSettingCollectionValue": [
+        {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "com.apple.softwareupdate_allowprereleaseinstallation",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "com.apple.softwareupdate_allowprereleaseinstallation_false",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "com.apple.softwareupdate_automaticcheckenabled",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "com.apple.softwareupdate_automaticcheckenabled_true",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "com.apple.softwareupdate_automaticdownload",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "com.apple.softwareupdate_automaticdownload_true",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "com.apple.softwareupdate_automaticallyinstallappupdates",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "com.apple.softwareupdate_automaticallyinstallappupdates_true",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "com.apple.softwareupdate_automaticallyinstallmacosupdates",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "com.apple.softwareupdate_automaticallyinstallmacosupdates_false",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "com.apple.softwareupdate_configdatainstall",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "com.apple.softwareupdate_configdatainstall_true",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "com.apple.softwareupdate_criticalupdateinstall",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "com.apple.softwareupdate_criticalupdateinstall_true",
+                "settingValueTemplateReference": null
+              }
+            }
+          ],
+          "settingValueTemplateReference": null
+        }
+      ],
+      "settingInstanceTemplateReference": null
+    },
+    "id": "0"
+  },
+  "Assignments": null,
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "",
+    "createdDateTime": "2026-01-16T14:54:35.9559826Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm,appleRemoteManagement",
+    "lastModifiedDateTime": "2026-01-16T23:25:14.1670242Z",
+    "id": "36b39695-0c95-44d9-baf4-a4e8ec191078",
+    "platforms": "macOS",
+    "settingCount": 1,
+    "name": "IAC - macOS - OS Updates Configuration Profile"
+  }
+}

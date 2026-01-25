@@ -1,0 +1,138 @@
+{
+  "ExportDate": "2026-01-16 18:38:15",
+  "Settings": [
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_devicelock_devicepasswordenabled",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_devicelock_maxinactivitytimedevicelock",
+              "settingInstanceTemplateReference": null,
+              "simpleSettingValue": {
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationIntegerSettingValue",
+                "value": 15,
+                "settingValueTemplateReference": null
+              }
+            }
+          ],
+          "value": "device_vendor_msft_policy_config_devicelock_devicepasswordenabled_0",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_experience_allowcortana",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "device_vendor_msft_policy_config_experience_allowcortana_0",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "1"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_experience_donotshowfeedbacknotifications",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "device_vendor_msft_policy_config_experience_donotshowfeedbacknotifications_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "2"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edgev93~policy~microsoft_edge~contentsettings_showpdfdefaultrecommendationsenabled",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "device_vendor_msft_policy_config_microsoft_edgev93~policy~microsoft_edge~contentsettings_showpdfdefaultrecommendationsenabled_0",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "3"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_hiderecentlyaddedapps",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "device_vendor_msft_policy_config_start_hiderecentlyaddedapps_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "4"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_start_simplifyquicksettings",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "device_vendor_msft_policy_config_start_simplifyquicksettings_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "5"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_timelanguagesettings_configuretimezone",
+        "settingInstanceTemplateReference": null,
+        "simpleSettingValue": {
+          "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+          "value": "Eastern Standard Time",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "6"
+    }
+  ],
+  "Assignments": null,
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "",
+    "createdDateTime": "2026-01-16T14:49:27.7373573Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:14.6067874Z",
+    "id": "0553566c-0df0-44fd-8bad-76663e22964f",
+    "platforms": "windows10",
+    "settingCount": 7,
+    "name": "IAC - Windows - Baseline Workstation Configuration Profile"
+  }
+}

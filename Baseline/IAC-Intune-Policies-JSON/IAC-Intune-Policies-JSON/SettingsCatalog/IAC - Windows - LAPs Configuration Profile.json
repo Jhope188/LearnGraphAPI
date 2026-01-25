@@ -1,0 +1,40 @@
+{
+  "ExportDate": "2026-01-16 18:38:19",
+  "Settings": {
+    "settingInstance": {
+      "auditRuleInformation": null,
+      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+      "settingDefinitionId": "device_vendor_msft_policy_config_localpoliciessecurityoptions_accounts_enableadministratoraccountstatus",
+      "settingInstanceTemplateReference": null,
+      "choiceSettingValue": {
+        "children": [],
+        "value": "device_vendor_msft_policy_config_localpoliciessecurityoptions_accounts_enableadministratoraccountstatus_1",
+        "settingValueTemplateReference": null
+      }
+    },
+    "id": "0"
+  },
+  "Assignments": null,
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "",
+    "createdDateTime": "2026-01-16T14:50:52.2194945Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:16.9674233Z",
+    "id": "f0af47f9-96ae-4c88-a21a-70f67e730631",
+    "platforms": "windows10",
+    "settingCount": 1,
+    "name": "IAC - Windows - LAPs Configuration Profile"
+  }
+}
