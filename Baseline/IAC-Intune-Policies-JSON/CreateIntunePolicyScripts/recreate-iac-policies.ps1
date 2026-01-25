@@ -477,3 +477,106 @@ $summary | ConvertTo-Json -Depth 10 | Out-File -FilePath $summaryPath -Encoding 
 Write-Host "`n📄 Summary exported to: $summaryPath" -ForegroundColor Cyan
 
 Write-Host "`n✨ Done!`n" -ForegroundColor Cyan
+
+# Helper function to create Custom Compliance Policy (Discovery Script)
+function Create-CustomCompliancePolicy {
+    param($scriptPath, $jsonPath)
+    
+    try {
+        # Read the PowerShell detection script
+        $scriptContent = Get-Content -Path $scriptPath -Raw
+        $scriptBytes = [System.Text.Encoding]::UTF8.GetBytes($scriptContent)
+        $scriptBase64 = [System.Convert]::ToBase64String($scriptBytes)
+        
+        # Read the compliance JSON rules
+        $complianceRules = Get-Content -Path $jsonPath -Raw | ConvertFrom-Json
+        
+        # Extract display name from file name
+        $displayName = [System.IO.Path]::GetFileNameWithoutExtension($jsonPath)
+        
+        # Create the device compliance script
+        $scriptBody = @{
+            displayName = $displayName
+            description = "Custom compliance policy for $displayName"
+            detectionScriptContent = $scriptBase64
+            runAs32Bit = $false
+            enforceSignatureCheck = $false
+            runAsAccount = "system"
+        }
+        
+        if (-not $DryRun) {
+            # Create the compliance script
+            $newScript = Invoke-MgGraphRequest -Method POST `
+                -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceComplianceScripts" `
+                -Body ($scriptBody | ConvertTo-Json -Depth 20)
+            
+            Write-Host "      Created compliance script: $($newScript.id)" -ForegroundColor Gray
+            
+            # Add the JSON rules to the script  
+            $rulesBody = $complianceRules | ConvertTo-Json -Depth 20
+            
+            Invoke-MgGraphRequest -Method POST `
+                -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceComplianceScripts/$($newScript.id)/deviceCompliancePolicy" `
+                -Body $rulesBody
+            
+            Write-Host "      Added compliance rules" -ForegroundColor Gray
+            
+            return @{ 
+                id = $newScript.id
+                displayName = $displayName
+                type = "CustomCompliance"
+            }
+        } else {
+            Write-Host "      [DRY RUN] Would create Custom Compliance Policy: $displayName" -ForegroundColor Gray
+            return @{ id = "dry-run-id"; displayName = $displayName; type = "CustomCompliance" }
+        }
+    } catch {
+        throw $_
+    }
+}
+
+# 7. Process Custom Compliance Policies
+Write-Host "`n🔍 Processing Custom Compliance Policies..." -ForegroundColor Yellow
+$customPolicyPath = "$ImportPath/CustomPolicy"
+if (Test-Path $customPolicyPath) {
+    # Look for pairs of .ps1 and .json files
+    $jsonFiles = Get-ChildItem -Path $customPolicyPath -Filter "*.json"
+    
+    if ($jsonFiles.Count -gt 0) {
+        foreach ($jsonFile in $jsonFiles) {
+            $baseName = [System.IO.Path]::GetFileNameWithoutExtension($jsonFile.Name)
+            $scriptFile = Join-Path $customPolicyPath "$($baseName)Script.ps1"
+            
+            if (Test-Path $scriptFile) {
+                Write-Host "   📄 $baseName" -ForegroundColor Cyan
+                
+                try {
+                    $newPolicy = Create-CustomCompliancePolicy -scriptPath $scriptFile -jsonPath $jsonFile.FullName
+                    
+                    Write-Host "      ✅ Created: $($newPolicy.displayName)" -ForegroundColor Green
+                    
+                    $createdPolicies += [PSCustomObject]@{
+                        Type = "Custom Compliance"
+                        Name = $newPolicy.displayName
+                        Id = $newPolicy.id
+                        Status = "Success"
+                    }
+                } catch {
+                    Write-Host "      ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                    
+                    $failedPolicies += [PSCustomObject]@{
+                        Type = "Custom Compliance"
+                        Name = $baseName
+                        Error = $_.Exception.Message
+                    }
+                }
+            } else {
+                Write-Host "   ⚠️  Missing detection script for: $baseName" -ForegroundColor Yellow
+            }
+        }
+    } else {
+        Write-Host "   ℹ️  No custom compliance policies found" -ForegroundColor Gray
+    }
+} else {
+    Write-Host "   ⚠️  CustomPolicy folder not found" -ForegroundColor Yellow
+}
