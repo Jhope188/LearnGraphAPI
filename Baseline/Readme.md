@@ -667,8 +667,32 @@ Microsoft Intune policies manage device configuration, compliance, and security 
 
 
 ### Compliance Policies
-*No policies in this category*
 
+#### IAC - Win - Baseline - Compliance - Policy
+**Platform:** Windows 10 and later
+
+Standard Windows compliance policy that enforces baseline security requirements for managed devices.
+
+**Location:** `/Users/jon/Desktop/BaslineSetup/IAC-Intune-Policies-JSON/Compliance/IAC-Win-Baseline-Compliance-Policy.json`
+
+### Custom Compliance Policies
+
+#### LAPS Compliance Policy
+**Platform:** Windows 10 and later  
+**Policy Type:** Custom Compliance (Discovery Script)
+
+**Purpose:** Validates that Windows Local Administrator Password Solution (LAPS) is actively processing on managed devices by checking for recent password rotation events.
+
+**How It Works:**
+- **Detection Script** (`LAPSComplianceScript.ps1`): Queries Windows event log for LAPS successful password rotation events (Event ID 10004) within the last 2 days
+- **Compliance Rule** (`LAPSCompliance.json`): Requires the `WindowsLAPSProcessing` setting to return `true`, indicating active LAPS management
+- **Remediation:** If LAPS isn't processing, devices are marked non-compliant and users receive guidance to check LAPS configuration
+
+**Files:**
+- **Detection Script:** `/Users/jon/Desktop/BaslineSetup/IAC-Intune-Policies-JSON/CustomPolicy/LAPSComplianceScript.ps1`
+- **Compliance JSON:** `/Users/jon/Desktop/BaslineSetup/IAC-Intune-Policies-JSON/CustomPolicy/LAPSCompliance.json`
+
+**Reference:** [Microsoft Learn - Windows LAPS Overview](https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview)
 
 ### Endpoint Security
 *No policies in this category*
@@ -718,7 +742,8 @@ Microsoft Intune policies manage device configuration, compliance, and security 
 
 ### Intune Policies
 - **Settings Catalog Policies:** 16
-- **Compliance Policies:** 0
+- **Compliance Policies:** 1
+- **Custom Compliance Policies:** 1 (LAPS)
 - **Endpoint Security:** 0
 - **Scripts:** 0
 - **Device Configuration Policies:** 5
