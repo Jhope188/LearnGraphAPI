@@ -10,10 +10,13 @@ $groupsToCreate = @(
     @{ Name = "CA-ServiceAccounts"; Description = "Conditional Access - Service Accounts"; IsDynamic = $false }
     @{ Name = "CA-TravelingUsers"; Description = "Conditional Access - Traveling Users"; IsDynamic = $false }
     @{ Name = "CA-Azure-DevOps-Users"; Description = "Conditional Access - Azure DevOps Users"; IsDynamic = $false }
+    @{ Name = "CA-Agent-Users"; Description = "Users able to use AI Agents"; IsDynamic = $false }
+    @{ Name = "CA-Agent-Admins"; Description = "Users able to approve Agents in Admin Center"; IsDynamic = $false }
     @{ Name = "Azure-Breakglass"; Description = "Emergency Break Glass Accounts"; IsDynamic = $false }
     @{ Name = "MFA-AUTH-SMS"; Description = "MFA Authentication - SMS"; IsDynamic = $false }
     @{ Name = "MFA-AUTH-EAM"; Description = "MFA Authentication - EAM"; IsDynamic = $false }
     @{ Name = "MFA-AUTH-Passkey"; Description = "MFA Authentication - Passkey"; IsDynamic = $false }
+   
     
     # Dynamic Security Groups
     @{ 
