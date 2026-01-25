@@ -120,19 +120,19 @@ Conditional Access policies evaluate signals such as user, device, location, and
 
 ---
 
-#### 5. IAC - GLOBAL - BLOCK - Authentication Transfer 🔴
+#### 5. IAC - GLOBAL - BLOCK - Authentication Transfer 🟢
 
 **Policy ID:** `6f37138a-a838-4b2d-bade-f81cbec243a7`  
-**State:** Disabled  
+**State:** Enabled  
 **Category:** Security Baseline  
 **Purpose:** Block authentication transfer attacks
 
 ---
 
-#### 6. IAC - GLOBAL - BLOCK - Device Code Auth Flow 🔴
+#### 6. IAC - GLOBAL - BLOCK - Device Code Auth Flow 🟢
 
 **Policy ID:** `e34f605a-c20e-451c-bfd3-62e3693868ba`  
-**State:** Disabled  
+**State:** Enabled  
 **Category:** Security Baseline  
 **Purpose:** Block device code authentication flow to prevent phishing attacks
 
@@ -165,19 +165,19 @@ Conditional Access policies evaluate signals such as user, device, location, and
 
 ---
 
-#### 10. IAC - GLOBAL – BLOCK - Legacy Authentication 🔴
+#### 10. IAC - GLOBAL – BLOCK - Legacy Authentication 🟢
 
 **Policy ID:** `d210a4e3-c9ac-44de-b13-e045743983f5`  
-**State:** Disabled  
+**State:** Enabled  
 **Category:** Security Baseline  
 **Purpose:** Block legacy authentication protocols
 
 ---
 
-#### 11. IAC - GLOBAL – BLOCK – Countries not Allowed 🔴
+#### 11. IAC - GLOBAL – BLOCK – Countries not Allowed 🟢
 
 **Policy ID:** `6bfbd7ba-fb48-424a-bdfb-b0934275c980`  
-**State:** Disabled  
+**State:** Enabled  
 **Category:** Geographic Restriction  
 **Purpose:** Block access from ALL locations except IAC - AllowedCountries
 
@@ -192,12 +192,23 @@ This policy blocks sign-ins from all geographic locations worldwide, EXCEPT for 
 
 ---
 
-#### 12. IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions 🔴
+#### 12. IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions 🟢
 
 **Policy ID:** `d9fe9d51-f837-479c-90f0-446b57939ac1`  
-**State:** Disabled  
+**State:** Enabled  
 **Category:** Geographic Restriction  
-**Purpose:** Block access from restricted countries (no exclusions)
+**Purpose:** Block access from restricted countries (IAC - Blocked Countries) with NO exceptions
+
+**Location Configuration:**
+- **Include:** IAC - Blocked Countries (Named Location: `18abd940-3aa0-4903-9457-8c8ff9ace93d`)
+- **Exclude:** None (no exclusions)
+
+**How It Works:**  
+This policy blocks ALL sign-ins originating from the 17 high-risk countries defined in the "IAC - Blocked Countries" named location, with absolutely no exceptions. This is a stricter version of Policy #11, which allows access from approved countries.
+
+**Blocked Countries:** AF, DZ, BY, BR, CN, CU, IR, IQ, NL, NG, KP, PK, RU, SD, SY, VE, VN (17 total)
+
+**Export Location:** `/IAC-Entra-Policies-JSON/ConditionalAccess/IAC-GLOBAL-BLOCK-Countries-not-Allowed-NoExclusions.json`
 
 ---
 
@@ -431,7 +442,7 @@ Named Locations define trusted network locations and geographic regions used in 
 **Include Unknown Regions:** Yes  
 **Export Location:** `/IAC-Entra-Policies-JSON/NamedLocations/IAC-Blocked-Countries.json`  
 **Used By Policies:**
-- IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions
+- IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions (as direct block list)
 
 ---
 
