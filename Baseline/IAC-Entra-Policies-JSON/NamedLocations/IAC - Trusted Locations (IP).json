@@ -1,0 +1,22 @@
+{
+  "ExportedDate": "2026-01-20 11:08:03",
+  "ODataType": "#microsoft.graph.ipNamedLocation",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a",
+  "DisplayName": "IAC - Trusted Locations (IP)",
+  "SourceLocationId": "0852b0c4-160e-441f-922b-a91615d22742",
+  "LocationType": "IP",
+  "LocationConfig": {
+    "ipRanges": [
+      {
+        "cidrAddress": "72.84.250.228/32",
+        "@odata.type": "#microsoft.graph.iPv4CidrRange"
+      },
+      {
+        "cidrAddress": "20.72.155.150/32",
+        "@odata.type": "#microsoft.graph.iPv4CidrRange"
+      }
+    ],
+    "displayName": "IAC - Trusted Locations (IP)",
+    "isTrusted": true
+  }
+}

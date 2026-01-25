@@ -148,6 +148,48 @@ function Import-PolicyFromJson {
     return $json
 }
 
+# Helper function to remove @odata.context metadata
+function Remove-ODataContext {
+    param([object]$Object)
+    
+    $json = $Object | ConvertTo-Json -Depth 20
+    $cleaned = $json -replace '"[^"]*@odata\.context":\s*"[^"]*",?\s*', ''
+    # Clean up any trailing commas
+    $cleaned = $cleaned -replace ',(\s*[}\]])', '$1'
+    
+    return ($cleaned | ConvertFrom-Json)
+}
+
+# Helper function to extract custom authentication strengths from policies
+function Get-CustomAuthenticationStrengths {
+    param([array]$PolicyFiles)
+    
+    $customStrengths = @{}
+    
+    foreach ($file in $PolicyFiles) {
+        $policyData = Import-PolicyFromJson -FilePath $file.FullName
+        
+        if ($policyData.PolicyConfig.grantControls.authenticationStrength) {
+            $strength = $policyData.PolicyConfig.grantControls.authenticationStrength
+            
+            # Check if it's a custom strength (not built-in)
+            if ($strength.policyType -eq 'custom' -and $strength.id) {
+                if (-not $customStrengths.ContainsKey($strength.id)) {
+                    $customStrengths[$strength.id] = @{
+                        DisplayName = $strength.displayName
+                        Description = $strength.description
+                        AllowedCombinations = $strength.allowedCombinations
+                        RequirementsSatisfied = $strength.requirementsSatisfied
+                        SourceId = $strength.id
+                    }
+                }
+            }
+        }
+    }
+    
+    return $customStrengths
+}
+
 # Main execution
 try {
     Write-Host "`n=== IAC Entra Policy Recreation ===" -ForegroundColor Cyan
@@ -174,11 +216,84 @@ try {
     $results = @{
         CreatedPolicies = @()
         CreatedLocations = @()
+        CreatedAuthStrengths = @()
         FailedPolicies = @()
         FailedLocations = @()
+        FailedAuthStrengths = @()
         Timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
         TargetTenantId = $context.TenantId
         DryRun = $DryRun.IsPresent
+    }
+    
+    # Authentication Strength ID mapping
+    $authStrengthMapping = @{}
+    
+    # ===== Scan for Custom Authentication Strengths =====
+    Write-Host "`n--- Scanning for Custom Authentication Strengths ---" -ForegroundColor Cyan
+    
+    $caFolder = Join-Path $ImportPath "ConditionalAccess"
+    if (Test-Path $caFolder) {
+        $caFiles = Get-ChildItem -Path $caFolder -Filter "*.json"
+        $customStrengths = Get-CustomAuthenticationStrengths -PolicyFiles $caFiles
+        
+        if ($customStrengths.Count -gt 0) {
+            Write-Host "Found $($customStrengths.Count) custom authentication strength(s) to create" -ForegroundColor Yellow
+            
+            foreach ($strengthId in $customStrengths.Keys) {
+                $strength = $customStrengths[$strengthId]
+                
+                try {
+                    Write-Host "`n  🔐 Processing: $($strength.DisplayName)" -ForegroundColor White
+                    
+                    if ($DryRun) {
+                        Write-Host "     🧪 [DRY RUN] Would create authentication strength: $($strength.DisplayName)" -ForegroundColor Yellow
+                        Write-Host "        Allowed Combinations: $($strength.AllowedCombinations.Count) methods" -ForegroundColor Gray
+                        
+                        # Create mock mapping for dry run
+                        $authStrengthMapping[$strengthId] = "00000000-0000-0000-0000-000000000000"
+                        
+                        $results.CreatedAuthStrengths += @{
+                            Name = $strength.DisplayName
+                            SourceId = $strengthId
+                            DryRun = $true
+                        }
+                    } else {
+                        # Create authentication strength
+                        $body = @{
+                            displayName = $strength.DisplayName
+                            description = $strength.Description
+                            allowedCombinations = $strength.AllowedCombinations
+                        } | ConvertTo-Json -Depth 10
+                        
+                        $newStrength = Invoke-MgGraphRequest -Method POST `
+                            -Uri "https://graph.microsoft.com/v1.0/identity/conditionalAccess/authenticationStrength/policies" `
+                            -Body $body `
+                            -ContentType "application/json"
+                        
+                        Write-Host "     ✅ Created authentication strength: $($newStrength.displayName)" -ForegroundColor Green
+                        Write-Host "        New ID: $($newStrength.id)" -ForegroundColor Gray
+                        
+                        # Map old ID to new ID
+                        $authStrengthMapping[$strengthId] = $newStrength.id
+                        
+                        $results.CreatedAuthStrengths += @{
+                            Name = $newStrength.displayName
+                            SourceId = $strengthId
+                            NewId = $newStrength.id
+                        }
+                    }
+                    
+                } catch {
+                    Write-Host "     ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                    $results.FailedAuthStrengths += @{
+                        Name = $strength.DisplayName
+                        Error = $_.Exception.Message
+                    }
+                }
+            }
+        } else {
+            Write-Host "No custom authentication strengths found" -ForegroundColor Gray
+        }
     }
     
     # ===== Import Conditional Access Policies =====
@@ -195,6 +310,21 @@ try {
                 
                 $policyData = Import-PolicyFromJson -FilePath $file.FullName
                 $policyConfig = $policyData.PolicyConfig
+                
+                # Remove @odata.context metadata
+                $policyConfig = Remove-ODataContext -Object $policyConfig
+                
+                # Update authentication strength ID if needed
+                if ($policyConfig.grantControls.authenticationStrength) {
+                    $oldStrengthId = $policyConfig.grantControls.authenticationStrength.id
+                    
+                    if ($authStrengthMapping.ContainsKey($oldStrengthId)) {
+                        Write-Host "     🔄 Mapping authentication strength ID..." -ForegroundColor Gray
+                        $policyConfig.grantControls.authenticationStrength = @{
+                            id = $authStrengthMapping[$oldStrengthId]
+                        }
+                    }
+                }
                 
                 # Update conditions with ID mappings
                 if ($GroupIdMapping.Count -gt 0 -or $UserIdMapping.Count -gt 0 -or $RoleIdMapping.Count -gt 0) {
@@ -316,6 +446,8 @@ try {
     # Final summary
     Write-Host "`n=== Recreation Complete ===" -ForegroundColor Cyan
     Write-Host "📊 Summary:" -ForegroundColor White
+    Write-Host "   Authentication Strengths Created: $($results.CreatedAuthStrengths.Count)" -ForegroundColor Green
+    Write-Host "   Authentication Strengths Failed: $($results.FailedAuthStrengths.Count)" -ForegroundColor $(if ($results.FailedAuthStrengths.Count -gt 0) { 'Red' } else { 'Gray' })
     Write-Host "   CA Policies Created: $($results.CreatedPolicies.Count)" -ForegroundColor Green
     Write-Host "   CA Policies Failed: $($results.FailedPolicies.Count)" -ForegroundColor $(if ($results.FailedPolicies.Count -gt 0) { 'Red' } else { 'Gray' })
     Write-Host "   Named Locations Created: $($results.CreatedLocations.Count)" -ForegroundColor Green

@@ -1,0 +1,16 @@
+{
+  "CreatedDateTime": "2026-01-25T20:11:32.8843077Z",
+  "DisplayName": "IAC - AllowedCountries",
+  "Id": "1fe18182-5167-4fb6-8fd7-e092917b97bc",
+  "ModifiedDateTime": "2026-01-25T20:11:32.8843077Z",
+  "AdditionalProperties": {
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/namedLocations/$entity",
+    "@odata.type": "#microsoft.graph.countryNamedLocation",
+    "countriesAndRegions": [
+      "GB",
+      "US"
+    ],
+    "includeUnknownCountriesAndRegions": false,
+    "countryLookupMethod": "clientIpAddress"
+  }
+}

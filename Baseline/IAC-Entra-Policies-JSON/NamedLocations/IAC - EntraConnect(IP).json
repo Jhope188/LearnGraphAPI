@@ -1,0 +1,18 @@
+{
+  "ExportedDate": "2026-01-20 11:08:03",
+  "ODataType": "#microsoft.graph.ipNamedLocation",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a",
+  "DisplayName": "IAC - EntraConnect(IP)",
+  "SourceLocationId": "0e653cf8-616f-46d9-b2bd-d3689d689d6c",
+  "LocationType": "IP",
+  "LocationConfig": {
+    "ipRanges": [
+      {
+        "cidrAddress": "128.85.196.27/32",
+        "@odata.type": "#microsoft.graph.iPv4CidrRange"
+      }
+    ],
+    "displayName": "IAC - EntraConnect(IP)",
+    "isTrusted": true
+  }
+}
