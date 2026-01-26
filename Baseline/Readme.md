@@ -13,7 +13,9 @@
 2. [Entra ID (Identity & Access)](#entra-id-identity--access)
    - [Conditional Access Policies](#conditional-access-policies)
    - [Named Locations](#named-locations)
-3. [Defender for Office 365 (Email Security)](#defender-for-office-365-email-security)
+   - [Tenant-Level Policies](#tenant-level-policies)
+   - [Custom Security Attributes](#custom-security-attributes-entra)
+3. [Defender for Office 365 (Email Security)](#defender-for-office-365-email-security) (Email Security)](#defender-for-office-365-email-security)
    - [Anti-Phishing Policies](#anti-phishing-policies)
    - [Anti-Spam Policies](#anti-spam-policies)
    - [Anti-Malware Policies](#anti-malware-policies)
@@ -43,7 +45,9 @@ This master documentation provides a comprehensive overview of all Infrastructur
 Identity and access control policies that govern how users authenticate and access resources:
 - **Conditional Access Policies**: 27 policies - Dynamic access controls based on conditions
 - **Named Locations**: 5 locations - Trusted network locations, IP ranges, and geographic restrictions
-- **Custom Authentication Strengths**: 1 custom strength - Advanced MFA methods
+- - **Custom Authentication Strengths**: 1 custom strength - Advanced MFA methods
+- **Tenant-Level Policies**: 2 policies - Authorization Policy and Authentication Methods Policy
+- **Custom Security Attributes**: 2 attribute sets - ConditionalAccessTaggedAgents and ConditionalAccessTaggedApps
 
 ### Defender for Office 365 (Email Security)
 Email security policies that protect against malicious content and phishing attacks:
@@ -379,6 +383,115 @@ Custom authentication strengths define specific combinations of authentication m
 **Used By Policies:**
 - IAC - P2 - GLOBAL – GRANT – High-Risk Sign-Ins
 
+
+### Tenant-Level Policies
+
+Tenant-level policies define organization-wide security and authentication settings that apply across all services.
+
+**Total Tenant Policies:** 2  
+**Deployment Date:** January 25, 2026  
+**Last Export:** January 25, 2026 20:55
+
+#### Authorization Policy
+
+**Policy Type:** Tenant Authorization Settings  
+**Purpose:** Controls tenant-wide authorization and security settings
+
+**Key Settings:**
+- **Block MSOL PowerShell:** `True` - Prevents use of legacy MSOnline PowerShell module
+- **Allow Email Subscriptions:** `False` - Disables email-based subscription sign-ups
+- **Guest User Role:** Configured with appropriate guest restrictions
+- **Default User Permissions:** Defines what standard users can do (create apps, groups, etc.)
+
+**Security Impact:**
+- Enforces modern authentication methods (Graph API/PowerShell)
+- Prevents shadow IT through self-service subscriptions
+- Controls guest access and external collaboration
+
+**IAC Export:** `TenantPolicies/AuthorizationPolicy.json`
+
+---
+
+#### Authentication Methods Policy
+
+**Policy Type:** MFA Configuration  
+**Purpose:** Defines available authentication methods and MFA enforcement
+
+**Key Settings:**
+- **Registration Campaign State:** `default` - MFA registration nudge campaign
+- **Enabled Authentication Methods:**
+  - Microsoft Authenticator
+  - SMS
+  - Voice calls
+  - FIDO2 Security Keys
+  - Windows Hello for Business
+  - Temporary Access Pass
+
+**Configuration Includes:**
+- Method-specific settings (SMS/Voice restrictions, Authenticator features)
+- Registration enforcement policies
+- User enablement scopes per method
+
+**Security Impact:**
+- Enables phishing-resistant authentication (FIDO2, WHfB)
+- Provides backup methods for account recovery
+- Supports passwordless authentication strategies
+
+**IAC Export:** `TenantPolicies/AuthenticationMethodsPolicy.json`
+
+---
+
+### Custom Security Attributes (Entra)
+
+Custom security attributes enable attribute-based access control (ABAC) by tagging resources with custom metadata that can be referenced in Conditional Access policies.
+
+**Total Attribute Sets:** 2  
+**Total Attributes:** 2  
+**Deployment Date:** January 25, 2026  
+**Last Export:** January 25, 2026 21:17
+
+#### ConditionalAccessTaggedAgents
+
+**Attribute Set ID:** `ConditionalAccessTaggedAgents`  
+**Description:** Agents that need a security attribute in order to work with CloudApps  
+**Maximum Attributes:** 25
+
+**Attribute: policyRequirement**
+- **Type:** String (Predefined Values)
+- **Status:** Available
+- **Description:** Policy that has to be used to approve Agent to communicate with CloudApps
+- **Allowed Values:** 1 predefined value
+- **Use Case:** Tag service principals/applications that require specific CA policy treatment
+
+**IAC Export:** `SecurityAttributes/ConditionalAccessTaggedAgents.json`
+
+---
+
+#### ConditionalAccessTaggedApps
+
+**Attribute Set ID:** `ConditionalAccessTaggedApps`  
+**Description:** Applications tagged with policy requirements for Conditional Access  
+**Maximum Attributes:** 25
+
+**Attribute: policyRequirement**
+- **Type:** String (Predefined Values)
+- **Status:** Available
+- **Allowed Values:**
+  - `legacyAuthAllowed` - Application can use legacy authentication
+  - `requireCompliantDevice` - Application requires compliant device
+  - `DoNotRequireMFA` - Application exempted from MFA requirements
+  - `blockGuests` - Application blocks guest user access
+  - `blockExternals` - Application blocks external user access
+
+**Use Cases:**
+- Tag applications with specific security requirements
+- Create dynamic CA policies based on application attributes
+- Implement consistent security controls across application portfolios
+- Enable attribute-based access control (ABAC) patterns
+
+**IAC Export:** `SecurityAttributes/ConditionalAccessTaggedApps.json`
+
+---
 
 ---
 
@@ -1364,10 +1477,21 @@ This will create: `/Users/jon/Desktop/BaslineSetup/Admin-Center-Configuration.js
 ### Documentation Scripts
 
 - **Entra Export:** `/Users/jon/Desktop/BaslineSetup/Scripts/Entra/export-iac-entra-policies-json.ps1`
-- **Entra Recreate:** `/Users/jon/Desktop/BaslineSetup/Scripts/Entra/recreate-iac-entra-policies.ps1`
+- **Entra Tenant Policies Export:** `/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON/ConditionalAccessScripts/export-iac-entra-tenant-policies.ps1`
+- **Entra Security Attributes Export:** `/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON/ConditionalAccessScripts/export-iac-entra-security-attributes.ps1`
+- **Entra Recreate:** `/Users/jon/Desktop/BaslineSetup/Scripts/Entra/recreate-iac-entra-policies.ps1` (Updated)
+  - **New Parameters:** `-SkipTenantPolicies`, `-SkipSecurityAttributes`
+  - **New Restoration Order:** Tenant Policies → Security Attributes → Auth Strengths → Named Locations → CA Policies
 - **Intune Export:** `/Users/jon/Desktop/BaslineSetup/Scripts/Intune/export-iac-policies-json.ps1`
 - **Intune Recreate:** `/Users/jon/Desktop/BaslineSetup/Scripts/Intune/recreate-iac-policies.ps1`
 
+### Related Documentation
+
+- **Detailed Entra Documentation:** [IAC-Entra-Policies-Documentation.md](IAC-Entra-Policies-Documentation.md)
+- **Tenant Policies README:** [IAC-Entra-Policies-JSON/TENANT-POLICIES-README.md](IAC-Entra-Policies-JSON/TENANT-POLICIES-README.md)
+- **Detailed Intune Documentation:** [IAC-Intune-Policies-Documentation.md](IAC-Intune-Policies-Documentation.md)
+- **Entra README:** [Scripts/Entra/README-RecreateIACEntraPolicies.md](Scripts/Entra/README-RecreateIACEntraPolicies.md)
+- **Intune README:** [Scripts/Intune/README-RecreateIACPolicies.md](Scripts/Intune/README-RecreateIACPolicies.md)
 ### Related Documentation
 
 - **Detailed Entra Documentation:** [IAC-Entra-Policies-Documentation.md](IAC-Entra-Policies-Documentation.md)
