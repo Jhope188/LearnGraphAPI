@@ -1,0 +1,33 @@
+{
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "ExportedAttributes": [
+    {
+      "AttributeSetId": "ConditionalAccessTaggedAgents",
+      "UsesPredefinedValues": true,
+      "Status": "Available",
+      "Type": "String",
+      "AttributeName": "policyRequirement"
+    },
+    {
+      "AttributeSetId": "ConditionalAccessTaggedApps",
+      "UsesPredefinedValues": true,
+      "Status": "Available",
+      "Type": "String",
+      "AttributeName": "policyRequirement"
+    }
+  ],
+  "FailedItems": [],
+  "Timestamp": "2026-01-25 21:17:00",
+  "ExportedAttributeSets": [
+    {
+      "AttributeSetId": "ConditionalAccessTaggedAgents",
+      "AttributeCount": 1,
+      "FilePath": "/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON/SecurityAttributes/ConditionalAccessTaggedAgents.json"
+    },
+    {
+      "AttributeSetId": "ConditionalAccessTaggedApps",
+      "AttributeCount": 1,
+      "FilePath": "/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON/SecurityAttributes/ConditionalAccessTaggedApps.json"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "ExportDate": "2026-01-25 21:17:00",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "AttributeSetConfig": {
+    "description": "Agents that need a security attribute in order to work",
+    "id": "ConditionalAccessTaggedAgents",
+    "maxAttributesPerSet": 25
+  },
+  "AttributeDefinitions": [
+    {
+      "status": "Available",
+      "isCollection": true,
+      "description": "Policy that has to be used to approve Agent to communicate with CloudApps",
+      "name": "policyRequirement",
+      "type": "String",
+      "usePreDefinedValuesOnly": true,
+      "attributeSet": "ConditionalAccessTaggedAgents",
+      "id": "ConditionalAccessTaggedAgents_policyRequirement",
+      "isSearchable": true,
+      "allowedValues": [
+        {
+          "isActive": true,
+          "id": "ApprovedAgent"
+        }
+      ]
+    }
+  ],
+  "AttributeSetId": "ConditionalAccessTaggedAgents",
+  "Notes": {
+    "ExportedBy": "admin@M365x93722695.onmicrosoft.com",
+    "Description": "Custom Security Attribute Set export for IAC",
+    "AttributeCount": 1
+  }
+}

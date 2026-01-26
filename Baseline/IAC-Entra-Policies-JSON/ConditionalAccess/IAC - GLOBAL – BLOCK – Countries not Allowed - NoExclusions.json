@@ -1,81 +1,67 @@
 {
-  "AssignmentDetails": {
-    "ExcludeUsers": [],
-    "ExcludeRoles": [],
-    "ExcludeGroups": [
-      {
-        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
-        "DisplayName": "Azure-Breakglass"
-      }
-    ],
-    "IncludeRoles": [],
-    "IncludeUsers": [
-      {
-        "Id": "All",
-        "DisplayName": "All"
-      }
-    ],
-    "IncludeGroups": []
-  },
-  "ExportDate": "2026-01-16 20:58:18",
+  "ExportDate": "2026-01-25 21:03:56",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
   "PolicyConfig": {
-    "sessionControls": null,
-    "state": "disabled",
-    "grantControls": {
-      "operator": "OR",
-      "customAuthenticationFactors": [],
-      "termsOfUse": [],
-      "builtInControls": [
-        "block"
-      ],
-      "authenticationStrength": null,
-      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('6170d175-6a8f-4c81-8eac-9b4ec286bc97')/grantControls/authenticationStrength/$entity"
-    },
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies/$entity",
+    "modifiedDateTime": "2026-01-25T20:35:12.5322535Z",
     "conditions": {
-      "servicePrincipalRiskLevels": [],
-      "users": {
-        "includeRoles": [],
-        "includeUsers": [
-          "All"
-        ],
-        "excludeGroups": [
-          "822cebe7-b527-405c-8bae-834782ec74cb"
-        ],
-        "excludeRoles": [],
-        "excludeUsers": [],
-        "includeGroups": [],
-        "excludeGuestsOrExternalUsers": null,
-        "includeGuestsOrExternalUsers": null
+      "clientApplications": null,
+      "authenticationFlows": null,
+      "devices": null,
+      "platforms": null,
+      "signInRiskLevels": [],
+      "locations": {
+        "excludeLocations": [],
+        "includeLocations": [
+          "18abd940-3aa0-4903-9457-8c8ff9ace93d"
+        ]
       },
       "applications": {
-        "excludeApplications": [],
+        "includeUserActions": [],
         "includeAuthenticationContextClassReferences": [],
         "applicationFilter": null,
-        "includeUserActions": [],
+        "excludeApplications": [],
         "includeApplications": [
           "All"
         ]
       },
-      "authenticationFlows": null,
+      "users": {
+        "excludeUsers": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeRoles": [],
+        "includeGroups": [],
+        "excludeGroups": [
+          "96437e0d-3d7c-4e28-b9bf-0fa68eabbff7"
+        ],
+        "includeGuestsOrExternalUsers": null,
+        "excludeGuestsOrExternalUsers": null,
+        "includeRoles": []
+      },
       "clientAppTypes": [
         "all"
       ],
-      "clientApplications": null,
-      "userRiskLevels": [],
-      "platforms": null,
-      "locations": {
-        "excludeLocations": [],
-        "includeLocations": [
-          "19895061-779a-4200-9524-36bccf61f684"
-        ]
-      },
+      "servicePrincipalRiskLevels": [],
       "insiderRiskLevels": null,
-      "devices": null,
-      "signInRiskLevels": []
+      "userRiskLevels": []
     },
     "displayName": "IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions",
-    "templateId": null
+    "sessionControls": null,
+    "createdDateTime": "2026-01-20T11:28:39.5986971Z",
+    "state": "enabled",
+    "grantControls": {
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('d9fe9d51-f837-479c-90f0-446b57939ac1')/grantControls/authenticationStrength/$entity",
+      "customAuthenticationFactors": [],
+      "authenticationStrength": null,
+      "builtInControls": [
+        "block"
+      ],
+      "termsOfUse": [],
+      "operator": "OR"
+    },
+    "templateId": null,
+    "id": "d9fe9d51-f837-479c-90f0-446b57939ac1"
   },
-  "SourcePolicyId": "6170d175-6a8f-4c81-8eac-9b4ec286bc97",
-  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+  "SourcePolicyId": "d9fe9d51-f837-479c-90f0-446b57939ac1"
 }

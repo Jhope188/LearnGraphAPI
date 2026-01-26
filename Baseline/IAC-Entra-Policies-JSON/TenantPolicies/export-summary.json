@@ -1,0 +1,25 @@
+{
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "FailedPolicies": [],
+  "ExportPath": "/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON/TenantPolicies",
+  "Timestamp": "2026-01-25 20:58:54",
+  "ExportedPolicies": [
+    {
+      "KeySettings": {
+        "blockMsolPowerShell": true,
+        "allowedToSignUpEmailBasedSubscriptions": false
+      },
+      "PolicyType": "AuthorizationPolicy",
+      "Id": "authorizationPolicy",
+      "FilePath": "/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON/TenantPolicies/AuthorizationPolicy.json"
+    },
+    {
+      "KeySettings": {
+        "registrationCampaignState": "default"
+      },
+      "PolicyType": "AuthenticationMethodsPolicy",
+      "Id": "authenticationMethodsPolicy",
+      "FilePath": "/Users/jon/Desktop/BaslineSetup/IAC-Entra-Policies-JSON/TenantPolicies/AuthenticationMethodsPolicy.json"
+    }
+  ]
+}

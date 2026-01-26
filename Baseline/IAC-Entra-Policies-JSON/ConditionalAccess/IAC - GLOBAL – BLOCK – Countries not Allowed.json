@@ -1,86 +1,72 @@
 {
-  "AssignmentDetails": {
-    "ExcludeUsers": [],
-    "ExcludeRoles": [],
-    "ExcludeGroups": [
-      {
-        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
-        "DisplayName": "Azure-Breakglass"
-      },
-      {
-        "Id": "063f926c-a676-4880-9edd-78a0ee7d5ff4",
-        "DisplayName": "CA - TravelingUsers"
-      }
-    ],
-    "IncludeRoles": [],
-    "IncludeUsers": [
-      {
-        "Id": "All",
-        "DisplayName": "All"
-      }
-    ],
-    "IncludeGroups": []
-  },
-  "ExportDate": "2026-01-16 20:58:12",
+  "ExportDate": "2026-01-25 21:03:47",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
   "PolicyConfig": {
-    "sessionControls": null,
-    "state": "disabled",
-    "grantControls": {
-      "operator": "OR",
-      "customAuthenticationFactors": [],
-      "termsOfUse": [],
-      "builtInControls": [
-        "block"
-      ],
-      "authenticationStrength": null,
-      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('b0052c50-3891-4e84-abde-772c5b58bc15')/grantControls/authenticationStrength/$entity"
-    },
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies/$entity",
+    "modifiedDateTime": "2026-01-25T20:28:34.8897188Z",
     "conditions": {
-      "servicePrincipalRiskLevels": [],
-      "users": {
-        "includeRoles": [],
-        "includeUsers": [
-          "All"
-        ],
-        "excludeGroups": [
-          "822cebe7-b527-405c-8bae-834782ec74cb",
-          "063f926c-a676-4880-9edd-78a0ee7d5ff4"
-        ],
-        "excludeRoles": [],
-        "excludeUsers": [],
-        "includeGroups": [],
-        "excludeGuestsOrExternalUsers": null,
-        "includeGuestsOrExternalUsers": null
-      },
-      "applications": {
-        "excludeApplications": [],
-        "includeAuthenticationContextClassReferences": [],
-        "applicationFilter": null,
-        "includeUserActions": [],
-        "includeApplications": [
-          "All"
-        ]
-      },
-      "authenticationFlows": null,
-      "clientAppTypes": [
-        "all"
-      ],
       "clientApplications": null,
-      "userRiskLevels": [],
+      "authenticationFlows": null,
+      "devices": null,
       "platforms": null,
+      "signInRiskLevels": [],
       "locations": {
-        "excludeLocations": [],
+        "excludeLocations": [
+          "1fe18182-5167-4fb6-8fd7-e092917b97bc"
+        ],
         "includeLocations": [
           "All"
         ]
       },
+      "applications": {
+        "includeUserActions": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "excludeApplications": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "users": {
+        "excludeUsers": [
+          "a1197d08-a831-4c41-ad33-c384964d1f07"
+        ],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeRoles": [],
+        "includeGroups": [],
+        "excludeGroups": [
+          "96437e0d-3d7c-4e28-b9bf-0fa68eabbff7",
+          "ec9e4975-1c27-41ac-ad9c-e346eff08a0b"
+        ],
+        "includeGuestsOrExternalUsers": null,
+        "excludeGuestsOrExternalUsers": null,
+        "includeRoles": []
+      },
+      "clientAppTypes": [
+        "all"
+      ],
+      "servicePrincipalRiskLevels": [],
       "insiderRiskLevels": null,
-      "devices": null,
-      "signInRiskLevels": []
+      "userRiskLevels": []
     },
     "displayName": "IAC - GLOBAL – BLOCK – Countries not Allowed",
-    "templateId": null
+    "sessionControls": null,
+    "createdDateTime": "2026-01-20T11:23:14.5456622Z",
+    "state": "enabled",
+    "grantControls": {
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('6bfbd7ba-fb48-424a-bdfb-b0934275c980')/grantControls/authenticationStrength/$entity",
+      "customAuthenticationFactors": [],
+      "authenticationStrength": null,
+      "builtInControls": [
+        "block"
+      ],
+      "termsOfUse": [],
+      "operator": "OR"
+    },
+    "templateId": null,
+    "id": "6bfbd7ba-fb48-424a-bdfb-b0934275c980"
   },
-  "SourcePolicyId": "b0052c50-3891-4e84-abde-772c5b58bc15",
-  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+  "SourcePolicyId": "6bfbd7ba-fb48-424a-bdfb-b0934275c980"
 }

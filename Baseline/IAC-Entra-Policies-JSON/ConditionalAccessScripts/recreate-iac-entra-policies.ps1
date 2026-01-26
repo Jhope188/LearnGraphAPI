@@ -25,6 +25,10 @@
 .PARAMETER RoleIdMapping
     Hashtable mapping source tenant role IDs to target tenant role IDs.
 
+.PARAMETER SkipTenantPolicies
+    When specified, skips restoring tenant-level policies (Authorization Policy, Authentication Methods Policy).
+    Use if you only want to restore CA policies and locations.
+
 .EXAMPLE
     .\recreate-iac-entra-policies.ps1 -DryRun
     Test import without creating anything
@@ -60,7 +64,13 @@ param(
     [hashtable]$UserIdMapping = @{},
     
     [Parameter(Mandatory=$false)]
-    [hashtable]$RoleIdMapping = @{}
+    [hashtable]$RoleIdMapping = @{},
+    
+    [Parameter(Mandatory=$false)]
+    [switch]$SkipTenantPolicies,
+    
+    [Parameter(Mandatory=$false)]
+    [switch]$SkipSecurityAttributes
 )
 
 #Requires -Modules Microsoft.Graph.Authentication, Microsoft.Graph.Identity.SignIns
@@ -214,6 +224,10 @@ try {
     
     # Initialize results tracking
     $results = @{
+        UpdatedTenantPolicies = @()
+        FailedTenantPolicies = @()
+        CreatedSecurityAttributes = @()
+        FailedSecurityAttributes = @()
         CreatedPolicies = @()
         CreatedLocations = @()
         CreatedAuthStrengths = @()
@@ -227,6 +241,132 @@ try {
     
     # Authentication Strength ID mapping
     $authStrengthMapping = @{}
+    
+    # ===== Restore Tenant-Level Policies =====
+    if (-not $SkipTenantPolicies) {
+        Write-Host "\n--- Restoring Tenant-Level Policies ---" -ForegroundColor Cyan
+        
+        $tenantPoliciesFolder = Join-Path $ImportPath "TenantPolicies"
+        if (Test-Path $tenantPoliciesFolder) {
+            # Restore Authorization Policy
+            $authzPolicyFile = Join-Path $tenantPoliciesFolder "AuthorizationPolicy.json"
+            if (Test-Path $authzPolicyFile) {
+                try {
+                    Write-Host "\n  🔐 Processing: Authorization Policy" -ForegroundColor White
+                    
+                    $authzData = Import-PolicyFromJson -FilePath $authzPolicyFile
+                    $authzConfig = $authzData.PolicyConfig
+                    
+                    # Remove read-only properties
+                    $authzConfig.PSObject.Properties.Remove('@odata.context')
+                    $authzConfig.PSObject.Properties.Remove('id')
+                    $authzConfig.PSObject.Properties.Remove('displayName')
+                    $authzConfig.PSObject.Properties.Remove('description')
+                    
+                    if ($DryRun) {
+                        Write-Host "     🧪 [DRY RUN] Would update Authorization Policy" -ForegroundColor Yellow
+                        Write-Host "        blockMsolPowerShell: $($authzConfig.blockMsolPowerShell)" -ForegroundColor Gray
+                        Write-Host "        allowedToSignUpEmailBasedSubscriptions: $($authzConfig.allowedToSignUpEmailBasedSubscriptions)" -ForegroundColor Gray
+                        
+                        $results.UpdatedTenantPolicies += @{
+                            PolicyType = "AuthorizationPolicy"
+                            DryRun = $true
+                        }
+                    } else {
+                        # Get current policy ID
+                        $currentPolicy = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/policies/authorizationPolicy"
+                        
+                        # Update policy
+                        $body = $authzConfig | ConvertTo-Json -Depth 10
+                        Invoke-MgGraphRequest -Method PATCH `
+                            -Uri "https://graph.microsoft.com/v1.0/policies/authorizationPolicy/$($currentPolicy.id)" `
+                            -Body $body `
+                            -ContentType "application/json" | Out-Null
+                        
+                        Write-Host "     ✅ Updated Authorization Policy" -ForegroundColor Green
+                        Write-Host "        blockMsolPowerShell: $($authzConfig.blockMsolPowerShell)" -ForegroundColor Gray
+                        Write-Host "        allowedToSignUpEmailBasedSubscriptions: $($authzConfig.allowedToSignUpEmailBasedSubscriptions)" -ForegroundColor Gray
+                        
+                        $results.UpdatedTenantPolicies += @{
+                            PolicyType = "AuthorizationPolicy"
+                            Settings = @{
+                                blockMsolPowerShell = $authzConfig.blockMsolPowerShell
+                                allowedToSignUpEmailBasedSubscriptions = $authzConfig.allowedToSignUpEmailBasedSubscriptions
+                            }
+                        }
+                    }
+                    
+                } catch {
+                    Write-Host "     ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                    $results.FailedTenantPolicies += @{
+                        PolicyType = "AuthorizationPolicy"
+                        Error = $_.Exception.Message
+                    }
+                }
+            } else {
+                Write-Host "  ⚠️  Authorization Policy file not found" -ForegroundColor Yellow
+            }
+            
+            # Restore Authentication Methods Policy
+            $authMethodsPolicyFile = Join-Path $tenantPoliciesFolder "AuthenticationMethodsPolicy.json"
+            if (Test-Path $authMethodsPolicyFile) {
+                try {
+                    Write-Host "\n  🔐 Processing: Authentication Methods Policy" -ForegroundColor White
+                    
+                    $authMethodsData = Import-PolicyFromJson -FilePath $authMethodsPolicyFile
+                    $authMethodsConfig = $authMethodsData.PolicyConfig
+                    
+                    # Remove read-only properties
+                    $authMethodsConfig.PSObject.Properties.Remove('@odata.context')
+                    $authMethodsConfig.PSObject.Properties.Remove('id')
+                    
+                    if ($DryRun) {
+                        Write-Host "     🧪 [DRY RUN] Would update Authentication Methods Policy" -ForegroundColor Yellow
+                        if ($authMethodsConfig.registrationEnforcement.authenticationMethodsRegistrationCampaign) {
+                            Write-Host "        Registration Campaign State: $($authMethodsConfig.registrationEnforcement.authenticationMethodsRegistrationCampaign.state)" -ForegroundColor Gray
+                        }
+                        
+                        $results.UpdatedTenantPolicies += @{
+                            PolicyType = "AuthenticationMethodsPolicy"
+                            DryRun = $true
+                        }
+                    } else {
+                        # Update policy
+                        $body = $authMethodsConfig | ConvertTo-Json -Depth 10
+                        Invoke-MgGraphRequest -Method PATCH `
+                            -Uri "https://graph.microsoft.com/v1.0/policies/authenticationMethodsPolicy" `
+                            -Body $body `
+                            -ContentType "application/json" | Out-Null
+                        
+                        Write-Host "     ✅ Updated Authentication Methods Policy" -ForegroundColor Green
+                        if ($authMethodsConfig.registrationEnforcement.authenticationMethodsRegistrationCampaign) {
+                            Write-Host "        Registration Campaign State: $($authMethodsConfig.registrationEnforcement.authenticationMethodsRegistrationCampaign.state)" -ForegroundColor Gray
+                        }
+                        
+                        $results.UpdatedTenantPolicies += @{
+                            PolicyType = "AuthenticationMethodsPolicy"
+                            Settings = @{
+                                registrationCampaignState = $authMethodsConfig.registrationEnforcement.authenticationMethodsRegistrationCampaign.state
+                            }
+                        }
+                    }
+                    
+                } catch {
+                    Write-Host "     ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                    $results.FailedTenantPolicies += @{
+                        PolicyType = "AuthenticationMethodsPolicy"
+                        Error = $_.Exception.Message
+                    }
+                }
+            } else {
+                Write-Host "  ⚠️  Authentication Methods Policy file not found" -ForegroundColor Yellow
+            }
+        } else {
+            Write-Host "  ℹ️  TenantPolicies folder not found - skipping tenant policy restoration" -ForegroundColor Gray
+        }
+    } else {
+        Write-Host "\n  ⏭️  Skipping tenant-level policies (SkipTenantPolicies specified)" -ForegroundColor Gray
+    }
     
     # ===== Scan for Custom Authentication Strengths =====
     Write-Host "`n--- Scanning for Custom Authentication Strengths ---" -ForegroundColor Cyan
@@ -294,6 +434,176 @@ try {
         } else {
             Write-Host "No custom authentication strengths found" -ForegroundColor Gray
         }
+    }
+    
+    # ===== Restore Custom Security Attributes =====
+    if (-not $SkipSecurityAttributes) {
+        Write-Host "`n--- Restoring Custom Security Attributes ---" -ForegroundColor Cyan
+        
+        $securityAttributesFolder = Join-Path $ImportPath "SecurityAttributes"
+        if (Test-Path $securityAttributesFolder) {
+            $attributeFiles = Get-ChildItem -Path $securityAttributesFolder -Filter "*.json" | Where-Object { $_.Name -ne "export-summary.json" }
+            Write-Host "Found $($attributeFiles.Count) attribute set(s) to restore" -ForegroundColor Yellow
+            
+            foreach ($file in $attributeFiles) {
+                try {
+                    Write-Host "`n  📦 Processing: $($file.BaseName)" -ForegroundColor White
+                    
+                    $attributeData = Import-PolicyFromJson -FilePath $file.FullName
+                    $attributeSet = $attributeData.AttributeSetConfig
+                    $attributeDefinitions = $attributeData.AttributeDefinitions
+                    
+                    # Step 1: Check if attribute set exists, if not create it
+                    $existingAttributeSet = $null
+                    try {
+                        $existingAttributeSet = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/directory/attributeSets/$($attributeSet.id)"
+                    } catch {
+                        # Attribute set doesn't exist
+                    }
+                    
+                    if (-not $existingAttributeSet) {
+                        if ($DryRun) {
+                            Write-Host "     🧪 [DRY RUN] Would create attribute set: $($attributeSet.id)" -ForegroundColor Yellow
+                            Write-Host "        Description: $($attributeSet.description)" -ForegroundColor Gray
+                        } else {
+                            # Create attribute set
+                            $setBody = @{
+                                id = $attributeSet.id
+                                description = $attributeSet.description
+                                maxAttributesPerSet = $attributeSet.maxAttributesPerSet
+                            } | ConvertTo-Json -Depth 5
+                            
+                            Invoke-MgGraphRequest -Method POST `
+                                -Uri "https://graph.microsoft.com/v1.0/directory/attributeSets" `
+                                -Body $setBody `
+                                -ContentType "application/json" | Out-Null
+                            
+                            Write-Host "     ✅ Created attribute set: $($attributeSet.id)" -ForegroundColor Green
+                        }
+                    } else {
+                        Write-Host "     ℹ️  Attribute set already exists: $($attributeSet.id)" -ForegroundColor Gray
+                    }
+                    
+                    # Step 2: Create/update attribute definitions
+                    foreach ($definition in $attributeDefinitions) {
+                        try {
+                            $defId = $definition.id
+                            
+                            # Check if definition exists
+                            $existingDefinition = $null
+                            try {
+                                $existingDefinition = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/directory/customSecurityAttributeDefinitions/$defId"
+                            } catch {
+                                # Definition doesn't exist
+                            }
+                            
+                            if (-not $existingDefinition) {
+                                if ($DryRun) {
+                                    Write-Host "        🧪 [DRY RUN] Would create attribute: $($definition.name)" -ForegroundColor Yellow
+                                    Write-Host "           Type: $($definition.type), Predefined Values: $($definition.usePreDefinedValuesOnly)" -ForegroundColor Gray
+                                } else {
+                                    # Create attribute definition
+                                    $defBody = @{
+                                        attributeSet = $definition.attributeSet
+                                        name = $definition.name
+                                        description = $definition.description
+                                        type = $definition.type
+                                        status = $definition.status
+                                        isCollection = $definition.isCollection
+                                        isSearchable = $definition.isSearchable
+                                        usePreDefinedValuesOnly = $definition.usePreDefinedValuesOnly
+                                    } | ConvertTo-Json -Depth 5
+                                    
+                                    $newDefinition = Invoke-MgGraphRequest -Method POST `
+                                        -Uri "https://graph.microsoft.com/v1.0/directory/customSecurityAttributeDefinitions" `
+                                        -Body $defBody `
+                                        -ContentType "application/json"
+                                    
+                                    Write-Host "        ✅ Created attribute: $($definition.name)" -ForegroundColor Green
+                                    
+                                    # Step 3: Add allowed values if applicable
+                                    if ($definition.usePreDefinedValuesOnly -eq $true -and $definition.allowedValues) {
+                                        Write-Host "           Adding $($definition.allowedValues.Count) allowed values..." -ForegroundColor Gray
+                                        
+                                        foreach ($allowedValue in $definition.allowedValues) {
+                                            try {
+                                                $valueBody = @{
+                                                    id = $allowedValue.id
+                                                    isActive = $allowedValue.isActive
+                                                } | ConvertTo-Json -Depth 5
+                                                
+                                                Invoke-MgGraphRequest -Method POST `
+                                                    -Uri "https://graph.microsoft.com/v1.0/directory/customSecurityAttributeDefinitions/$($newDefinition.id)/allowedValues" `
+                                                    -Body $valueBody `
+                                                    -ContentType "application/json" | Out-Null
+                                                
+                                                Write-Host "              - $($allowedValue.id)" -ForegroundColor DarkGray
+                                            } catch {
+                                                Write-Host "              ⚠️  Failed to add value: $($allowedValue.id)" -ForegroundColor Yellow
+                                            }
+                                        }
+                                    }
+                                    
+                                    $results.CreatedSecurityAttributes += @{
+                                        AttributeSet = $attributeSet.id
+                                        AttributeName = $definition.name
+                                        Type = $definition.type
+                                        AllowedValues = $definition.allowedValues.Count
+                                    }
+                                }
+                            } else {
+                                Write-Host "        ℹ️  Attribute already exists: $($definition.name)" -ForegroundColor Gray
+                                
+                                # Check if we need to add missing allowed values
+                                if ($definition.usePreDefinedValuesOnly -eq $true -and $definition.allowedValues -and -not $DryRun) {
+                                    $existingValues = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/directory/customSecurityAttributeDefinitions/$defId/allowedValues"
+                                    $existingValueIds = $existingValues.value | ForEach-Object { $_.id }
+                                    
+                                    foreach ($allowedValue in $definition.allowedValues) {
+                                        if ($allowedValue.id -notin $existingValueIds) {
+                                            try {
+                                                $valueBody = @{
+                                                    id = $allowedValue.id
+                                                    isActive = $allowedValue.isActive
+                                                } | ConvertTo-Json -Depth 5
+                                                
+                                                Invoke-MgGraphRequest -Method POST `
+                                                    -Uri "https://graph.microsoft.com/v1.0/directory/customSecurityAttributeDefinitions/$defId/allowedValues" `
+                                                    -Body $valueBody `
+                                                    -ContentType "application/json" | Out-Null
+                                                
+                                                Write-Host "           ✅ Added missing value: $($allowedValue.id)" -ForegroundColor Green
+                                            } catch {
+                                                Write-Host "           ⚠️  Failed to add value: $($allowedValue.id)" -ForegroundColor Yellow
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        } catch {
+                            Write-Host "        ❌ Failed to process attribute: $($definition.name) - $($_.Exception.Message)" -ForegroundColor Red
+                            $results.FailedSecurityAttributes += @{
+                                AttributeSet = $attributeSet.id
+                                AttributeName = $definition.name
+                                Error = $_.Exception.Message
+                            }
+                        }
+                    }
+                    
+                } catch {
+                    Write-Host "     ❌ Failed to process attribute set: $($_.Exception.Message)" -ForegroundColor Red
+                    $results.FailedSecurityAttributes += @{
+                        AttributeSet = $file.BaseName
+                        Error = $_.Exception.Message
+                    }
+                }
+            }
+        } else {
+            Write-Host "  ℹ️  SecurityAttributes folder not found - skipping" -ForegroundColor Gray
+        }
+    } else {
+        Write-Host "`n  ⏭️  Skipping custom security attributes (SkipSecurityAttributes specified)" -ForegroundColor Gray
     }
     
     # ===== Import Conditional Access Policies =====
@@ -446,6 +756,10 @@ try {
     # Final summary
     Write-Host "`n=== Recreation Complete ===" -ForegroundColor Cyan
     Write-Host "📊 Summary:" -ForegroundColor White
+    Write-Host "   Tenant Policies Updated: $($results.UpdatedTenantPolicies.Count)" -ForegroundColor Green
+    Write-Host "   Tenant Policies Failed: $($results.FailedTenantPolicies.Count)" -ForegroundColor $(if ($results.FailedTenantPolicies.Count -gt 0) { 'Red' } else { 'Gray' })
+    Write-Host "   Security Attributes Created: $($results.CreatedSecurityAttributes.Count)" -ForegroundColor Green
+    Write-Host "   Security Attributes Failed: $($results.FailedSecurityAttributes.Count)" -ForegroundColor $(if ($results.FailedSecurityAttributes.Count -gt 0) { 'Red' } else { 'Gray' })
     Write-Host "   Authentication Strengths Created: $($results.CreatedAuthStrengths.Count)" -ForegroundColor Green
     Write-Host "   Authentication Strengths Failed: $($results.FailedAuthStrengths.Count)" -ForegroundColor $(if ($results.FailedAuthStrengths.Count -gt 0) { 'Red' } else { 'Gray' })
     Write-Host "   CA Policies Created: $($results.CreatedPolicies.Count)" -ForegroundColor Green
