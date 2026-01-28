@@ -659,7 +659,7 @@ try {
                     # Create policy
                     $body = $policyConfig | ConvertTo-Json -Depth 10
                     $newPolicy = Invoke-MgGraphRequest -Method POST `
-                        -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/policies" `
+                        -Uri "https://graph.microsoft.com/v1.0/identity/conditionalAccess/policies" `
                         -Body $body `
                         -ContentType "application/json"
                     

@@ -1,0 +1,76 @@
+{
+  "createdDateTime": "2026-01-27T01:09:53.5646252Z",
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies/$entity",
+  "id": "8b6e642a-8d67-4111-9100-88dcf19a66c3",
+  "conditions": {
+    "userRiskLevels": [],
+    "times": {
+      "includeDays": {
+        "timeZone": "UTC",
+        "daysOfWeek": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday"
+        ],
+        "allDay": false,
+        "startTime": "09:00:00",
+        "endTime": "17:00:00"
+      },
+      "includeAllTimes": false,
+      "excludeRange": null,
+      "includeRange": null,
+      "excludeDays": null
+    },
+    "signInRiskLevels": [],
+    "platforms": null,
+    "clientAppTypes": [
+      "all"
+    ],
+    "devices": null,
+    "deviceStates": null,
+    "applications": {
+      "excludeApplications": [],
+      "applicationFilter": null,
+      "includeUserActions": [],
+      "includeApplications": [
+        "Office365"
+      ],
+      "includeAuthenticationContextClassReferences": []
+    },
+    "locations": null,
+    "clientApplications": null,
+    "users": {
+      "includeGuestsOrExternalUsers": null,
+      "includeRoles": [],
+      "excludeRoles": [],
+      "excludeUsers": [],
+      "excludeGuestsOrExternalUsers": null,
+      "includeUsers": [
+        "274c4644-56e5-4ce1-8f30-13457b94c6e5"
+      ],
+      "excludeGroups": [
+        "96437e0d-3d7c-4e28-b9bf-0fa68eabbff7"
+      ],
+      "includeGroups": []
+    }
+  },
+  "sessionControls": null,
+  "templateId": null,
+  "modifiedDateTime": "2026-01-28T01:11:23.7158106Z",
+  "partialEnablementStrategy": null,
+  "state": "enabled",
+  "displayName": "IAC - O365 - BLOCK - NonWorkingHours",
+  "deletedDateTime": null,
+  "grantControls": {
+    "authenticationStrength": null,
+    "customAuthenticationFactors": [],
+    "operator": "OR",
+    "termsOfUse": [],
+    "builtInControls": [
+      "block"
+    ],
+    "authenticationStrength@odata.context": "https://graph.microsoft.com/beta/$metadata#identity/conditionalAccess/policies('8b6e642a-8d67-4111-9100-88dcf19a66c3')/grantControls/authenticationStrength/$entity"
+  }
+}
