@@ -55,6 +55,85 @@ Now includes tenant policy restoration in addition to CA policies and locations.
 - `-SkipTenantPolicies` - Skip tenant policy restoration (only restore CA policies and locations)
 - `-SkipSecurityAttributes` - Skip security attributes restoration
 
+## Pre-Restoration Requirements
+
+### CRITICAL: ID Mapping Table Required
+
+Before restoring policies to a **different tenant**, you MUST create a mapping table for tenant-specific IDs. These IDs differ between tenants and must be mapped from source to destination.
+
+#### Required Mappings
+
+##### 1. Group Object IDs (REQUIRED)
+Map these groups from source tenant to destination tenant:
+
+| Group Display Name | Source Tenant ID | Destination Tenant ID | Notes |
+|-------------------|------------------|----------------------|-------|
+| Azure-Breakglass | `822cebe7-b527-405c-8bae-834782ec74cb` | `<NEW-ID>` | Emergency access accounts exclusion |
+| AVD-ExternalUsers | `21344a9f-6ef0-4181-970a-15202237ac4b` | `<NEW-ID>` | Azure Virtual Desktop external users |
+| CA - GlobalExclusions | `6064391a-c4b7-4991-b87f-e7a98fcd23aa` | `<NEW-ID>` | Global policy exclusions |
+
+**How to get destination IDs:**
+```powershell
+Get-MgGroup -Filter "displayName eq 'Azure-Breakglass'" | Select-Object DisplayName, Id
+```
+
+##### 2. Named Location IDs (REQUIRED)
+Map named locations from source to destination:
+
+| Location Display Name | Source Tenant ID | Destination Tenant ID | Type |
+|----------------------|------------------|----------------------|------|
+| AllTrusted | `<SOURCE-ID>` | `<NEW-ID>` | IP-based or Country |
+| (Other locations...) | `<SOURCE-ID>` | `<NEW-ID>` | |
+
+**Note:** Named locations may need to be created in destination tenant BEFORE running restoration script.
+
+##### 3. Custom Authentication Strength IDs (if applicable)
+If your policies reference custom authentication strengths:
+
+| Strength Name | Source Tenant ID | Destination Tenant ID |
+|---------------|------------------|----------------------|
+| (Custom Strength) | `<SOURCE-ID>` | `<NEW-ID>` |
+
+##### 4. Application IDs (Usually NOT Required)
+Standard Microsoft 365 application IDs are universal and don't need mapping:
+- Office 365 SharePoint Online: `00000003-0000-0ff1-ce00-000000000000`
+- Office 365: Standard GUID
+
+**Only map if you have custom line-of-business applications.**
+
+### Pre-Restoration Checklist
+
+Before running `recreate-iac-entra-policies.ps1`:
+
+- [ ] **Create all required groups in destination tenant** with same display names
+- [ ] **Export list of group IDs** from destination tenant
+- [ ] **Create mapping table** (CSV, Excel, or PowerShell hashtable)
+- [ ] **Verify all Named Locations exist** in destination (or will be created by script)
+- [ ] **Confirm permissions** on destination tenant (see Required Permissions section)
+- [ ] **Test with one policy first** using report-only mode
+- [ ] **Have source tenant admin available** for validation
+
+### Example Mapping Hashtable (PowerShell)
+
+```powershell
+$GroupIdMapping = @{
+    '822cebe7-b527-405c-8bae-834782ec74cb' = '<destination-breakglass-id>'
+    '21344a9f-6ef0-4181-970a-15202237ac4b' = '<destination-avd-id>'
+    '6064391a-c4b7-4991-b87f-e7a98fcd23aa' = '<destination-globalexclusions-id>'
+}
+
+$LocationIdMapping = @{
+    '<source-alltrusted-id>' = '<destination-alltrusted-id>'
+}
+```
+
+### What Happens If You Don't Map?
+
+❌ **Policies will fail to create** - Invalid group/location references will cause errors
+❌ **Wrong groups may be excluded** - Policies might reference non-existent objects
+❌ **Security gaps** - Breakglass accounts won't be properly excluded
+❌ **Audit failures** - Policies won't match source tenant configuration
+
 ## Restoration Order
 The recreate script processes in this order:
 1. **Tenant Policies** (Authorization Policy, Authentication Methods Policy)
