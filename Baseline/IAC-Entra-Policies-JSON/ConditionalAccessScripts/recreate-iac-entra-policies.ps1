@@ -46,7 +46,23 @@
     Author: GitHub Copilot
     Date: 2026-01-16
     Requires: Microsoft.Graph PowerShell Module
-    Permissions: Policy.ReadWrite.ConditionalAccess, Application.ReadWrite.All
+    Required Graph API Permissions:
+        - Policy.ReadWrite.ConditionalAccess (for CA policies)
+        - Policy.ReadWrite.Authorization (for tenant authorization policy)
+        - Application.ReadWrite.All (for custom authentication strengths)
+        - Directory.ReadWrite.All (for custom security attributes)
+        - Policy.Read.All (for reading existing policies)
+        - RoleManagement.ReadWrite.Directory (for role assignments)
+    
+    Connection Example:
+        Connect-MgGraph -Scopes @(
+            'Policy.ReadWrite.ConditionalAccess',
+            'Policy.ReadWrite.Authorization',
+            'Application.ReadWrite.All',
+            'Directory.ReadWrite.All',
+            'Policy.Read.All',
+            'RoleManagement.ReadWrite.Directory'
+        ) -NoWelcome
 #>
 
 [CmdletBinding()]
@@ -75,6 +91,20 @@ param(
 
 #Requires -Modules Microsoft.Graph.Authentication, Microsoft.Graph.Identity.SignIns
 
+# Remove corrupted Exchange Online module if present (prevents module load errors)
+Remove-Module ExchangeOnlineManagement -Force -ErrorAction SilentlyContinue
+
+# Explicitly import required modules to verify they load correctly
+try {
+    Import-Module Microsoft.Graph.Authentication -ErrorAction Stop
+    Import-Module Microsoft.Graph.Identity.SignIns -ErrorAction Stop
+} catch {
+    Write-Host "❌ Error loading required Microsoft Graph modules: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "💡 Try running: Remove-Module ExchangeOnlineManagement -Force" -ForegroundColor Yellow
+    Write-Host "💡 Then restart PowerShell and try again" -ForegroundColor Yellow
+    exit 1
+}
+
 # Helper function to map IDs
 function Map-Id {
     param(
@@ -101,49 +131,91 @@ function Update-PolicyConditions {
         [object]$Conditions,
         [hashtable]$GroupMap,
         [hashtable]$UserMap,
-        [hashtable]$RoleMap
+        [hashtable]$RoleMap,
+        [hashtable]$LocationMap
     )
     
-    $updatedConditions = $Conditions | ConvertTo-Json -Depth 10 | ConvertFrom-Json
+    # Work with the object directly without JSON round-trip
+    $updatedConditions = $Conditions
     
     if ($updatedConditions.users) {
-        # Map users
+        # Map users - ensure arrays stay as arrays
         if ($updatedConditions.users.includeUsers) {
-            $updatedConditions.users.includeUsers = $updatedConditions.users.includeUsers | ForEach-Object {
+            $newIncludeUsers = @($updatedConditions.users.includeUsers | ForEach-Object {
                 Map-Id -Id $_ -Mapping $UserMap
-            }
+            })
+            $updatedConditions.users.includeUsers = $newIncludeUsers
         }
         
         if ($updatedConditions.users.excludeUsers) {
-            $updatedConditions.users.excludeUsers = $updatedConditions.users.excludeUsers | ForEach-Object {
+            $newExcludeUsers = @($updatedConditions.users.excludeUsers | ForEach-Object {
                 Map-Id -Id $_ -Mapping $UserMap
-            }
+            })
+            $updatedConditions.users.excludeUsers = $newExcludeUsers
         }
         
         # Map groups
         if ($updatedConditions.users.includeGroups) {
-            $updatedConditions.users.includeGroups = $updatedConditions.users.includeGroups | ForEach-Object {
+            $newIncludeGroups = @($updatedConditions.users.includeGroups | ForEach-Object {
                 Map-Id -Id $_ -Mapping $GroupMap
-            }
+            })
+            $updatedConditions.users.includeGroups = $newIncludeGroups
         }
         
         if ($updatedConditions.users.excludeGroups) {
-            $updatedConditions.users.excludeGroups = $updatedConditions.users.excludeGroups | ForEach-Object {
+            $newExcludeGroups = @($updatedConditions.users.excludeGroups | ForEach-Object {
                 Map-Id -Id $_ -Mapping $GroupMap
-            }
+            })
+            $updatedConditions.users.excludeGroups = $newExcludeGroups
         }
         
         # Map roles
         if ($updatedConditions.users.includeRoles) {
-            $updatedConditions.users.includeRoles = $updatedConditions.users.includeRoles | ForEach-Object {
+            $newIncludeRoles = @($updatedConditions.users.includeRoles | ForEach-Object {
                 Map-Id -Id $_ -Mapping $RoleMap
-            }
+            })
+            $updatedConditions.users.includeRoles = $newIncludeRoles
         }
         
         if ($updatedConditions.users.excludeRoles) {
-            $updatedConditions.users.excludeRoles = $updatedConditions.users.excludeRoles | ForEach-Object {
+            $newExcludeRoles = @($updatedConditions.users.excludeRoles | ForEach-Object {
                 Map-Id -Id $_ -Mapping $RoleMap
-            }
+            })
+            $updatedConditions.users.excludeRoles = $newExcludeRoles
+        }
+    }
+    
+    # Map named locations
+    if ($updatedConditions.locations -and $LocationMap.Count -gt 0) {
+        if ($updatedConditions.locations.includeLocations) {
+            $newIncludeLocs = @($updatedConditions.locations.includeLocations | ForEach-Object {
+                # Don't map special keywords like "All", "AllTrusted"
+                if ($_ -match '^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$') {
+                    Map-Id -Id $_ -Mapping $LocationMap
+                } else {
+                    $_
+                }
+            })
+            $updatedConditions.locations.includeLocations = $newIncludeLocs
+        }
+        
+        if ($updatedConditions.locations.excludeLocations) {
+            $newExcludeLocs = @($updatedConditions.locations.excludeLocations | ForEach-Object {
+                # Don't map special keywords like "All", "AllTrusted"
+                if ($_ -match '^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$') {
+                    Map-Id -Id $_ -Mapping $LocationMap
+                } else {
+                    $_
+                }
+            })
+            $updatedConditions.locations.excludeLocations = $newExcludeLocs
+        }
+    }
+    
+    # Ensure includeApplications is always an array
+    if ($updatedConditions.applications -and $updatedConditions.applications.includeApplications) {
+        if ($updatedConditions.applications.includeApplications -isnot [array]) {
+            $updatedConditions.applications.includeApplications = @($updatedConditions.applications.includeApplications)
         }
     }
     
@@ -159,15 +231,31 @@ function Import-PolicyFromJson {
 }
 
 # Helper function to remove @odata.context metadata
+# Helper function to remove @odata.context fields from JSON objects
 function Remove-ODataContext {
-    param([object]$Object)
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$Json
+    )
     
-    $json = $Object | ConvertTo-Json -Depth 20
-    $cleaned = $json -replace '"[^"]*@odata\.context":\s*"[^"]*",?\s*', ''
-    # Clean up any trailing commas
-    $cleaned = $cleaned -replace ',(\s*[}\]])', '$1'
+    # Remove @odata fields using multiple patterns:
+    # Pattern 1: "@odata.context": "value" (standalone property)
+    $cleaned = $Json -replace '"@odata\.(context|type)"\s*:\s*"[^"]*",?\s*[\r\n]*', ''
     
-    return ($cleaned | ConvertFrom-Json)
+    # Pattern 2: "propertyName@odata.context": "value" (property with @odata suffix)
+    $cleaned = $cleaned -replace '"[^"]+@odata\.(context|type)"\s*:\s*"[^"]*",?\s*[\r\n]*', ''
+    
+    # Pattern 3: Handle trailing commas before closing braces/brackets
+    $cleaned = $cleaned -replace ',\s*}', '}'
+    $cleaned = $cleaned -replace ',\s*]', ']'
+    
+    # Pattern 4: Handle leading commas after opening braces
+    $cleaned = $cleaned -replace '{\s*,', '{'
+    
+    # Pattern 5: Clean up multiple blank lines
+    $cleaned = $cleaned -replace '(\r?\n\s*){3,}', "`n`n"
+    
+    return $cleaned
 }
 
 # Helper function to extract custom authentication strengths from policies
@@ -606,6 +694,153 @@ try {
         Write-Host "`n  ⏭️  Skipping custom security attributes (SkipSecurityAttributes specified)" -ForegroundColor Gray
     }
     
+    # ===== Import Named Locations FIRST (before policies that reference them) =====
+    Write-Host "`n--- Processing Named Locations ---" -ForegroundColor Cyan
+    
+    $LocationIdMapping = @{}
+    
+    $locFolder = Join-Path $ImportPath "NamedLocations"
+    if (Test-Path $locFolder) {
+        $locFiles = Get-ChildItem -Path $locFolder -Filter "*.json"
+        Write-Host "Found $($locFiles.Count) Named Location files" -ForegroundColor Yellow
+        
+        foreach ($file in $locFiles) {
+            try {
+                Write-Host "`n  📍 Processing: $($file.BaseName)" -ForegroundColor White
+                
+                # Load location JSON and remove @odata fields BEFORE parsing
+                $locationJson = Get-Content -Path $file.FullName -Raw
+                $cleanedJson = Remove-ODataContext -Json $locationJson
+                $locationData = $cleanedJson | ConvertFrom-Json
+                $locationConfig = $locationData.LocationConfig
+                
+                # Remove read-only fields that shouldn't be sent during creation
+                if ($locationConfig.PSObject.Properties['id']) { $locationConfig.PSObject.Properties.Remove('id') }
+                if ($locationConfig.PSObject.Properties['createdDateTime']) { $locationConfig.PSObject.Properties.Remove('createdDateTime') }
+                if ($locationConfig.PSObject.Properties['modifiedDateTime']) { $locationConfig.PSObject.Properties.Remove('modifiedDateTime') }
+                
+                # Re-add @odata.type for proper creation
+                $locationConfig | Add-Member -MemberType NoteProperty -Name '@odata.type' -Value $locationData.ODataType -Force
+                
+                if ($DryRun) {
+                    Write-Host "     🧪 [DRY RUN] Would create Named Location: $($locationConfig.displayName)" -ForegroundColor Yellow
+                    Write-Host "        Type: $($locationData.LocationType)" -ForegroundColor Gray
+                    Write-Host "        Trusted: $($locationConfig.isTrusted)" -ForegroundColor Gray
+                    
+                    $results.CreatedLocations += @{
+                        Name = $locationConfig.displayName
+                        SourceId = $locationData.SourceLocationId
+                        Type = $locationData.LocationType
+                        DryRun = $true
+                    }
+                } else {
+                    # Create location
+                    $body = $locationConfig | ConvertTo-Json -Depth 10
+                    $newLocation = Invoke-MgGraphRequest -Method POST `
+                        -Uri "https://graph.microsoft.com/v1.0/identity/conditionalAccess/namedLocations" `
+                        -Body $body `
+                        -ContentType "application/json"
+                    
+                    Write-Host "     ✅ Created Named Location: $($newLocation.displayName)" -ForegroundColor Green
+                    Write-Host "        Old ID: $($locationData.SourceLocationId)" -ForegroundColor Gray
+                    Write-Host "        New ID: $($newLocation.id)" -ForegroundColor Gray
+                    Write-Host "        Type: $($locationData.LocationType)" -ForegroundColor Gray
+                    
+                    # Build location ID mapping (old source ID -> new ID)
+                    if ($locationData.SourceLocationId) {
+                        $LocationIdMapping[$locationData.SourceLocationId] = $newLocation.id
+                        Write-Host "        📝 Mapped: $($locationData.SourceLocationId) -> $($newLocation.id)" -ForegroundColor DarkGray
+                    }
+                    
+                    $results.CreatedLocations += @{
+                        Name = $newLocation.displayName
+                        SourceId = $locationData.SourceLocationId
+                        NewId = $newLocation.id
+                        Type = $locationData.LocationType
+                    }
+                }
+                
+            } catch {
+                Write-Host "     ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
+                $results.FailedLocations += @{
+                    Name = $file.BaseName
+                    Error = $_.Exception.Message
+                }
+            }
+        }
+    } else {
+        Write-Host "⚠️  NamedLocations folder not found" -ForegroundColor Yellow
+    }
+    
+    if ($LocationIdMapping.Count -gt 0) {
+        Write-Host "`n  📊 Location ID Mapping Summary:" -ForegroundColor Cyan
+        $LocationIdMapping.GetEnumerator() | ForEach-Object {
+            Write-Host "     $($_.Key) -> $($_.Value)" -ForegroundColor DarkGray
+        }
+    }
+    
+    # ===== Build Group ID Mapping (if not provided) =====
+    if ($GroupIdMapping.Count -eq 0) {
+        Write-Host "`n--- Building Group ID Mapping ---" -ForegroundColor Cyan
+        
+        # Scan all policy JSON files for group IDs
+        $caFolder = Join-Path $ImportPath "ConditionalAccess"
+        if (Test-Path $caFolder) {
+            $caFiles = Get-ChildItem -Path $caFolder -Filter "*.json"
+            $allGroupDetails = @{}
+            
+            foreach ($file in $caFiles) {
+                try {
+                    $policyData = Import-PolicyFromJson -FilePath $file.FullName
+                    
+                    # Check AssignmentDetails for group display names
+                    if ($policyData.AssignmentDetails) {
+                        foreach ($group in $policyData.AssignmentDetails.ExcludeGroups) {
+                            if ($group.Id -and $group.DisplayName) {
+                                $allGroupDetails[$group.Id] = $group.DisplayName
+                            }
+                        }
+                        foreach ($group in $policyData.AssignmentDetails.IncludeGroups) {
+                            if ($group.Id -and $group.DisplayName) {
+                                $allGroupDetails[$group.Id] = $group.DisplayName
+                            }
+                        }
+                    }
+                } catch {
+                    # Skip files that can't be parsed
+                }
+            }
+            
+            Write-Host "  Found $($allGroupDetails.Count) unique groups referenced in policies" -ForegroundColor Yellow
+            
+            # Look up each group in target tenant by displayName
+            $GroupIdMapping = @{}
+            foreach ($oldId in $allGroupDetails.Keys) {
+                $displayName = $allGroupDetails[$oldId]
+                
+                try {
+                    $filter = "displayName eq '$($displayName.Replace("'", "''"))'"
+                    $targetGroup = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/groups?`$filter=$filter"
+                    
+                    if ($targetGroup.value -and $targetGroup.value.Count -gt 0) {
+                        $newId = $targetGroup.value[0].id
+                        $GroupIdMapping[$oldId] = $newId
+                        Write-Host "     ✅ Mapped: $displayName" -ForegroundColor Green
+                        Write-Host "        $oldId -> $newId" -ForegroundColor DarkGray
+                    } else {
+                        Write-Host "     ⚠️  Group not found in target tenant: $displayName" -ForegroundColor Yellow
+                    }
+                } catch {
+                    Write-Host "     ❌ Failed to lookup: $displayName" -ForegroundColor Red
+                }
+            }
+            
+            Write-Host "`n  📊 Built $($GroupIdMapping.Count) group ID mappings" -ForegroundColor Cyan
+        }
+    } else {
+        Write-Host "`n  ℹ️  Using provided GroupIdMapping ($($GroupIdMapping.Count) mappings)" -ForegroundColor Gray
+    }
+
     # ===== Import Conditional Access Policies =====
     Write-Host "`n--- Processing Conditional Access Policies ---" -ForegroundColor Cyan
     
@@ -618,11 +853,11 @@ try {
             try {
                 Write-Host "`n  📄 Processing: $($file.BaseName)" -ForegroundColor White
                 
-                $policyData = Import-PolicyFromJson -FilePath $file.FullName
+                # Load policy JSON and remove @odata fields BEFORE parsing
+                $policyJson = Get-Content -Path $file.FullName -Raw
+                $cleanedJson = Remove-ODataContext -Json $policyJson
+                $policyData = $cleanedJson | ConvertFrom-Json
                 $policyConfig = $policyData.PolicyConfig
-                
-                # Remove @odata.context metadata
-                $policyConfig = Remove-ODataContext -Object $policyConfig
                 
                 # Update authentication strength ID if needed
                 if ($policyConfig.grantControls.authenticationStrength) {
@@ -637,13 +872,51 @@ try {
                 }
                 
                 # Update conditions with ID mappings
-                if ($GroupIdMapping.Count -gt 0 -or $UserIdMapping.Count -gt 0 -or $RoleIdMapping.Count -gt 0) {
+                if ($GroupIdMapping.Count -gt 0 -or $UserIdMapping.Count -gt 0 -or $RoleIdMapping.Count -gt 0 -or $LocationIdMapping.Count -gt 0) {
                     Write-Host "     🔄 Applying ID mappings..." -ForegroundColor Gray
                     $policyConfig.conditions = Update-PolicyConditions `
                         -Conditions $policyConfig.conditions `
                         -GroupMap $GroupIdMapping `
                         -UserMap $UserIdMapping `
-                        -RoleMap $RoleIdMapping
+                        -RoleMap $RoleIdMapping `
+                        -LocationMap $LocationIdMapping
+                }
+                
+                # Remove external tenant references that may not be valid in target tenant
+                if ($policyConfig.conditions.users.excludeGuestsOrExternalUsers.externalTenants) {
+                    $policyConfig.conditions.users.excludeGuestsOrExternalUsers = $null
+                }
+                if ($policyConfig.conditions.users.includeGuestsOrExternalUsers.externalTenants) {
+                    $policyConfig.conditions.users.includeGuestsOrExternalUsers = $null
+                }
+                
+                # Clean up authenticationStrength to only include required fields
+                if ($policyConfig.grantControls.authenticationStrength -and $policyConfig.grantControls.authenticationStrength -ne $null) {
+                    $authStrength = $policyConfig.grantControls.authenticationStrength
+                    if ($authStrength.PSObject.Properties.Name -contains 'id') {
+                        # Keep only id - Graph API will reject read-only fields
+                        $policyConfig.grantControls.authenticationStrength = @{
+                            id = $authStrength.id
+                        }
+                    }
+                }
+                
+                # Validate policy has users targeted (required by Graph API)
+                $hasUsers = $false
+                if ($policyConfig.conditions.users.includeUsers.Count -gt 0 -or 
+                    $policyConfig.conditions.users.includeGroups.Count -gt 0 -or 
+                    $policyConfig.conditions.users.includeRoles.Count -gt 0 -or
+                    $policyConfig.conditions.users.includeGuestsOrExternalUsers -ne $null) {
+                    $hasUsers = $true
+                }
+                
+                if (-not $hasUsers) {
+                    Write-Host "     ⚠️  Skipping: Policy has no users targeted after cleanup" -ForegroundColor Yellow
+                    $results.FailedPolicies += @{
+                        Name = $policyConfig.displayName
+                        Error = "Policy has no users targeted (includeGuestsOrExternalUsers was removed)"
+                    }
+                    continue
                 }
                 
                 if ($DryRun) {
@@ -656,8 +929,19 @@ try {
                         DryRun = $true
                     }
                 } else {
+                    # Remove read-only fields that shouldn't be included in POST requests
+                    $policyConfig.PSObject.Properties.Remove('id')
+                    $policyConfig.PSObject.Properties.Remove('createdDateTime')
+                    $policyConfig.PSObject.Properties.Remove('modifiedDateTime')
+                    
                     # Create policy
                     $body = $policyConfig | ConvertTo-Json -Depth 10
+                    
+                    # DEBUG: Save body to file for inspection
+                    $debugFile = "/tmp/policy-body-$($policyConfig.displayName -replace '[^a-zA-Z0-9]', '-').json"
+                    $body | Out-File -FilePath $debugFile -Encoding utf8
+                    Write-Host "     🐛 DEBUG: Body saved to $debugFile" -ForegroundColor Magenta
+                    
                     $newPolicy = Invoke-MgGraphRequest -Method POST `
                         -Uri "https://graph.microsoft.com/beta/identity/conditionalAccess/policies" `
                         -Body $body `
@@ -684,67 +968,6 @@ try {
         }
     } else {
         Write-Host "⚠️  ConditionalAccess folder not found" -ForegroundColor Yellow
-    }
-    
-    # ===== Import Named Locations =====
-    Write-Host "`n--- Processing Named Locations ---" -ForegroundColor Cyan
-    
-    $locFolder = Join-Path $ImportPath "NamedLocations"
-    if (Test-Path $locFolder) {
-        $locFiles = Get-ChildItem -Path $locFolder -Filter "*.json"
-        Write-Host "Found $($locFiles.Count) Named Location files" -ForegroundColor Yellow
-        
-        foreach ($file in $locFiles) {
-            try {
-                Write-Host "`n  📍 Processing: $($file.BaseName)" -ForegroundColor White
-                
-                $locationData = Import-PolicyFromJson -FilePath $file.FullName
-                $locationConfig = $locationData.LocationConfig
-                
-                # Re-add @odata.type for proper creation
-                $locationConfig | Add-Member -MemberType NoteProperty -Name '@odata.type' -Value $locationData.ODataType -Force
-                
-                if ($DryRun) {
-                    Write-Host "     🧪 [DRY RUN] Would create Named Location: $($locationConfig.displayName)" -ForegroundColor Yellow
-                    Write-Host "        Type: $($locationData.LocationType)" -ForegroundColor Gray
-                    Write-Host "        Trusted: $($locationConfig.isTrusted)" -ForegroundColor Gray
-                    
-                    $results.CreatedLocations += @{
-                        Name = $locationConfig.displayName
-                        SourceId = $locationData.SourceLocationId
-                        Type = $locationData.LocationType
-                        DryRun = $true
-                    }
-                } else {
-                    # Create location
-                    $body = $locationConfig | ConvertTo-Json -Depth 10
-                    $newLocation = Invoke-MgGraphRequest -Method POST `
-                        -Uri "https://graph.microsoft.com/v1.0/identity/conditionalAccess/namedLocations" `
-                        -Body $body `
-                        -ContentType "application/json"
-                    
-                    Write-Host "     ✅ Created Named Location: $($newLocation.displayName)" -ForegroundColor Green
-                    Write-Host "        New ID: $($newLocation.id)" -ForegroundColor Gray
-                    Write-Host "        Type: $($locationData.LocationType)" -ForegroundColor Gray
-                    
-                    $results.CreatedLocations += @{
-                        Name = $newLocation.displayName
-                        SourceId = $locationData.SourceLocationId
-                        NewId = $newLocation.id
-                        Type = $locationData.LocationType
-                    }
-                }
-                
-            } catch {
-                Write-Host "     ❌ Failed: $($_.Exception.Message)" -ForegroundColor Red
-                $results.FailedLocations += @{
-                    Name = $file.BaseName
-                    Error = $_.Exception.Message
-                }
-            }
-        }
-    } else {
-        Write-Host "⚠️  NamedLocations folder not found" -ForegroundColor Yellow
     }
     
     # Save results summary

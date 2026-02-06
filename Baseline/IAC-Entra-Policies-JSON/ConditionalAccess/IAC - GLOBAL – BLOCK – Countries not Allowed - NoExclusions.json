@@ -13,7 +13,7 @@
       "locations": {
         "excludeLocations": [],
         "includeLocations": [
-          "18abd940-3aa0-4903-9457-8c8ff9ace93d"
+          "12a14ddd-df08-455c-9196-4b112db40ee9"
         ]
       },
       "applications": {
@@ -46,7 +46,7 @@
       "insiderRiskLevels": null,
       "userRiskLevels": []
     },
-    "displayName": "IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions",
+    "displayName": "IAC - GLOBAL \u2013 BLOCK \u2013 Countries not Allowed - NoExclusions",
     "sessionControls": null,
     "createdDateTime": "2026-01-20T11:28:39.5986971Z",
     "state": "enabled",

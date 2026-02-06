@@ -1,5 +1,24 @@
+# Remove corrupted Exchange Online module if present
+Remove-Module ExchangeOnlineManagement -Force -ErrorAction SilentlyContinue
+
+# Verify required modules can load
+try {
+    Import-Module Microsoft.Graph.Authentication -ErrorAction Stop
+    Import-Module Microsoft.Graph.Identity.SignIns -ErrorAction Stop
+    Import-Module Microsoft.Graph.Groups -ErrorAction Stop
+} catch {
+    Write-Host "❌ Error loading required modules: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "Try running: Remove-Module ExchangeOnlineManagement -Force" -ForegroundColor Yellow
+    exit 1
+}
+
 # Connect to Microsoft Graph
-Connect-MgGraph -Scopes "Policy.ReadWrite.ConditionalAccess", "Group.Read.All"
+try {
+    Connect-MgGraph -Scopes "Policy.ReadWrite.ConditionalAccess", "Group.Read.All" -ErrorAction Stop
+} catch {
+    Write-Host "❌ Failed to connect to Microsoft Graph: $($_.Exception.Message)" -ForegroundColor Red
+    exit 1
+}
 
 Write-Host "`n=== Updating CA Policy Exclusion Groups ===" -ForegroundColor Cyan
 Write-Host ""

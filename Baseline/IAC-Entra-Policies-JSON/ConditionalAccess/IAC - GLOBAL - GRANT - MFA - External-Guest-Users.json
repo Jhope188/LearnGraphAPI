@@ -53,11 +53,7 @@
           }
         },
         "includeGuestsOrExternalUsers": {
-          "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider",
-          "externalTenants": {
-            "membershipKind": "all",
-            "@odata.type": "#microsoft.graph.conditionalAccessAllExternalTenants"
-          }
+          "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
         }
       },
       "applications": {
