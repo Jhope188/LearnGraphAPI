@@ -706,7 +706,7 @@ Navigate to: **M365 Admin Center** > Settings > Org settings > Security & privac
 ### Automated Settings (Applied by admincenterconfig.ps1)
 
 <!-- INSERT IMAGE: Automated checks screenshot -->
-![Automated CIS Checks]([images/AutomatedChanges.png])
+![Automated CIS Checks](https://github.com/Jhope188/LearnGraphAPI/blob/main/Baseline/IAC-Admin-Center-Policies-JSON/Images/AutomatedChanges.png)
 
 | CIS Control | Setting | Recommended | Status |
 |-------------|---------|------------|--------|
