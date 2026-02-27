@@ -165,6 +165,13 @@ $users = @(
         Office = "Slytherin"
     },
     @{
+        GivenName = "Dolores"
+        Surname = "Umbridge"
+        JobTitle = "Senior Undersecretary to the Minister"
+        Department = "Ministry Leadership"
+        Office = "Slytherin"
+    },
+    @{
         GivenName = "Luna"
         Surname = "Lovegood"
         JobTitle = "Magizoologist"
@@ -238,9 +245,10 @@ $users = @(
 
 # Create each user
 $successCount = 0
+$skipCount = 0
 $failCount = 0
 
-Write-Host "`nCreating 20 Harry Potter users..." -ForegroundColor Green
+Write-Host "`nCreating 21 Harry Potter users..." -ForegroundColor Green
 Write-Host "Default Password: $generatedPassword (must be changed on first sign-in)`n" -ForegroundColor Yellow
 
 foreach ($user in $users) {
@@ -253,14 +261,9 @@ foreach ($user in $users) {
         $existingUser = Get-MgUser -Filter "userPrincipalName eq '$userPrincipalName'" -ErrorAction SilentlyContinue
         
         if ($existingUser) {
-            Write-Host "⚠️  User already exists: $displayName ($userPrincipalName)" -ForegroundColor Yellow
-            Write-Host "   📸 Updating profile photo..." -ForegroundColor Cyan
-            $photoSet = Set-UserProfilePhoto -UserId $existingUser.Id -DisplayName $displayName -House $user.Office
-            if ($photoSet) {
-                Write-Host "   ✅ Profile photo updated!" -ForegroundColor Green
-            }
+            Write-Host "⏭️  Skipping (already exists): $displayName ($userPrincipalName)" -ForegroundColor Gray
             Write-Host ""
-            $successCount++
+            $skipCount++
         } else {
             # Create the user
             $userParams = @{
@@ -394,13 +397,18 @@ Write-Host ""
 # Summary
 Write-Host "═══════════════════════════════════════" -ForegroundColor Cyan
 Write-Host "Summary:" -ForegroundColor Cyan
-Write-Host "✅ Successfully created: $successCount users" -ForegroundColor Green
-Write-Host "❌ Failed/Skipped: $failCount users" -ForegroundColor Yellow
+Write-Host "✅ Created: $successCount users" -ForegroundColor Green
+Write-Host "⏭️  Skipped (already existed): $skipCount users" -ForegroundColor Gray
+Write-Host "❌ Failed: $failCount users" -ForegroundColor Red
 Write-Host "✅ Dynamic groups created/verified: $($groupSuccessCount + $groupSkipCount)" -ForegroundColor Green
 Write-Host "═══════════════════════════════════════" -ForegroundColor Cyan
-Write-Host "`nDefault Password: $generatedPassword" -ForegroundColor Yellow
-Write-Host "⚠️  SAVE THIS PASSWORD NOW - it is not stored anywhere!" -ForegroundColor Red
-Write-Host "Users will be required to change password on first sign-in`n" -ForegroundColor Yellow
+if ($successCount -gt 0) {
+    Write-Host "`nDefault Password: $generatedPassword" -ForegroundColor Yellow
+    Write-Host "⚠️  SAVE THIS PASSWORD NOW - it is not stored anywhere!" -ForegroundColor Red
+    Write-Host "Users will be required to change password on first sign-in`n" -ForegroundColor Yellow
+} else {
+    Write-Host "`nNo new users created — no password to save.`n" -ForegroundColor Gray
+}
 
 # Disconnect
 Disconnect-MgGraph | Out-Null
