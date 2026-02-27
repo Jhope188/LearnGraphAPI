@@ -330,16 +330,29 @@ These settings define what standard (non-admin) users can do in your Microsoft 3
 
 ### Available Scripts
 
-1. **admincenterconfig.ps1** - Sets administrative center configuration (disables trials)
+1. **admincenterconfig.ps1** - CIS M365 Benchmark-aligned admin center hardening (19 automated controls)
 2. **export-admin-center-config.ps1** - Exports current configuration to JSON
 
 ### Usage
 
-**To Configure Admin Center (Disable Trials):**
+**To Configure Admin Center (CIS Hardening):**
 ```powershell
-cd /Users/jon/Desktop/BaslineSetup/Scripts
+cd /Users/jon/Desktop/BaslineSetup/IAC-Admin-Center-Policies-JSON/Scripts
 ./admincenterconfig.ps1
 ```
+
+**Required Modules:**
+- Microsoft.Graph PowerShell SDK
+- ExchangeOnlineManagement
+- MSCommerce
+
+**Required Graph Scopes:**
+- `Policy.ReadWrite.Authorization`
+- `Policy.Read.All`
+- `Domain.ReadWrite.All`
+- `Application.Read.All`
+- `Directory.ReadWrite.All`
+- `SharePointTenantSettings.ReadWrite.All`
 
 **To Export Current Configuration:**
 ```powershell
@@ -347,92 +360,492 @@ cd /Users/jon/Desktop/BaslineSetup/Scripts
 ./export-admin-center-config.ps1
 ```
 
-This will create: `/Users/jon/Desktop/BaslineSetup/Admin-Center-Configuration.json`
+---
+
+## Password Expiration Policy (CIS 1.1.4)
+
+**CIS Control:** 1.1.4 - Ensure that password hash sync is enabled for resiliency and leaked credential detection / Passwords do not expire
+
+**Description:** CIS and NIST 800-63B recommend setting passwords to **never expire** when MFA is enforced. Frequent password changes lead to weaker passwords (users create predictable patterns) and do not meaningfully improve security when combined with MFA.
+
+**Recommended Value:** Passwords set to **never expire** (2147483647 days)
+
+**Management:**
+
+```powershell
+# Check current password expiration policy
+Get-MgDomain | Select-Object Id, PasswordValidityPeriodInDays, PasswordNotificationWindowInDays
+
+# Set passwords to never expire for a domain
+Update-MgDomain -DomainId "yourdomain.onmicrosoft.com" `
+    -PasswordValidityPeriodInDays 2147483647 `
+    -PasswordNotificationWindowInDays 14
+```
+
+**Prerequisites:** MFA must be enforced for all users before disabling password expiration.
+
+**Impact:**
+- When passwords **don't expire**: Users create stronger passwords they can remember; MFA provides the security layer
+- When passwords **expire**: Users tend to create weaker, predictable passwords (Password1!, Password2!, etc.)
 
 ---
 
-## Quick Reference: Recommended Settings for Enterprise
+## User Consent to Applications (CIS 5.1.5.1)
 
-**Last Updated:** February 2, 2026
+**CIS Control:** 5.1.5.1 - Ensure user consent to apps accessing company data is restricted
 
-| Setting | Recommended | Current | Status |
-|---------|------------|---------|--------|
-| Email-based subscriptions | ❌ Disabled | ❌ Disabled | ✅ Match |
-| Email verified users can join | ❌ Disabled | ❌ Disabled | ✅ Match |
-| Block legacy MSOL PowerShell | ✅ Enabled | ✅ Enabled | ✅ Match |
-| External calendar sharing | ⚠️ Review Required | ⚠️ Requires Review | ℹ️ Manual Check |
-| Self-service purchases (27 products) | ❌ Disabled (all) | ❌ Disabled (all) | ✅ Match |
-| Users can create apps | ❌ Disabled | ❌ Disabled | ✅ Match |
-| Users can create security groups | ❌ Disabled | ❌ Disabled | ✅ Match |
-| Users can create tenants | ❌ Disabled | ❌ Disabled | ✅ Match |
-| Users can read Bitlocker keys | ✅ Enabled | ✅ Enabled | ✅ Match |
-| Users can read other users | ✅ Enabled | ✅ Enabled | ✅ Match |
+**Description:** Controls whether users can grant permissions to third-party applications to access organizational data. Unrestricted consent allows users to potentially grant malicious applications access to corporate resources.
+
+**Recommended Value:** Allow user consent only for apps from **verified publishers** with **low-impact permissions**
+
+**Management:**
+
+```powershell
+# Restrict user consent to verified publishers with low-impact permissions only
+$consentBody = @{
+    defaultUserRolePermissions = @{
+        permissionGrantPoliciesAssigned = @(
+            "managePermissionGrantsForSelf.microsoft-user-default-low"
+        )
+    }
+}
+Invoke-MgGraphRequest -Method PATCH `
+    -Uri "https://graph.microsoft.com/v1.0/policies/authorizationPolicy" `
+    -Body $consentBody
+```
+
+**Options:**
+| Setting | Description |
+|---------|-------------|
+| `microsoft-user-default-low` | Users can consent to verified publishers for low-impact permissions only |
+| Do not allow user consent | All consent requires admin approval |
+
+**Impact:**
+- When **unrestricted**: Any user can grant apps access to their mailbox, files, etc. — high risk of consent phishing
+- When **restricted**: Users can only consent to trusted apps; all others require admin approval
+
+---
+
+## Admin Consent Workflow (CIS 5.1.5.2)
+
+**CIS Control:** 5.1.5.2 - Ensure the admin consent workflow is enabled
+
+**Description:** When user consent is restricted, users need a way to request access to apps they need. The admin consent workflow provides a structured process for these requests.
+
+**Recommended Value:** `Enabled`
+
+**Management:**
+
+```powershell
+# Check current admin consent workflow status
+Invoke-MgGraphRequest -Method GET `
+    -Uri "https://graph.microsoft.com/v1.0/policies/adminConsentRequestPolicy"
+
+# Enable admin consent workflow
+$adminConsentBody = @{
+    isEnabled = $true
+    notifyReviewers = $true
+    remindersEnabled = $true
+    requestDurationInDays = 30
+}
+Invoke-MgGraphRequest -Method PUT `
+    -Uri "https://graph.microsoft.com/v1.0/policies/adminConsentRequestPolicy" `
+    -Body $adminConsentBody
+```
+
+**Manual Configuration:**
+Navigate to: **Entra Admin Center** > Enterprise apps > Consent and permissions > Admin consent settings
+
+---
+
+## External Collaboration (Guest) Settings (CIS 5.1.8.1)
+
+**CIS Control:** 5.1.8.1 - Ensure guest invitations are restricted to specific admin roles
+
+**Description:** Controls who can invite external guests to your organization. By default, all users can invite guests, which creates uncontrolled external access.
+
+**Recommended Value:** `adminsAndGuestInviters` (Only admins and users with the Guest Inviter role)
+
+**Management:**
+
+```powershell
+# Restrict guest invitations to admins and Guest Inviter role only
+$extCollabBody = @{
+    allowInvitesFrom = "adminsAndGuestInviters"
+}
+Invoke-MgGraphRequest -Method PATCH `
+    -Uri "https://graph.microsoft.com/v1.0/policies/authorizationPolicy" `
+    -Body $extCollabBody
+```
+
+**Options:**
+| Value | Description |
+|-------|-------------|
+| `everyone` | Anyone including guests can invite (least secure) |
+| `everyoneExceptGuests` | All members can invite, but not guests |
+| `adminsAndGuestInviters` | Only admins + Guest Inviter role (recommended) |
+| `none` | No one can invite guests (most restrictive) |
+
+---
+
+## Unified Audit Logging (CIS 6.1.1)
+
+**CIS Control:** 6.1.1 - Ensure Microsoft 365 audit log search is enabled
+
+**Description:** Unified audit logging records user and admin activity across Microsoft 365 services. This is critical for security monitoring, incident response, and compliance.
+
+**Recommended Value:** `Enabled` (UnifiedAuditLogIngestionEnabled = $true)
+
+**⚠️ Important:** Auditing is **NOT enabled by default** for Business Basic, Business Standard, and Business Premium licenses. It must be manually enabled.
+
+**Management:**
+
+```powershell
+# Connect to Exchange Online
+Connect-ExchangeOnline -ShowBanner:$false
+
+# Check audit logging status
+Get-AdminAuditLogConfig | Format-List UnifiedAuditLogIngestionEnabled
+
+# Enable audit logging
+Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true
+```
+
+**Impact:**
+- When **Enabled**: All user/admin activities are recorded and searchable for 180 days (default)
+- When **Disabled**: No audit trail — severely impacts incident response and compliance reporting
+
+**Compliance Relevance:** Required for SOC 2, ISO 27001, HIPAA, GDPR, and virtually all compliance frameworks.
+
+---
+
+## External Email Forwarding (CIS 6.5.3)
+
+**CIS Control:** 6.5.3 - Ensure automatic external email forwarding is disabled
+
+**Description:** Automatic email forwarding to external domains is a common data exfiltration technique. Attackers who compromise an account often set up forwarding rules to silently copy emails to external addresses.
+
+**Recommended Value:** AutoForwardingMode = `Off` on all outbound spam filter policies
+
+**Management:**
+
+```powershell
+# Check current auto-forwarding settings
+Get-HostedOutboundSpamFilterPolicy | Select-Object Name, AutoForwardingMode
+
+# Disable auto-forwarding on all outbound spam policies
+Get-HostedOutboundSpamFilterPolicy | ForEach-Object {
+    Set-HostedOutboundSpamFilterPolicy -Identity $_.Name -AutoForwardingMode Off
+}
+
+# Also disable on Default remote domain
+Set-RemoteDomain -Identity Default -AutoForwardEnabled $false
+
+# Check remote domain settings
+Get-RemoteDomain | Select-Object DomainName, AutoForwardEnabled
+```
+
+**Impact:**
+- When **Off**: Users cannot create inbox rules or mailbox forwarding to external addresses
+- When **On**: Compromised accounts can silently exfiltrate email data
+
+---
+
+## Authenticated SMTP (CIS 6.5.1)
+
+**CIS Control:** 6.5.1 - Ensure SMTP AUTH is disabled
+
+**Description:** SMTP AUTH (Authenticated SMTP) is a legacy protocol that doesn't support modern authentication or Conditional Access policies. It should be disabled organization-wide unless specifically required for legacy applications.
+
+**Recommended Value:** SmtpClientAuthenticationDisabled = `$true` (org-level + per-mailbox)
+
+**Management:**
+
+```powershell
+# Disable SMTP AUTH at organization level
+Set-TransportConfig -SmtpClientAuthenticationDisabled $true
+
+# Verify
+Get-TransportConfig | Select-Object SmtpClientAuthenticationDisabled
+
+# Disable per-mailbox (safety net)
+Get-CASMailbox -ResultSize Unlimited | Where-Object { $_.SmtpClientAuthenticationDisabled -ne $true } |
+    ForEach-Object { Set-CASMailbox -Identity $_.Identity -SmtpClientAuthenticationDisabled $true }
+```
+
+---
+
+## SharePoint & OneDrive Security (CIS 7.2.x)
+
+### Legacy Authentication Protocols (CIS 7.2.10)
+
+**CIS Control:** 7.2.10 - Ensure that legacy authentication protocols are disabled for SharePoint
+
+**Description:** Legacy auth protocols (e.g., older Office clients, third-party apps using basic auth) bypass Conditional Access and MFA.
+
+**Recommended Value:** `isLegacyAuthProtocolsEnabled = false`
+
+```powershell
+# Check via Graph
+$spo = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/admin/sharepoint/settings"
+$spo.isLegacyAuthProtocolsEnabled  # Should be False
+
+# Disable legacy auth
+Invoke-MgGraphRequest -Method PATCH -Uri "https://graph.microsoft.com/beta/admin/sharepoint/settings" `
+    -Body @{ isLegacyAuthProtocolsEnabled = $false }
+```
+
+### External Sharing (CIS 7.2.1)
+
+**CIS Control:** 7.2.1 - Ensure SharePoint external sharing is managed appropriately
+
+**Recommended Value:** `externalUserSharingOnly` (New and existing guests — requires authentication)
+
+| Level | Value | Description |
+|-------|-------|-------------|
+| Most Open | `externalUserAndGuestSharing` | Anyone links (no authentication) |
+| Recommended | `externalUserSharingOnly` | New and existing guests (requires sign-in) |
+| Restrictive | `existingExternalUserSharingOnly` | Only guests already in directory |
+| Most Secure | `disabled` | No external sharing |
+
+```powershell
+# Set sharing to authenticated guests only
+Invoke-MgGraphRequest -Method PATCH -Uri "https://graph.microsoft.com/beta/admin/sharepoint/settings" `
+    -Body @{ sharingCapability = "externalUserSharingOnly" }
+```
+
+### Default Sharing Link Type (CIS 7.3.4)
+
+**CIS Control:** 7.3.4 - Ensure default sharing link type is set to Specific People
+
+**Recommended Value:** `specificPeople`
+
+```powershell
+# Set default sharing link to Specific People (most restrictive)
+Invoke-MgGraphRequest -Method PATCH -Uri "https://graph.microsoft.com/beta/admin/sharepoint/settings" `
+    -Body @{ defaultSharingLinkType = "specificPeople" }
+```
+
+---
+
+## Release Preferences (CIS 1.3.3)
+
+**CIS Control:** 1.3.3 - Ensure release preferences are set appropriately
+
+**Description:** Release preferences control how your organization receives Microsoft 365 feature updates. Targeted release for select users allows IT admins to preview and prepare for changes.
+
+**Recommended Value:** `Targeted Release for select users` (add IT admins/helpdesk)
+
+**Manual Configuration Required:**
+Navigate to: **M365 Admin Center** > Settings > Org settings > Organization profile > **Release preferences**
+
+**Options:**
+| Option | Description |
+|--------|-------------|
+| Standard release | Updates released to all users simultaneously |
+| Targeted release for everyone | All users get early access (risky for large orgs) |
+| **Targeted release for select users** | **Recommended** — IT admins preview first |
+
+**Note:** This setting cannot be configured via Graph API or PowerShell — manual action required.
+
+---
+
+## Idle Session Timeout (CIS 1.3.6)
+
+**CIS Control:** 1.3.6 - Ensure idle session timeout is configured for web apps
+
+**Description:** Configures automatic sign-out for inactive users accessing Microsoft 365 web apps. Prevents unauthorized access from unattended sessions.
+
+**Recommended Value:** Sign out after **1 hour** of inactivity (or per organizational policy)
+
+**Manual Configuration Required:**
+
+**Option A - M365 Admin Center:**
+Navigate to: **M365 Admin Center** > Settings > Org settings > Security & privacy > **Idle session timeout**
+- ✅ Enable "Sign out inactive users"
+- Set timeout period (e.g., 1 hour)
+
+**Option B - Conditional Access (more granular):**
+Navigate to: **Entra Admin Center** > Identity > Protection > Conditional Access
+- Create policy with Session controls > Sign-in frequency
+
+```
+Conditional Access Policy:
+  Users: All users
+  Cloud apps: Office 365
+  Session: Sign-in frequency = 1 hour
+```
+
+---
+
+## Customer Lockbox (CIS 1.3.7)
+
+**CIS Control:** 1.3.7 - Ensure Customer Lockbox feature is enabled
+
+**Description:** Customer Lockbox ensures that Microsoft engineers cannot access your content without your explicit approval during support operations. This provides an additional layer of data sovereignty.
+
+**Recommended Value:** `Enabled`
+
+**License Required:** Microsoft 365 E5, E5 Compliance, or F5 Compliance add-on
+
+**Manual Configuration Required:**
+Navigate to: **M365 Admin Center** > Settings > Org settings > Security & privacy > **Customer lockbox**
+- ✅ Check "Require approval for all data access requests"
+
+**Note:** Not available on Business Standard/Premium licenses. If E5 is available, this should be enabled.
+
+---
+
+## Quick Reference: CIS M365 Benchmark Compliance
+
+**Last Updated:** February 2026
+**Benchmark:** CIS Microsoft 365 Foundations Benchmark v4.0
+
+### Automated Settings (Applied by admincenterconfig.ps1)
+
+| CIS Control | Setting | Recommended | Status |
+|-------------|---------|------------|--------|
+| 1.1.4 | Password expiration | Never expire (with MFA) | ✅ Automated |
+| 1.3.1 | Email-based subscriptions | ❌ Disabled | ✅ Automated |
+| 1.3.2 | Email verified users can join | ❌ Disabled | ✅ Automated |
+| 1.3.4 | Self-service purchases (27 products) | ❌ Disabled (all) | ✅ Automated |
+| 1.3.5 | Block legacy MSOL PowerShell | ✅ Enabled | ✅ Automated |
+| 5.1.5.1 | User consent to apps | Verified publishers only | ✅ Automated |
+| 5.1.5.2 | Admin consent workflow | ✅ Enabled | ✅ Automated |
+| 5.1.5.3 | Users can register apps | ❌ Disabled | ✅ Automated |
+| 5.1.8.1 | Guest invitations | Admins + Guest Inviter only | ✅ Automated |
+| 6.1.1 | Unified audit logging | ✅ Enabled | ✅ Automated |
+| 6.5.1 | Authenticated SMTP | ❌ Disabled | ✅ Automated |
+| 6.5.3 | External email forwarding | ❌ Disabled (Off) | ✅ Automated |
+| 7.2.1 | SharePoint external sharing | Authenticated guests only | ✅ Automated |
+| 7.2.10 | SharePoint legacy auth | ❌ Disabled | ✅ Automated |
+| 7.3.4 | Default sharing link type | Specific People | ✅ Automated |
+| — | Users can create security groups | ❌ Disabled | ✅ Automated |
+| — | Users can create tenants | ❌ Disabled | ✅ Automated |
+| — | Users can read Bitlocker keys | ✅ Enabled | ✅ Automated |
+| — | Users can read other users | ✅ Enabled | ✅ Automated |
+
+### Manual Settings (Require Admin Center Configuration)
+
+| CIS Control | Setting | Recommended | Status |
+|-------------|---------|------------|--------|
+| 1.3.3 | Release preferences | Targeted Release for select users | ⚠️ Manual |
+| 1.3.6 | Idle session timeout | 1 hour (web apps) | ⚠️ Manual |
+| 1.3.7 | Customer Lockbox | ✅ Enabled (E5 only) | ⚠️ Manual |
+| 3.1.x | DLP policies | Create for PII, financial, health | ⚠️ Manual |
+| 5.1.2.1 | MFA for all users | Security Defaults or CA policy | ⚠️ Manual |
+| 5.1.2.2 | MFA for admin roles | Phishing-resistant MFA | ⚠️ Manual |
+| 5.1.2.3 | Block legacy authentication | CA policy | ⚠️ Manual |
+| — | User owned apps & services | ❌ Disabled | ⚠️ Manual |
+| — | Copilot agent settings | Restricted | ⚠️ Manual |
+| — | External calendar sharing | Review/Disable | ⚠️ Manual |
 
 **Legend:**
-- ✅ Match = Current setting matches recommendation
-- ⚠️ **Action Required** = Current setting does not match recommendation (security/compliance concern)
-- ℹ️ Manual Check = Setting requires manual review based on business requirements
-- ℹ️ More restrictive = Current setting is more restrictive than recommendation (acceptable)
+- ✅ Automated = Applied by `admincenterconfig.ps1`
+- ⚠️ Manual = Requires manual configuration in admin center
 
 ### Summary
-- **9 of 9 automated settings** match recommendations (100% compliance)
-- **1 setting requires manual review** (External calendar sharing)
-- **0 critical security gaps** (self-service purchases are properly disabled)
+- **19 automated settings** applied by script
+- **10 settings** require manual configuration
+- **15 CIS controls** directly addressed
+- **0 critical security gaps** in automated controls
 
 ---
 
 ## Security & Governance Impact
 
-### High Priority (Disable Recommended)
-- **Self-service trials** - Prevents shadow IT and uncontrolled costs
-- **Self-service purchases** - Prevents unmanaged licensing and budget overruns
-- **User app registration** - Prevents potential security vulnerabilities
-- **External calendar sharing** - Prevents information disclosure via calendar details
+### Critical Priority (CIS Automated)
+- **Unified audit logging** (CIS 6.1.1) - Foundation for all security monitoring and compliance
+- **External email forwarding disabled** (CIS 6.5.3) - Prevents data exfiltration via compromised accounts
+- **User consent restricted** (CIS 5.1.5.1) - Prevents consent phishing attacks
+- **SMTP AUTH disabled** (CIS 6.5.1) - Blocks legacy auth credential attacks
+- **SharePoint legacy auth disabled** (CIS 7.2.10) - Forces modern authentication
 
-### Medium Priority (Configure Based on Needs)
-- **Security group creation** - Balance between governance and user autonomy
-- **Block MSOL PowerShell** - Forces modern authentication and improved security
-- **Tenant creation** - Prevents unauthorized tenant sprawl
+### High Priority (CIS Automated)
+- **Self-service trials & purchases disabled** (CIS 1.3.4) - Prevents shadow IT
+- **User app registration disabled** (CIS 5.1.5.3) - Prevents unauthorized app access
+- **Guest invitations restricted** (CIS 5.1.8.1) - Controls external access
+- **Password never expires** (CIS 1.1.4) - Aligns with NIST 800-63B when MFA is enforced
+- **SharePoint sharing restricted** (CIS 7.2.1) - Prevents anonymous external sharing
+
+### High Priority (Manual Required)
+- **MFA enforcement** (CIS 5.1.2.1) - Essential security control
+- **Idle session timeout** (CIS 1.3.6) - Prevents unauthorized access from unattended sessions
+- **Customer Lockbox** (CIS 1.3.7) - Data sovereignty during support operations
+
+### Medium Priority
+- **Block MSOL PowerShell** (CIS 1.3.5) - Forces modern authentication
+- **Security group creation disabled** - Governance control
+- **Tenant creation disabled** - Prevents tenant sprawl
+- **Release preferences** (CIS 1.3.3) - IT admin preview of changes
+- **DLP policies** (CIS 3.1.x) - Data protection
 
 ### Low Priority (Usually Enable)
 - **Bitlocker key self-service** - Reduces helpdesk burden
-- **Read other users** - Enables collaboration and communication
+- **Read other users** - Enables collaboration
 
 ---
 
 ## Compliance Considerations
 
-- **Data Governance:** Disabling self-service purchases helps maintain data governance policies
-- **Cost Control:** Prevents users from making unauthorized purchases on corporate accounts
-- **Shadow IT Prevention:** Disabling trials prevents users from creating unmanaged workloads
-- **Audit Trail:** Centralized IT management enables better audit logging and compliance reporting
+### CIS Microsoft 365 Foundations Benchmark v4.0
+This configuration addresses the following CIS benchmark sections:
+- **Section 1** - Account/Authentication: Password policy, MFA, release preferences, lockbox
+- **Section 3** - Data Management: DLP policies, sharing controls
+- **Section 5** - Application Permissions: User consent, admin consent, app registration, guest access
+- **Section 6** - Exchange Online: Audit logging, SMTP AUTH, email forwarding
+- **Section 7** - SharePoint/OneDrive: External sharing, legacy auth, default link type
+
+### Regulatory Alignment
+- **NIST 800-63B:** Password policy (no expiration with MFA)
+- **SOC 2 Type II:** Audit logging, access controls, change management
+- **ISO 27001:** Information security management controls (A.9, A.12, A.13)
+- **GDPR:** Data protection, access controls, audit trail
+- **HIPAA:** Access controls (§164.312), audit controls (§164.312(b))
+- **SOX:** Segregation of duties, approval workflows, audit trail
 
 ---
 
 ## Next Steps
 
-### ✅ All Security Settings Validated
+### ✅ CIS Benchmark Security Settings Applied
 
-**Congratulations!** All authorization policy settings now match security best practices:
+**Script Coverage:** 19 automated settings across 15 CIS controls
 
-- Email-based subscriptions: Properly disabled
-- Email verified users can join: Properly disabled ✅
-- Block legacy MSOL PowerShell: Properly enabled ✅
-- Self-service purchases: All 27 products properly disabled
-- User app registration: Properly disabled
-- Security group creation: Properly disabled
-- Tenant creation: Properly disabled
-- Bitlocker self-service: Properly enabled
-- User directory reading: Properly enabled
+**Automated Controls Applied:**
+- ✅ Authorization policy (email subscriptions, verified users, MSOL block)
+- ✅ Password expiration policy (NIST 800-63B aligned)
+- ✅ User consent restricted to verified publishers
+- ✅ Admin consent workflow enabled
+- ✅ Guest invitations restricted to admin roles
+- ✅ SMTP AUTH disabled (org-level + per-mailbox)
+- ✅ Unified audit logging enabled
+- ✅ External email forwarding blocked
+- ✅ SharePoint legacy auth disabled
+- ✅ SharePoint sharing restricted to authenticated guests
+- ✅ Default sharing link set to Specific People
+- ✅ Self-service purchases disabled (27 products)
+- ✅ User permissions restricted (apps, groups, tenants)
+
+**Manual Actions Remaining:**
+- ⏭️ Configure release preferences (Targeted Release for select users)
+- ⏭️ Enable idle session timeout (1 hour)
+- ⏭️ Enable Customer Lockbox (if E5 licensed)
+- ⏭️ Create DLP policies in Microsoft Purview
+- ⏭️ Verify MFA enforcement (Security Defaults or Conditional Access)
+- ⏭️ Configure user owned apps & services
+- ⏭️ Review Copilot agent settings
+- ⏭️ Review external calendar sharing
 
 ### Documentation Tasks
-
-1. ✅ Export completed (January 17, 2026 16:10:41)
-2. ✅ Configuration reviewed against recommendations
-3. ✅ Applied security hardening fixes (February 2, 2026)
-4. ⏭️ Re-export configuration to verify changes
-5. ⏭️ Document in change management system
-6. ⏭️ Include in master IAC documentation
+1. ✅ Export completed (January 17, 2026)
+2. ✅ Configuration reviewed against CIS M365 Benchmark v4.0
+3. ✅ Applied CIS-aligned security hardening (February 2026)
+4. ⏭️ Complete manual configuration items
+5. ⏭️ Re-export configuration to verify changes
+6. ⏭️ Document in change management system
+7. ⏭️ Include in master IAC documentation
+8. ⏭️ Schedule periodic CIS benchmark re-assessment (quarterly)
 
 ---
 
@@ -541,6 +954,8 @@ This will create: `/Users/jon/Desktop/BaslineSetup/Admin-Center-Configuration.js
 
 ## References
 
+- [CIS Microsoft 365 Foundations Benchmark v4.0](https://www.cisecurity.org/benchmark/microsoft_365)
+- [NIST SP 800-63B Digital Identity Guidelines](https://pages.nist.gov/800-63-3/sp800-63b.html)
 - [Microsoft 365 admin center documentation](https://learn.microsoft.com/microsoft-365/admin/)
 - [Manage self-service purchases](https://learn.microsoft.com/microsoft-365/commerce/subscriptions/manage-self-service-purchases-admins)
 - [Authorization policy in Azure AD](https://learn.microsoft.com/graph/api/resources/authorizationpolicy)
@@ -549,3 +964,11 @@ This will create: `/Users/jon/Desktop/BaslineSetup/Admin-Center-Configuration.js
 - [Retirement of MSOnline and AzureAD PowerShell modules](https://techcommunity.microsoft.com/t5/microsoft-entra-azure-ad-blog/important-azure-ad-graph-retirement-and-powershell-module/ba-p/3848270)
 - [Azure AD B2B collaboration](https://learn.microsoft.com/azure/active-directory/external-identities/what-is-b2b)
 - [Zero Trust security model](https://learn.microsoft.com/security/zero-trust/)
+- [Configure user consent to applications](https://learn.microsoft.com/entra/identity/enterprise-apps/configure-user-consent)
+- [Configure admin consent workflow](https://learn.microsoft.com/entra/identity/enterprise-apps/configure-admin-consent-workflow)
+- [Turn auditing on or off](https://learn.microsoft.com/purview/audit-log-enable-disable)
+- [Control automatic external email forwarding](https://learn.microsoft.com/defender-office-365/outbound-spam-policies-external-email-forwarding)
+- [Manage sharing settings for SharePoint](https://learn.microsoft.com/sharepoint/turn-external-sharing-on-or-off)
+- [Set password expiration policy](https://learn.microsoft.com/microsoft-365/admin/manage/set-password-expiration-policy)
+- [Release options in Microsoft 365](https://learn.microsoft.com/microsoft-365/admin/manage/release-options-in-office-365)
+- [Customer Lockbox](https://learn.microsoft.com/purview/customer-lockbox-requests)
