@@ -98,16 +98,22 @@ try {
     # CIS 5.1.5.2 - Enable admin consent workflow
     $consentWorkflow = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/policies/adminConsentRequestPolicy"
     if (-not $consentWorkflow.isEnabled) {
-        $adminConsentBody = @{
+        # Use PATCH to enable without overwriting existing reviewers
+        Invoke-MgGraphRequest -Method PATCH -Uri "https://graph.microsoft.com/v1.0/policies/adminConsentRequestPolicy" -Body @{
             isEnabled = $true
             notifyReviewers = $true
             remindersEnabled = $true
             requestDurationInDays = 30
         }
-        Invoke-MgGraphRequest -Method PUT -Uri "https://graph.microsoft.com/v1.0/policies/adminConsentRequestPolicy" -Body $adminConsentBody
         Write-Host "  ✓ Admin consent workflow enabled" -ForegroundColor Green
     } else {
         Write-Host "  ✓ Admin consent workflow already enabled" -ForegroundColor Green
+    }
+    # Warn if no reviewers are configured (workflow is useless without them)
+    if ($consentWorkflow.reviewers.Count -eq 0) {
+        Write-Host "  ⚠️  WARNING: No reviewers configured for admin consent workflow!" -ForegroundColor Red
+        Write-Host "  ➜ Navigate: Entra Admin Center > Enterprise apps > Admin consent settings" -ForegroundColor Yellow
+        Write-Host "  ➜ Add Global Admin or Application Admin as reviewer" -ForegroundColor Yellow
     }
 }
 catch {
@@ -194,8 +200,23 @@ try {
     }
 }
 catch {
-    Write-Host "  ⚠️ Audit logging error: $($_.Exception.Message)" -ForegroundColor Yellow
-    Write-Host "  ℹ️  For Business Standard/Premium, audit logging must be enabled manually" -ForegroundColor Gray
+    Write-Host "  ⚠️ Audit logging error (attempt 1): $($_.Exception.Message)" -ForegroundColor Yellow
+    Write-Host "  Retrying in 5 seconds..." -ForegroundColor Gray
+    Start-Sleep -Seconds 5
+    try {
+        $auditConfig = Get-AdminAuditLogConfig
+        if (-not $auditConfig.UnifiedAuditLogIngestionEnabled) {
+            Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true -ErrorAction Stop
+            Write-Host "  ✓ Unified audit logging ENABLED (on retry)" -ForegroundColor Green
+        } else {
+            Write-Host "  ✓ Unified audit logging already enabled" -ForegroundColor Green
+        }
+    }
+    catch {
+        Write-Host "  ❌ Audit logging failed after retry: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "  ℹ️  For Business Standard/Premium, audit logging must be enabled manually" -ForegroundColor Gray
+        Write-Host "  ℹ️  Run: Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled `$true" -ForegroundColor Gray
+    }
 }
 
 #############################################################################
@@ -270,7 +291,7 @@ try {
     }
 
     if ($changed) {
-        Invoke-MgGraphRequest -Method PATCH -Uri "https://graph.microsoft.com/beta/admin/sharepoint/settings" -Body $spoUpdateBody
+        Invoke-MgGraphRequest -Method PATCH -Uri "https://graph.microsoft.com/beta/admin/sharepoint/settings" -Body $spoUpdateBody | Out-Null
         if ($spoUpdateBody.ContainsKey("isLegacyAuthProtocolsEnabled")) {
             Write-Host "  ✓ Legacy authentication protocols disabled for SharePoint" -ForegroundColor Green
         }
@@ -318,16 +339,20 @@ Write-Host ""
 Write-Host "=== [10/10] Self-Service Purchase Policies ===" -ForegroundColor Cyan
 Write-Host "Applying CIS 1.3.4..." -ForegroundColor Gray
 
+# MSCommerce must run in a subprocess to avoid Microsoft.Identity.Client DLL version
+# conflict with Exchange Online Management module (loaded in Section 5).
+# The DLL is locked in memory once loaded — only a new process can load MSCommerce cleanly.
+Write-Host "  ℹ️  Running MSCommerce in subprocess to avoid DLL conflict..." -ForegroundColor Gray
+
+$msCommerceScript = @'
 try {
     Import-Module MSCommerce -ErrorAction Stop
     Connect-MSCommerce -ErrorAction Stop
 
     # Disable self-service purchases (AllowSelfServicePurchase)
-    Write-Host "  Processing AllowSelfServicePurchase policies..." -ForegroundColor Yellow
     $selfServiceProducts = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase
     $disabledSelfService = 0
     $alreadyDisabledSelfService = 0
-
     foreach ($product in $selfServiceProducts) {
         if ($product.PolicyValue -eq "Enabled") {
             Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $product.ProductId -Enabled $false
@@ -339,10 +364,8 @@ try {
     }
 
     # Disable admin-initiated trials (AllowAdminTrialPurchase)
-    Write-Host "  Processing AllowAdminTrialPurchase policies..." -ForegroundColor Yellow
     $disabledAdminTrial = 0
     $alreadyDisabledAdminTrial = 0
-    
     try {
         $adminTrialProducts = Get-MSCommerceProductPolicies -PolicyId AllowAdminTrialPurchase -ErrorAction Stop
         foreach ($product in $adminTrialProducts) {
@@ -354,8 +377,7 @@ try {
                 $alreadyDisabledAdminTrial++
             }
         }
-    }
-    catch {
+    } catch {
         Write-Host "    ℹ️  Admin trial policies not available in this tenant" -ForegroundColor Gray
     }
 
@@ -364,18 +386,30 @@ try {
     Write-Host "    Self-Service: $disabledSelfService newly disabled, $alreadyDisabledSelfService already disabled" -ForegroundColor White
     Write-Host "    Admin Trials: $disabledAdminTrial newly disabled, $alreadyDisabledAdminTrial already disabled" -ForegroundColor White
 
-    # Final verification
     $finalSelfService = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | Where-Object { $_.PolicyValue -eq "Enabled" }
     if ($finalSelfService.Count -eq 0) {
         Write-Host "  ✅ All self-service purchases DISABLED" -ForegroundColor Green
     } else {
         Write-Host "  ⚠️ $($finalSelfService.Count) self-service purchases still enabled" -ForegroundColor Red
     }
-}
-catch {
+} catch {
     Write-Host "  ⚠️ MSCommerce Error: $($_.Exception.Message)" -ForegroundColor Red
-    Write-Host "  ℹ️  MSCommerce may conflict with Exchange Online in the same session" -ForegroundColor Gray
-    Write-Host "  ℹ️  Try running MSCommerce section in a separate PowerShell session" -ForegroundColor Gray
+    exit 1
+}
+'@
+
+$tempScript = [System.IO.Path]::GetTempFileName() -replace '\.tmp$', '.ps1'
+$msCommerceScript | Set-Content -Path $tempScript -Encoding UTF8
+try {
+    $result = & pwsh -NoProfile -File $tempScript 2>&1
+    $result | ForEach-Object { Write-Host $_ }
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  ⚠️ MSCommerce subprocess exited with errors" -ForegroundColor Yellow
+    }
+} catch {
+    Write-Host "  ⚠️ Failed to launch MSCommerce subprocess: $($_.Exception.Message)" -ForegroundColor Red
+} finally {
+    Remove-Item -Path $tempScript -Force -ErrorAction SilentlyContinue
 }
 
 #############################################################################
