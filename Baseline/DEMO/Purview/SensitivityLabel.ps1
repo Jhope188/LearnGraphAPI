@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Creates IAC sensitivity labels and publishes them via label policies.
+    Creates IAC sensitivity labels (does NOT publish — use Publish-SensitivityLabelPolicies.ps1).
 
 .DESCRIPTION
     Implements the Purview Practitioner 4-group taxonomy (Public, General, Confidential, Restricted)
@@ -17,9 +17,8 @@
         |- Restricted - Internal      - Encrypted (admin-only template), markings
         +- Restricted - Third Parties - Encrypted (user-defined recipients), markings
 
-    Label Policies:
-      IAC - All Users Label Policy    - Publishes all labels, default=General,
-                                        mandatory labeling, downgrade justification
+    After running this script, publish labels using:
+      .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
 
     Reference:
       https://www.thepurviewpractitioner.com/tools/taxonomy
@@ -35,9 +34,6 @@
 
 .PARAMETER DryRun
     If specified, shows what would be created without making changes.
-
-.PARAMETER SkipPolicies
-    If specified, creates labels only and skips label policy publishing.
 
 .EXAMPLE
     .\SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
@@ -59,10 +55,7 @@ param(
     [string]$AdminEmail,
 
     [Parameter(Mandatory = $false)]
-    [switch]$DryRun,
-
-    [Parameter(Mandatory = $false)]
-    [switch]$SkipPolicies
+    [switch]$DryRun
 )
 
 # Build admin email from domain if not provided
@@ -345,78 +338,13 @@ $restThird = Ensure-Label `
     -EncryptionDoNotForward $true
 
 # ============================================================================
-# LABEL POLICIES - Publish labels to users
+# NEXT STEP: Publish labels using the separate publishing script
 # ============================================================================
-if (-not $SkipPolicies) {
-    Write-Host ""
-    Write-Host "--- Publishing Label Policies ---" -ForegroundColor Magenta
-    Write-Host ""
-
-    # All label display names for the unified policy
-    $allLabelNames = @(
-        "Public",
-        "General",
-        "Confidential",
-        "Confidential - Internal",
-        "Confidential - Third Parties",
-        "Confidential - Reporting",
-        "Restricted",
-        "Restricted - Internal",
-        "Restricted - Third Parties"
-    )
-
-    $policyName = "IAC - All Users Label Policy"
-
-    $existingPolicy = Get-LabelPolicy -Identity $policyName -ErrorAction SilentlyContinue
-
-    if ($existingPolicy) {
-        Write-Host "  [EXISTS] Policy: $policyName" -ForegroundColor Gray
-        Write-Host "           Published labels: $($existingPolicy.Labels -join ', ')" -ForegroundColor Gray
-    } else {
-        if ($DryRun) {
-            Write-Host "  [DRY RUN] Would create policy: $policyName" -ForegroundColor Yellow
-            Write-Host "            Labels: $($allLabelNames -join ', ')" -ForegroundColor Yellow
-        } else {
-            Write-Host "  [CREATING] Policy: $policyName" -ForegroundColor Green
-
-            # Best-practice policy settings:
-            #   ExchangeLocation "All" = publish to all users
-            #   Default label = General (unlabeled content gets classified)
-            #   Mandatory labeling = users must label before saving/sending
-            #   Downgrade justification = users must explain removing/lowering a label
-            $policyParams = @{
-                Name             = $policyName
-                Labels           = $allLabelNames
-                ExchangeLocation = "All"
-                Comment          = "IAC baseline label policy. Publishes all sensitivity labels to all users with mandatory labeling and downgrade justification."
-                Settings         = @(
-                    '{"Key":"mandatory","Value":"true"}',
-                    '{"Key":"requiredowngradejustification","Value":"true"}',
-                    '{"Key":"defaultlabelid","Value":"' + $general.ImmutableId + '"}',
-                    '{"Key":"powerbimandatory","Value":"true"}'
-                )
-            }
-
-            New-LabelPolicy @policyParams
-            Write-Host "  [OK] Policy created and published to all users" -ForegroundColor Green
-        }
-    }
-
-    # ========================================================================
-    # IMPORTANT: Propagation delay
-    # ========================================================================
-    Write-Host ""
-    Write-Host "================================================================" -ForegroundColor Yellow
-    Write-Host "  IMPORTANT: Label policies take up to 24 hours to propagate" -ForegroundColor Yellow
-    Write-Host "  to all users and applications. During this time:" -ForegroundColor Yellow
-    Write-Host "    - Labels may not appear in Office apps immediately" -ForegroundColor Yellow
-    Write-Host "    - Default label and mandatory settings sync gradually" -ForegroundColor Yellow
-    Write-Host "    - Power BI and SharePoint may take longer" -ForegroundColor Yellow
-    Write-Host "================================================================" -ForegroundColor Yellow
-} else {
-    Write-Host ""
-    Write-Host "  [SKIP] Label policies skipped (run without -SkipPolicies to publish)" -ForegroundColor Gray
-}
+Write-Host ""
+Write-Host "================================================================" -ForegroundColor Yellow
+Write-Host "  Labels created. To publish, run:" -ForegroundColor Yellow
+Write-Host "  .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain `"$TenantDomain`"" -ForegroundColor Yellow
+Write-Host "================================================================" -ForegroundColor Yellow
 
 # ============================================================================
 # SUMMARY
@@ -437,23 +365,14 @@ Write-Host "    Restricted (container)          - Groups & Sites scope" -Foregro
 Write-Host "      +- Internal                   - Encrypted (admin template)" -ForegroundColor White
 Write-Host "      +- Third Parties              - Encrypted (user-defined)" -ForegroundColor White
 Write-Host ""
-if (-not $SkipPolicies) {
-    Write-Host "  Policy:" -ForegroundColor White
-    Write-Host "    IAC - All Users Label Policy" -ForegroundColor White
-    Write-Host "      Default Label:              General" -ForegroundColor White
-    Write-Host "      Mandatory Labeling:         Yes" -ForegroundColor White
-    Write-Host "      Downgrade Justification:    Yes" -ForegroundColor White
-    Write-Host "      Published To:               All Users" -ForegroundColor White
-    Write-Host ""
-}
 Write-Host "================================================================" -ForegroundColor Green
-Write-Host "  Complete" -ForegroundColor Green
+Write-Host "  Label Creation Complete" -ForegroundColor Green
 Write-Host "================================================================" -ForegroundColor Green
 
-# Do NOT auto-disconnect - user may want to verify
+# Do NOT auto-disconnect - user may want to verify or publish
 Write-Host ""
-Write-Host "  To verify:  Get-Label | Sort Priority | FT DisplayName, Priority, EncryptionEnabled, ContentType" -ForegroundColor Gray
-Write-Host "  To verify:  Get-LabelPolicy | FL Name, Labels, Settings" -ForegroundColor Gray
-Write-Host "  To disconnect: Disconnect-ExchangeOnline -Confirm:`$false" -ForegroundColor Gray
+Write-Host "  To verify labels:  Get-Label | Sort-Object Priority | FT DisplayName, Priority, EncryptionEnabled, ContentType" -ForegroundColor Gray
+Write-Host "  To publish:        .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain `"$TenantDomain`"" -ForegroundColor Gray
+Write-Host "  To disconnect:     Disconnect-ExchangeOnline -Confirm:`$false" -ForegroundColor Gray
 Write-Host ""
 

@@ -92,7 +92,8 @@ If you need to ensure the checkbox appears checked in the portal, open the label
 | File | Purpose |
 |------|---------|
 | `Enable-SensitivityLabelsPrerequisites.ps1` | Enables MIP labels in Entra ID, SharePoint, and runs AzureADLabelSync. **Run first.** |
-| `SensitivityLabel.ps1` | Creates all 9 labels and publishes the unified label policy. **Run second.** |
+| `SensitivityLabel.ps1` | Creates all 9 labels (does NOT publish). **Run second.** |
+| `Publish-SensitivityLabelPolicies.ps1` | Publishes labels via 3 tiered policies. **Run third.** |
 | `IAC-Sensitivity-Labels-Documentation.md` | This document |
 
 ---
@@ -295,7 +296,7 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 Microsoft Purview supports two approaches to publishing labels. The right choice depends on your governance requirements.
 
-#### Option A: Single Unified Policy (Current IAC Deployment)
+#### Option A: Single Unified Policy (Simple Alternative)
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -323,7 +324,7 @@ Microsoft Purview supports two approaches to publishing labels. The right choice
 
 ---
 
-#### Option B: Tiered Policy Architecture (Recommended for Granular Control)
+#### Option B: Tiered Policy Architecture (Current IAC Deployment)
 
 If you need to **exclude certain groups from specific label classifications** (e.g., contractors shouldn't see Restricted labels, or the finance team needs a special "Confidential - Financial" label), use multiple policies:
 
@@ -336,33 +337,37 @@ If you need to **exclude certain groups from specific label classifications** (e
 │  Default:   General                          │
 │  Mandatory: Yes                              │
 │  Downgrade: Justification required           │
+│  Power BI:  Mandatory                        │
 │                                              │
 │  → Everyone gets Public + General            │
 └──────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────┐
-│  Policy 2: IAC - Confidential Policy         │
+│  Policy 2: IAC - Confidential Label Policy   │
 │  ─────────────────────────────────────       │
-│  Labels:    Confidential (parent + children) │
+│  Labels:    Confidential children only       │
+│             (parent auto-included)           │
 │  Scope:     All Users                        │
-│             EXCEPT: SG-Contractors           │
+│             (exclude via -ExcludeFrom...)    │
 │  Default:   None (inherits from Policy 1)    │
 │  Mandatory: No (inherits from Policy 1)      │
 │                                              │
 │  → Internal staff see Confidential labels    │
-│  → Contractors do not                        │
+│  → Can exclude contractors later             │
 └──────────────────────────────────────────────┘
 
 ┌──────────────────────────────────────────────┐
-│  Policy 3: IAC - Restricted Policy           │
+│  Policy 3: IAC - Restricted Label Policy     │
 │  ─────────────────────────────────────       │
-│  Labels:    Restricted (parent + children)   │
-│  Scope:     SG-Restricted-Users              │
-│             (e.g., Executives, Legal, HR)    │
+│  Labels:    Restricted children only         │
+│             (parent auto-included)           │
+│  Scope:     All Users                        │
+│             (exclude via -ExcludeFrom...)    │
 │  Default:   None                             │
 │  Mandatory: No (inherits from Policy 1)      │
 │                                              │
-│  → Only named groups see Restricted labels   │
+│  → All users see Restricted by default       │
+│  → Can restrict to named groups later        │
 └──────────────────────────────────────────────┘
 ```
 
@@ -406,32 +411,22 @@ When a user is in scope of **multiple label policies**, Microsoft Purview resolv
 | **500+ users, contractors, departments** | Option B — Tiered policies from day one |
 | **Regulated industry (finance, healthcare, legal)** | Option B — With department-specific restricted labels |
 
-### 5.4 How to Convert from Single to Tiered (Future Migration)
+### 5.4 New-LabelPolicy Gotchas (Lessons Learned)
 
-If you start with Option A and later need to split:
+These were discovered during deployment and are baked into `Publish-SensitivityLabelPolicies.ps1`:
 
-```powershell
-# 1. Create the new targeted policies FIRST (they won't conflict yet)
-New-LabelPolicy -Name "IAC - Restricted Policy" `
-    -Labels "Restricted","Restricted - Internal","Restricted - Third Parties" `
-    -ExchangeLocation "SG-Restricted-Users" `
-    -Comment "Restricted labels for authorised users only"
-
-# 2. Remove Restricted labels from the unified policy
-Set-LabelPolicy -Identity "IAC - All Users Label Policy" `
-    -RemoveLabels "Restricted","Restricted - Internal","Restricted - Third Parties"
-
-# 3. Verify the split
-Get-LabelPolicy | Format-List Name, Labels
-```
-
-**Wait 24 hours** between creating the new policy and removing labels from the old one, to avoid a window where Restricted labels are invisible to everyone.
+| Gotcha | Detail |
+|--------|--------|
+| **Parent labels can't be explicitly published** | `New-LabelPolicy -Labels "Confidential"` fails with `"Label group(s) can not be published"`. Parent labels are auto-included as navigation headers when any of their children are published. Only list child labels. |
+| **Use internal Name, not DisplayName** | `New-LabelPolicy -Labels "Confidential - Internal"` fails. The `-Labels` parameter requires the internal `Name` property (e.g. `Confidential-Internal`). Check with `Get-Label \| FT Name, DisplayName`. |
+| **Advanced settings must be applied separately** | `New-LabelPolicy -Settings` doesn't accept a hashtable for settings like `mandatory`, `defaultlabelid`, etc. Create the policy first, then apply via `Set-LabelPolicy -Identity "name" -AdvancedSettings @{ mandatory="true" }`. |
+| **Policy priority is auto-assigned** | Policies get `Priority` values in creation order (0, 1, 2). Create the Base policy first to ensure it gets Priority 0 (highest). |
 
 ---
 
 ## 6. Publishing Walkthrough
 
-### Step-by-Step: Publishing with the Single Unified Policy
+### Step-by-Step: Tiered Policy Deployment
 
 #### Step 1: Run Prerequisites (One-Time)
 
@@ -442,7 +437,7 @@ pwsh ./Enable-SensitivityLabelsPrerequisites.ps1 -TenantId "<your-tenant-id>"
 
 Wait **24 hours** for propagation.
 
-#### Step 2: Dry Run
+#### Step 2: Dry Run Labels
 
 ```powershell
 ./SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -DryRun
@@ -450,13 +445,12 @@ Wait **24 hours** for propagation.
 
 Review the output. Confirm:
 - All 9 labels detected or would be created
-- Policy name and settings look correct
 - Admin email is correct (defaults to `admin@<TenantDomain>`)
 
-#### Step 3: Create Labels Only (No Policy)
+#### Step 3: Create Labels
 
 ```powershell
-./SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -SkipPolicies
+./SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
 ```
 
 After running, verify in the **Purview portal**:
@@ -465,23 +459,40 @@ After running, verify in the **Purview portal**:
 3. Click each child → verify encryption type and content markings
 4. Confirm parent labels show Groups & Sites protection
 
-#### Step 4: Publish the Label Policy
+#### Step 4: Dry Run Policies
 
 ```powershell
-./SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
+./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -DryRun
 ```
 
-The script creates **"IAC - All Users Label Policy"** with:
+Confirm:
+- All 9 labels resolve (`[OK]`)
+- 3 policies would be created with correct label assignments
+- No exclusions unless you passed `-ExcludeFromConfidential` or `-ExcludeFromRestricted`
 
-| Setting | Value |
-|---------|-------|
-| Default Label | General |
-| Mandatory Labelling | Yes |
-| Downgrade Justification | Yes |
-| Power BI Mandatory | Yes |
-| Exchange Location | All |
+#### Step 5: Publish Policies
 
-#### Step 5: Wait for Propagation
+```powershell
+./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
+```
+
+The script creates 3 tiered policies:
+
+| Policy | Labels | Priority | Settings |
+|--------|--------|----------|----------|
+| IAC - Base Label Policy | Public, General | 0 | Default=General, Mandatory=Yes, Downgrade=Yes, PowerBI=Yes |
+| IAC - Confidential Label Policy | Confidential children (parent auto-included) | 1 | Scope: All Users |
+| IAC - Restricted Label Policy | Restricted children (parent auto-included) | 2 | Scope: All Users |
+
+#### Step 5a: Publish with Exclusions (Optional)
+
+```powershell
+./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com" `
+    -ExcludeFromConfidential @("SG-Contractors@acme2m365.onmicrosoft.com") `
+    -ExcludeFromRestricted @("SG-Contractors@acme2m365.onmicrosoft.com")
+```
+
+#### Step 6: Wait for Propagation
 
 Label policies propagate over **up to 24 hours** across:
 
@@ -494,7 +505,7 @@ Label policies propagate over **up to 24 hours** across:
 | SharePoint Online | 12–24 hours |
 | Power BI | 12–24 hours |
 
-#### Step 6: Verify End-User Experience
+#### Step 7: Verify End-User Experience
 
 After propagation:
 
@@ -511,27 +522,39 @@ After propagation:
 ### 7.1 Script Parameters
 
 ```
-SensitivityLabel.ps1
+SensitivityLabel.ps1  (Label Creation Only)
 
   -TenantDomain  [Required]  Your *.onmicrosoft.com domain
   -AdminEmail    [Optional]  Admin email for Restricted-Internal encryption
                              Defaults to admin@<TenantDomain>
   -DryRun        [Optional]  Show what would happen without making changes
-  -SkipPolicies  [Optional]  Create labels only, skip policy publishing
 ```
 
-### 7.2 What the Script Does (Idempotent)
+```
+Publish-SensitivityLabelPolicies.ps1  (Policy Publishing)
 
-The script is **safe to re-run**. For each label:
+  -TenantDomain             [Required]  Your *.onmicrosoft.com domain
+  -ExcludeFromConfidential  [Optional]  Group emails to exclude from Confidential policy
+  -ExcludeFromRestricted    [Optional]  Group emails to exclude from Restricted policy
+  -DryRun                   [Optional]  Show what would happen without making changes
+```
+
+### 7.2 What the Scripts Do (Idempotent)
+
+Both scripts are **safe to re-run**.
+
+**SensitivityLabel.ps1** — For each label:
 - If the label **exists** → skips it (`[EXISTS]`)
 - If the label **doesn't exist** → creates it (`[CREATING]`)
 
-For the policy:
-- If the policy **exists** → skips it
-- If the policy **doesn't exist** → creates it
+**Publish-SensitivityLabelPolicies.ps1** — For each policy:
+- If the policy **exists** → skips it (`[EXISTS]`)
+- If the policy **doesn't exist** → creates it (`[CREATING]`)
+- Advanced settings (mandatory, default label, etc.) are applied via `Set-LabelPolicy -AdvancedSettings` after creation
 
-### 7.3 What the Script Does NOT Do
+### 7.3 What the Scripts Do NOT Do
 
+- **SensitivityLabel.ps1 does not publish** — use `Publish-SensitivityLabelPolicies.ps1` separately
 - **Does not modify existing labels** — if you need to change encryption or markings on an existing label, use `Set-Label` manually
 - **Does not delete labels** — label deletion must be done manually via `Remove-Label`
 - **Does not handle the duplicate Restricted label** — that was a one-time cleanup (see Section 9.2)
@@ -547,8 +570,11 @@ For the policy:
 # All labels with priority and encryption status
 Get-Label | Sort-Object Priority | Format-Table DisplayName, Priority, EncryptionEnabled, ContentType
 
-# Label policy settings
-Get-LabelPolicy | Format-List Name, Labels, Settings, ExchangeLocation
+# All policies with labels and settings
+Get-LabelPolicy | Sort-Object Name | Format-Table Name, Labels, ExchangeLocation, ExchangeLocationException -AutoSize -Wrap
+
+# Base policy advanced settings (default label, mandatory, etc.)
+Get-LabelPolicy -Identity "IAC - Base Label Policy" | Format-List Settings
 
 # Check a specific label's encryption rights
 Get-Label -Identity "Confidential - Internal" | Format-List EncryptionRightsDefinitions
@@ -577,8 +603,10 @@ If labels aren't appearing after 24 hours:
 # Office apps: force policy download
 # User can manually trigger from File → Account → Update Labels
 
-# PowerShell: re-publish the policy (triggers fresh sync)
-Set-LabelPolicy -Identity "IAC - All Users Label Policy" -Settings @{} 
+# PowerShell: re-publish a policy (triggers fresh sync)
+Set-LabelPolicy -Identity "IAC - Base Label Policy" -AdvancedSettings @{}
+Set-LabelPolicy -Identity "IAC - Confidential Label Policy" -AdvancedSettings @{}
+Set-LabelPolicy -Identity "IAC - Restricted Label Policy" -AdvancedSettings @{}
 
 # SharePoint: force site-level sync
 Set-SPOSite -Identity "https://acme2m365.sharepoint.com/sites/yoursite" -SensitivityLabel ""
@@ -603,8 +631,8 @@ New-Label -Name "Confidential-Financial" `
     -ApplyContentMarkingHeaderEnabled $true `
     -ApplyContentMarkingHeaderText "Confidential - Financial"
 
-# Then add it to the relevant policy
-Set-LabelPolicy -Identity "IAC - All Users Label Policy" -AddLabels "Confidential - Financial"
+# Then add it to the Confidential policy
+Set-LabelPolicy -Identity "IAC - Confidential Label Policy" -AddLabels "Confidential-Financial"
 ```
 
 ### 9.2 Removing a Duplicate or Unwanted Label
@@ -627,9 +655,24 @@ Set-Label -Identity "Restricted - Internal" `
     -EncryptionRightsDefinitions "securityteam@acme2m365.onmicrosoft.com:OWNER"
 ```
 
-### 9.4 Converting to Tiered Policies
+### 9.4 Modifying Policy Scope (Exclusions)
 
-See [Section 5.4](#54-how-to-convert-from-single-to-tiered-future-migration) for the step-by-step migration from single to tiered policy architecture.
+```powershell
+# Exclude contractors from Confidential labels
+Set-LabelPolicy -Identity "IAC - Confidential Label Policy" `
+    -AddExchangeLocationException "SG-Contractors@acme2m365.onmicrosoft.com"
+
+# Exclude contractors from Restricted labels
+Set-LabelPolicy -Identity "IAC - Restricted Label Policy" `
+    -AddExchangeLocationException "SG-Contractors@acme2m365.onmicrosoft.com"
+
+# Remove an exclusion later
+Set-LabelPolicy -Identity "IAC - Confidential Label Policy" `
+    -RemoveExchangeLocationException "SG-Contractors@acme2m365.onmicrosoft.com"
+
+# Verify current exclusions
+Get-LabelPolicy | Format-Table Name, ExchangeLocationException -AutoSize
+```
 
 ### 9.5 Auditing Label Usage
 
@@ -646,11 +689,13 @@ Search-UnifiedAuditLog -StartDate (Get-Date).AddDays(-7) -EndDate (Get-Date) `
 If you need to roll back and remove mandatory labelling urgently:
 
 ```powershell
-# Remove the unified policy (labels remain but are unpublished)
-Remove-LabelPolicy -Identity "IAC - All Users Label Policy" -Confirm:$false
+# Remove all 3 tiered policies (labels remain but are unpublished)
+Remove-LabelPolicy -Identity "IAC - Base Label Policy" -Confirm:$false
+Remove-LabelPolicy -Identity "IAC - Confidential Label Policy" -Confirm:$false
+Remove-LabelPolicy -Identity "IAC - Restricted Label Policy" -Confirm:$false
 
 # Labels still exist — they're just not visible to users
-# Re-publish when ready by re-running SensitivityLabel.ps1
+# Re-publish when ready by re-running Publish-SensitivityLabelPolicies.ps1
 ```
 
 ---
@@ -669,4 +714,10 @@ Remove-LabelPolicy -Identity "IAC - All Users Label Policy" -Confirm:$false
 | 8 | Restricted - Third Parties | 7 | File, Email, Site, UnifiedGroup | UserDefined + DNF | Restricted |
 | 9 | Restricted - Internal | 8 | File, Email, Site, UnifiedGroup | Template (admin-only) | Restricted |
 
-**Policy:** IAC - All Users Label Policy → All 9 labels, Default=General, Mandatory=Yes, Downgrade Justification=Yes
+**Tiered Policies:**
+
+| # | Policy | Labels | Priority | Settings |
+|---|--------|--------|----------|----------|
+| 1 | IAC - Base Label Policy | Public, General | 0 | Default=General, Mandatory=Yes, Downgrade=Yes, PowerBI=Yes |
+| 2 | IAC - Confidential Label Policy | Confidential-Internal, Confidential-ThirdParties, Confidential-Reporting (parent auto-included) | 1 | Scope: All Users |
+| 3 | IAC - Restricted Label Policy | Restricted-Internal, Restricted-ThirdParties (parent auto-included) | 2 | Scope: All Users |
