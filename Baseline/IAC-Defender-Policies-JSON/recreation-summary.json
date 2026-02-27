@@ -1,0 +1,35 @@
+{
+  "AntiPhishing": {
+    "Failed": [],
+    "Created": [
+      "IAC - DfO - [Anti-Phishing] for [All Domains]"
+    ]
+  },
+  "ImportPath": "/Users/jon/Desktop/BaslineSetup/IAC-Defender-Policies-JSON",
+  "EndTime": "2026-02-04T23:01:01.42672-05:00",
+  "AntiMalware": {
+    "Failed": [],
+    "Created": [
+      "IAC - DfO - [Anti-Malware] for [All Domains]"
+    ]
+  },
+  "AntiSpam": {
+    "Failed": [],
+    "Created": [
+      "IAC - DfO - [Anti-Spam] [Inbound] [All Domains]"
+    ]
+  },
+  "StartTime": "2026-02-04T23:00:56.371381-05:00",
+  "SafeAttachments": {
+    "Failed": [],
+    "Created": [
+      "IAC - DfO - [Safe Attachments] for [All Domains]"
+    ]
+  },
+  "SafeLinks": {
+    "Failed": [],
+    "Created": [
+      "IAC - DfO - [Safe Links] for [All Domains]"
+    ]
+  }
+}
