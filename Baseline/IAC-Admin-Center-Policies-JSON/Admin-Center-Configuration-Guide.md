@@ -733,7 +733,7 @@ Navigate to: **M365 Admin Center** > Settings > Org settings > Security & privac
 ### Manual Settings (Require Admin Center / Portal Configuration)
 
 <!-- INSERT IMAGE: Manual checks screenshot -->
-![Manual CIS Checks](images/manual-checks-placeholder.png)
+![Manual CIS Checks]([images/manual-checks-placeholder.png](https://github.com/Jhope188/LearnGraphAPI/blob/main/Baseline/IAC-Admin-Center-Policies-JSON/Images/ManualChanges.png))
 
 | CIS Control | Setting | Recommended | Status |
 |-------------|---------|------------|--------|
