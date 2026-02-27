@@ -705,6 +705,9 @@ Navigate to: **M365 Admin Center** > Settings > Org settings > Security & privac
 
 ### Automated Settings (Applied by admincenterconfig.ps1)
 
+<!-- INSERT IMAGE: Automated checks screenshot -->
+![Automated CIS Checks](images/automated-checks-placeholder.png)
+
 | CIS Control | Setting | Recommended | Status |
 |-------------|---------|------------|--------|
 | 1.3.1 (L1) | Password expiration | Never expire (with MFA) | ✅ Automated |
@@ -728,6 +731,9 @@ Navigate to: **M365 Admin Center** > Settings > Org settings > Security & privac
 | — | Users can read other users | ✅ Enabled | ✅ Automated |
 
 ### Manual Settings (Require Admin Center / Portal Configuration)
+
+<!-- INSERT IMAGE: Manual checks screenshot -->
+![Manual CIS Checks](images/manual-checks-placeholder.png)
 
 | CIS Control | Setting | Recommended | Status |
 |-------------|---------|------------|--------|
