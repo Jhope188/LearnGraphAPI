@@ -3,7 +3,8 @@
 > **Author:** IAC  
 > **Date:** 27 February 2026  
 > **Tenant:** acme2m365.onmicrosoft.com  
-> **Reference:** [Purview Practitioner Taxonomy](https://www.thepurviewpractitioner.com/tools/taxonomy) · [Microsoft Learn — Sensitivity Labels](https://learn.microsoft.com/purview/sensitivity-labels)
+> **Reference:** [Purview Practitioner Taxonomy](https://www.thepurviewpractitioner.com/tools/taxonomy) · [Microsoft Learn — Sensitivity Labels](https://learn.microsoft.com/purview/sensitivity-labels)  
+> **Video:** [Ewelina's Sensitivity Label Deep Dive](https://www.youtube.com/watch?v=6TaVptqv_V8) *(recommended viewing before deployment)*
 
 ---
 
