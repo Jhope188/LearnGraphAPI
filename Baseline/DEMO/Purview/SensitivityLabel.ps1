@@ -237,7 +237,7 @@ $general = Ensure-Label `
     -DisplayName "General" `
     -Tooltip "Default label for everyday business content." `
     -Comment "Business data not intended for public consumption." `
-    -ContentType @("File", "Email") `
+    -ContentType @("File", "Email", "Site", "UnifiedGroup") `
     -HeaderText "General" `
     -FooterText "General - Business Use"
 
@@ -261,7 +261,7 @@ $confInternal = Ensure-Label `
     -Tooltip "Encrypted for internal employees only. Content cannot leave the organisation unprotected." `
     -Comment "Confidential content encrypted for all internal users." `
     -ParentImmutableId $confidential.ImmutableId `
-    -ContentType @("File", "Email") `
+    -ContentType @("File", "Email", "Site", "UnifiedGroup") `
     -HeaderText "Confidential - Internal Only" `
     -FooterText "Confidential - Internal Only" `
     -EncryptionEnabled $true `
@@ -276,7 +276,7 @@ $confThird = Ensure-Label `
     -Tooltip "User selects authorised external recipients at time of sharing." `
     -Comment "Confidential content shared with named external recipients." `
     -ParentImmutableId $confidential.ImmutableId `
-    -ContentType @("File", "Email") `
+    -ContentType @("File", "Email", "Site", "UnifiedGroup") `
     -HeaderText "Confidential - Authorised Recipients" `
     -FooterText "Confidential - Authorised Recipients" `
     -EncryptionEnabled $true `
@@ -292,7 +292,7 @@ $confReporting = Ensure-Label `
     -Tooltip "Confidential reports and analytics. Encrypted for internal use." `
     -Comment "Reports, dashboards, and analytics - internal only." `
     -ParentImmutableId $confidential.ImmutableId `
-    -ContentType @("File", "Email") `
+    -ContentType @("File", "Email", "Site", "UnifiedGroup") `
     -HeaderText "Confidential - Reporting" `
     -FooterText "Confidential - Reporting" `
     -EncryptionEnabled $true `
@@ -319,7 +319,7 @@ $restInternal = Ensure-Label `
     -Tooltip "Encrypted for specific internal recipients only." `
     -Comment "Restricted content - admin-controlled access only." `
     -ParentImmutableId $restricted.ImmutableId `
-    -ContentType @("File", "Email") `
+    -ContentType @("File", "Email", "Site", "UnifiedGroup") `
     -HeaderText "RESTRICTED - Internal Only" `
     -FooterText "RESTRICTED - Internal Only" `
     -WatermarkText "RESTRICTED" `
@@ -335,7 +335,7 @@ $restThird = Ensure-Label `
     -Tooltip "User selects authorised recipients. Do Not Forward enforced." `
     -Comment "Restricted content shared with named external recipients." `
     -ParentImmutableId $restricted.ImmutableId `
-    -ContentType @("File", "Email") `
+    -ContentType @("File", "Email", "Site", "UnifiedGroup") `
     -HeaderText "RESTRICTED - Authorised Recipients" `
     -FooterText "RESTRICTED - Authorised Recipients" `
     -WatermarkText "RESTRICTED" `
@@ -456,3 +456,4 @@ Write-Host "  To verify:  Get-Label | Sort Priority | FT DisplayName, Priority, 
 Write-Host "  To verify:  Get-LabelPolicy | FL Name, Labels, Settings" -ForegroundColor Gray
 Write-Host "  To disconnect: Disconnect-ExchangeOnline -Confirm:`$false" -ForegroundColor Gray
 Write-Host ""
+

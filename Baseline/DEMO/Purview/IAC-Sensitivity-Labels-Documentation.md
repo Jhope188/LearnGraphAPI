@@ -36,6 +36,57 @@ This document describes the IAC sensitivity label taxonomy deployed to the Micro
 | **Downgrade justification** | Users must explain why they're lowering a classification |
 | **Groups & Sites protection** | Parent labels protect Teams, SharePoint sites, and M365 Groups with privacy and guest access controls |
 
+### Scope Design Rationale: Container vs. Content Protection
+
+Microsoft Purview has **two independent protection layers** that serve different purposes:
+
+| Layer | Scope | What It Protects | Applied To |
+|-------|-------|-----------------|------------|
+| **Container** | Site, UnifiedGroup | Privacy, guest access, sharing controls on the **Team/Site/Group itself** | The Team or SharePoint site as a whole |
+| **Content** | File, Email | Encryption, content markings on **individual files and emails** | Each document or message inside a container |
+
+These layers are independent — you label the **container** with a parent or top-level label, and label **files inside it** with child labels.
+
+**Why parent labels don't carry encryption:**
+
+Parent labels (Confidential, Restricted) are designed as **containers only**. They protect the "room" — setting the Team to Private, blocking guest access, etc. The child labels protect the "filing cabinets inside the room" — encrypting individual files with specific rights for specific audiences.
+
+If a parent label carried encryption, every file inside that Team would inherit the same encryption template, which is too rigid. Different files within the same Confidential Team may need different audiences (internal-only vs. third-party sharing).
+
+**Example workflow:**
+
+```
+User creates a Team → Purview prompts "What label for this Team?"
+  → User picks "Confidential"  ← parent label (container scope)
+  → Team is Private, guests allowed, sharing restricted
+
+User creates a document INSIDE that Team → Purview prompts "Label this file?"
+  → User picks "Confidential - Internal"  ← child label (file/email scope)
+  → File is encrypted with org-wide rights + content markings
+
+User creates another document to send to a vendor:
+  → User picks "Confidential - Third Parties"  ← different child
+  → User is prompted to select recipients, Do Not Forward applied
+```
+
+**Why General and Public have ALL scopes (File, Email, Site, UnifiedGroup):**
+
+These are top-level labels (not parents with children), so they need to work everywhere — a user should be able to label a Team as "General" AND label a document as "General." Since they carry no encryption, there is no conflict between container and content protection.
+
+**Why the Purview portal may show "Groups & sites" unchecked on parent labels:**
+
+For parent labels (`IsParent=True`), Purview stores `ContentType` as "None" because parents delegate file/email scope to their children. The portal UI reads the `ContentType` field to render checkboxes, so it may display Groups & Sites as unchecked even when the `protectgroup` and `protectsite` LabelActions are correctly configured in the backend.
+
+To verify the backend state, use:
+
+```powershell
+# Check if protectgroup and protectsite are present and enabled
+(Get-Label -Identity "Confidential").LabelActions
+# Should show: {"Type":"protectgroup"... "disabled":"false"} and {"Type":"protectsite"... "disabled":"false"}
+```
+
+If you need to ensure the checkbox appears checked in the portal, open the label in the Purview portal editor, check "Groups & sites", and re-save — this forces the UI and backend into sync.
+
 ### Files in This Package
 
 | File | Purpose |
@@ -85,7 +136,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 │                                                                     │
 │  GENERAL  ← Default Label                                          │
 │  └── Header/footer markings. No encryption.                        │
-│      Scope: File, Email                                            │
+│      Scope: File, Email, Site, UnifiedGroup                        │
+│      Container: Privacy Unspecified │ Guests: Allowed              │
 │                                                                     │
 │  CONFIDENTIAL (parent container)                                    │
 │  │   Scope: Groups & Sites only (protectgroup + protectsite)       │
@@ -138,8 +190,9 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 | Setting | Value |
 |---------|-------|
-| **Scope** | File, Email |
+| **Scope** | File, Email, Site, UnifiedGroup |
 | **Encryption** | None |
+| **Container Protection** | Privacy: Unspecified, Guests: Allowed, Full Access: Yes |
 | **Header** | "General" (10pt, red, centred) |
 | **Footer** | "General - Business Use" (8pt, red, centred) |
 | **Tooltip** | Default label for everyday business content. |
@@ -160,7 +213,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 | Setting | Value |
 |---------|-------|
-| **Scope** | File, Email |
+| **Scope** | File, Email, Site, UnifiedGroup |
+| **Container Protection** | Privacy: Private, Guests: Allowed, Full Access: Yes |
 | **Encryption** | Template — org-wide |
 | **Rights** | `<TenantDomain>`: VIEW, VIEWRIGHTSDATA, DOCEDIT, EDIT, PRINT, EXTRACT, REPLY, REPLYALL, FORWARD, OBJMODEL |
 | **Header** | "Confidential - Internal Only" (10pt, red, centred) |
@@ -172,7 +226,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 | Setting | Value |
 |---------|-------|
-| **Scope** | File, Email |
+| **Scope** | File, Email, Site, UnifiedGroup |
+| **Container Protection** | Privacy: Private, Guests: Allowed, Full Access: Yes |
 | **Encryption** | User-Defined — user selects recipients |
 | **Protection** | Do Not Forward enforced |
 | **Header** | "Confidential - Authorised Recipients" (10pt, red, centred) |
@@ -184,7 +239,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 | Setting | Value |
 |---------|-------|
-| **Scope** | File, Email |
+| **Scope** | File, Email, Site, UnifiedGroup |
+| **Container Protection** | Privacy: Private, Guests: Allowed, Full Access: Yes |
 | **Encryption** | Template — org-wide |
 | **Rights** | Same as Confidential - Internal |
 | **Header** | "Confidential - Reporting" (10pt, red, centred) |
@@ -207,7 +263,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 | Setting | Value |
 |---------|-------|
-| **Scope** | File, Email |
+| **Scope** | File, Email, Site, UnifiedGroup |
+| **Container Protection** | Privacy: Private, Guests: Blocked, Full Access: No |
 | **Encryption** | Template — admin-only |
 | **Rights** | `<AdminEmail>`: OWNER (full control) |
 | **Header** | "RESTRICTED - Internal Only" (10pt, red, centred) |
@@ -220,7 +277,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 | Setting | Value |
 |---------|-------|
-| **Scope** | File, Email |
+| **Scope** | File, Email, Site, UnifiedGroup |
+| **Container Protection** | Privacy: Private, Guests: Blocked, Full Access: No |
 | **Encryption** | User-Defined — user selects recipients |
 | **Protection** | Do Not Forward enforced |
 | **Header** | "RESTRICTED - Authorised Recipients" (10pt, red, centred) |
@@ -602,13 +660,13 @@ Remove-LabelPolicy -Identity "IAC - All Users Label Policy" -Confirm:$false
 | # | Label | Priority | Scope | Encryption | Parent |
 |---|-------|----------|-------|------------|--------|
 | 1 | Public | 0 | File, Email, Site, UnifiedGroup | None | — |
-| 2 | General | 1 | File, Email | None | — |
+| 2 | General | 1 | File, Email, Site, UnifiedGroup | None | — |
 | 3 | Confidential | 2 | Groups & Sites (container) | None | — |
-| 4 | Confidential - Internal | 3 | File, Email | Template (org-wide) | Confidential |
-| 5 | Confidential - Reporting | 4 | File, Email | Template (org-wide) | Confidential |
-| 6 | Confidential - Third Parties | 5 | File, Email | UserDefined + DNF | Confidential |
+| 4 | Confidential - Internal | 3 | File, Email, Site, UnifiedGroup | Template (org-wide) | Confidential |
+| 5 | Confidential - Reporting | 4 | File, Email, Site, UnifiedGroup | Template (org-wide) | Confidential |
+| 6 | Confidential - Third Parties | 5 | File, Email, Site, UnifiedGroup | UserDefined + DNF | Confidential |
 | 7 | Restricted | 6 | Groups & Sites (container) | None | — |
-| 8 | Restricted - Third Parties | 7 | File, Email | UserDefined + DNF | Restricted |
-| 9 | Restricted - Internal | 8 | File, Email | Template (admin-only) | Restricted |
+| 8 | Restricted - Third Parties | 7 | File, Email, Site, UnifiedGroup | UserDefined + DNF | Restricted |
+| 9 | Restricted - Internal | 8 | File, Email, Site, UnifiedGroup | Template (admin-only) | Restricted |
 
 **Policy:** IAC - All Users Label Policy → All 9 labels, Default=General, Mandatory=Yes, Downgrade Justification=Yes
