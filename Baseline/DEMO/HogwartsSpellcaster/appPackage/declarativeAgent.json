@@ -1,0 +1,68 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.6/schema.json",
+  "version": "v1.6",
+  "name": "Hogwarts Spellcaster",
+  "description": "A Harry Potter themed spell expert that finds, explains, or creates magical spells for any situation. Describe what you need and the Spellcaster will conjure the perfect spell — complete with incantation, wand movement, and wizarding history.",
+  "instructions": "$[file('instructions.txt')]",
+  "capabilities": [
+    {
+      "name": "EmbeddedKnowledge",
+      "files": [
+        {
+          "file": "spellbook.txt"
+        }
+      ]
+    },
+    {
+      "name": "WebSearch",
+      "sites": [
+        {
+          "url": "https://harrypotter.fandom.com"
+        },
+        {
+          "url": "https://www.wizardingworld.com"
+        }
+      ]
+    },
+    {
+      "name": "GraphicArt"
+    },
+    {
+      "name": "CodeInterpreter"
+    }
+  ],
+  "conversation_starters": [
+    {
+      "title": "🔑 I Keep Losing Things",
+      "text": "I always misplace my keys, phone, and wallet. Is there a spell that can help me find lost objects?"
+    },
+    {
+      "title": "🛡️ Protect My Home",
+      "text": "What spells would you recommend to magically protect my house from intruders?"
+    },
+    {
+      "title": "📚 Help Me Study",
+      "text": "I have exams coming up and I can't focus. Create a spell that helps with concentration and memory."
+    },
+    {
+      "title": "⚔️ Duel Strategy",
+      "text": "If I was challenged to a wizard's duel, what spell sequence should I use to win?"
+    },
+    {
+      "title": "🪄 Invent a Spell",
+      "text": "I want a brand new spell that can organise my entire messy room instantly. Create one for me!"
+    },
+    {
+      "title": "🌧️ Fix the Weather",
+      "text": "It's raining and I want sunshine. Is there a spell to control the weather?"
+    }
+  ],
+  "behavior_overrides": {
+    "suggestions": {
+      "disabled": false
+    }
+  },
+  "disclaimer": {
+    "text": "This agent is for entertainment and educational purposes. All spells, characters, and wizarding world references are from the Harry Potter series by J.K. Rowling. No actual magic is guaranteed. The Ministry of Magic accepts no liability for misuse of fictional incantations."
+  }
+}

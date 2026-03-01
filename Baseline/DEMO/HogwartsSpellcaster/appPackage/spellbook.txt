@@ -1,0 +1,558 @@
+# The Complete Hogwarts Spellbook
+## A Comprehensive Guide to Magical Spells, Charms, Hexes, Jinxes, and Curses
+
+---
+
+## CHARMS
+
+### Accio (Summoning Charm)
+- **Incantation:** Accio [object name]
+- **Type:** Charm
+- **Difficulty:** O.W.L. Level (4th Year)
+- **Effect:** Summons an object to the caster from a distance. The caster must clearly visualise the object.
+- **Wand Movement:** Sharp flick toward self
+- **Use When:** You need to retrieve something far away, lost items, or objects out of reach.
+- **Famous Use:** Harry Potter summoned his Firebolt during the First Task of the Triwizard Tournament to outfly the Hungarian Horntail.
+- **Counter:** Cannot summon objects protected by Anti-Theft Charms (e.g. Gringotts vaults).
+- **Teaching Notes:** Taught by Professor Flitwick in 4th year Charms class. Requires strong concentration on the desired object.
+
+### Aguamenti (Water-Making Spell)
+- **Incantation:** Aguamenti
+- **Type:** Charm / Conjuration
+- **Difficulty:** N.E.W.T. Level (6th Year)
+- **Effect:** Produces a jet of clean, drinkable water from the wand tip.
+- **Wand Movement:** Smooth wave motion
+- **Use When:** You need water for drinking, extinguishing fires, filling containers, or cleaning.
+- **Famous Use:** Dumbledore attempted to use it to give water to a weakened individual in the Crystal Cave, but the enchantment made the water vanish.
+- **Counter:** Certain dark enchantments can cause conjured water to vanish instantly.
+- **Teaching Notes:** Part of the 6th year curriculum. One of the few conjuration spells that creates a consumable substance.
+
+### Alohomora (Unlocking Charm)
+- **Incantation:** Alohomora
+- **Type:** Charm
+- **Difficulty:** Beginner (1st Year)
+- **Effect:** Unlocks doors and windows that have been sealed with a standard locking spell.
+- **Wand Movement:** Backward S shape
+- **Use When:** You need to open a locked door, chest, window, or container that uses a standard magical lock.
+- **Famous Use:** Hermione used it to unlock the door to the forbidden third-floor corridor where Fluffy guarded the Philosopher's Stone.
+- **Counter:** Does not work against more advanced magical locks or the Colloportus charm when reinforced. Anti-Alohomora charms exist.
+- **Teaching Notes:** One of the first spells taught at Hogwarts. Originated in Africa before being brought to Britain by Eldon Elsrickle.
+
+### Aparecium (Revealing Charm)
+- **Incantation:** Aparecium
+- **Type:** Charm
+- **Difficulty:** Intermediate (3rd Year)
+- **Effect:** Reveals invisible ink or concealed writing on parchment or other surfaces.
+- **Wand Movement:** Tap on the surface
+- **Use When:** You suspect hidden messages, invisible ink, or concealed text on documents.
+- **Famous Use:** Hermione attempted to use it on Tom Riddle's diary, though the diary's dark magic prevented it from working.
+- **Counter:** Extremely powerful concealment magic may resist this charm.
+
+### Arresto Momentum (Slowing Charm)
+- **Incantation:** Arresto Momentum
+- **Type:** Charm
+- **Difficulty:** Intermediate (3rd Year)
+- **Effect:** Slows the speed of a moving object or person. Can prevent injury from falls.
+- **Wand Movement:** Sweeping downward motion
+- **Use When:** Someone or something is falling, an object is moving too fast, you need to slow a collision.
+- **Famous Use:** Dumbledore used it to slow Harry's fall during a Quidditch match when Dementors attacked.
+- **Counter:** Very heavy or fast objects may only be partially slowed.
+
+### Cheering Charm
+- **Incantation:** (Non-verbal, intention-based)
+- **Type:** Charm
+- **Difficulty:** Intermediate (3rd Year)
+- **Effect:** Causes the target to become cheerful and happy. Excessive use can cause uncontrollable laughter.
+- **Wand Movement:** Gentle upward flick
+- **Use When:** Someone is feeling down, needs encouragement, or you want to lighten the mood.
+- **Famous Use:** Harry excelled at this charm in his 3rd year exams under Professor Flitwick.
+- **Teaching Notes:** Must be applied carefully — too much force causes hysterical giggling that takes hours to wear off.
+
+### Confundo (Confundus Charm)
+- **Incantation:** Confundo
+- **Type:** Charm
+- **Difficulty:** O.W.L. Level (5th Year)
+- **Effect:** Causes the target to become confused, disoriented, and suggestible.
+- **Wand Movement:** Spiral motion toward the target
+- **Use When:** You need to misdirect someone, cause temporary confusion, or make someone susceptible to suggestion.
+- **Famous Use:** Hermione used it on Cormac McLaggen during Quidditch Keeper tryouts to help Ron.
+- **Counter:** Can be shaken off by those with strong willpower. Effects wear off naturally.
+- **Legal Note:** Using a Confundus Charm on a Muggle is a violation of the Statute of Secrecy.
+
+### Engorgio (Engorgement Charm)
+- **Incantation:** Engorgio
+- **Type:** Charm
+- **Difficulty:** Intermediate (4th Year)
+- **Effect:** Causes the target object or creature to swell in size.
+- **Wand Movement:** Upward expanding gesture
+- **Use When:** You need to enlarge an object, make something bigger for visibility, or increase the size of ingredients.
+- **Counter Spell:** Reducio (Shrinking Charm)
+- **Famous Use:** Hagrid was suspected of using it on his pumpkins for the Halloween feast.
+
+### Episkey (Healing Spell)
+- **Incantation:** Episkey
+- **Type:** Healing Charm
+- **Difficulty:** Intermediate (3rd Year)
+- **Effect:** Heals minor injuries such as broken noses, split lips, and small cuts.
+- **Wand Movement:** Touch wand tip to injury site
+- **Use When:** Someone has a minor injury — broken nose, small cuts, bruises, sprains.
+- **Famous Use:** Tonks used it to heal Harry's broken nose on the Hogwarts Express in his 6th year.
+- **Limitations:** Cannot heal serious injuries, cursed wounds, or re-grow bones.
+
+### Expecto Patronum (Patronus Charm)
+- **Incantation:** Expecto Patronum
+- **Type:** Charm (Advanced Defensive)
+- **Difficulty:** N.E.W.T. Level / Beyond (Extremely Advanced)
+- **Effect:** Conjures a Patronus — a silver guardian made of pure positive energy. Corporeal Patronuses take animal form. Protects against Dementors and Lethifolds.
+- **Wand Movement:** Circular motion while focusing on happiest memory
+- **Use When:** Dementors are near, you need protection from dark creatures, or you need to send a message (Patronus messaging).
+- **Famous Use:** Harry produced a full corporeal stag Patronus at age 13, driving away over a hundred Dementors at the Black Lake.
+- **Critical Requirement:** Requires focusing on your happiest, most powerful positive memory. The strength of the Patronus depends on the strength of the memory.
+- **Patronus Forms (Known):** Stag (Harry Potter), Otter (Hermione Granger), Jack Russell Terrier (Ron Weasley), Doe (Severus Snape/Lily Potter), Phoenix (Albus Dumbledore), Horse (Ginny Weasley), Hare (Luna Lovegood), Cat (Minerva McGonagall).
+- **Teaching Notes:** Many adult wizards cannot produce a corporeal Patronus. Remus Lupin taught Harry this spell in his 3rd year. It is considered one of the most advanced defensive spells in existence.
+
+### Expelliarmus (Disarming Charm)
+- **Incantation:** Expelliarmus
+- **Type:** Charm (Defensive/Duelling)
+- **Difficulty:** Intermediate (2nd Year)
+- **Effect:** Forces the target to release whatever they are holding, typically disarming them of their wand.
+- **Wand Movement:** Sharp forward jab
+- **Use When:** Duelling, self-defence, disarming an opponent, preventing someone from casting a spell.
+- **Famous Use:** Harry's signature spell. He used it to defeat Voldemort in their final duel, causing the Elder Wand to rebound Voldemort's Killing Curse.
+- **Teaching Notes:** Taught by Gilderoy Lockhart (demonstrated by Snape) in the Duelling Club. Despite being considered "basic," it proved to be one of the most effective combat spells when mastered.
+
+### Feather-Light Charm
+- **Incantation:** (Non-verbal)
+- **Type:** Charm
+- **Difficulty:** Beginner (1st Year)
+- **Effect:** Makes objects lighter and easier to carry without changing their size.
+- **Use When:** You need to carry heavy luggage, move furniture, transport supplies.
+- **Famous Use:** Students commonly use it on their school trunks before the journey to Hogwarts.
+
+### Lumos (Wand-Lighting Charm)
+- **Incantation:** Lumos
+- **Type:** Charm
+- **Difficulty:** Beginner (1st Year)
+- **Effect:** Creates a bright light at the tip of the caster's wand. Lumos Maxima creates a blinding flash.
+- **Wand Movement:** Simple upward flick
+- **Use When:** You need light in dark places, exploring, reading in the dark, navigating at night.
+- **Counter Spell:** Nox (extinguishes the light)
+- **Variations:** Lumos Maxima (intense flash), Lumos Solem (sunlight beam — effective against Devil's Snare)
+- **Famous Use:** Hermione used Lumos Solem to escape Devil's Snare in the chamber protecting the Philosopher's Stone.
+
+### Obliviate (Memory Charm)
+- **Incantation:** Obliviate
+- **Type:** Charm
+- **Difficulty:** Advanced (N.E.W.T. Level)
+- **Effect:** Erases specific memories from the target's mind. Can be precisely targeted to remove only certain memories.
+- **Wand Movement:** Pointed at the temple
+- **Use When:** Someone has witnessed magical events who shouldn't have (Statute of Secrecy), or to protect sensitive information.
+- **Famous Use:** Hermione used it on her parents to protect them from Death Eaters, making them forget they had a daughter.
+- **Warning:** Improperly cast Memory Charms can cause permanent, irreversible brain damage. Gilderoy Lockhart's own Memory Charm backfired, leaving him permanently amnesiac.
+- **Legal Note:** Ministry-approved Obliviators are specifically trained to perform this charm safely.
+
+### Protego (Shield Charm)
+- **Incantation:** Protego
+- **Type:** Charm (Defensive)
+- **Difficulty:** O.W.L. Level (5th Year)
+- **Effect:** Creates an invisible magical shield that deflects spells and physical entities.
+- **Wand Movement:** Broad sweeping motion
+- **Use When:** Under attack, duelling, protecting yourself or others from incoming spells.
+- **Variations:** Protego Totalum (area shield), Protego Horribilis (powerful shield against dark magic), Protego Maxima (maximum strength shield)
+- **Famous Use:** The combined Protego spells were used to create the magical shield around Hogwarts during the Battle of Hogwarts.
+- **Limitations:** Cannot block Unforgivable Curses. Very powerful spells may shatter the shield.
+
+### Reducto (Reductor Curse)
+- **Incantation:** Reducto
+- **Type:** Curse
+- **Difficulty:** O.W.L. Level (4th Year)
+- **Effect:** Blasts solid objects into pieces. More powerful versions can reduce objects to dust.
+- **Wand Movement:** Forceful forward thrust
+- **Use When:** You need to break through barriers, destroy obstacles, blast open doors.
+- **Famous Use:** Ginny Weasley's Reductor Curse was so powerful it impressed the D.A. members during practice.
+
+### Reparo (Mending Charm)
+- **Incantation:** Reparo
+- **Type:** Charm
+- **Difficulty:** Beginner (1st Year)
+- **Effect:** Repairs broken objects, restoring them to their original state.
+- **Wand Movement:** Tap on the broken object
+- **Use When:** Something is broken, shattered, torn, or damaged and needs to be fixed.
+- **Famous Use:** Hermione used it frequently, including to fix Harry's glasses on the Hogwarts Express.
+- **Limitations:** Cannot repair objects destroyed by very powerful dark magic. Cannot repair wands (except with the Elder Wand).
+
+### Riddikulus (Boggart-Banishing Spell)
+- **Incantation:** Riddikulus
+- **Type:** Charm (Defence)
+- **Difficulty:** Intermediate (3rd Year)
+- **Effect:** Forces a Boggart to assume a humorous form, which weakens it through laughter.
+- **Wand Movement:** Short, sharp flick
+- **Use When:** Confronting a Boggart (a shapeshifter that takes the form of your worst fear).
+- **Critical Requirement:** You must clearly visualise something funny while casting. Laughter is what truly defeats the Boggart.
+- **Famous Use:** Neville Longbottom imagined Professor Snape in his grandmother's clothes.
+- **Teaching Notes:** Taught by Professor Lupin in 3rd year Defence Against the Dark Arts.
+
+### Silencio (Silencing Charm)
+- **Incantation:** Silencio
+- **Type:** Charm
+- **Difficulty:** O.W.L. Level (5th Year)
+- **Effect:** Renders the target unable to make sound. Works on creatures and objects.
+- **Wand Movement:** Sharp downward slash
+- **Use When:** You need silence, to prevent someone from casting verbal spells, to quiet a noisy creature.
+- **Famous Use:** Hermione successfully cast it on a raven during O.W.L. practice.
+
+### Sonorus (Amplifying Charm)
+- **Incantation:** Sonorus
+- **Type:** Charm
+- **Difficulty:** Intermediate
+- **Effect:** Magically amplifies the caster's voice so it can be heard over great distances.
+- **Wand Movement:** Touch wand to throat
+- **Use When:** Public speaking, Quidditch commentary, addressing large crowds, emergencies.
+- **Counter Spell:** Quietus (returns voice to normal volume)
+- **Famous Use:** Ludo Bagman used it to commentate at the Quidditch World Cup.
+
+### Wingardium Leviosa (Levitation Charm)
+- **Incantation:** Wingardium Leviosa
+- **Type:** Charm
+- **Difficulty:** Beginner (1st Year)
+- **Effect:** Makes objects levitate and float under the caster's control.
+- **Wand Movement:** Swish and flick
+- **Use When:** You need to lift or move objects without touching them, reaching high places, moving heavy items.
+- **Famous Use:** Ron used it to levitate a troll's club and knock out the mountain troll in the girls' bathroom.
+- **Teaching Notes:** The very first spell taught in Charms class by Professor Flitwick. "It's Levi-OH-sa, not Levio-SAH!" — Hermione Granger.
+- **Critical Note:** Pronunciation is crucial. Seamus Finnigan set his feather on fire by getting it wrong.
+
+---
+
+## TRANSFIGURATION SPELLS
+
+### Avifors
+- **Incantation:** Avifors
+- **Type:** Transfiguration
+- **Difficulty:** Intermediate (3rd Year)
+- **Effect:** Transforms small objects into birds.
+- **Use When:** You need to create a distraction, demonstrate Transfiguration skill, or create birds.
+- **Teaching Notes:** Taught by Professor McGonagall.
+
+### Draconifors
+- **Incantation:** Draconifors
+- **Type:** Transfiguration
+- **Difficulty:** Advanced (5th Year)
+- **Effect:** Transforms small objects into miniature dragons that attack the nearest target.
+- **Use When:** Combat situations, creating a distraction, or advanced Transfiguration practice.
+
+### Lapifors
+- **Incantation:** Lapifors
+- **Type:** Transfiguration
+- **Difficulty:** Intermediate (3rd Year)
+- **Effect:** Transforms small objects into rabbits.
+- **Use When:** Transfiguration practice, entertainment, or creating a distraction.
+
+### Vera Verto
+- **Incantation:** Vera Verto
+- **Type:** Transfiguration
+- **Difficulty:** Intermediate (2nd Year)
+- **Effect:** Transforms an animal into a water goblet.
+- **Wand Movement:** Three taps on the animal
+- **Use When:** Transfiguration class demonstrations, practical examinations.
+- **Famous Use:** Professor McGonagall demonstrated this in class. Ron attempted it but his wand malfunctioned, producing a furry goblet.
+
+---
+
+## DEFENSIVE SPELLS
+
+### Cave Inimicum
+- **Incantation:** Cave Inimicum
+- **Type:** Protective Charm
+- **Difficulty:** Advanced
+- **Effect:** Creates a protective boundary that warns of and deters enemies from an area.
+- **Use When:** Setting up a campsite, protecting a location, creating a safe perimeter.
+- **Famous Use:** Hermione used it along with other protective enchantments when the trio was on the run.
+
+### Fianto Duri
+- **Incantation:** Fianto Duri
+- **Type:** Protective Spell
+- **Difficulty:** Advanced (N.E.W.T. Level)
+- **Effect:** Strengthens and hardens existing shield spells and protective enchantments.
+- **Use When:** You need to reinforce existing magical protections, fortify a location.
+- **Famous Use:** Used during the Battle of Hogwarts to strengthen the castle's shields.
+
+### Impedimenta (Impediment Jinx)
+- **Incantation:** Impedimenta
+- **Type:** Jinx (Defensive)
+- **Difficulty:** O.W.L. Level (4th Year)
+- **Effect:** Slows down or stops an attacker by impeding their movement. Target may be frozen briefly.
+- **Wand Movement:** Forward jab
+- **Use When:** Being chased, under attack, need to slow an advancing enemy.
+- **Famous Use:** Harry used it multiple times during the Third Task of the Triwizard Tournament.
+
+### Petrificus Totalus (Full Body-Bind Curse)
+- **Incantation:** Petrificus Totalus
+- **Type:** Curse (Defensive)
+- **Difficulty:** Intermediate (1st Year — Hermione mastered it early)
+- **Effect:** Binds the target's entire body rigid, rendering them completely immobile. They remain conscious but cannot move or speak.
+- **Wand Movement:** Straight forward point
+- **Use When:** You need to completely immobilise someone without injuring them. Non-lethal restraint.
+- **Famous Use:** Hermione used it on Neville Longbottom when he tried to stop them going after the Philosopher's Stone. Neville later used it extensively during the Battle of Hogwarts.
+- **Counter:** Wears off naturally or can be ended with the counter-curse.
+
+### Salvio Hexia
+- **Incantation:** Salvio Hexia
+- **Type:** Protective Charm
+- **Difficulty:** Advanced
+- **Effect:** Provides protection against hexes within a defined area.
+- **Use When:** Setting up camp in dangerous areas, protecting a location from hostile magic.
+- **Famous Use:** Used by Hermione as part of the protective enchantments around the trio's tent.
+
+### Stupefy (Stunning Spell)
+- **Incantation:** Stupefy
+- **Type:** Charm (Offensive/Defensive)
+- **Difficulty:** O.W.L. Level (4th Year)
+- **Effect:** Renders the target unconscious. One of the most useful combat spells.
+- **Wand Movement:** Forward jab with intent
+- **Use When:** Duelling, self-defence, capturing someone, non-lethal combat.
+- **Counter Spell:** Rennervate (revives a stunned person)
+- **Famous Use:** Used extensively during the Battle of the Department of Mysteries by D.A. members.
+- **Teaching Notes:** A favourite spell of Aurors. Multiple Stunners hitting one target simultaneously can be fatal.
+
+---
+
+## HEXES AND JINXES
+
+### Bat-Bogey Hex
+- **Incantation:** (Unknown — likely non-verbal in advanced use)
+- **Type:** Hex
+- **Difficulty:** Intermediate
+- **Effect:** Causes the target's bogeys to enlarge, grow wings, and attack the victim's face.
+- **Use When:** You need to incapacitate someone in a humiliating but non-dangerous way.
+- **Famous Use:** Ginny Weasley's signature spell. She was famous for her powerful Bat-Bogey Hexes.
+
+### Densaugeo
+- **Incantation:** Densaugeo
+- **Type:** Hex
+- **Difficulty:** Intermediate (4th Year)
+- **Effect:** Causes the target's teeth to grow rapidly and uncontrollably.
+- **Use When:** Duelling (humiliation hex), not recommended for casual use.
+- **Famous Use:** Draco Malfoy's spell accidentally hit Hermione, causing her front teeth to grow past her collar.
+
+### Furnunculus (Pimple Jinx)
+- **Incantation:** Furnunculus
+- **Type:** Jinx
+- **Difficulty:** Intermediate (4th Year)
+- **Effect:** Causes painful boils and pimples to break out on the target's skin.
+- **Use When:** Duelling, pranks (not recommended), defensive situations.
+- **Famous Use:** Harry and Draco's spells collided in the corridor, causing Goyle to sprout boils and Hermione's teeth to grow.
+
+### Jelly-Legs Jinx
+- **Incantation:** Locomotor Wibbly
+- **Type:** Jinx
+- **Difficulty:** Beginner (1st-2nd Year)
+- **Effect:** Causes the target's legs to wobble uncontrollably, making it difficult to walk or stand.
+- **Use When:** Pranks, minor duelling, causing someone to stumble.
+- **Teaching Notes:** One of the first jinxes students learn to both cast and counter.
+
+### Langlock
+- **Incantation:** Langlock
+- **Type:** Jinx
+- **Difficulty:** Intermediate
+- **Effect:** Glues the target's tongue to the roof of their mouth, preventing speech.
+- **Use When:** You need to prevent someone from casting verbal spells or speaking.
+- **Famous Use:** Invented by Severus Snape (published in his Half-Blood Prince potions book). Harry used it against Peeves.
+
+### Levicorpus
+- **Incantation:** Levicorpus (originally non-verbal)
+- **Type:** Jinx
+- **Difficulty:** Advanced (6th Year)
+- **Effect:** Hoists the target into the air by their ankle, leaving them dangling upside down.
+- **Wand Movement:** Upward flick
+- **Use When:** Self-defence, duelling, subduing an opponent non-lethally.
+- **Counter Spell:** Liberacorpus
+- **Famous Use:** Invented by Severus Snape. James Potter used it against Snape by the lake (Snape's Worst Memory).
+- **Origin:** Found in the Half-Blood Prince's potions textbook.
+
+### Rictusempra (Tickling Charm)
+- **Incantation:** Rictusempra
+- **Type:** Charm/Jinx
+- **Difficulty:** Beginner (2nd Year)
+- **Effect:** Causes the target to feel an intense tickling sensation, doubling them over with laughter.
+- **Use When:** Duelling (distraction), entertainment, non-violent conflict resolution.
+- **Famous Use:** Harry used it against Draco Malfoy during the Duelling Club.
+
+### Tarantallegra (Dancing Feet Spell)
+- **Incantation:** Tarantallegra
+- **Type:** Jinx
+- **Difficulty:** Intermediate (2nd Year)
+- **Effect:** Forces the target's legs to perform an uncontrollable quickstep dance.
+- **Use When:** Duelling (to distract or immobilise through forced movement), entertainment.
+- **Famous Use:** Draco Malfoy used it on Harry during the Duelling Club.
+
+---
+
+## DARK ARTS (FOR EDUCATIONAL REFERENCE ONLY)
+
+### The Three Unforgivable Curses
+These curses are ILLEGAL. Use of any Unforgivable Curse on another human being carries a life sentence in Azkaban. They are documented here for defensive education only, as mandated by Professor Moody's (Barty Crouch Jr.'s) 4th year curriculum.
+
+#### Avada Kedavra (Killing Curse)
+- **Incantation:** Avada Kedavra
+- **Type:** Curse (Unforgivable)
+- **Difficulty:** Requires powerful dark intent
+- **Effect:** Causes instant, painless death. Produces a jet of green light. Leaves no mark on the body.
+- **Counter:** NONE. The only known survivor is Harry Potter, protected by his mother's sacrificial love. Can be physically dodged or blocked with solid objects.
+- **Legal Status:** UNFORGIVABLE — Life sentence in Azkaban.
+
+#### Crucio (Cruciatus Curse)
+- **Incantation:** Crucio
+- **Type:** Curse (Unforgivable)
+- **Difficulty:** Requires sadistic intent — "You have to mean it"
+- **Effect:** Inflicts excruciating, unbearable pain on the victim. Prolonged exposure can cause permanent insanity.
+- **Famous Victims:** Frank and Alice Longbottom (tortured to insanity by Bellatrix Lestrange).
+- **Legal Status:** UNFORGIVABLE — Life sentence in Azkaban.
+
+#### Imperio (Imperius Curse)
+- **Incantation:** Imperio
+- **Type:** Curse (Unforgivable)
+- **Difficulty:** Advanced dark magic
+- **Effect:** Places the victim under complete control of the caster. The victim feels a wonderful sense of floating freedom while their will is suppressed.
+- **Counter:** Can be resisted with exceptional willpower. Harry Potter successfully threw off the Imperius Curse cast by Barty Crouch Jr. (as Moody) in class.
+- **Legal Status:** UNFORGIVABLE — Life sentence in Azkaban.
+
+### Sectumsempra
+- **Incantation:** Sectumsempra
+- **Type:** Curse (Dark)
+- **Difficulty:** Advanced
+- **Effect:** Slashes the target as if struck by an invisible sword, causing deep, potentially fatal wounds.
+- **Counter Spell:** Vulnera Sanentur (heals the wounds — must be cast immediately)
+- **Famous Use:** Harry used it on Draco Malfoy without knowing what it did. Snape arrived to heal Draco.
+- **Origin:** Invented by Severus Snape. Written in the Half-Blood Prince's potions textbook as "For Enemies."
+- **Warning:** Extremely dangerous. Dark magic that should not be used.
+
+### Morsmordre (Dark Mark)
+- **Incantation:** Morsmordre
+- **Type:** Dark Charm
+- **Difficulty:** Advanced
+- **Effect:** Conjures the Dark Mark — a glowing green skull with a serpent — into the sky.
+- **Use Context:** Cast by Death Eaters over locations where they had killed. A symbol of terror.
+- **Famous Use:** Barty Crouch Jr. cast it at the Quidditch World Cup, causing mass panic.
+
+---
+
+## HOUSEHOLD AND UTILITY SPELLS
+
+### Evanesco (Vanishing Spell)
+- **Incantation:** Evanesco
+- **Type:** Transfiguration
+- **Difficulty:** O.W.L. Level (5th Year)
+- **Effect:** Makes objects vanish completely (they go "into non-being, which is to say, everything").
+- **Use When:** Cleaning up, disposing of unwanted items, clearing messes.
+- **Teaching Notes:** Professor McGonagall considers this one of the most important spells in Transfiguration. Difficulty increases with the complexity of what you're vanishing (invertebrates → vertebrates → mammals).
+
+### Impervius (Impervius Charm)
+- **Incantation:** Impervius
+- **Type:** Charm
+- **Difficulty:** Intermediate
+- **Effect:** Makes an object repel water and other substances.
+- **Use When:** Rainy Quidditch matches, protecting documents from water damage, waterproofing clothing.
+- **Famous Use:** Hermione cast it on Harry's glasses during a rainy Quidditch match so he could see.
+
+### Orchideous
+- **Incantation:** Orchideous
+- **Type:** Conjuration Charm
+- **Difficulty:** Intermediate
+- **Effect:** Conjures a bouquet of flowers from the wand tip.
+- **Use When:** Gifts, decorations, romantic gestures, cheering someone up.
+- **Famous Use:** Mr Ollivander used it to test Fleur Delacour's wand before the Triwizard Tournament.
+
+### Pack (Packing Charm)
+- **Incantation:** Pack
+- **Type:** Charm
+- **Difficulty:** Intermediate
+- **Effect:** Magically packs belongings neatly into a trunk or bag.
+- **Use When:** Packing for a journey, tidying up, end of term at Hogwarts.
+- **Famous Use:** Tonks used it to pack Lupin's things when he resigned from Hogwarts.
+
+### Scourgify (Scouring Charm)
+- **Incantation:** Scourgify
+- **Type:** Charm
+- **Difficulty:** Beginner (1st Year)
+- **Effect:** Cleans the target object or surface, removing dirt, grime, and other substances.
+- **Use When:** Cleaning, sanitising, removing stains, tidying up.
+- **Famous Use:** Tonks used it to clean Hedwig's cage.
+
+### Tergeo
+- **Incantation:** Tergeo
+- **Type:** Charm
+- **Difficulty:** Intermediate
+- **Effect:** Siphons liquid or dried substances off a surface (blood, ink, etc.).
+- **Use When:** Cleaning up spills, removing blood from wounds or surfaces, cleaning ink stains.
+- **Famous Use:** Hermione used it to clean blood from Harry's face after Ron's Quidditch injury.
+
+---
+
+## COMMUNICATION AND TRANSPORT SPELLS
+
+### Apparition
+- **Incantation:** Focus on the three D's: Destination, Determination, Deliberation
+- **Type:** Transport Magic
+- **Difficulty:** Advanced (6th Year — requires licence at 17)
+- **Effect:** Instantaneous teleportation from one location to another.
+- **Use When:** Long-distance travel, emergencies, quick getaways.
+- **Warning:** Splinching (leaving body parts behind) occurs when concentration is broken. Requires a licence from the Ministry of Magic.
+- **Limitations:** Cannot Apparate within Hogwarts grounds (anti-Apparition wards). Some locations are protected.
+
+### Portus
+- **Incantation:** Portus
+- **Type:** Charm
+- **Difficulty:** Advanced (Restricted by Ministry)
+- **Effect:** Transforms an ordinary object into a Portkey — a magical transport device that teleports anyone touching it to a predetermined location.
+- **Legal Note:** Unauthorised Portkey creation is illegal. Ministry approval required.
+- **Famous Use:** Dumbledore created a Portkey from a trophy in his office to transport Harry after Cedric's death.
+
+### Point Me (Four-Point Spell)
+- **Incantation:** Point Me
+- **Type:** Charm
+- **Difficulty:** Intermediate (4th Year)
+- **Effect:** Makes the caster's wand act as a compass, pointing due north.
+- **Use When:** Lost, navigating, orienteering, finding your way in the dark.
+- **Famous Use:** Harry used it to navigate the maze during the Third Task of the Triwizard Tournament.
+
+---
+
+## SPELL CREATION GUIDELINES
+
+When requesting a NEW spell, the Spellcaster will create one following these magical principles:
+
+### Latin/Greek Root Construction
+Most spells derive from Latin, Greek, or a combination. The incantation should:
+- Sound magical and authoritative
+- Relate directly to the spell's effect
+- Follow established phonetic patterns of known spells
+
+### Wand Movement Classification
+- **Jab/Thrust:** Offensive spells
+- **Flick:** Quick effect spells, charms
+- **Swish:** Flowing, continuous effects
+- **Circular:** Area effects, protection
+- **Tap:** Contact spells, object-specific
+- **Wave:** Water/elemental spells
+
+### Difficulty Scaling
+- **1st Year:** Simple, single-effect, low power
+- **2nd-3rd Year:** Intermediate, more precision required
+- **4th-5th Year (O.W.L.):** Complex, requires strong magical ability
+- **6th-7th Year (N.E.W.T.):** Advanced, potentially dangerous
+- **Beyond N.E.W.T.:** Master-level, few wizards capable
+
+### Colour Classifications
+- **Red:** Stunning, disarming
+- **Green:** Dark magic, killing
+- **Blue:** Memory, mind
+- **White/Silver:** Protective, Patronus
+- **Gold:** Powerful enchantments
+- **Purple:** Transformation
+
+---
+
+*This spellbook is maintained by the Hogwarts Department of Magical Education in coordination with the Ministry of Magic's Improper Use of Magic Office.*
+
+*"Every great wizard in history has started out as nothing more than what we are now: students. If they can do it, why not us?" — Harry Potter*

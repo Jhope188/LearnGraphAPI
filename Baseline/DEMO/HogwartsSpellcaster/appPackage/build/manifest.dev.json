@@ -1,0 +1,38 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.19/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.19",
+    "version": "1.0.0",
+    "id": "d9d840b9-2c6f-4039-99c9-11bc5bc06ec7",
+    "developer": {
+        "name": "IAC Baseline Automation",
+        "websiteUrl": "https://inforcer2m365.onmicrosoft.com",
+        "privacyUrl": "https://inforcer2m365.onmicrosoft.com",
+        "termsOfUseUrl": "https://inforcer2m365.onmicrosoft.com"
+    },
+    "name": {
+        "short": "Hogwarts Spellcaster",
+        "full": "Hogwarts Spellcaster — Magical Spell Expert for Microsoft 365 Copilot"
+    },
+    "description": {
+        "short": "Find, learn, or create Harry Potter spells for any situation",
+        "full": "The Hogwarts Spellcaster is a Harry Potter themed declarative agent for Microsoft 365 Copilot. Describe what you need — whether it's protecting your home, finding lost objects, winning a duel, or organising your desk — and the Spellcaster will find the perfect existing spell or create an entirely new one, complete with Latin incantation, wand movement, difficulty level, and wizarding history. Powered by the most comprehensive spellbook this side of the Restricted Section."
+    },
+    "icons": {
+        "outline": "outline.png",
+        "color": "color.png"
+    },
+    "accentColor": "#7B2D8E",
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [],
+    "copilotAgents": {
+        "declarativeAgents": [
+            {
+                "id": "hogwartsSpellcaster",
+                "file": "declarativeAgent.json"
+            }
+        ]
+    }
+}
