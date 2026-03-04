@@ -4,7 +4,7 @@
 
 | Property | Value |
 |----------|-------|
-| **Tenant** | Inforcer2m365.onmicrosoft.com |
+| **Tenant** | acme2m365.onmicrosoft.com |
 | **Tenant ID** | `e37d43b7-ff48-444b-9d44-fbd4477c18f3` |
 | **Sponsor** | Jon Hope (`d5f7d3fe-f83b-4d14-a45f-5b106348ce10`) |
 | **Feature** | Microsoft Entra Agent ID (Preview) |
