@@ -1,515 +1,364 @@
+# Microsoft 365 Copilot Readiness — CIS Policy Recommendations
 
-# IAC Agent Identity Configuration Guide
-
-## Microsoft Entra Agent ID — Harry Potter Demo Tenant
-
-| Property | Value |
-|----------|-------|
-| **Tenant** | acme2m365.onmicrosoft.com |
-| **Tenant ID** | `e37d43b7-ff48-444b-9d44-fbd4477c18f3` |
-| **Sponsor** | Jon Hope (`d5f7d3fe-f83b-4d14-a45f-5b106348ce10`) |
-| **Feature** | Microsoft Entra Agent ID (Preview) |
-| **API Version** | Microsoft Graph Beta |
-| **Created** | July 2025 |
+**Tenant:** inforcer2M365 (ACME Corp Baseline)  
+**Date:** 3 March 2026  
+**Framework Alignment:** CIS Microsoft 365 Foundations Benchmark v6.0.0  
+**Total Recommended Policies:** 55
 
 ---
 
-## Table of Contents
+## Summary
 
-1. [What Is Microsoft Entra Agent ID?](#what-is-microsoft-entra-agent-id)
-2. [Architecture Overview](#architecture-overview)
-3. [Deployed Blueprints & Agent Identities](#deployed-blueprints--agent-identities)
-4. [How Each Agent Can Be Used](#how-each-agent-can-be-used)
-5. [Can Agents Be Added to Teams?](#can-agents-be-added-to-teams)
-6. [Can Agents Query Hogwarts Data?](#can-agents-query-hogwarts-data)
-7. [Agent Users — Digital Workers in Teams & Outlook](#agent-users--digital-workers-in-teams--outlook)
-8. [Conditional Access for Agents](#conditional-access-for-agents)
-9. [Security & Governance Controls](#security--governance-controls)
-10. [Known Limitations (Preview)](#known-limitations-preview)
-11. [Management & Lifecycle](#management--lifecycle)
-12. [Prerequisites](#prerequisites)
-13. [References](#references)
+This document outlines the **recommended CIS-aligned policies** required to securely deploy Microsoft 365 Copilot. Each section identifies the policies needed, their priority, and the recommended deployment order to ensure your tenant meets security best practices before enabling Copilot.
+
+**Total policies recommended: 55**
+
+| Priority | Count | Description |
+|----------|-------|-------------|
+| 🔴 Critical | 15 | Required policies for secure Copilot deployment |
+| 🟠 High | 14 | Strongly recommended policies that underpin Copilot security |
+| 🟡 Medium | 18 | Supporting policies that strengthen Copilot security posture |
+| 🔵 Informational | 8 | Monitoring policies for ongoing compliance |
 
 ---
 
-## What Is Microsoft Entra Agent ID?
+## 🔴 Critical Priority — Required Copilot Readiness Policies
 
-Microsoft Entra Agent ID is a **preview feature** that extends Entra ID to provide dedicated identity management for AI agents. It solves a fundamental problem: existing identity models (user accounts and app registrations) were never designed for the dynamic, ephemeral nature of AI agents.
+These policies are required before Copilot rollout to ensure a secure deployment.
 
-Agent ID introduces a purpose-built identity type that allows organisations to:
+### 1. MFA for All Users
 
-- **Distinguish** AI agent operations from human and workload identities
-- **Right-size** access — agents get exactly the permissions they need
-- **Prevent** agents from gaining privileged administrative roles
-- **Scale** identity management to thousands of agents created and destroyed dynamically
-- **Audit** all agent activity separately in sign-in and audit logs
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| CIS - CA01 - MFA for All Admins [L1] - M365 - v6.0.0 *(§5.2.2.1)* | Entra | **Deploy** |
+| CIS - CA02 - MFA for All Users [L1] - M365 - v6.0.0 *(§5.2.2.2)* | Entra | **Deploy** |
+| CIS - CA06 - Phishing-Resistant MFA for All Admins [L2] - M365 - v6.0.0 *(§5.2.2.5)* | Entra | **Deploy** |
+| CIS - 5.1.2.1 - Disable Per-User MFA [L1] - M365 - v6.0.0 | Entra | **Deploy** |
+| Microsoft Authenticator configuration *(§5.2.3.1)* | Entra | **Configure** |
+| FIDO2 Authentication configuration | Entra | **Configure** |
 
-### Identity Hierarchy
-
-```
-Agent Identity Blueprint (Application)
-    └── Blueprint Principal (Service Principal in tenant)
-         └── Agent Identity (ServiceIdentity — the actual "agent")
-              └── Agent User (Optional — for Teams, mailbox, etc.)
-```
+**Rationale:** Copilot readiness requires MFA for all users via Conditional Access. v6.0.0 adds §5.1.2.1 requiring per-user MFA to be **disabled** in favour of CA-based MFA for consistent enforcement. §5.2.2.5 was renamed from "Strong Authentication" to "Phishing-Resistant MFA" to align with Microsoft terminology.
 
 ---
 
-## Architecture Overview
+### 2. Require Managed Device for Authentication
 
-Each agent is built from a **three-tier architecture**:
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| CIS - CA08 - Require Managed Devices [L1] - M365 - v6.0.0 *(§5.2.2.9)* | Entra | **Deploy** |
+| CIS - CA09 - Require Managed Device for MFA Registration [L1] - M365 - v6.0.0 | Entra | **Deploy** |
+| Device Compliance Settings | Intune | **Configure** |
 
-### Tier 1 — Agent Identity Blueprint
-
-A reusable template (an application registration with `@odata.type = Microsoft.Graph.AgentIdentityBlueprint`) that defines the *kind* of agent. Think of it as a class definition. Blueprints capture:
-
-- Display name and description
-- Owner and sponsor (accountable human)
-- OAuth2 scopes and identifier URIs
-- Client credentials for autonomous operation
-
-### Tier 2 — Blueprint Principal
-
-A tenant-level service principal (`graph.agentIdentityBlueprintPrincipal`) that activates the blueprint in your tenant. This is what makes the blueprint usable and allows Conditional Access policies to target it.
-
-### Tier 3 — Agent Identity
-
-The actual agent instance (a service principal with `servicePrincipalType = ServiceIdentity`) created *by* the blueprint using its own `client_credentials` token. Each blueprint can create many agent identities — like instantiating objects from a class.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                  ENTRA AGENT ID ARCHITECTURE                │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌───────────────────┐    ┌───────────────────┐            │
-│  │ 🎩 Sorting Hat    │    │ 🛡️ Auror Sentinel  │  ...       │
-│  │   (Blueprint)     │    │   (Blueprint)      │            │
-│  └────────┬──────────┘    └────────┬───────────┘            │
-│           │                        │                        │
-│  ┌────────▼──────────┐    ┌────────▼───────────┐            │
-│  │  Blueprint        │    │  Blueprint         │            │
-│  │  Principal (SP)   │    │  Principal (SP)    │            │
-│  └────────┬──────────┘    └────────┬───────────┘            │
-│           │                        │                        │
-│  ┌────────▼──────────┐    ┌────────▼───────────┐            │
-│  │ The Sorting Hat   │    │ Mad-Eye Moody      │            │
-│  │ (Agent Identity)  │    │ (Agent Identity)   │            │
-│  │ ServiceIdentity   │    │ ServiceIdentity    │            │
-│  └───────────────────┘    └────────────────────┘            │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+**Rationale:** Copilot can surface sensitive data through chat. Ensuring only managed, compliant devices can access Copilot prevents data leakage to unmanaged endpoints.
 
 ---
 
-## Deployed Blueprints & Agent Identities
+### 3. Restrict M365 Group Creation
 
-### Blueprints (Agent Registry)
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| Default User Role Permissions | Entra | **Configure** |
 
-| Blueprint | AppId | Identifier URI | OAuth Scope |
-|-----------|-------|----------------|-------------|
-| **Hogwarts Sorting Hat** | `cfec31f2-6e56-4b4c-91ca-b18e739c2082` | `api://cfec31f2-6e56-4b4c-91ca-b18e739c2082` | `access_agent` |
-| **Auror Department Sentinel** | `0f9bca3a-b325-4837-82f3-a3973952874b` | `api://0f9bca3a-b325-4837-82f3-a3973952874b` | `access_agent` |
-| **Hogwarts Library Keeper** | `a954848c-6553-4949-b64e-bdf71f551a59` | `api://a954848c-6553-4949-b64e-bdf71f551a59` | `access_agent` |
-| **Ministry Owl Post** | `9f2ca896-b1d7-4901-bb41-452f63e423b9` | `api://9f2ca896-b1d7-4901-bb41-452f63e423b9` | `access_agent` |
-| **Potions Lab Cauldron** | `6e48c97f-de9b-46f3-b799-149529a1a1a4` | `api://6e48c97f-de9b-46f3-b799-149529a1a1a4` | `access_agent` |
-
-### Agent Identities (Active Agents)
-
-| Agent Identity | SP Object ID | Blueprint | Purpose |
-|----------------|-------------|-----------|---------|
-| 🎩 **The Sorting Hat** | `abe80e72-5f15-4f3f-a65d-e861a4b640d4` | Hogwarts Sorting Hat | Autonomous classification — evaluates traits and assigns Hogwarts houses |
-| 🛡️ **Mad-Eye Moody** | `1aea4bc4-93e7-41f1-9ed0-e966821990c0` | Auror Department Sentinel | CONSTANT VIGILANCE! Real-time threat detection and security monitoring |
-| 📚 **Madam Pince** | `21afab1e-e9d7-4a8f-83ce-3c10bd3fcc5d` | Hogwarts Library Keeper | Knowledge retrieval with strict access controls and citation tracking |
-| 🦉 **Hedwig** | `06a0f791-8bc3-4b27-b024-13d76c5a6f44` | Ministry Owl Post | Reliable communications routing with end-to-end encryption |
-| ⚗️ **Professor Snape's Cauldron** | `5bcda6f1-cfc0-4373-878b-0081a6154a44` | Potions Lab Cauldron | Formula analysis and quality control — no dunderheads allowed |
+**Rationale:** Uncontrolled group creation means uncontrolled SharePoint sites and Teams — all of which Copilot can index and surface. Restricting group creation limits the blast radius of Copilot's data access.
 
 ---
 
-## How Each Agent Can Be Used
+### 4. Mailbox Audit Actions Configured
 
-### 🎩 The Sorting Hat — Classification Agent
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| Mail Flow Security Settings | Exchange | **Enable & monitor** |
+| Mail Flow General Settings | Exchange | **Enable & monitor** |
 
-**Real-world parallel:** Document classification, data labelling, user onboarding routing.
-
-An agent that evaluates inputs against criteria and assigns categories. In a production scenario this could:
-
-- Automatically classify incoming documents using sensitivity labels
-- Route new user onboarding to the correct department/group
-- Triage support tickets by severity and department
-- Apply Microsoft Purview Information Protection labels based on content analysis
-
-### 🛡️ Mad-Eye Moody — Security Sentinel
-
-**Real-world parallel:** Threat detection, compliance monitoring, alert triage.
-
-A security-focused agent performing continuous monitoring. Could be configured to:
-
-- Monitor sign-in logs for anomalous behaviour and raise alerts
-- Review Conditional Access policy effectiveness
-- Scan for risky users/workloads and recommend remediation
-- Integrate with Microsoft Sentinel or Defender for automated response
-
-### 📚 Madam Pince — Knowledge Retrieval Agent
-
-**Real-world parallel:** RAG-based Q&A, document search, knowledge base management.
-
-A retrieval agent with strict access boundaries. Could:
-
-- Search SharePoint document libraries and return citations
-- Enforce sensitivity label restrictions — only surface content the requestor can access
-- Query the Hogwarts SharePoint sites for library content, course materials, and policies
-- Integrate with Microsoft 365 Copilot as a governed knowledge source
-
-### 🦉 Hedwig — Communications Agent
-
-**Real-world parallel:** Notification routing, email automation, message brokering.
-
-A communications-focused agent. Could:
-
-- Route notifications to the correct Teams channels
-- Send scheduled email digests via Exchange Online
-- Broker messages between users and other agents
-- Manage communication preferences and delivery tracking
-
-### ⚗️ Professor Snape's Cauldron — Analysis Agent
-
-**Real-world parallel:** Data validation, formula/calculation engine, QA pipeline.
-
-A quality-control and analysis agent. Could:
-
-- Validate data inputs against business rules
-- Run compliance checks on submitted reports
-- Perform calculations and return structured results
-- Flag anomalies in datasets for human review
+**Rationale:** Full mailbox auditing (including Copy, FolderBind, Move actions) is essential for detecting if Copilot-driven actions or data access trigger unusual mailbox activity.
 
 ---
 
-## Can Agents Be Added to Teams?
+### 5. Disable Self-Service Purchase for Copilot
 
-### Short Answer: **Yes — but it requires an Agent User**
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| Microsoft 365 Copilot | M365 Admin Center | **Disable self-service** |
+| Microsoft 365 Copilot Pro | M365 Admin Center | **Verify disabled** |
 
-Agent identities on their own are service principals (`ServiceIdentity` type). They can authenticate to APIs and access Microsoft Graph resources, but they **cannot** directly join Teams channels, send chat messages, or have a mailbox.
-
-To enable Teams participation, you need to create an **Agent User** — a special Entra user account paired 1:1 with an agent identity. This is a separate, optional step.
-
-### What Agent Users Enable
-
-| Capability | Agent Identity Only | With Agent User |
-|------------|:------------------:|:---------------:|
-| Authenticate to Graph API | ✅ | ✅ |
-| Access web services autonomously | ✅ | ✅ |
-| Have a mailbox | ❌ | ✅ |
-| Join Teams and send chat messages | ❌ | ✅ |
-| Appear in Teams as a participant | ❌ | ✅ |
-| Be @mentioned in Teams/Outlook | ❌ | ✅ |
-| Be added to Entra groups | ❌ | ✅ |
-| Be assigned licences | ❌ | ✅ |
-| Receive and respond to Word comments | ❌ | ✅ |
-| Be added to administrative units | ❌ | ✅ |
-
-### How to Create an Agent User
-
-1. **Grant the blueprint** the `AgentIdUser.ReadWrite.IdentityParentedBy` application permission
-2. **Create the agent user** via the beta Graph API, specifying the parent agent identity
-3. **Assign a Microsoft 365 licence** (required for mailbox/Teams provisioning)
-4. The agent user is then available in Teams, Outlook, and collaborative workflows
-
-```powershell
-# Example: Create an agent user for "The Sorting Hat"
-# First: Blueprint needs AgentIdUser.ReadWrite.IdentityParentedBy permission
-
-$agentUserBody = @{
-    displayName         = "The Sorting Hat"
-    agentIdentityId     = "abe80e72-5f15-4f3f-a65d-e861a4b640d4"   # Agent identity SP ID
-    "sponsors@odata.bind" = @("https://graph.microsoft.com/v1.0/users/$sponsorId")
-} | ConvertTo-Json -Depth 5
-
-# Use the blueprint's client_credentials token
-Invoke-RestMethod -Method POST `
-    -Uri "https://graph.microsoft.com/beta/users/graph.agentUser" `
-    -Headers @{
-        "Authorization" = "Bearer $blueprintToken"
-        "Content-Type"  = "application/json"
-        "OData-Version" = "4.0"
-    } `
-    -Body $agentUserBody
-```
-
-### Agent 365 SDK (For Full Teams Integration)
-
-Microsoft's **Agent 365 SDK** provides the richest Teams integration for agents. With it, agents can:
-
-- Use **@mentions** in Teams, Word, Outlook
-- Receive and respond to notifications from Teams channels, Outlook emails, and Word comments
-- Access governed **MCP (Model Context Protocol) servers** for SharePoint, Mail, Calendar, Teams data
-- Gain full **OpenTelemetry** observability for audited, traceable interactions
-
-> **Note:** Agent 365 SDK requires the Frontier preview programme and a Microsoft 365 Copilot licence.
+**Rationale:** Allowing self-service purchase of Copilot licenses means users could enable Copilot before the tenant is properly secured — bypassing all readiness controls.
 
 ---
 
-## Can Agents Query Hogwarts Data?
+### 6. Data Loss Prevention Policies
 
-### Short Answer: **Yes — with the right permissions**
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| Default Office 365 DLP policy | Purview | **Enable** |
+| Default policy for Teams | Purview | **Enable** |
+| Default policy for devices | Purview | **Enable** |
+| U.S. Financial Data | Purview | **Enable** |
+| Default DLP policy - Protect sensitive M365 Copilot interactions | Purview | **Enable** |
 
-The agent identities we've created can access Microsoft Graph and other APIs using their blueprint's `client_credentials` flow. To query Hogwarts-related data (SharePoint sites, user profiles, groups, etc.), you need to:
-
-### 1. Grant Microsoft Graph Permissions to the Blueprint
-
-The blueprint principal needs API permissions consented by an admin. Common permissions for querying Hogwarts data:
-
-| Permission | Type | What It Enables |
-|------------|------|-----------------|
-| `Sites.Read.All` | Application | Read all SharePoint sites (Hogwarts houses, library, etc.) |
-| `Sites.ReadWrite.All` | Application | Read/write SharePoint content |
-| `User.Read.All` | Application | Read all user profiles (Harry Potter characters) |
-| `Group.Read.All` | Application | Read Entra groups (house groups: Gryffindor, Slytherin, etc.) |
-| `Files.Read.All` | Application | Read files in SharePoint/OneDrive |
-| `Mail.Read` | Application | Read mailboxes (requires agent user) |
-| `ChannelMessage.Read.All` | Application | Read Teams channel messages |
-
-### 2. Example: Querying Hogwarts SharePoint Sites
-
-```powershell
-# Authenticate as the Madam Pince blueprint (Library Keeper)
-$tokenBody = @{
-    client_id     = "a954848c-6553-4949-b64e-bdf71f551a59"
-    scope         = "https://graph.microsoft.com/.default"
-    client_secret = "<Library Keeper Secret>"
-    grant_type    = "client_credentials"
-}
-$token = (Invoke-RestMethod -Method POST `
-    -Uri "https://login.microsoftonline.com/e37d43b7-ff48-444b-9d44-fbd4477c18f3/oauth2/v2.0/token" `
-    -ContentType "application/x-www-form-urlencoded" `
-    -Body $tokenBody).access_token
-
-# Search for Hogwarts sites
-$sites = Invoke-RestMethod `
-    -Uri "https://graph.microsoft.com/v1.0/sites?search=Hogwarts" `
-    -Headers @{ Authorization = "Bearer $token" }
-
-$sites.value | ForEach-Object { Write-Host "$($_.displayName) — $($_.webUrl)" }
-```
-
-### 3. Example: Listing Hogwarts House Members
-
-```powershell
-# Using the Sorting Hat agent's blueprint credentials
-# Query the dynamic house groups
-
-$groups = Invoke-RestMethod `
-    -Uri "https://graph.microsoft.com/v1.0/groups?`$filter=startswith(displayName,'Hogwarts')" `
-    -Headers @{ Authorization = "Bearer $token" }
-
-foreach ($group in $groups.value) {
-    Write-Host "`n$($group.displayName):" -ForegroundColor Yellow
-    $members = Invoke-RestMethod `
-        -Uri "https://graph.microsoft.com/v1.0/groups/$($group.id)/members?`$select=displayName,jobTitle" `
-        -Headers @{ Authorization = "Bearer $token" }
-    foreach ($m in $members.value) {
-        Write-Host "  $($m.displayName) — $($m.jobTitle)"
-    }
-}
-```
-
-### What Hogwarts Data Is Available
-
-Based on the demo tenant setup, these agents could query:
-
-| Data Source | Type | Example Content |
-|-------------|------|-----------------|
-| Harry Potter users (21 characters) | Entra ID Users | Names, departments, job titles, houses |
-| Hogwarts House groups | Dynamic Entra Groups | Gryffindor, Hufflepuff, Ravenclaw, Slytherin |
-| SharePoint sites | SharePoint Online | House sites, library, Dumbledore's Army docs |
-| Sensitivity labels | Microsoft Purview | Hogwarts tiered classification labels |
-| Document libraries | SharePoint/OneDrive | Course materials, restricted section docs |
+**Rationale:** DLP policies are the primary control preventing Copilot from surfacing or generating sensitive data (PII, financial data, credentials) in chat responses. The Copilot-specific DLP policy should be enabled before rollout.
 
 ---
 
-## Agent Users — Digital Workers in Teams & Outlook
+### 7. Guest Sharing Controls
 
-Agent users are the key to making agents appear as team members in Microsoft 365 collaborative apps.
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| Guest item sharing settings | SharePoint | **Configure** |
+| External sharing settings | SharePoint | **Configure** |
+| Guest user access and invite settings | Entra | **Configure** |
 
-### Agent User Capabilities
-
-- **Added to Entra groups** — inherit permissions from group membership (excluding role-assignable groups)
-- **Assigned licences** — needed for mailbox and Teams provisioning
-- **Added to administrative units** — same as human users
-- **Cannot have passwords** — only authenticate through their parent agent identity's credentials
-- **Cannot be assigned privileged admin roles** — security boundary prevents privilege escalation
-
-### Security Model
-
-```
-Agent Identity Blueprint (has client_credentials)
-    │
-    ├── Creates → Agent Identity (ServiceIdentity SP)
-    │                 │
-    │                 └── Creates → Agent User (Entra User, type: agent)
-    │                                   │
-    │                                   ├── Mailbox
-    │                                   ├── Teams presence
-    │                                   ├── Group membership
-    │                                   └── Licence assignments
-    │
-    └── Authenticates → Token (idtyp=app)
-                             │
-                             └── Can impersonate → Agent User Token (idtyp=user)
-```
-
-### Scenario: Adding "The Sorting Hat" to a Teams Channel
-
-1. Create an agent user for The Sorting Hat (see example above)
-2. Assign a Microsoft 365 licence to the agent user
-3. Wait for mailbox/Teams provisioning (~minutes)
-4. Add the agent user to a Team as a member
-5. The Sorting Hat can now send/receive messages in that Team's channels
-6. Users can @mention The Sorting Hat to invoke it
+**Rationale:** If guests can reshare items they don't own, Copilot-indexed content could be exposed to external users through sharing chains.
 
 ---
 
-## Conditional Access for Agents
+### 8. Sensitivity Labels on SharePoint Sites
 
-Microsoft Entra Agent ID integrates with Conditional Access, allowing you to apply adaptive policies to agents:
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| CIS - Base Label Policy | Purview | **Verify published** |
+| CIS - Restricted Label Policy | Purview | **Verify published** |
+| CIS - Confidential Label Policy | Purview | **Verify published** |
+| Confidential (label group) | Purview | **Apply to sites** |
+| Restricted (label group) | Purview | **Apply to sites** |
 
-### What You Can Do
-
-- **Block high-risk agents** — Microsoft-managed policies automatically block agents flagged as risky
-- **Require compliant network** — enforce agents only operate from approved network locations
-- **Target by blueprint** — apply policies to all instances of a specific agent type
-- **Use custom security attributes** — deploy policies at scale across agent collections
-- **Token lifetime controls** — restrict how long agent tokens are valid
-
-### Example Policy: Restrict Agents to Corporate Network
-
-| Setting | Value |
-|---------|-------|
-| **Assignment** | All ServiceIdentity principals |
-| **Condition** | Location NOT in "Trusted corporate IPs" |
-| **Grant** | Block access |
+**Rationale:** Sensitivity labels on SharePoint sites control what Copilot can access. Without labels applied at the site level, Copilot treats all content equally — no classification boundary exists.
 
 ---
 
-## Security & Governance Controls
+## 🟠 High Priority — Strongly Recommended Policies
 
-### What Agents Cannot Do
+These policies are strongly recommended to underpin the critical policies above and close security gaps.
 
-- ❌ Be assigned **privileged administrator roles** (Global Admin, etc.)
-- ❌ Have **passwords or passkeys** — only client_credentials or federated identity credentials
-- ❌ **Interactively sign in** — agents cannot complete browser-based auth flows
-- ❌ Be added to **role-assignable groups**
-- ❌ Use **custom role assignments** (preview limitation)
+### 9. Block Legacy Authentication
 
-### What Admins Can Do
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| CIS - CA03 - Block Legacy Authentication [L1] - M365 - v6.0.0 *(§5.2.2.3)* | Entra | **Deploy** |
 
-- ✅ View all agents in the **Agent Registry** (Entra admin centre)
-- ✅ Apply **Conditional Access policies** to all agents or specific blueprints
-- ✅ **Disable** all agents of a given type by disabling the blueprint principal
-- ✅ **Revoke permissions** at the blueprint level (affects all child agents)
-- ✅ View agent **sign-in and audit logs** separately from human activity
-- ✅ Use **Identity Protection** risk signals for agents
-- ✅ Manage agents via **agent collections** for grouped governance
-
-### Audit & Monitoring
-
-All agent operations are recorded in Entra sign-in logs and clearly marked as AI agent activity. This enables:
-
-- Separate reporting on agent vs. human operations
-- Detection of anomalous agent behaviour
-- Compliance evidence for regulatory requirements
-- Integration with Microsoft Sentinel for SIEM/SOAR workflows
+**Rationale:** Legacy auth bypasses MFA. The CIS baseline policy ensures comprehensive coverage across all apps and client types.
 
 ---
 
-## Known Limitations (Preview)
+### 10. External Sharing & Default Link Type
 
-| Limitation | Impact | Workaround |
-|-----------|--------|------------|
-| **No delegated permission for agent deletion** | Agent identities and blueprint principals cannot be deleted using delegated auth | Use app permissions or the Entra admin centre portal |
-| **Rapid blueprint creation causes BadRequest** | Creating blueprints in quick succession (<30s) fails intermittently | Use ≥30-second delays between creation calls |
-| **Agent users require additional permissions** | `AgentIdUser.ReadWrite.IdentityParentedBy` must be explicitly granted | Request authorisation from tenant admin |
-| **Orphaned SPs after blueprint deletion** | Deleting a blueprint app leaves orphaned SPs (principals + agent identities) | Non-functional but persistent — clean up via admin centre |
-| **Frontier programme required** | Agent ID requires M365 Copilot licence + Frontier enabled | Enable via M365 Admin → Copilot → Settings → User access → Copilot Frontier |
-| **Teams chat limitation** | Some agent patterns only support 1:1 chats (not group chats or channel threads) | Depends on agent implementation and SDK used |
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| SharePoint External Sharing | SharePoint | **Monitor** |
+| Allow syncing only on computers joined to specific domains | SharePoint | **Configure** |
+
+**Rationale:** External sharing settings and default link types control how easily Copilot-accessible content can leak externally. Organisation links should be the default, not "Anyone" links.
 
 ---
 
-## Management & Lifecycle
+### 11. Sensitivity Label Policies Published
 
-### Viewing Agents in the Entra Admin Centre
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| CIS - Base Label Policy | Purview | **Verify user coverage** |
+| CIS - Restricted Label Policy | Purview | **Verify user coverage** |
+| CIS - Confidential Label Policy | Purview | **Verify user coverage** |
 
-- **Agent identities tab:** [https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/AllAgents.MenuView](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/AllAgents.MenuView)
-- **Agent registry:** [https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/AllAgents.MenuView/~/agentRegistry](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/AllAgents.MenuView/~/agentRegistry)
-
-### Listing Agents via PowerShell
-
-```powershell
-# Connect with required scopes
-Connect-MgGraph -Scopes "Application.Read.All" -TenantId "e37d43b7-ff48-444b-9d44-fbd4477c18f3"
-
-# List all blueprints
-$apps = Invoke-MgGraphRequest -Method GET `
-    -Uri "https://graph.microsoft.com/beta/applications?`$select=id,appId,displayName,identifierUris&`$top=200" `
-    -OutputType PSObject
-$apps.value | Where-Object { $_.identifierUris -match "^api://" } |
-    Format-Table displayName, appId, @{L='URI';E={$_.identifierUris -join ','}}
-
-# List all agent identities
-$sps = Invoke-MgGraphRequest -Method GET `
-    -Uri "https://graph.microsoft.com/beta/servicePrincipals?`$filter=servicePrincipalType eq 'ServiceIdentity'&`$select=id,displayName,servicePrincipalType" `
-    -OutputType PSObject
-$sps.value | Format-Table displayName, id, servicePrincipalType
-```
-
-### Rotating Secrets
-
-Blueprint secrets expire after 6 months (as configured). To rotate:
-
-```powershell
-# Add new secret
-$newSecret = Invoke-MgGraphRequest -Method POST `
-    -Uri "https://graph.microsoft.com/beta/applications/<AppId>/addPassword" `
-    -Body (@{ passwordCredential = @{ displayName = "AgentSecret-Rotated"; endDateTime = (Get-Date).AddMonths(6).ToString("yyyy-MM-ddTHH:mm:ssZ") } } | ConvertTo-Json) `
-    -ContentType "application/json" -OutputType PSObject
-
-# Remove old secret (by keyId)
-Invoke-MgGraphRequest -Method POST `
-    -Uri "https://graph.microsoft.com/beta/applications/<AppId>/removePassword" `
-    -Body (@{ keyId = "<old-key-id>" } | ConvertTo-Json) `
-    -ContentType "application/json"
-```
+**Rationale:** Labels must be published to all users and sites. Copilot respects sensitivity labels only when they're actually applied.
 
 ---
 
-## Prerequisites
+### 12. Supporting Conditional Access & Authentication Policies
 
-| Requirement | Details |
-|-------------|---------|
-| **Licence** | Microsoft 365 Copilot |
-| **Frontier Programme** | Enabled via M365 Admin → Copilot → Settings → Copilot Frontier |
-| **Entra Role** | Agent ID Developer or Agent ID Administrator |
-| **PowerShell** | 7.0+ with `Microsoft.Graph.Beta.Applications` module |
-| **Graph API** | Beta endpoint (`https://graph.microsoft.com/beta/`) |
-| **Required Scopes** | `AgentIdentityBlueprint.Create`, `AgentIdentityBlueprint.ReadWrite.All`, `AgentIdentityBlueprint.AddRemoveCreds.All`, `AgentIdentityBlueprintPrincipal.Create`, `Application.Read.All`, `User.Read` |
+| Policy Name | Product | Recommendation |
+|------------|---------|----------------|
+| CIS - CA05 - Restrict Entra Admin Center [L1] *(§5.1.2.4)* | Entra | **Deploy** |
+| CIS - CA13 - Block Device Code Flow [L1] *(§5.2.2.12)* | Entra | **Deploy** |
+| CIS - CA04 - Sign-In Frequency & Non-Persistent Browser for Admins [L1] | Entra | **Deploy** |
+| CIS - CA07 - Idle Session Timeout for Unmanaged Devices [L1] | Entra | **Deploy** |
+| CIS - CA11 - Protect High Risk Sign-Ins [L1] - P2 *(§5.2.2.7)* | Entra | **Deploy** |
+| CIS - CA12 - Block Medium Risk Sign-Ins [L2] - P2 *(§5.2.2.8)* | Entra | **Deploy** |
+| CIS - CA10 - Protect High Risk Users [L1] - P2 *(§5.2.2.6)* | Entra | **Deploy** |
+| CIS - CA14 - Intune Enrollment Sign-In Frequency [L1] | Entra | **Deploy** |
+| CIS - 5.2.3.5 - Disable Weak Authentication Methods [L1] - v6.0.0 | Entra | **Deploy** |
+| CIS - 5.2.3.6 - Enable System-Preferred MFA [L1] - v6.0.0 | Entra | **Deploy** |
+| CIS - 5.3.3 - Access Reviews for Privileged Roles [L1] - v6.0.0 | Entra | **Deploy** |
 
----
+**Rationale:** These CA and authentication policies form the Zero Trust foundation that Copilot security depends on. Device code flow blocking prevents token theft; session controls limit exposure windows; risk-based policies catch compromised accounts before Copilot can be abused.
 
-## References
-
-| Resource | URL |
-|----------|-----|
-| What is Microsoft Entra Agent ID? | [learn.microsoft.com/entra/agent-id/identity-professional/microsoft-entra-agent-identities-for-ai-agents](https://learn.microsoft.com/entra/agent-id/identity-professional/microsoft-entra-agent-identities-for-ai-agents) |
-| What are agent identities? | [learn.microsoft.com/entra/agent-id/identity-platform/what-is-agent-id](https://learn.microsoft.com/entra/agent-id/identity-platform/what-is-agent-id) |
-| Agent users | [learn.microsoft.com/entra/agent-id/identity-platform/agent-users](https://learn.microsoft.com/entra/agent-id/identity-platform/agent-users) |
-| Create a blueprint | [learn.microsoft.com/entra/agent-id/identity-platform/create-blueprint](https://learn.microsoft.com/entra/agent-id/identity-platform/create-blueprint) |
-| Create agent identities | [learn.microsoft.com/entra/agent-id/identity-platform/create-delete-agent-identities](https://learn.microsoft.com/entra/agent-id/identity-platform/create-delete-agent-identities) |
-| Agent 365 SDK | [learn.microsoft.com/microsoft-agent-365/developer/agent-365-sdk](https://learn.microsoft.com/microsoft-agent-365/developer/agent-365-sdk) |
-| Request agent user tokens | [learn.microsoft.com/entra/agent-id/identity-platform/autonomous-agent-request-agent-user-tokens](https://learn.microsoft.com/entra/agent-id/identity-platform/autonomous-agent-request-agent-user-tokens) |
-| Preview known issues | [learn.microsoft.com/entra/agent-id/identity-platform/preview-known-issues](https://learn.microsoft.com/entra/agent-id/identity-platform/preview-known-issues) |
-| Conditional Access for agents | [learn.microsoft.com/entra/identity/conditional-access/agent-id](https://learn.microsoft.com/entra/identity/conditional-access/agent-id) |
-| Creation script | `Create-HarryPotterAgents.ps1` in `BaslineSetup/HarryPotterPurviewDemo/` |
+> **⚠️ v6.0.0 Changes:**
+> - **CA05** (Restrict Entra Admin Center) was elevated from **L2 → L1** — now a baseline requirement.
+> - **§5.2.3.5** (NEW) — Weak authentication methods (SMS, voice) must be disabled.
+> - **§5.2.3.6** (NEW) — System-preferred MFA ensures the strongest available method is used.
+> - **§5.3.3** (NEW) — Access reviews for privileged roles required at L1.
 
 ---
 
-> **Document Version:** 1.0 · **Last Updated:** February 2026 · **Author:** IAC Baseline Automation
+## 🟡 Medium Priority — Supporting Copilot Posture
+
+These policies strengthen the overall security context around Copilot and are recommended for a robust deployment.
+
+| Policy Name | Product | Copilot Relevance |
+|------------|---------|-------------------|
+| Entra Enterprise Application Admin Consent settings | Entra | Controls which apps (including Copilot plugins) admins can consent to |
+| Entra Enterprise Application User Consent settings | Entra | Prevents users consenting to risky apps that Copilot could interact with |
+| Registration Campaign | Entra | Drives MFA adoption — needed before Copilot rollout |
+| Password Protection | Entra | Weak passwords + Copilot = easy account compromise + data access |
+| Software OATH tokens Authentication configuration | Entra | Ensure strong auth methods available for Copilot users |
+| CIS - 5.1.3.1 - Dynamic Group for Guest Users [L1] - v6.0.0 | Entra | Ensures guest lifecycle management — Copilot respects group-based access |
+| INF - Client Approved IP Range | Entra | Named locations underpin CA policy enforcement |
+| INF-NL01 - Approved Countries | Entra | Named locations underpin CA policy enforcement |
+| INF - MSP Service Center | Entra | Named locations underpin CA policy enforcement |
+| TiB - Allowed Countries | Entra | Named locations underpin CA policy enforcement |
+| Organization Technical Contact | M365 Admin Center | Ensures proper communication channel for Copilot-related notifications |
+| Guest user directory access | M365 Admin Center | Controls what guests can discover via directory — Copilot respects directory permissions |
+| CIS - 7.2.9 - Guest Access Auto-Expiration [L1] - v6.0.0 | SharePoint | Automatically expires stale guest access to Copilot-indexed content |
+| Global (Meeting policy) | Teams | Controls Copilot in Teams Meetings behaviour |
+| TiB - Meeting Recording Settings | Teams | Copilot uses meeting transcripts — recording settings matter |
+| Meeting Record Settings | Teams | Controls Copilot transcript access |
+| CIS - 8.2.2 - Block Unmanaged Teams Users [L1] - v6.0.0 | Teams | Prevents data leakage through Copilot-accessible Teams conversations |
+| CIS - 8.2.3 - Block External Teams Conversations [L1] - v6.0.0 | Teams | Blocks unsolicited external contact that Copilot could index |
+
+---
+
+## 🔵 Informational — Ongoing Monitoring Policies
+
+These policies should be in place and monitored for drift to maintain Copilot readiness.
+
+| Policy Name | Product | Copilot Relevance |
+|------------|---------|-------------------|
+| Unified Audit Logging | Purview | Audit log search enabled |
+| Mail Flow Security Settings | Exchange | AuditBypassEnabled not set |
+| Mail Flow General Settings | Exchange | AuditDisabled is False |
+| SharePoint External Sharing | SharePoint | Org-level sharing compliant |
+| OneDrive Retention | SharePoint | Data governance |
+| Idle session sign-out | SharePoint | Session security |
+| SharePoint Site Creation settings | SharePoint | Site governance |
+| Password Expiration Policy | M365 Admin Center | Account security baseline |
+
+---
+
+## Quick-Reference: All 55 Recommended CIS Policies
+
+### Entra (30 policies)
+
+| # | Policy | Priority |
+|---|--------|----------|
+| 1 | CIS - CA01 - MFA for All Admins [L1] *(§5.2.2.1)* | 🔴 Critical |
+| 2 | CIS - CA02 - MFA for All Users [L1] *(§5.2.2.2)* | 🔴 Critical |
+| 3 | CIS - CA06 - Phishing-Resistant MFA for Admins [L2] *(§5.2.2.5)* | 🔴 Critical |
+| 4 | CIS - 5.1.2.1 - Disable Per-User MFA [L1] | 🔴 Critical |
+| 5 | CIS - CA08 - Require Managed Devices [L1] *(§5.2.2.9)* | 🔴 Critical |
+| 6 | CIS - CA09 - Require Managed Device for MFA Registration [L1] | 🔴 Critical |
+| 7 | Microsoft Authenticator configuration *(§5.2.3.1)* | 🔴 Critical |
+| 8 | FIDO2 Authentication configuration | 🔴 Critical |
+| 9 | Default User Role Permissions | 🔴 Critical |
+| 10 | Guest user access and invite settings *(§5.1.6.2)* | 🔴 Critical |
+| 11 | CIS - CA03 - Block Legacy Authentication [L1] *(§5.2.2.3)* | 🟠 High |
+| 12 | CIS - CA05 - Restrict Entra Admin Center [L1] *(§5.1.2.4)* ⬆️ | 🟠 High |
+| 13 | CIS - CA13 - Block Device Code Flow [L1] *(§5.2.2.12)* | 🟠 High |
+| 14 | CIS - CA04 - Sign-In Frequency for Admins [L1] | 🟠 High |
+| 15 | CIS - CA07 - Idle Session Timeout [L1] | 🟠 High |
+| 16 | CIS - CA11 - Protect High Risk Sign-Ins [L1] *(§5.2.2.7)* | 🟠 High |
+| 17 | CIS - CA12 - Block Medium Risk Sign-Ins [L2] *(§5.2.2.8)* | 🟠 High |
+| 18 | CIS - CA10 - Protect High Risk Users [L1] *(§5.2.2.6)* | 🟠 High |
+| 19 | CIS - CA14 - Intune Enrollment Sign-In Frequency [L1] | 🟠 High |
+| 20 | CIS - 5.2.3.5 - Disable Weak Auth Methods [L1] 🆕 | 🟠 High |
+| 21 | CIS - 5.2.3.6 - System-Preferred MFA [L1] 🆕 | 🟠 High |
+| 22 | CIS - 5.3.3 - Access Reviews for Privileged Roles [L1] 🆕 | 🟠 High |
+| 23 | Entra Enterprise Application Admin Consent settings | 🟡 Medium |
+| 24 | Entra Enterprise Application User Consent settings | 🟡 Medium |
+| 25 | Registration Campaign | 🟡 Medium |
+| 26 | Password Protection *(§5.2.3.2/§5.2.3.3)* | 🟡 Medium |
+| 27 | Software OATH tokens Authentication configuration | 🟡 Medium |
+| 28 | CIS - 5.1.3.1 - Dynamic Group for Guest Users [L1] 🆕 | 🟡 Medium |
+| 29 | INF - Client Approved IP Range | 🟡 Medium |
+| 30 | INF-NL01 - Approved Countries + TiB - Allowed Countries + INF - MSP Service Center | 🟡 Medium |
+
+### Purview (9 policies)
+
+| # | Policy | Priority |
+|---|--------|----------|
+| 31 | Default Office 365 DLP policy | 🔴 Critical |
+| 32 | Default policy for Teams | 🔴 Critical |
+| 33 | Default policy for devices | 🔴 Critical |
+| 34 | U.S. Financial Data | 🔴 Critical |
+| 35 | Default DLP policy - Protect sensitive M365 Copilot interactions | 🔴 Critical |
+| 36 | CIS - Base Label Policy *(§3.3.1)* | 🔴 Critical |
+| 37 | CIS - Restricted Label Policy *(§3.3.1)* | 🔴 Critical |
+| 38 | CIS - Confidential Label Policy *(§3.3.1)* | 🔴 Critical |
+| 39 | Unified Audit Logging *(§6.1.1)* | 🔵 Informational |
+
+### SharePoint (6 policies)
+
+| # | Policy | Priority |
+|---|--------|----------|
+| 40 | Guest item sharing settings *(§7.2.5)* | 🔴 Critical |
+| 41 | External sharing settings *(§7.2.3)* | 🔴 Critical |
+| 42 | Allow syncing only on computers joined to specific domains *(§7.3.2)* | 🟠 High |
+| 43 | CIS - 7.2.9 - Guest Access Auto-Expiration [L1] 🆕 | 🟡 Medium |
+| 44 | SharePoint External Sharing | 🔵 Informational |
+| 45 | Idle session sign-out | 🔵 Informational |
+
+### Exchange (2 policies)
+
+| # | Policy | Priority |
+|---|--------|----------|
+| 46 | Mail Flow Security Settings *(§6.1.2)* | 🔴 Critical |
+| 47 | Mail Flow General Settings *(§6.1.1/§6.1.3)* | 🔴 Critical |
+
+### M365 Admin Center (4 policies)
+
+| # | Policy | Priority |
+|---|--------|----------|
+| 48 | Microsoft 365 Copilot (Self-Service) | 🔴 Critical |
+| 49 | Microsoft 365 Copilot Pro (Self-Service) | 🔴 Critical |
+| 50 | Organization Technical Contact | 🟡 Medium |
+| 51 | Guest user directory access | 🟡 Medium |
+
+### Teams (4 policies)
+
+| # | Policy | Priority |
+|---|--------|----------|
+| 52 | Global (Meeting policy) | 🟡 Medium |
+| 53 | TiB - Meeting Recording Settings | 🟡 Medium |
+| 54 | CIS - 8.2.2 - Block Unmanaged Teams Users [L1] 🆕 | 🟡 Medium |
+| 55 | CIS - 8.2.3 - Block External Teams Conversations [L1] 🆕 | 🟡 Medium |
+
+### Intune (1 policy)
+
+| # | Policy | Priority |
+|---|--------|----------|
+| 56 | Device Compliance Settings *(§4.1)* | 🔴 Critical |
+
+---
+
+## Recommended Deployment Order
+
+Before enabling Copilot licenses, address these in order:
+
+### Phase 1 — Identity & Access (Week 1-2)
+1. ✅ Disable per-user MFA and deploy CA-based MFA policies (CA01, CA02, CA06) + Authenticator/FIDO2 config
+2. ✅ Deploy CIS-CA08 (Managed Devices) + fix Device Compliance Settings
+3. ✅ Block legacy auth (CA03)
+4. ✅ Disable weak auth methods (§5.2.3.5) + enable system-preferred MFA (§5.2.3.6)
+5. ✅ Restrict M365 group creation (Default User Role Permissions)
+6. ✅ Disable Copilot self-service purchase
+
+### Phase 2 — Data Protection (Week 2-3)
+7. ✅ **Enable** all 5 DLP policies (especially the Copilot-specific one)
+8. ✅ Apply sensitivity labels to all SharePoint sites
+9. ✅ Verify label publishing policies cover all users
+10. ✅ Fix guest sharing settings (SharePoint + Entra) + enable guest access auto-expiration (§7.2.9)
+
+### Phase 3 — Hardening (Week 3-4)
+11. ✅ Deploy remaining CA policies (CA05, CA07, CA10-14)
+12. ✅ Configure access reviews for privileged roles (§5.3.3)
+13. ✅ Fix Exchange mailbox audit actions (add Copy, FolderBind, Move)
+14. ✅ Restrict Teams external communications (§8.2.2, §8.2.3)
+15. ✅ Remediate Teams meeting recording settings
+16. ✅ Address consent settings, password protection, and dynamic guest group
+
+### Phase 4 — Validate & Enable
+17. ✅ Re-run Copilot Readiness check — target all checks passed
+18. ✅ Apply "Copilot Readiness" tags to all 55 policies in Inforcer
+19. ✅ Enable Copilot licenses for pilot group
+20. ✅ Monitor audit logs and DLP alerts for 2 weeks before broader rollout
+
+---
+
+*CIS Microsoft 365 Foundations Benchmark v6.0.0 — Copilot Readiness Policy Recommendations — inforcer2M365 tenant.*
