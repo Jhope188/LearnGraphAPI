@@ -1,0 +1,102 @@
+{
+  "createdDateTime": "2026-02-26T15:31:13.62617Z",
+  "description": "",
+  "lastModifiedDateTime": "2026-02-26T15:31:13.62617Z",
+  "name": "Windows 11 Anti-Virus Defender Update Controls",
+  "platforms": "windows10",
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 3,
+  "technologies": "mdm,microsoftSense",
+  "id": "29e74d82-937f-4b46-aaa6-62017c656143",
+  "templateReference": {
+    "templateId": "e3f74c5a-a6de-411d-aef6-eb15628f3a0a_1",
+    "templateFamily": "endpointSecurityAntivirus",
+    "templateDisplayName": "Defender Update controls",
+    "templateDisplayVersion": "Version 1"
+  },
+  "settings@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies('29e74d82-937f-4b46-aaa6-62017c656143')/settings",
+  "settings": [
+    {
+      "id": "0",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_defender_configuration_engineupdateschannel",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "f7e1409d-9c85-4a3f-85a6-ad05cc8ccf13"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_defender_configuration_engineupdateschannel_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "afc8df70-7b19-4335-b200-bf4b7e098f67",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "1",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_defender_configuration_platformupdateschannel",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "e78b3ace-75d0-4aad-b3fa-4f49390d6483"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_defender_configuration_platformupdateschannel_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "d3b0d61a-bdc5-4507-84d0-5f2a4a3e11a5",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "2",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_defender_configuration_securityintelligenceupdateschannel",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "ba273649-e186-4377-89d5-87405bc9a87c"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_defender_configuration_securityintelligenceupdateschannel_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "41ea06bf-e94a-482a-9aaa-7fd535fb4150",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    }
+  ],
+  "assignments@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies('29e74d82-937f-4b46-aaa6-62017c656143')/assignments",
+  "assignments": [
+    {
+      "id": "29e74d82-937f-4b46-aaa6-62017c656143_adadadad-808e-44e2-905a-0b7873a8a531",
+      "source": "direct",
+      "sourceId": "29e74d82-937f-4b46-aaa6-62017c656143",
+      "target": {
+        "@odata.type": "#microsoft.graph.allDevicesAssignmentTarget",
+        "deviceAndAppManagementAssignmentFilterId": null,
+        "deviceAndAppManagementAssignmentFilterType": "none"
+      }
+    },
+    {
+      "id": "29e74d82-937f-4b46-aaa6-62017c656143_acacacac-9df4-4c7d-9d50-4ef0226f57a9",
+      "source": "direct",
+      "sourceId": "29e74d82-937f-4b46-aaa6-62017c656143",
+      "target": {
+        "@odata.type": "#microsoft.graph.allLicensedUsersAssignmentTarget",
+        "deviceAndAppManagementAssignmentFilterId": null,
+        "deviceAndAppManagementAssignmentFilterType": "none"
+      }
+    }
+  ]
+}
