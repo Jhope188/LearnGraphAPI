@@ -255,7 +255,7 @@ To ground the agent in your SharePoint content (e.g., Hogwarts SharePoint sites)
   "name": "OneDriveAndSharePoint",
   "items_by_url": [
     {
-      "url": "https://inforcer2m365.sharepoint.com/sites/HogwartsLibrary"
+      "url": "https://acme2m365.sharepoint.com/sites/HogwartsLibrary"
     }
   ]
 }
@@ -356,7 +356,7 @@ To give the agent the ability to call external APIs (e.g., a spell database API)
 | Agents Toolkit Tutorial | [learn.microsoft.com](https://learn.microsoft.com/microsoft-365-copilot/extensibility/build-declarative-agents) |
 | Writing Effective Instructions | [learn.microsoft.com](https://learn.microsoft.com/microsoft-365-copilot/extensibility/declarative-agent-instructions) |
 | Agent Builder in Copilot | [learn.microsoft.com](https://learn.microsoft.com/microsoft-365-copilot/extensibility/agent-builder) |
-| IAC Agent Identity Config | [IAC-Agent-Identity-Configuration-Guide.md](../../Inforcer%20Baseline%20Documentation/Agent%20Docs/IAC-Agent-Identity-Configuration-Guide.md) |
+| IAC Agent Identity Config | [IAC-Agent-Identity-Configuration-Guide.md](../../acme%20Baseline%20Documentation/Agent%20Docs/IAC-Agent-Identity-Configuration-Guide.md) |
 
 ---
 
@@ -364,7 +364,7 @@ To give the agent the ability to call external APIs (e.g., a spell database API)
 
 | Property | Value |
 |----------|-------|
-| **Tenant** | Inforcer2m365.onmicrosoft.com |
+| **Tenant** | acme2m365.onmicrosoft.com |
 | **Tenant ID** | `e37d43b7-ff48-444b-9d44-fbd4477c18f3` |
 | **Developer** | Jon Hope |
 | **Created** | February 2026 |
