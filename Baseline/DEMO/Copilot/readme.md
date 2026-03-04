@@ -1,6 +1,6 @@
 # Microsoft 365 Copilot Readiness — CIS Policy Recommendations
 
-**Tenant:** inforcer2M365 (ACME Corp Baseline)  
+**Tenant:** acme2M365 (ACME Corp Baseline)  
 **Date:** 3 March 2026  
 **Framework Alignment:** CIS Microsoft 365 Foundations Benchmark v6.0.0  
 **Total Recommended Policies:** 55
