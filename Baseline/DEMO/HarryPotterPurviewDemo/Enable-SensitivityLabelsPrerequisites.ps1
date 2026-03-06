@@ -13,6 +13,9 @@
 # Then the "Groups & sites" checkbox in the label editor will be available.
 #
 # Author: ACME Baseline
+# https://learn.microsoft.com/en-us/purview/sensitivity-labels-teams-groups-sites#enable-this-preview-and-synchronize-labels
+# https://learn.microsoft.com/en-us/entra/identity/users/groups-assign-sensitivity-labels?tabs=microsoft
+# https://ngcloudsecurity.com/how-to-enable-container-level-sensitivity-labeling-for-microsoft-teams-groups-and-sharepoint-sites-using-powershell/
 # ═══════════════════════════════════════════════════════════════════════
 
 #Requires -Modules Microsoft.Graph.Authentication, ExchangeOnlineManagement
