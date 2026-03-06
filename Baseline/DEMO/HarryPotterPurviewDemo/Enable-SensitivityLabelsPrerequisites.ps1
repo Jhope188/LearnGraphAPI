@@ -12,7 +12,7 @@
 # After running: allow up to 24 hours for full propagation.
 # Then the "Groups & sites" checkbox in the label editor will be available.
 #
-# Author: Inforcer Baseline
+# Author: ACME Baseline
 # ═══════════════════════════════════════════════════════════════════════
 
 #Requires -Modules Microsoft.Graph.Authentication, ExchangeOnlineManagement
