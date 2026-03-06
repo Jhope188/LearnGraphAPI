@@ -1,6 +1,6 @@
-# Inforcer Prerequisites for Microsoft 365 Business Premium
+# Microsoft 365 Business Premium
 
-## Manual Prerequisites Before Deploying Policies via Inforcer
+## Manual Prerequisites Before Deploying Policies
 
 These settings **must be completed manually** in the tenant **before** deploying policies.  
 Follow the steps **in order**. The checklist is grouped by portal for clarity.
