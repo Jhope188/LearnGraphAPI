@@ -1,0 +1,12 @@
+"File","Name","PolicyId","Status","Error"
+"ASR-Audit.json","ASR - Audit","48c6c5aa-eacd-493a-843d-f2f7898fea7a","Success",
+"ASR-ExploitProtection.json","Windows 11 ASR Exploit Protection","e37e8f64-8290-465b-bf09-ccfc433eb1ee","Success",
+"ASR-DeviceControl.json","Windows 11 ASR Device Control","5ff35bfa-13c1-486a-8660-5ba101bfdfc7","Success",
+"ASR-AppBrowserIsolation.json","Windows 11 App Browser & Isolation","dec42049-02a4-44a9-9b23-3f6081d1a4d4","Success",
+"Firewall.json","Windows 11 Firewall","f326a956-5f34-4dcf-b858-97646d4c892c","Success",
+"Antivirus-SecurityExperience.json","Windows 11 Security Experience","e4291f30-7ca7-4487-a172-f8442f862f39","Success",
+"Antivirus-DefenderUpdateControls.json","Windows 11 Anti-Virus Defender Update Controls","87170d07-e266-49d6-819c-15cef8597f8f","Success",
+"Antivirus-Exclusions.json","Windows 11 Anti-Virus Exclusions","0c512e75-7df4-43c3-ab16-9d6270522d24","Success",
+"Antivirus-DefenderAntivirus.json","Windows 11 Microsoft Defender Antivirus","0d527e2d-a802-41f1-b44a-edc06728bc35","Success",
+"SecurityBaseline.json","Windows 11 Security Baseline",,"Failed","Response status code does not indicate success: BadRequest (Bad Request)."
+"ASR-Rules.json","Windows 11 ASR Rules","aeb57db7-188d-4954-9162-ccd2102590d3","Success",
