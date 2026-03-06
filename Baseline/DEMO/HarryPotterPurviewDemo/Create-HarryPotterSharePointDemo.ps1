@@ -5,7 +5,7 @@
 # Install-Module -Name PnP.PowerShell -Force -AllowClobber
 
 param(
-    [string]$TenantUrl = "https://inforcer2m365-admin.sharepoint.com",
+    [string]$TenantUrl = "https://acme2m365-admin.sharepoint.com",
     [string]$TenantName = "inforcer2m365"
 )
 
