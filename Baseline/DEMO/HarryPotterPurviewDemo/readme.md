@@ -3,7 +3,7 @@
 > **Tenant:** Inforcer2m365.onmicrosoft.com  
 > **SharePoint Home:** https://acme2m365.sharepoint.com  
 > **Created:** March 2026
-> **Script:** `
+> **Script:** `Create-HarryPotterSharePointDemo.ps1` #Run this script first for the original 5 sites
 > **Script:** `Create-HarryPotterDemoEnvironment.ps1`
 
 ## Overview
