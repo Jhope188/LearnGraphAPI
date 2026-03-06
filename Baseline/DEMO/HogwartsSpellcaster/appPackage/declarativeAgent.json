@@ -2,16 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.6/schema.json",
   "version": "v1.6",
   "name": "Hogwarts Spellcaster",
-  "description": "A Harry Potter themed spell expert that finds, explains, or creates magical spells for any situation. Describe what you need and the Spellcaster will conjure the perfect spell — complete with incantation, wand movement, and wizarding history.",
+  "description": "A Harry Potter themed spell expert that finds, explains, or creates magical spells for any situation. Describe what you need and the Spellcaster will conjure the perfect spell - complete with incantation, wand movement, and wizarding history.",
   "instructions": "$[file('instructions.txt')]",
   "capabilities": [
     {
-      "name": "EmbeddedKnowledge",
-      "files": [
-        {
-          "file": "spellbook.txt"
-        }
-      ]
+      "name": "OneDriveAndSharePoint"
     },
     {
       "name": "WebSearch",
@@ -23,12 +18,6 @@
           "url": "https://www.wizardingworld.com"
         }
       ]
-    },
-    {
-      "name": "GraphicArt"
-    },
-    {
-      "name": "CodeInterpreter"
     }
   ],
   "conversation_starters": [
@@ -56,13 +45,5 @@
       "title": "🌧️ Fix the Weather",
       "text": "It's raining and I want sunshine. Is there a spell to control the weather?"
     }
-  ],
-  "behavior_overrides": {
-    "suggestions": {
-      "disabled": false
-    }
-  },
-  "disclaimer": {
-    "text": "This agent is for entertainment and educational purposes. All spells, characters, and wizarding world references are from the Harry Potter series by J.K. Rowling. No actual magic is guaranteed. The Ministry of Magic accepts no liability for misuse of fictional incantations."
-  }
+  ]
 }

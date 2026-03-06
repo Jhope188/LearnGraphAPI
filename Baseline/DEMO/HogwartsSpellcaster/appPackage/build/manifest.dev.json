@@ -9,24 +9,19 @@
         "privacyUrl": "https://inforcer2m365.onmicrosoft.com",
         "termsOfUseUrl": "https://inforcer2m365.onmicrosoft.com"
     },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
     "name": {
         "short": "Hogwarts Spellcaster",
-        "full": "Hogwarts Spellcaster — Magical Spell Expert for Microsoft 365 Copilot"
+        "full": "Hogwarts Spellcaster - Magical Spell Expert for Microsoft 365 Copilot"
     },
     "description": {
         "short": "Find, learn, or create Harry Potter spells for any situation",
-        "full": "The Hogwarts Spellcaster is a Harry Potter themed declarative agent for Microsoft 365 Copilot. Describe what you need — whether it's protecting your home, finding lost objects, winning a duel, or organising your desk — and the Spellcaster will find the perfect existing spell or create an entirely new one, complete with Latin incantation, wand movement, difficulty level, and wizarding history. Powered by the most comprehensive spellbook this side of the Restricted Section."
-    },
-    "icons": {
-        "outline": "outline.png",
-        "color": "color.png"
+        "full": "The Hogwarts Spellcaster is a Harry Potter themed declarative agent for Microsoft 365 Copilot. Describe what you need - whether it is protecting your home, finding lost objects, winning a duel, or organising your desk - and the Spellcaster will find the perfect existing spell or create an entirely new one, complete with Latin incantation, wand movement, difficulty level, and wizarding history. Powered by the most comprehensive spellbook this side of the Restricted Section."
     },
     "accentColor": "#7B2D8E",
-    "permissions": [
-        "identity",
-        "messageTeamMembers"
-    ],
-    "validDomains": [],
     "copilotAgents": {
         "declarativeAgents": [
             {
@@ -34,5 +29,10 @@
                 "file": "declarativeAgent.json"
             }
         ]
-    }
+    },
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": []
 }
