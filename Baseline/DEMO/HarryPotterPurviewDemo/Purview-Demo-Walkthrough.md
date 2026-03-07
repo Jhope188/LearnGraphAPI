@@ -2,7 +2,7 @@
 
 ## The Battle for Hogwarts — Sensitivity Labels, Copilot Oversharing & Restricted SharePoint Search
 
-> **Tenant:** Inforcer2m365.onmicrosoft.com  
+> **Tenant:** acme2m365.onmicrosoft.com  
 > **Presenter:** Jon Hope (Global Admin)  
 > **Estimated Demo Time:** 30–45 minutes
 
@@ -34,9 +34,9 @@ Before starting the demo, confirm these are in place:
 
 | Character | UPN | House | Role in Demo |
 |-----------|-----|-------|-------------|
-| **Dolores Umbridge** | `dolores.umbridge@Inforcer2m365.onmicrosoft.com` | 🐍 Slytherin | The adversary — tries to access restricted content via Copilot |
-| **Harry Potter** | `harry.potter@Inforcer2m365.onmicrosoft.com` | 🦁 Gryffindor | The hero — has legitimate access to Order/DA sites |
-| **Hermione Granger** | `hermione.granger@Inforcer2m365.onmicrosoft.com` | 🦁 Gryffindor | Alternative hero account for testing |
+| **Dolores Umbridge** | `dolores.umbridge@acme2m365.onmicrosoft.com` | 🐍 Slytherin | The adversary — tries to access restricted content via Copilot |
+| **Harry Potter** | `harry.potter@acme2m365.onmicrosoft.com` | 🦁 Gryffindor | The hero — has legitimate access to Order/DA sites |
+| **Hermione Granger** | `hermione.granger@acme2m365.onmicrosoft.com` | 🦁 Gryffindor | Alternative hero account for testing |
 
 ### 🦁 Gryffindor Dynamic Group Members
 
@@ -46,19 +46,19 @@ Before starting the demo, confirm these are in place:
 
 | Member | UPN |
 |--------|-----|
-| Harry Potter | `harry.potter@Inforcer2m365.onmicrosoft.com` |
-| Hermione Granger | `hermione.granger@Inforcer2m365.onmicrosoft.com` |
-| Ron Weasley | `ron.weasley@Inforcer2m365.onmicrosoft.com` |
-| Albus Dumbledore | `albus.dumbledore@Inforcer2m365.onmicrosoft.com` |
-| Minerva McGonagall | `minerva.mcgonagall@Inforcer2m365.onmicrosoft.com` |
-| Neville Longbottom | `neville.longbottom@Inforcer2m365.onmicrosoft.com` |
+| Harry Potter | `harry.potter@acme2m365.onmicrosoft.com` |
+| Hermione Granger | `hermione.granger@acme2m365.onmicrosoft.com` |
+| Ron Weasley | `ron.weasley@acme2m365.onmicrosoft.com` |
+| Albus Dumbledore | `albus.dumbledore@acme2m365.onmicrosoft.com` |
+| Minerva McGonagall | `minerva.mcgonagall@acme2m365.onmicrosoft.com` |
+| Neville Longbottom | `neville.longbottom@acme2m365.onmicrosoft.com` |
 
 ### 🏰 Key SharePoint Sites for This Demo
 
 | Site | URL | Group ID | Documents |
 |------|-----|----------|-----------|
-| **Order of the Phoenix** | `https://Inforcer2m365.sharepoint.com/sites/OrderOfThePhoenix` | `3089b4c4-56f8-4047-a3cc-e3e846f71025` | Dumbledore's Army.docx |
-| **Dumbledores Army HQ** | `https://Inforcer2m365.sharepoint.com/sites/DumbledoresArmy` | `7153419a-cc7a-432e-a5f9-d129942beae7` | DA Membership Roster.xlsx, DA Training Curriculum.pptx, The DA Charter - KEEP SECRET.docx |
+| **Order of the Phoenix** | `https://acme2m365.sharepoint.com/sites/OrderOfThePhoenix` | `3089b4c4-56f8-4047-a3cc-e3e846f71025` | Dumbledore's Army.docx |
+| **Dumbledores Army HQ** | `https://acme2m365.sharepoint.com/sites/DumbledoresArmy` | `7153419a-cc7a-432e-a5f9-d129942beae7` | DA Membership Roster.xlsx, DA Training Curriculum.pptx, The DA Charter - KEEP SECRET.docx |
 
 ---
 
@@ -71,7 +71,7 @@ Before starting the demo, confirm these are in place:
 1. Open a **private/incognito browser window**
 2. Navigate to **https://microsoft365.com**
 3. Sign in as:
-   - **Username:** `dolores.umbridge@Inforcer2m365.onmicrosoft.com`
+   - **Username:** `dolores.umbridge@acme2m365.onmicrosoft.com`
    - **Password:** *(use TAP or password from user creation script)*
 
 ### Step 1.2 — Open Microsoft 365 Copilot
@@ -101,8 +101,8 @@ Before starting the demo, confirm these are in place:
 
 ### Step 1.4 — Visit the SharePoint Sites Directly
 
-1. Navigate to `https://Inforcer2m365.sharepoint.com/sites/OrderOfThePhoenix`
-2. Navigate to `https://Inforcer2m365.sharepoint.com/sites/DumbledoresArmy`
+1. Navigate to `https://acme2m365.sharepoint.com/sites/OrderOfThePhoenix`
+2. Navigate to `https://acme2m365.sharepoint.com/sites/DumbledoresArmy`
 3. **🎤 Talking Point:** *"Right now these are standard M365 Group sites. Any licensed user can browse right in. Let's fix that."*
 
 > **📸 Screenshot opportunity:** Dolores viewing the DA Charter in SharePoint
@@ -177,7 +177,7 @@ Before starting the demo, confirm these are in place:
 
 #### Option A: Manual Application (Good for Live Demo)
 
-1. Open a **new browser window** as **Harry Potter** (`harry.potter@Inforcer2m365.onmicrosoft.com`)
+1. Open a **new browser window** as **Harry Potter** (`harry.potter@acme2m365.onmicrosoft.com`)
 2. Navigate to **Order of the Phoenix** SharePoint site
 3. Open **Dumbledore's Army.docx** in Word Online
 4. Click **Sensitivity** in the ribbon → Select **🛡️ Order of the Phoenix — Restricted**
@@ -233,7 +233,7 @@ Before starting the demo, confirm these are in place:
 ### Step 3.2 — Dolores Tries Direct Access
 
 1. In Dolores's browser, navigate to:
-   `https://Inforcer2m365.sharepoint.com/sites/DumbledoresArmy`
+   `https://acme2m365.sharepoint.com/sites/DumbledoresArmy`
 2. Try to open **The DA Charter - KEEP SECRET.docx**
 3. **Expected Result:** Access denied or encrypted content warning
 
@@ -268,14 +268,14 @@ Before starting the demo, confirm these are in place:
 
 ### Step 4.2 — Enable Restricted SharePoint Search
 
-1. Open **SharePoint Admin Center**: `https://Inforcer2m365-admin.sharepoint.com`
+1. Open **SharePoint Admin Center**: `https://acme2m365-admin.sharepoint.com`
 2. Navigate to **Settings** → **Search** (or via direct URL)
 3. Or use **PowerShell**:
 
 ```powershell
 # Connect to SharePoint Online
 Import-Module Microsoft.Online.SharePoint.PowerShell
-Connect-SPOService -Url "https://Inforcer2m365-admin.sharepoint.com"
+Connect-SPOService -Url "https://acme2m365-admin.sharepoint.com"
 
 # Enable Restricted SharePoint Search
 Set-SPOTenant -IsDataAccessInCardDesignerEnabled $false
@@ -339,7 +339,7 @@ Set-SPOTenant -IsDataAccessInCardDesignerEnabled $false
 ### Step 4.5 — Show That Direct Access Still Works
 
 1. In Dolores's browser, **directly navigate** to:
-   `https://Inforcer2m365.sharepoint.com/sites/HogwartsHousePoints`
+   `https://acme2m365.sharepoint.com/sites/HogwartsHousePoints`
 2. **Expected Result:** She can still browse it — Restricted Search only affects Copilot/Search, not direct URL access
 
 > **🎤 Talking Point:** *"Important caveat — Restricted SharePoint Search only controls what Copilot and Microsoft Search can discover. Users can still access sites directly if they have the URL and permissions. That's why you need BOTH: Sensitivity Labels for content-level encryption AND Restricted Search for discovery control. Defence in depth."*
