@@ -1,8 +1,15 @@
 # Add Dumbledore's Army Word document to Order of the Phoenix SharePoint site
 # Requires: Microsoft.Graph module with Sites.ReadWrite.All scope
+#
+# Usage: ./Add-DumbledoresArmyDoc.ps1 -TenantDomain "contoso.onmicrosoft.com"
 
-# Site details
-$siteUrl = "https://inforcer2m365.sharepoint.com/sites/OrderOfThePhoenix"
+param(
+    [Parameter(Mandatory)]
+    [string]$TenantDomain
+)
+
+$TenantPrefix = $TenantDomain -replace '\.onmicrosoft\.com$' -replace '\..*$'
+$siteUrl      = "https://$TenantPrefix.sharepoint.com/sites/OrderOfThePhoenix"
 $fileName = "Dumbledores-Army.docx"
 
 # Content for the Word document

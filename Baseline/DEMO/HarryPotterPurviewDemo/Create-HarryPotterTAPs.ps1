@@ -18,7 +18,8 @@
 # Date: March 5, 2026
 
 param(
-    [string]$TenantId = "e37d43b7-ff48-444b-9d44-fbd4477c18f3",
+    [Parameter(Mandatory)]
+    [string]$TenantId,
     [int]$TapLifetimeMinutes = 480,       # 8 hours (max depends on policy, up to 43200 = 30 days)
     [switch]$IsUsableOnce = $false,        # $false = reusable within lifetime
     [switch]$WhatIf

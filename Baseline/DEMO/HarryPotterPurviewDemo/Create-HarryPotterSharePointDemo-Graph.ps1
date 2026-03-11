@@ -1,15 +1,23 @@
 # Create Harry Potter themed SharePoint sites using Microsoft Graph API
-# Target tenant: inforcer2M365.onmicrosoft.com (e37d43b7-ff48-444b-9d44-fbd4477c18f3)
+#
+# Usage: ./Create-HarryPotterSharePointDemo-Graph.ps1 -TenantDomain "contoso.onmicrosoft.com"
 
-# Requires: Microsoft.Graph module and active Graph connection
-# Connect-MgGraph -TenantId 'e37d43b7-ff48-444b-9d44-fbd4477c18f3' -Scopes 'Sites.ReadWrite.All', 'Group.ReadWrite.All'
+param(
+    [Parameter(Mandatory)]
+    [string]$TenantDomain
+)
+
+$TenantPrefix = $TenantDomain -replace '\.onmicrosoft\.com$' -replace '\..*$'
+$SPOBaseUrl   = "https://$TenantPrefix.sharepoint.com"
+
+# Connect to Graph
+Connect-MgGraph -TenantId $TenantDomain -Scopes 'Sites.ReadWrite.All', 'Group.ReadWrite.All' -NoWelcome
 
 # Verify connection
 $context = Get-MgContext
 if (-not $context) {
-    Write-Host "❌ Not connected to Microsoft Graph. Please run:" -ForegroundColor Red
-    Write-Host "Connect-MgGraph -TenantId 'e37d43b7-ff48-444b-9d44-fbd4477c18f3' -Scopes 'Sites.ReadWrite.All', 'Group.ReadWrite.All'" -ForegroundColor Yellow
-    exit
+    Write-Error "Failed to connect to Microsoft Graph for tenant $TenantDomain"
+    exit 1
 }
 
 Write-Host "✓ Connected to tenant: $($context.TenantId)" -ForegroundColor Green
@@ -92,7 +100,7 @@ Write-Host ""
 
 Write-Host "📋 Created Sites:" -ForegroundColor White
 foreach ($createdSite in $createdSites) {
-    $siteUrl = "https://inforcer2m365.sharepoint.com/sites/$($createdSite.MailNickname)"
+    $siteUrl = "$SPOBaseUrl/sites/$($createdSite.MailNickname)"
     Write-Host "  • $($createdSite.DisplayName)" -ForegroundColor Cyan
     Write-Host "    URL: $siteUrl" -ForegroundColor Gray
     Write-Host "    Group ID: $($createdSite.GroupId)" -ForegroundColor Gray
@@ -101,7 +109,7 @@ foreach ($createdSite in $createdSites) {
 
 Write-Host "⭐ Special Site for Demo:" -ForegroundColor Yellow
 Write-Host "  📁 Order of the Phoenix" -ForegroundColor White
-Write-Host "  🔗 https://inforcer2m365.sharepoint.com/sites/OrderOfThePhoenix" -ForegroundColor Gray
+Write-Host "  🔗 $SPOBaseUrl/sites/OrderOfThePhoenix" -ForegroundColor Gray
 Write-Host ""
 Write-Host "📝 Next Steps:" -ForegroundColor Cyan
 Write-Host "  1. Wait 5-10 minutes for SharePoint sites to fully provision" -ForegroundColor White

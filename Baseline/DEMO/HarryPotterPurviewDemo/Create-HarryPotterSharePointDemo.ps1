@@ -5,8 +5,10 @@
 # Install-Module -Name PnP.PowerShell -Force -AllowClobber
 
 param(
-    [string]$TenantUrl = "https://acme2m365-admin.sharepoint.com",
-    [string]$TenantName = "inforcer2m365"
+    [Parameter(Mandatory)]
+    [string]$TenantUrl,    # e.g. "https://contoso-admin.sharepoint.com"
+    [Parameter(Mandatory)]
+    [string]$TenantName    # e.g. "contoso"
 )
 
 # Connect to SharePoint Online using device login

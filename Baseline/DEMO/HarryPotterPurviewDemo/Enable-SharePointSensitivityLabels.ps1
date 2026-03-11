@@ -1,13 +1,21 @@
 # Enable Sensitivity Labels for SharePoint Online and OneDrive
 # This allows users to apply sensitivity labels to Office files in SharePoint and OneDrive
 
+param(
+    [Parameter(Mandatory)]
+    [string]$TenantDomain   # e.g. "contoso.onmicrosoft.com"
+)
+
+$TenantPrefix    = $TenantDomain -replace '\.onmicrosoft\.com$' -replace '\..*$'
+$SPOAdminUrl     = "https://$TenantPrefix-admin.sharepoint.com"
+
 # Import the SharePoint Online module
 Write-Host "Importing SharePoint Online module..." -ForegroundColor Cyan
 Import-Module Microsoft.Online.SharePoint.PowerShell -ErrorAction Stop
 
 # Connect to SharePoint Online (if not already connected)
-Write-Host "Connecting to SharePoint Online..." -ForegroundColor Cyan
-Connect-SPOService -Url "https://inforcer2m365-admin.sharepoint.com"
+Write-Host "Connecting to SharePoint Online ($SPOAdminUrl)..." -ForegroundColor Cyan
+Connect-SPOService -Url $SPOAdminUrl
 
 # Enable sensitivity labels for SharePoint and OneDrive
 Write-Host "`nEnabling sensitivity labels for SharePoint and OneDrive..." -ForegroundColor Yellow
@@ -26,7 +34,7 @@ try {
 }
 
 # Verify the setting
-Write-Host "Current setting:" -ForegroundColor Cyan
+Write-Host "Current setting for $SPOAdminUrl :" -ForegroundColor Cyan
 Get-SPOTenant | Select-Object EnableAIPIntegration
 
 Write-Host "`nNext steps:" -ForegroundColor Cyan
