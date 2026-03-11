@@ -7,7 +7,7 @@
 #>
 
 Import-Module ExchangeOnlineManagement
-Connect-ExchangeOnline -Organization 'inforcer2M365.onmicrosoft.com' -ShowBanner:$false
+Connect-ExchangeOnline -Organization 'acme.onmicrosoft.com' -ShowBanner:$false
 
 $policyName = 'BlockBasic639084019154570982'
 
