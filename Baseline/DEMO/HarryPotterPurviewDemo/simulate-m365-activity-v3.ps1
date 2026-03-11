@@ -12,7 +12,7 @@
 #     • Teams activity via channel messages
 #
 # CONNECT FIRST, then run this script in the same PowerShell session:
-#   Connect-MgGraph -TenantId 'e37d43b7-ff48-444b-9d44-fbd4477c18f3' -Scopes @(
+#   Connect-MgGraph -TenantId '<your-tenant-id>' -Scopes @(
 #       'User.Read.All','Mail.Send','Mail.ReadWrite','Files.ReadWrite.All',
 #       'Calendars.ReadWrite','Group.ReadWrite.All','TeamMember.Read.All',
 #       'Channel.ReadBasic.All','ChannelMessage.Send'
@@ -22,7 +22,8 @@
 # Date: March 5, 2026
 
 param(
-    [string]$TenantId = "e37d43b7-ff48-444b-9d44-fbd4477c18f3",
+    [Parameter(Mandatory)]
+    [string]$TenantId,
     [int]$MaxRecipients = 20,
     [int]$EmailsPerRecipient = 2,
     [switch]$WhatIf,

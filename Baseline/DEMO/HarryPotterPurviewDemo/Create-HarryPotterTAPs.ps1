@@ -7,7 +7,7 @@
 #   • Security defaults MFA status
 #
 # CONNECT FIRST, then run this script in the same PowerShell session:
-#   Connect-MgGraph -TenantId 'e37d43b7-ff48-444b-9d44-fbd4477c18f3' -Scopes @(
+#   Connect-MgGraph -TenantId '<your-tenant-id>' -Scopes @(
 #       'User.Read.All','UserAuthenticationMethod.ReadWrite.All'
 #   ) -NoWelcome
 #
@@ -56,7 +56,10 @@ Write-Host ""
 # ═══════════════════════════════════════════════════════════════
 # DEFINE HARRY POTTER USERS
 # ═══════════════════════════════════════════════════════════════
-$domain = "Inforcer2m365.onmicrosoft.com"
+# Derive tenant domain from the connected session
+$domain = (Get-MgDomain | Where-Object { $_.IsDefault }).Id
+Write-Host "   Tenant domain: $domain" -ForegroundColor Gray
+Write-Host ""
 
 $harryPotterUPNs = @(
     "harry.potter@$domain",

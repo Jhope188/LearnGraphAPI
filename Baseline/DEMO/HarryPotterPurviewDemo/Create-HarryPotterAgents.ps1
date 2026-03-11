@@ -50,7 +50,7 @@
     .\Create-HarryPotterAgents.ps1 -DryRun
 
 .EXAMPLE
-    .\Create-HarryPotterAgents.ps1 -TenantId "e37d43b7-ff48-444b-9d44-fbd4477c18f3"
+    .\Create-HarryPotterAgents.ps1 -TenantId "<your-tenant-id>"
 
 .EXAMPLE
     .\Create-HarryPotterAgents.ps1 -SkipAgentIdentities
@@ -63,7 +63,7 @@
 [CmdletBinding()]
 param(
     [Parameter()]
-    [string]$TenantId = "e37d43b7-ff48-444b-9d44-fbd4477c18f3",
+    [string]$TenantId,
 
     [Parameter()]
     [string]$SponsorEmail,

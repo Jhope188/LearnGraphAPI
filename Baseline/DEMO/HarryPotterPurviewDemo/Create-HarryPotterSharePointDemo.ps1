@@ -1,5 +1,6 @@
 # Create Harry Potter themed SharePoint sites and files for Sensitivity Label demo
-# Target tenant: inforcer2M365.onmicrosoft.com (e37d43b7-ff48-444b-9d44-fbd4477c18f3)
+#
+# Usage: ./Create-HarryPotterSharePointDemo.ps1 -TenantUrl "https://contoso-admin.sharepoint.com" -TenantName "contoso"
 
 # Requires: PnP.PowerShell module
 # Install-Module -Name PnP.PowerShell -Force -AllowClobber
