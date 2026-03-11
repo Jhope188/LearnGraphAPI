@@ -1,16 +1,18 @@
 ##############################################################################
 #  Create-HogwartsStaffGroup.ps1
-#  Creates a "Hogwarts Staff" M365 security group and adds all staff members
-#  including Dolores Umbridge, then grants the group access to every
-#  SharePoint site in the demo tenant.
+#  Creates a "🏰 Hogwarts Staff" Microsoft 365 (Unified) group and adds all
+#  staff members including Dolores Umbridge, then grants the group access
+#  to every SharePoint site in the demo tenant.
 #
 #  This is required for the Purview Demo — Act 1 depends on Dolores being
 #  able to see ALL sites (to demonstrate the oversharing problem BEFORE
 #  sensitivity labels are applied).
 #
-#  Group type: Assigned security group (NOT dynamic — Dolores is
-#  "Ministry Leadership" not "Hogwarts Faculty", so a dynamic rule
-#  based on Department would miss her)
+#  Group type: M365 Unified group (NOT security, NOT dynamic)
+#  Using Unified allows the group to be assigned to SharePoint sites,
+#  Teams, and used as a membership container across M365 workloads.
+#  Dolores is added explicitly — her Dept = "Ministry Leadership" so
+#  a department-based dynamic rule would miss her.
 #
 #  Usage:
 #    ./Create-HogwartsStaffGroup.ps1 -TenantDomain "contoso.onmicrosoft.com"
@@ -104,7 +106,7 @@ Connect-MgGraph `
     -NoWelcome
 
 ##############################################################################
-# SECTION 1 — Create the Hogwarts Staff Security Group
+# SECTION 1 — Create the Hogwarts Staff M365 Group
 ##############################################################################
 
 if (-not $SkipGroupCreation) {
@@ -124,9 +126,9 @@ if (-not $SkipGroupCreation) {
             DisplayName          = $GroupDisplayName
             MailNickname         = $GroupMailNickname
             Description          = $GroupDescription
-            GroupTypes           = @()          # Empty = security group (not M365 group, not dynamic)
-            MailEnabled          = $false
-            SecurityEnabled      = $true
+            GroupTypes           = @("Unified")   # Unified = M365 group (assignable to SPO sites & Teams)
+            MailEnabled          = $true
+            SecurityEnabled      = $false
             Visibility           = "Private"
         }
 
