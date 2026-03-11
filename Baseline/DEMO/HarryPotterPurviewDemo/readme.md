@@ -2,7 +2,7 @@
 
 ## The Battle for Hogwarts — Sensitivity Labels, Copilot Oversharing & Restricted SharePoint Search
 
-> **Tenant:** Inforcer2m365.onmicrosoft.com  
+> **Tenant:** acme2m365.onmicrosoft.com  
 > **Presenter:** Jon Hope (Global Admin)  
 > **Estimated Demo Time:** 30–45 minutes
 
