@@ -3,7 +3,7 @@
 **Tenant:** acme2M365 (ACME Corp Baseline)  
 **Date:** 3 March 2026  
 **Framework Alignment:** CIS Microsoft 365 Foundations Benchmark v6.0.0  
-**Total Recommended Policies:** 55
+**Total Recommended Policies:** 59
 
 ---
 
@@ -15,9 +15,9 @@ This document outlines the **recommended CIS-aligned policies** required to secu
 
 | Priority | Count | Description |
 |----------|-------|-------------|
-| 🔴 Critical | 15 | Required policies for secure Copilot deployment |
-| 🟠 High | 14 | Strongly recommended policies that underpin Copilot security |
-| 🟡 Medium | 18 | Supporting policies that strengthen Copilot security posture |
+| 🔴 Critical | 17 | Required policies for secure Copilot deployment |
+| 🟠 High | 15 | Strongly recommended policies that underpin Copilot security |
+| 🟡 Medium | 19 | Supporting policies that strengthen Copilot security posture |
 | 🔵 Informational | 8 | Monitoring policies for ongoing compliance |
 
 ---
@@ -87,15 +87,85 @@ These policies are required before Copilot rollout to ensure a secure deployment
 
 ### 6. Data Loss Prevention Policies
 
+> 🔬 **Start here — run DSPM for AI before configuring any DLP.** Purview Data Security Posture Management for AI provides an oversharing assessment showing exactly what content Copilot can currently access. Its built-in recommendations directly inform which DLP policies and label conditions to configure first.
+
 | Policy Name | Product | Recommendation |
 |------------|---------|----------------|
+| DSPM for AI — oversharing assessment | Purview | **Run first — pre-requisite** 🆕 |
 | Default Office 365 DLP policy | Purview | **Enable** |
 | Default policy for Teams | Purview | **Enable** |
 | Default policy for devices | Purview | **Enable** |
 | U.S. Financial Data | Purview | **Enable** |
-| Default DLP policy - Protect sensitive M365 Copilot interactions | Purview | **Enable** |
+| Default DLP policy - Protect sensitive M365 Copilot interactions | Purview | **Enable** ⚠️ audit-only by default |
+| Copilot-scoped blocking DLP policy (label + SIT conditions) | Purview | **Create & enforce** 🆕 |
+| Adaptive Protection (Insider Risk + DLP) | Purview | **Enable** 🆕 |
+| Communication Compliance for Copilot | Purview | **Configure** 🆕 |
 
-**Rationale:** DLP policies are the primary control preventing Copilot from surfacing or generating sensitive data (PII, financial data, credentials) in chat responses. The Copilot-specific DLP policy should be enabled before rollout.
+**Rationale:** The five default Microsoft DLP policies detect but do not block — they run in audit-only mode by default. For Copilot readiness you need at minimum one **blocking** policy explicitly scoped to the Microsoft 365 Copilot location, using label-based conditions (more reliable than SIT scanning alone) and set to Active enforcement mode. DSPM for AI tells you what to protect before you build the policies.
+
+---
+
+#### How to configure DSPM for AI
+
+1. Go to **Microsoft Purview portal** → **Solutions** → **Data Security Posture Management**
+2. Select the **AI Hub** tab → review the **Oversharing** tile — this shows files labelled Confidential or Restricted that Copilot can currently access without any restriction
+3. Review the **Recommendations** tab — Purview will suggest specific DLP policies and label conditions based on your actual content exposure
+4. Export the oversharing report to inform which SITs and labels to target in your blocking DLP policy (configured below)
+5. Review **Activity explorer** → filter by **Copilot** to see what Copilot interactions are already occurring and what content is being surfaced
+
+> ℹ️ Requires Purview Information Protection P2 or Microsoft 365 E5 Compliance licence.
+
+---
+
+#### How to configure the Copilot-scoped blocking DLP policy
+
+1. Go to **Microsoft Purview portal** → **Data loss prevention** → **Policies** → **+ Create policy**
+2. Select **Custom policy** → name it e.g. `Block sensitive content in Copilot interactions`
+3. **Choose locations:** Select **Microsoft 365 Copilot** (also add Teams chat, SharePoint, OneDrive, and Exchange for full coverage)
+4. **Define Rule 1 — label-based:**
+   - Condition: **Content is labelled** → select your `Confidential` and `Restricted` sensitivity labels
+   - Action: **Block everyone** (or **Block with override** if users need to provide a business justification to proceed)
+   - User notification: enable and explain why the content was blocked
+5. **Define Rule 2 — SIT-based:**
+   - Condition: **Content contains** → add Sensitive Information Types relevant to your org (e.g. Credit Card Number, UK National Insurance Number, Azure storage keys, passwords/credentials)
+   - Confidence level: **High confidence** | Instance count: **1 or more**
+   - Action: **Block with override** (requiring justification reduces false positive friction while maintaining an audit trail)
+6. **Policy mode:** Set to **Simulation** first — review the matches report for 48 hours to baseline the false positive rate, then switch to **Active enforcement**
+7. Save and publish — allow up to 24 hours for full propagation across all locations
+
+> ⚠️ Do not skip the simulation step. The Microsoft 365 Copilot location does not support all DLP rule conditions available in other locations — verify your rules behave as expected before going Active.
+
+---
+
+#### How to configure Adaptive Protection
+
+1. Go to **Microsoft Purview portal** → **Insider Risk Management** → **Adaptive Protection** → toggle **On**
+2. Insider Risk Management will begin assigning risk levels (Minor / Moderate / Elevated) to users based on their behaviour signals (e.g. bulk downloads, unusual sharing, departing employee indicators)
+3. Go to **Data loss prevention** → open your Copilot blocking DLP policy → **Edit**
+4. Add a new rule (place above your existing rules so it takes priority):
+   - Condition: **Insider risk level is** → **Elevated**
+   - Action: **Block** (no override — stricter than the business-justification rule for normal users)
+5. Optionally add a second rule for **Moderate** risk with a **Block with override** action
+6. Save and publish — users with elevated risk scores will now automatically receive stricter DLP enforcement across all locations including Copilot interactions
+
+> ℹ️ Requires Microsoft 365 E5 Compliance or the Insider Risk Management add-on.
+
+---
+
+#### How to configure Communication Compliance for Copilot
+
+1. Go to **Microsoft Purview portal** → **Communication Compliance** → **Policies** → **+ Create policy**
+2. Select the **Monitor Copilot interactions** template from the list — if the template is not available in your tenant, create a **Custom policy** and manually scope it to Microsoft 365 Copilot
+3. **Scope:** Set supervised users to all Copilot licence holders (or a pilot group initially to tune the policy before broad rollout)
+4. **Conditions to monitor:**
+   - Sensitive information types: add your key SITs (credentials, financial data, health information, PII)
+   - Keywords: add terms relevant to your environment (e.g. confidential project names, `bypass`, `ignore previous instructions`, `as an AI ignore`)
+   - Optionally enable the **Threat**, **Targeted harassment**, or **Offensive language** classifiers
+5. **Reviewers:** Assign at least two compliance reviewers who will triage flagged Copilot interactions — a single reviewer creates a bottleneck and a conflict-of-interest risk
+6. **Alerts:** Start with a **Weekly digest** alert to reviewers to avoid alert fatigue on initial deployment; increase cadence once the policy is tuned
+7. Review the **Reports** tab regularly — Communication Compliance provides trend data on policy violations by user, policy, and time period
+
+> ℹ️ Communication Compliance captures both Copilot prompts (what users ask) and responses (what Copilot surfaces) — this is the primary control for detecting prompt injection attempts, systematic data extraction via Copilot, and policy circumvention.
 
 ---
 
@@ -212,6 +282,7 @@ These policies strengthen the overall security context around Copilot and are re
 | Meeting Record Settings | Teams | Controls Copilot transcript access |
 | CIS - 8.2.2 - Block Unmanaged Teams Users [L1] - v6.0.0 | Teams | Prevents data leakage through Copilot-accessible Teams conversations |
 | CIS - 8.2.3 - Block External Teams Conversations [L1] - v6.0.0 | Teams | Blocks unsolicited external contact that Copilot could index |
+| Communication Compliance for Copilot 🆕 | Purview | Monitors Copilot prompts and responses for policy violations, prompt injection attempts, and sensitive data extraction |
 
 ---
 
@@ -232,7 +303,7 @@ These policies should be in place and monitored for drift to maintain Copilot re
 
 ---
 
-## Quick-Reference: All 55 Recommended CIS Policies
+## Quick-Reference: All 59 Recommended CIS Policies
 
 ### Entra (30 policies)
 
@@ -269,7 +340,7 @@ These policies should be in place and monitored for drift to maintain Copilot re
 | 29 | INF - Client Approved IP Range | 🟡 Medium |
 | 30 | INF-NL01 - Approved Countries + TiB - Allowed Countries + INF - MSP Service Center | 🟡 Medium |
 
-### Purview (9 policies)
+### Purview (13 policies)
 
 | # | Policy | Priority |
 |---|--------|----------|
@@ -277,53 +348,57 @@ These policies should be in place and monitored for drift to maintain Copilot re
 | 32 | Default policy for Teams | 🔴 Critical |
 | 33 | Default policy for devices | 🔴 Critical |
 | 34 | U.S. Financial Data | 🔴 Critical |
-| 35 | Default DLP policy - Protect sensitive M365 Copilot interactions | 🔴 Critical |
-| 36 | CIS - Base Label Policy *(§3.3.1)* | 🔴 Critical |
-| 37 | CIS - Restricted Label Policy *(§3.3.1)* | 🔴 Critical |
-| 38 | CIS - Confidential Label Policy *(§3.3.1)* | 🔴 Critical |
-| 39 | Unified Audit Logging *(§6.1.1)* | 🔵 Informational |
+| 35 | Default DLP policy - Protect sensitive M365 Copilot interactions ⚠️ audit-only | 🔴 Critical |
+| 36 | DSPM for AI — oversharing assessment 🆕 | 🔴 Critical |
+| 37 | Copilot-scoped blocking DLP policy (label + SIT conditions) 🆕 | 🔴 Critical |
+| 38 | CIS - Base Label Policy *(§3.3.1)* | 🔴 Critical |
+| 39 | CIS - Restricted Label Policy *(§3.3.1)* | 🔴 Critical |
+| 40 | CIS - Confidential Label Policy *(§3.3.1)* | 🔴 Critical |
+| 41 | Adaptive Protection (Insider Risk + DLP) 🆕 | 🟠 High |
+| 42 | Communication Compliance for Copilot 🆕 | 🟡 Medium |
+| 43 | Unified Audit Logging *(§6.1.1)* | 🔵 Informational |
 
 ### SharePoint (6 policies)
 
 | # | Policy | Priority |
 |---|--------|----------|
-| 40 | Guest item sharing settings *(§7.2.5)* | 🔴 Critical |
-| 41 | External sharing settings *(§7.2.3)* | 🔴 Critical |
-| 42 | Allow syncing only on computers joined to specific domains *(§7.3.2)* | 🟠 High |
-| 43 | CIS - 7.2.9 - Guest Access Auto-Expiration [L1] 🆕 | 🟡 Medium |
-| 44 | SharePoint External Sharing | 🔵 Informational |
-| 45 | Idle session sign-out | 🔵 Informational |
+| 44 | Guest item sharing settings *(§7.2.5)* | 🔴 Critical |
+| 45 | External sharing settings *(§7.2.3)* | 🔴 Critical |
+| 46 | Allow syncing only on computers joined to specific domains *(§7.3.2)* | 🟠 High |
+| 47 | CIS - 7.2.9 - Guest Access Auto-Expiration [L1] 🆕 | 🟡 Medium |
+| 48 | SharePoint External Sharing | 🔵 Informational |
+| 49 | Idle session sign-out | 🔵 Informational |
 
 ### Exchange (2 policies)
 
 | # | Policy | Priority |
 |---|--------|----------|
-| 46 | Mail Flow Security Settings *(§6.1.2)* | 🔴 Critical |
-| 47 | Mail Flow General Settings *(§6.1.1/§6.1.3)* | 🔴 Critical |
+| 50 | Mail Flow Security Settings *(§6.1.2)* | 🔴 Critical |
+| 51 | Mail Flow General Settings *(§6.1.1/§6.1.3)* | 🔴 Critical |
 
 ### M365 Admin Center (4 policies)
 
 | # | Policy | Priority |
 |---|--------|----------|
-| 48 | Microsoft 365 Copilot (Self-Service) | 🔴 Critical |
-| 49 | Microsoft 365 Copilot Pro (Self-Service) | 🔴 Critical |
-| 50 | Organization Technical Contact | 🟡 Medium |
-| 51 | Guest user directory access | 🟡 Medium |
+| 52 | Microsoft 365 Copilot (Self-Service) | 🔴 Critical |
+| 53 | Microsoft 365 Copilot Pro (Self-Service) | 🔴 Critical |
+| 54 | Organization Technical Contact | 🟡 Medium |
+| 55 | Guest user directory access | 🟡 Medium |
 
 ### Teams (4 policies)
 
 | # | Policy | Priority |
 |---|--------|----------|
-| 52 | Global (Meeting policy) | 🟡 Medium |
-| 53 | TiB - Meeting Recording Settings | 🟡 Medium |
-| 54 | CIS - 8.2.2 - Block Unmanaged Teams Users [L1] 🆕 | 🟡 Medium |
-| 55 | CIS - 8.2.3 - Block External Teams Conversations [L1] 🆕 | 🟡 Medium |
+| 56 | Global (Meeting policy) | 🟡 Medium |
+| 57 | TiB - Meeting Recording Settings | 🟡 Medium |
+| 58 | CIS - 8.2.2 - Block Unmanaged Teams Users [L1] 🆕 | 🟡 Medium |
+| 59 | CIS - 8.2.3 - Block External Teams Conversations [L1] 🆕 | 🟡 Medium |
 
 ### Intune (1 policy)
 
 | # | Policy | Priority |
 |---|--------|----------|
-| 56 | Device Compliance Settings *(§4.1)* | 🔴 Critical |
+| 60 | Device Compliance Settings *(§4.1)* | 🔴 Critical |
 
 ---
 
@@ -340,24 +415,28 @@ Before enabling Copilot licenses, address these in order:
 6. ✅ Disable Copilot self-service purchase
 
 ### Phase 2 — Data Protection (Week 2-3)
-7. ✅ **Enable** all 5 DLP policies (especially the Copilot-specific one)
-8. ✅ Apply sensitivity labels to all SharePoint sites
-9. ✅ Verify label publishing policies cover all users
-10. ✅ Fix guest sharing settings (SharePoint + Entra) + enable guest access auto-expiration (§7.2.9)
+7. ✅ Run **DSPM for AI** oversharing assessment — identify what content Copilot can currently access before any DLP blocking is in place
+8. ✅ **Enable** all 5 default DLP policies; note the Copilot-specific policy is **audit-only by default** — do not rely on it to block
+9. ✅ Create **Copilot-scoped blocking DLP policy** — label-based + SIT conditions; run in **Simulation mode for 48 hours** to baseline false positives, then switch to **Active enforcement**
+10. ✅ Enable **Adaptive Protection** in Insider Risk Management → add elevated-risk condition to the Copilot blocking DLP policy
+11. ✅ Apply sensitivity labels to all SharePoint sites
+12. ✅ Verify label publishing policies cover all users
+13. ✅ Fix guest sharing settings (SharePoint + Entra) + enable guest access auto-expiration (§7.2.9)
 
 ### Phase 3 — Hardening (Week 3-4)
-11. ✅ Deploy remaining CA policies (CA05, CA07, CA10-14)
-12. ✅ Configure access reviews for privileged roles (§5.3.3)
-13. ✅ Fix Exchange mailbox audit actions (add Copy, FolderBind, Move)
-14. ✅ Restrict Teams external communications (§8.2.2, §8.2.3)
-15. ✅ Remediate Teams meeting recording settings
-16. ✅ Address consent settings, password protection, and dynamic guest group
+14. ✅ Deploy remaining CA policies (CA05, CA07, CA10-14)
+15. ✅ Configure access reviews for privileged roles (§5.3.3)
+16. ✅ Fix Exchange mailbox audit actions (add Copy, FolderBind, Move)
+17. ✅ Restrict Teams external communications (§8.2.2, §8.2.3)
+18. ✅ Remediate Teams meeting recording settings
+19. ✅ Address consent settings, password protection, and dynamic guest group
+20. ✅ Configure **Communication Compliance** policy scoped to Copilot licence holders
 
 ### Phase 4 — Validate & Enable
-17. ✅ Re-run Copilot Readiness check — target all checks passed
-18. ✅ Apply "Copilot Readiness" tags to all 55 policies in Inforcer
-19. ✅ Enable Copilot licenses for pilot group
-20. ✅ Monitor audit logs and DLP alerts for 2 weeks before broader rollout
+21. ✅ Re-run Copilot Readiness check — target all checks passed
+22. ✅ Apply "Copilot Readiness" tags to all 59 policies in Inforcer
+23. ✅ Enable Copilot licenses for pilot group
+24. ✅ Monitor audit logs, DLP alerts, and Communication Compliance matches for 2 weeks before broader rollout
 
 ---
 
