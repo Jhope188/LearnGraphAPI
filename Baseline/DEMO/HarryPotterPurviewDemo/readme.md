@@ -2,7 +2,7 @@
 
 ## The Battle for Hogwarts — Sensitivity Labels, Copilot Oversharing & Restricted SharePoint Search
 
-> **Tenant:** acme2m365.onmicrosoft.com  
+> **Tenant:** Inforcer2m365.onmicrosoft.com  
 > **Presenter:** Jon Hope (Global Admin)  
 > **Estimated Demo Time:** 30–45 minutes
 
@@ -50,6 +50,8 @@ pwsh Scripts/Create-HogwartsStaffGroup.ps1 -TenantDomain "contoso.onmicrosoft.co
 ```
 > Creates `🏰 Hogwarts Staff` as an **M365 Unified group** with 9 members (all Hogwarts Faculty + Administration + Dolores Umbridge explicitly). Then adds every member to all 21 SharePoint site M365 groups — giving Dolores broad access required for Act 1 (oversharing demonstration).  
 > ⚠️ Dolores is `Department = "Ministry Leadership"` so she is added manually, not via a dynamic rule.
+>
+> ⚠️ **Critical for Copilot:** For **private** M365 Group sites, Copilot only surfaces content to users who are **M365 Group members** — SharePoint Site Collection Admin or Site Member permissions alone are not enough. This script must add Dolores as an M365 Group member (not just a SharePoint permission). Verify in Entra ID → Groups → [site group] → Members, **not** in SharePoint Admin.
 
 ---
 
@@ -98,7 +100,7 @@ pwsh Scripts/Setup-PurviewDemo.ps1 -TenantDomain "contoso.onmicrosoft.com" -Skip
 | 2 | House dynamic groups populated | Entra ID → Groups → `🦁 Gryffindor – Dynamic User Group` → Members (expect 6) | ☐ |
 | 3 | `🦁 Gryffindor – M365 Dynamic User Group` has members | Entra ID → Groups → Members tab (same 6 members) | ☐ |
 | 4 | `🏰 Hogwarts Staff` group has 9 members | Entra ID → Groups → `🏰 Hogwarts Staff` → Members | ☐ |
-| 5 | Dolores is a member of all 21 sites | SharePoint Admin → Active sites → any site → Membership → Members | ☐ |
+| 5 | Dolores is an **M365 Group member** of all 21 sites | Entra ID → Groups → each site group → Members tab (must be member, not just SP admin) ⚠️ Site Collection Admin alone is NOT sufficient — Copilot requires M365 Group membership for private sites | ☐ |
 | 6 | Sensitivity label visible in Purview | compliance.microsoft.com → Information Protection → Labels | ☐ |
 | 7 | Label policy published | Information Protection → Label policies → `Order of the Phoenix Protection Policy` | ☐ |
 | 8 | Copilot for M365 licences assigned | M365 Admin → Billing → Licences → assign to Dolores + Harry Potter | ☐ |
@@ -468,7 +470,7 @@ Get-PnPTenantRestrictedSearchAllowedList
 
 ### The Defence-in-Depth Stack
 
-```
+```text
 ┌─────────────────────────────────────────────────┐
 │  Layer 5: Per-Site Copilot Restriction          │
 │  Blocks Copilot from specific sites entirely    │
@@ -558,7 +560,7 @@ ACT 4 — DEFENCE IN DEPTH (10 min)
   → Sensitive sites completely invisible to Copilot
 
 ACT 5 — WRAP UP (5 min)
-  → Show the 4-layer defence model
-  → Dynamic Groups → Permissions → Labels → Search
+  → Show the 5-layer defence model
+  → Dynamic Groups → Permissions → Labels → Search → Per-Site Block
   → "No single control is enough — layer them"
 ```
