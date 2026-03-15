@@ -347,13 +347,19 @@ pwsh Scripts/Setup-PurviewDemo.ps1 -TenantDomain "contoso.onmicrosoft.com" -Skip
 2. Navigate to **Settings** → **Search** (or via direct URL)
 3. Or use **PowerShell**:
 
+> 💻 **macOS / Cross-platform:** Uses PnP.PowerShell. Requires the **PnP Hogwarts Admin** app registered in this tenant (ClientId: `7b394b1f-92e5-4be8-b433-b0fa7e938cb7`).
+
 ```powershell
-# Connect to SharePoint Online
-Import-Module Microsoft.Online.SharePoint.PowerShell
-Connect-SPOService -Url "https://Inforcer2m365-admin.sharepoint.com"
+# Connect to SharePoint Online (macOS — PnP.PowerShell)
+Import-Module PnP.PowerShell
+Connect-PnPOnline `
+    -Url "https://Inforcer2m365-admin.sharepoint.com" `
+    -ClientId "7b394b1f-92e5-4be8-b433-b0fa7e938cb7" `
+    -Interactive
 
 # Enable Restricted SharePoint Search
-Set-SPOTenant -IsDataAccessInCardDesignerEnabled $false
+# ⏱️ Note: Takes approximately 1 hour to take effect
+Set-PnPTenantRestrictedSearchMode -Mode Enabled
 ```
 
 4. Or via the **SharePoint Admin Center UI**:
@@ -387,7 +393,42 @@ Set-SPOTenant -IsDataAccessInCardDesignerEnabled $false
 | ❌ Hogwarts Library Restricted Section | Restricted access materials |
 | ❌ Snapes Potions Laboratory | Contains CONFIDENTIAL documents |
 
-### Step 4.4 — Show Copilot with Restricted Search Active
+4. Use **PowerShell** to add the approved sites to the allowlist:
+
+```powershell
+# Add approved sites to the RSS allowlist (PnP.PowerShell — macOS compatible)
+# Max 100 sites. Hub sites count as 1 entry but cover all associated sites.
+$allowedSites = @(
+    "https://Inforcer2m365.sharepoint.com/sites/HogwartsHousePoints",
+    "https://Inforcer2m365.sharepoint.com/sites/QuidditchWorldCup2026",
+    "https://Inforcer2m365.sharepoint.com/sites/HogsmeadeVillageCouncil",
+    "https://Inforcer2m365.sharepoint.com/sites/DobbysSockFoundation",
+    "https://Inforcer2m365.sharepoint.com/sites/HogwartsExpressOperations"
+)
+Add-PnPTenantRestrictedSearchAllowedList -SitesList $allowedSites
+
+# Verify the allowlist
+Get-PnPTenantRestrictedSearchAllowedList
+```
+
+### Step 4.4 — Block Dumbledore's Army HQ from Copilot Directly
+
+> **🎤 Talking Point:** *"RSS gives you tenant-wide control, but SharePoint also has a per-site switch. For your most sensitive sites — like Dumbledore's Army HQ — you can block Copilot at the site level entirely, as an additional layer of protection on top of RSS."*
+
+1. Navigate to `https://Inforcer2m365.sharepoint.com/sites/DumbledoresArmy`
+2. Click the **Settings** gear (top right) → **Site information** → **View all site settings**
+3. Click **Site settings** → scroll to find **"Restrict content from Microsoft 365 Copilot"**
+   - Or go to **SharePoint Admin Center** → **Active sites** → select **Dumbledores Army** → **Settings** tab
+4. Set **Restrict content from Microsoft 365 Copilot** → **On**
+5. Click **Save**
+
+> ⚠️ **What this does:** Even if Dolores is a member, even if RSS is disabled, Copilot will **never** surface content from this site. Direct URL access is unaffected — she can still browse to it, but Copilot and Microsoft Search are completely blind to it.
+
+> **🎤 Talking Point:** *"This is the nuclear option for individual sites. Notice it's labelled PRO — it requires Microsoft 365 Copilot licences on the tenant. Use it for your crown jewels: the sites so sensitive that no Copilot query should ever reach them, regardless of who asks or how RSS is configured."*
+
+---
+
+### Step 4.5 — Show Copilot with Restricted Search Active
 
 1. Switch back to **Dolores Umbridge** browser
 2. Open **Microsoft 365 Copilot**
@@ -411,7 +452,7 @@ Set-SPOTenant -IsDataAccessInCardDesignerEnabled $false
 
 > **🎤 Talking Point:** *"Restricted SharePoint Search is your emergency brake. Turn it on, start with zero sites allowed, then progressively add sites as you confirm they have the right labels and permissions. It's the 'deny by default' approach — nothing is searchable until you say it is."*
 
-### Step 4.5 — Show That Direct Access Still Works
+### Step 4.6 — Show That Direct Access Still Works
 
 1. In Dolores's browser, **directly navigate** to:
    `https://Inforcer2m365.sharepoint.com/sites/HogwartsHousePoints`
@@ -429,6 +470,9 @@ Set-SPOTenant -IsDataAccessInCardDesignerEnabled $false
 
 ```
 ┌─────────────────────────────────────────────────┐
+│  Layer 5: Per-Site Copilot Restriction          │
+│  Blocks Copilot from specific sites entirely    │
+├─────────────────────────────────────────────────┤
 │  Layer 4: Restricted SharePoint Search          │
 │  Controls what Copilot & Search can discover    │
 ├─────────────────────────────────────────────────┤
@@ -451,6 +495,7 @@ Set-SPOTenant -IsDataAccessInCardDesignerEnabled $false
 | **SharePoint Permissions** | Site access controlled by M365 Group membership | ✅ If site is restricted to Gryffindor group |
 | **Sensitivity Labels** | AIP encryption on individual files — only Gryffindor can decrypt | ✅ Even if Dolores gets the file, she can't open it |
 | **Restricted SharePoint Search** | Copilot/Search can only see allowed sites | ✅ Sensitive sites invisible to Copilot |
+| **Per-Site Copilot Restriction** | Site-level block — Copilot blind to this site regardless of RSS or permissions | ✅ Dumbledore's Army HQ completely hidden from Copilot |
 
 > **🎤 Final Talking Point:** *"No single control is enough. Permissions can be misconfigured. Labels can be forgotten. Search controls can be too broad. But when you layer them together — dynamic groups, site permissions, file-level encryption, and search restrictions — you get true defence in depth. Dolores Umbridge isn't getting into Dumbledore's Army, no matter how hard she tries."*
 
@@ -464,6 +509,7 @@ If you want to reset for the next demo run:
 |--------|-----|
 | Remove Sensitivity Label from files | Open each file as Harry → Sensitivity → Remove label |
 | Disable Restricted SharePoint Search | SharePoint Admin → Settings → Search → Toggle off |
+| Remove per-site Copilot restriction | Navigate to site → Site settings → Restrict content from Microsoft 365 Copilot → Off |
 | Delete the label policy | Purview → Information Protection → Label policies → Delete |
 | Delete the label | Purview → Information Protection → Labels → Delete |
 
