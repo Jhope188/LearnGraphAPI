@@ -1,6 +1,6 @@
 # Copilot Readiness — Policy Tag Recommendations
 
-**Tenant:** inforcer2M365 (ACME Corp Baseline)  
+**Tenant:** acme2M365 (ACME Corp Baseline)  
 **Date:** 3 March 2026  
 **Alignment Score:** 23.45% (290 policies)  
 **Copilot Readiness Checks:** 21 (8 Failed, 5 Warning, 8 Passed)
