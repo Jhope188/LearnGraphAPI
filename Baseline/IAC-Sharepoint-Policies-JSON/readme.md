@@ -1,5 +1,5 @@
 # SharePoint & OneDrive — CIS Settings Reference
-**Inforcer Managed Settings | SharePoint Admin Center**
+**SharePoint Admin Center**
 *Last updated: March 9, 2026*
 
 ---
