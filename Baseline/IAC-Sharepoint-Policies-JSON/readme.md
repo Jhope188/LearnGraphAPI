@@ -1,5 +1,5 @@
 # SharePoint & OneDrive — CIS Settings Reference
-**SharePoint Admin Center**
+**M365 Managed Settings | SharePoint Admin Center**
 *Last updated: March 9, 2026*
 
 ---
@@ -166,9 +166,11 @@ Setting a default storage quota prevents data hoarding and ungoverned accumulati
 ### 8. OneDrive Sync macOS Settings \*
 
 **Admin Center Path:**
-SharePoint admin center → **Settings** → **Sync** → check *"Block sync on Mac OS X"*
+~~SharePoint admin center → **Settings** → **Sync** → check *"Block sync on Mac OS X"*~~
 
-> ⚠️ Same page as setting #1 and #11.
+> ⚠️ **The "Block sync on Mac OS X" checkbox no longer appears in the modern SharePoint admin center UI.** It has been silently removed from the Settings → Sync page. The underlying property still exists and can be read/set via PowerShell only.
+
+> ⚠️ Same page as setting #1 and #11 (for the controls that *are* still visible).
 
 **JSON:**
 ```json
@@ -178,6 +180,22 @@ SharePoint admin center → **Settings** → **Sync** → check *"Block sync on 
 ```
 
 > The recommended value is **`false`** — meaning macOS sync is **not** blocked. Inforcer monitors this setting to detect if it is ever unexpectedly enabled.
+
+**Check current value (PowerShell — macOS/PnP):**
+
+```powershell
+Connect-PnPOnline `
+    -Url 'https://<tenant>-admin.sharepoint.com' `
+    -Interactive `
+    -ClientId '<clientId>' `
+    -Tenant '<tenant>.onmicrosoft.com'
+
+Get-PnPTenant | Select-Object BlockMacSync
+```
+
+> ⚠️ **Observed behaviour (March 2026):** The property is returned by `Get-PnPTenant` but with **no value** — the column header appears with a blank result. Microsoft has deprecated this property at both the UI and API level. It is no longer settable or readable in a meaningful way.
+
+> **Conclusion:** `BlockMacSync` is fully deprecated. The UI checkbox was removed from the modern admin center and the API property no longer returns a boolean value. Inforcer monitoring of this setting may show as unknown/null rather than `false`. **No remediation action is possible or required** — macOS sync blocking is not enforceable through this property in current tenants. Use Conditional Access device compliance policies if you need to restrict sync by device platform.
 
 **Rationale:**
 
@@ -225,7 +243,7 @@ SharePoint admin center → **Policies** → **Sharing** → set both sliders �
 | Guests must sign in using the same account invitations were sent to | `RequireAcceptingAccountMatchInvitedAccount` | `true` | ✅ Prevents invitation forwarding — recipient must use the exact email address the invite was sent to. Stops guests forwarding share links to unintended parties. |
 | Limit external sharing by domain | `SharingDomainRestrictionMode` + `SharingAllowedDomainList` | `AllowList` | ✅ Restricts sharing to approved partner domains only. Strong control for orgs with known, fixed external partners. Without this, users can share to any domain. |
 | Allow only users in specific security groups to share externally | `SharingAllowedDomainList` (group-scoped) | Enabled | ✅ Limits external sharing to a vetted subset of users (e.g. senior staff, sales team). Reduces accidental oversharing by standard employees. |
-| Allow guests to share items they don't own | `PreventExternalUsersFromResharing` | `false` (disable resharing) | ⚠️ **CIS: Disable this.** If guests can reshare, content can spread beyond your intended audience with no audit trail. Set to `false` so guests cannot reshare items. |
+| Allow guests to share items they don't own | **SPO PS:** `PreventExternalUsersFromResharing` = `true`<br>**Graph API (Inforcer):** `isResharingByExternalUsersEnabled` = `false` | Block resharing | ⚠️ **CIS: Block guest resharing.** If guests can reshare, content can spread beyond your intended audience with no audit trail. ⚠️ **Note: the two property names have inverted logic** — SPO PowerShell uses `PreventExternalUsersFromResharing: true` to block, while the Graph API / Inforcer uses `isResharingByExternalUsersEnabled: false` to block. They are the same underlying setting. |
 | Guest access to a site or OneDrive will automatically expire after this many days | `ExternalUserExpireInDays` | `30` | ✅ **CIS: Enable with 30 days.** Automatically revokes guest access after the set period. Without this, guest access persists indefinitely even when the business relationship ends. Reduces stale access risk significantly. |
 | People who use a verification code must reauthenticate after this many days | `EmailAttestationReAuthDays` | `15` | ✅ **CIS: Enable with 15 days.** Forces one-time-code users to re-verify periodically. Without this, a one-time code used once grants indefinite access from that browser session. |
 
@@ -416,6 +434,7 @@ Connect-PnPOnline -Url "https://Inforcer2m365-admin.sharepoint.com" -Interactive
 Connect-SPOService -Url "https://<tenant>-admin.sharepoint.com"
 Get-SPOTenant | Select-Object DisallowInfectedFileDownload
 ```
+
 
 **Remediate (PowerShell — macOS/PnP):**
 
