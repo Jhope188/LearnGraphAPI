@@ -17,9 +17,32 @@
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
-param(
-    [string]$TenantId = "ffa402cb-399d-4c30-8803-00c9fa541f30"
-)
+param()
+
+# ---------------------------------------------------------------------------
+# Connect to Graph (re-use existing session or prompt for sign-in)
+# ---------------------------------------------------------------------------
+$requiredScopes = @("User.ReadWrite.All")
+$ctx = Get-MgContext
+
+if (-not $ctx) {
+    Write-Host "🔐 No active session — launching interactive sign-in..." -ForegroundColor Cyan
+    Connect-MgGraph -Scopes $requiredScopes -NoWelcome
+    $ctx = Get-MgContext
+}
+elseif ($requiredScopes | Where-Object { $ctx.Scopes -notcontains $_ }) {
+    Write-Host "🔐 Reconnecting to request missing scopes..." -ForegroundColor Cyan
+    Connect-MgGraph -Scopes $requiredScopes -TenantId $ctx.TenantId -NoWelcome
+    $ctx = Get-MgContext
+}
+
+if (-not $ctx) {
+    Write-Error "❌ Failed to connect to Microsoft Graph. Exiting."
+    return
+}
+
+$TenantId = $ctx.TenantId
+Write-Host "🔗 Connected to tenant: $TenantId ($($ctx.Account))" -ForegroundColor Cyan
 
 # ---------------------------------------------------------------------------
 # House → background hex  (text is always white)
@@ -32,12 +55,6 @@ $houseColors = @{
 }
 
 $hufflepuffTextColor = "000000"   # Black text on yellow background
-
-# ---------------------------------------------------------------------------
-# Connect
-# ---------------------------------------------------------------------------
-Write-Host "🔐 Connecting to Microsoft Graph..." -ForegroundColor Cyan
-Connect-MgGraph -Scopes "User.ReadWrite.All" -TenantId $TenantId -NoWelcome
 
 # ---------------------------------------------------------------------------
 # Get all users whose OfficeLocation is a house name
