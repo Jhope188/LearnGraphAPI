@@ -2,17 +2,13 @@
 
 <#
 .SYNOPSIS
-    Sets house-coloured profile photos for all Harry Potter demo users.
+    Sets profile photos for all Harry Potter demo users.
 
 .DESCRIPTION
-    Standalone script to (re)apply ui-avatars.com profile photos to all
-    existing Harry Potter Entra ID users.  Run this after Create-HarryPotterUsers.ps1
-    if photos were skipped (users already existed) or failed silently.
-
-    Key fix over the original script:
-    - Always iterates existing users rather than skipping them
-    - Passes -ContentType "image/png" to Set-MgUserPhotoContent (was missing)
-    - Uses a clean temp path without the double-extension bug
+    Uploads profile photos for Harry Potter Entra ID demo users.
+    - First checks the local characters-resized folder for a matching photo
+    - Falls back to house-coloured avatars from ui-avatars.com if no local file exists
+    - Passes -ContentType correctly for both png and jpg uploads
     - Verbose success/failure output per user
 #>
 
@@ -45,6 +41,13 @@ $TenantId = $ctx.TenantId
 Write-Host "🔗 Connected to tenant: $TenantId ($($ctx.Account))" -ForegroundColor Cyan
 
 # ---------------------------------------------------------------------------
+# Photo folder — resized character images live next to this script
+# ---------------------------------------------------------------------------
+$scriptDir  = $PSScriptRoot
+$photoDir   = Join-Path $scriptDir "characters-resized"
+Write-Host "📂 Photo folder: $photoDir" -ForegroundColor Cyan
+
+# ---------------------------------------------------------------------------
 # House → background hex  (text is always white)
 # ---------------------------------------------------------------------------
 $houseColors = @{
@@ -71,40 +74,72 @@ if (-not $hpUsers) {
 Write-Host "   Found $($hpUsers.Count) users.`n"
 
 # ---------------------------------------------------------------------------
-# Set photos
+# Set photos — local file first, then fallback to house-colour avatar
 # ---------------------------------------------------------------------------
-$success = 0
-$failed  = 0
+$success   = 0
+$failed    = 0
+$fromFile  = 0
+$fromAvatar = 0
 
 foreach ($user in $hpUsers) {
     $house = $user.OfficeLocation
     $bgHex = $houseColors[$house]
     $fgHex = if ($house -eq "Hufflepuff") { $hufflepuffTextColor } else { "ffffff" }
 
-    # URL-encode display name for the API
-    $encodedName = [Uri]::EscapeDataString($user.DisplayName)
-    $avatarUrl   = "https://ui-avatars.com/api/?name=$encodedName&size=512" +
-                   "&background=$bgHex&color=$fgHex&bold=true&format=png"
+    # Build potential local filenames: "Harry_Potter.png", "Harry_Potter.jpg", "Dolores.png" etc.
+    $safeName   = $user.DisplayName -replace '\s+', '_'
+    $firstName  = ($user.DisplayName -split '\s+')[0]
+    $localPhoto = $null
+    $contentType = "image/png"
 
-    # Unique temp file per user (avoids collision; no double-extension)
-    $tempFile = [System.IO.Path]::Combine(
-        [System.IO.Path]::GetTempPath(),
-        "$($user.Id).png"
-    )
+    # Check for local photo: full name first, then first name only
+    foreach ($nameVariant in @($safeName, $firstName)) {
+        foreach ($ext in @("png", "jpg", "jpeg")) {
+            $candidate = Join-Path $photoDir "$nameVariant.$ext"
+            if (Test-Path $candidate) {
+                $localPhoto  = $candidate
+                $contentType = if ($ext -eq "png") { "image/png" } else { "image/jpeg" }
+                break
+            }
+        }
+        if ($localPhoto) { break }
+    }
+
+    $photoSource = $null
+    $tempFile    = $null
 
     try {
-        # Download avatar
-        Invoke-WebRequest -Uri $avatarUrl -OutFile $tempFile -UseBasicParsing -ErrorAction Stop
+        if ($localPhoto) {
+            # Use the local character photo
+            $photoSource = $localPhoto
+            Write-Host "  📷 $($user.DisplayName) — using local photo: $(Split-Path $localPhoto -Leaf)" -ForegroundColor DarkCyan
+        }
+        else {
+            # Fallback: download house-coloured avatar
+            $encodedName = [Uri]::EscapeDataString($user.DisplayName)
+            $avatarUrl   = "https://ui-avatars.com/api/?name=$encodedName&size=512" +
+                           "&background=$bgHex&color=$fgHex&bold=true&format=png"
+
+            $tempFile = [System.IO.Path]::Combine(
+                [System.IO.Path]::GetTempPath(),
+                "$($user.Id).png"
+            )
+
+            Invoke-WebRequest -Uri $avatarUrl -OutFile $tempFile -UseBasicParsing -ErrorAction Stop
+            $photoSource = $tempFile
+            $contentType = "image/png"
+            Write-Host "  🎨 $($user.DisplayName) — using house avatar ($house)" -ForegroundColor DarkYellow
+        }
 
         if ($PSCmdlet.ShouldProcess($user.DisplayName, "Set profile photo")) {
-            # Upload – must pass -ContentType or Graph rejects the request silently
             Set-MgUserPhotoContent -UserId $user.Id `
-                                   -InFile $tempFile `
-                                   -ContentType "image/png" `
+                                   -InFile $photoSource `
+                                   -ContentType $contentType `
                                    -ErrorAction Stop
 
             Write-Host "  ✅ $($user.DisplayName)  ($house)" -ForegroundColor Green
             $success++
+            if ($localPhoto) { $fromFile++ } else { $fromAvatar++ }
         }
     }
     catch {
@@ -112,7 +147,7 @@ foreach ($user in $hpUsers) {
         $failed++
     }
     finally {
-        if (Test-Path $tempFile) { Remove-Item $tempFile -Force }
+        if ($tempFile -and (Test-Path $tempFile)) { Remove-Item $tempFile -Force }
     }
 }
 
@@ -120,7 +155,7 @@ foreach ($user in $hpUsers) {
 # Summary
 # ---------------------------------------------------------------------------
 Write-Host "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "  Photos set:    $success" -ForegroundColor $(if ($success -gt 0) { "Green" } else { "Gray" })
+Write-Host "  Photos set:    $success  (📷 local: $fromFile | 🎨 avatar: $fromAvatar)" -ForegroundColor $(if ($success -gt 0) { "Green" } else { "Gray" })
 Write-Host "  Failed:        $failed"  -ForegroundColor $(if ($failed  -gt 0) { "Red"   } else { "Gray" })
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor Cyan
 
