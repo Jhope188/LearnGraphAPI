@@ -18,7 +18,10 @@
 6. [Publishing Walkthrough](#6-publishing-walkthrough)
 7. [Deployment Runbook](#7-deployment-runbook)
 8. [Verification & Troubleshooting](#8-verification--troubleshooting)
-9. [Day-2 Operations](#9-day-2-operations)
+9. [DLP Integration](#9-dlp-integration)
+10. [Auto-Labeling](#10-auto-labeling)
+11. [Adaptive Protection](#11-adaptive-protection)
+12. [Day-2 Operations](#12-day-2-operations)
 
 ---
 
@@ -108,6 +111,9 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 | 1 | **EnableMIPLabels = True** | Allows sensitivity labels to be applied to M365 Groups | `Invoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/v1.0/groupSettings'` → check `EnableMIPLabels` value |
 | 2 | **isSensitivityLabelsEnabled = True** | Enables sensitivity labels in SharePoint Online | `Invoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/beta/admin/sharepoint/settings'` → check `isSensitivityLabelsEnabled` |
 | 3 | **Execute-AzureADLabelSync** | Syncs Purview labels to Entra ID so they appear in Teams/SharePoint admin | Run via Connect-IPPSSession |
+| 4 | **Co-authoring for encrypted files** | Enables real-time co-authoring on Office files protected by sensitivity label encryption. Without this, two users cannot simultaneously edit an encrypted document — the second user receives a read-only lock. | Purview portal → **Settings** → **Co-authoring for files with sensitivity labels** → toggle **On** |
+
+> **Co-authoring note:** Co-authoring requires Microsoft 365 Apps version 2107 or later and applies only to files stored in SharePoint Online or OneDrive for Business. On-premises file shares and non-Microsoft storage do not support co-authoring with label encryption. Enable this setting before deploying encrypted labels to end users to avoid unexpected edit conflicts.
 
 **Required Roles:**
 
@@ -250,6 +256,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 | **Tooltip** | Confidential reports and analytics. Encrypted for internal use. |
 | **Use Case** | Financial reports, board packs, analytics dashboards, audit reports |
 
+> **Design rationale — why this label exists separately from Confidential - Internal:** The encryption rights are intentionally identical to Confidential - Internal (org-wide Co-Author). The differentiation is operational rather than technical: having a distinct "Reporting" label allows Activity Explorer and audit logs to track classification of financial and analytical content separately from general internal content. This matters for compliance reporting (e.g., demonstrating that board packs are consistently classified) and for future scoping of auto-labeling rules that target financial SITs (credit card numbers, bank account numbers) specifically to this label. If the organisation later needs to restrict reporting content to a smaller audience (e.g., Finance + Board only), the encryption rights on this label can be narrowed independently without affecting Confidential - Internal documents already in circulation.
+
 ### 4.4 Restricted (Parent — Container Only)
 
 | Setting | Value |
@@ -267,13 +275,21 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 |---------|-------|
 | **Scope** | File, Email, Site, UnifiedGroup |
 | **Container Protection** | Privacy: Private, Guests: Blocked, Full Access: No |
-| **Encryption** | Template — admin-only |
-| **Rights** | `<AdminEmail>`: OWNER (full control) |
+| **Encryption** | Template — named principals only |
+| **Rights** | `<AdminEmail or Security Group>`: OWNER (full control) |
 | **Header** | "RESTRICTED - Internal Only" (10pt, red, centred) |
 | **Footer** | "RESTRICTED - Internal Only" (8pt, red, centred) |
 | **Watermark** | "RESTRICTED" (48pt, diagonal) |
 | **Tooltip** | Encrypted for specific internal recipients only. |
 | **Use Case** | Executive compensation, M&A documents, legal hold materials, security incident reports |
+
+> **⚠️ Operational risk — use a security group, not a single admin account:** The `SensitivityLabel.ps1` script defaults `$adminRights` to the signed-in admin's UPN (e.g., `admin@domain.com:OWNER`). This creates a **single point of failure**: if that account is deleted, disabled, or its UPN changes, every document encrypted with this label becomes inaccessible — including M&A files, legal hold materials, and executive compensation records. Before production deployment, replace the individual admin UPN with a **role-based mail-enabled security group** (e.g., `SG-Restricted-Owners@domain.com`) containing the appropriate privileged users. Set a formal access review for group membership. The encryption rights string to use in the script would be:
+>
+> ```powershell
+> $adminRights = "SG-Restricted-Owners@yourdomain.com:OWNER"
+> ```
+>
+> The security group membership should be reviewed quarterly and ownership assigned to a named role (e.g., CISO or Legal Counsel), not an individual.
 
 #### 4.4.2 Restricted - Third Parties
 
@@ -615,9 +631,132 @@ Set-SPOSite -Identity "https://acme2m365.sharepoint.com/sites/yoursite" -Sensiti
 
 ---
 
-## 9. Day-2 Operations
+## 9. DLP Integration
 
-### 9.1 Adding a New Label
+Sensitivity labels define classification and apply encryption, but they do not by themselves enforce data movement controls. DLP policies are the complementary layer that monitors and restricts how labelled content is shared, moved, or transmitted. Labels and DLP should be designed together — a label that carries no corresponding DLP action provides classification visibility but no enforcement at the data-flow level.
+
+### 9.1 Label-as-Condition DLP Policy Design
+
+Microsoft Purview DLP supports sensitivity labels as policy conditions via **"Content is labelled"**. This is distinct from "content contains sensitive info type" — the label condition checks the label metadata applied to the item, not the textual content of the document.
+
+> **Important limitation (from Welka's World):** DLP "content contains: sensitive info type" does **not** detect metadata tags. It detects the document body, headers/footers, and Office document properties only. If you intend DLP to act on labelled content, always use the **"Content is labelled"** condition, not a SIT condition, to avoid false negatives on encrypted documents where the body is not scannable.
+
+**Recommended baseline DLP policies to accompany this label taxonomy:**
+
+| Policy | Condition | Action | Rationale |
+|--------|-----------|--------|-----------|
+| Restricted - Block External Sharing | Label = Restricted - Internal **or** Restricted - Third Parties | Block sharing with external users; notify admin | Restricted content must never leave the org uncontrolled |
+| Restricted - Block Upload to Unmanaged Apps | Label = Restricted-* | Endpoint DLP: block upload to non-corporate cloud apps | Prevents exfiltration via browser |
+| Confidential - Warn on External Email | Label = Confidential - Internal | Warn user; require business justification override | Confidential - Internal is org-wide encrypted; external email is likely an error |
+| Confidential - Block External Third Party without Recipient | Label = Confidential - Third Parties **and** no encryption recipients set | Block send | Catches misconfigured label application |
+| General - Monitor External Sharing | Label = General | Audit only; no block | Baseline visibility into what is classified as General and shared externally |
+
+### 9.2 DLP Policy Deployment Approach
+
+Follow the same progressive enforcement model used for labels — deploy new DLP policies in **test mode** first, review Activity Explorer and DLP reports for 1–2 weeks, then move to **warn mode**, then **block mode**. Never deploy block-mode DLP to all users on day one.
+
+```powershell
+# Check DLP policy status
+Get-DlpCompliancePolicy | Format-Table Name, Mode, Workload
+
+# Move a policy from TestWithNotifications to Enable (enforce)
+Set-DlpCompliancePolicy -Identity "Restricted - Block External Sharing" -Mode Enable
+```
+
+### 9.3 Endpoint DLP Considerations
+
+For Restricted labels specifically, consider enabling Endpoint DLP to enforce controls at the device level, including:
+
+- Blocking copy to USB removable media
+- Blocking upload to personal cloud storage (OneDrive personal, Dropbox, Google Drive)
+- Blocking print to non-corporate printers
+- Blocking clipboard copy to unmanaged apps
+
+Endpoint DLP requires Microsoft Purview compliance licensing (E5 or equivalent) and devices onboarded to Microsoft Defender for Endpoint.
+
+---
+
+## 10. Auto-Labeling
+
+Manual labelling relies on users making correct classification decisions. Auto-labeling applies labels automatically based on content inspection, reducing human error and extending coverage to existing unclassified content.
+
+Microsoft Purview supports two distinct auto-labeling mechanisms:
+
+| Type | Where It Runs | How It Works | Scope |
+|------|--------------|-------------|-------|
+| **Client-side auto-labeling** | In Office apps (Word, Excel, Outlook) | Recommends or applies a label based on SIT matches in the document as the user works | New and edited documents |
+| **Service-side auto-labeling** | In SharePoint Online and Exchange | Scans existing content at rest; applies labels without user interaction | Existing libraries and mailboxes |
+
+### 10.1 Recommended Auto-Labeling Targets for This Taxonomy
+
+| Label | Auto-Labeling Trigger | SIT Examples |
+|-------|----------------------|-------------|
+| Confidential - Reporting | Financial SITs detected in document body | Credit card numbers, bank account numbers, ABA routing numbers |
+| Confidential - Internal | PII SITs (names + govt IDs in combination) | UK National Insurance Number, passport numbers |
+| Restricted - Internal | High-confidence sensitive data combinations | Medical records, legal privilege indicators |
+
+> **Deployment warning:** Always run service-side auto-labeling policies in **simulation mode** first. Use Activity Explorer to review what would be labelled before enabling enforcement. Overly broad SIT rules will label large volumes of incorrectly classified content, and re-labelling at scale is disruptive.
+
+### 10.2 Setting Up a Service-Side Auto-Labeling Policy
+
+Auto-labeling policies are created in the Purview portal under **Information Protection → Auto-labeling**, not as part of label policy publishing. They are a separate configuration step after labels and manual policies are deployed and stable.
+
+---
+
+## 11. Adaptive Protection
+
+Adaptive Protection integrates Microsoft Purview Insider Risk Management (IRM) with DLP to dynamically adjust enforcement strictness based on a user's current risk level. Rather than applying the same DLP rules to everyone equally, Adaptive Protection can:
+
+- Apply **tighter DLP controls** to users flagged as elevated or high risk by IRM (e.g., users who have recently triggered data exfiltration alerts, users in the offboarding risk indicator window)
+- Apply **standard or relaxed controls** to low-risk users to avoid unnecessary friction
+
+### 11.1 How It Interacts with This Label Taxonomy
+
+For organisations deploying Restricted labels for high-sensitivity scenarios (M&A, legal hold, executive compensation), Adaptive Protection adds a meaningful additional layer:
+
+- A high-risk user attempting to access or share Restricted-labelled content can be automatically subjected to more aggressive DLP blocks without a policy change
+- Low-risk users retain normal enforcement, reducing helpdesk burden
+
+### 11.2 Prerequisites
+
+- Microsoft Purview Insider Risk Management must be configured with at least one active policy
+- Adaptive Protection requires Microsoft 365 E5 Compliance or equivalent add-on licensing
+- Adaptive Protection is enabled in Purview portal → **Insider Risk Management** → **Adaptive Protection**
+
+> **Maturity path:** Adaptive Protection is typically a Phase 2 or Phase 3 addition after the label taxonomy and baseline DLP policies are stable and generating reliable signal. Do not attempt to configure Adaptive Protection before DLP enforcement is established.
+
+---
+
+## 12. Day-2 Operations
+
+### 12.1 Label Governance Framework
+
+Labels require ongoing ownership to prevent the common failure pattern of taxonomy decay — unused labels accumulating, users defaulting to the wrong label, and no one accountable for reviewing changes.
+
+**Ownership model:**
+
+| Role | Responsibility |
+|------|----------------|
+| **Label Owner** (e.g., Information Protection Admin) | Approves new label requests, manages taxonomy changes, reviews quarterly |
+| **DLP Policy Owner** (e.g., Compliance team) | Maintains DLP policy alignment with label changes, reviews DLP reports monthly |
+| **Business Stakeholders** | Request new labels via a defined process; receive Activity Explorer reports on label usage for their data |
+
+**Quarterly label review checklist:**
+
+- Review Activity Explorer: are all 9 labels being used? Are any labels with zero usage candidates for removal?
+- Review audit log for label downgrade events: are justifications reasonable?
+- Review membership of `SG-Restricted-Owners` (or equivalent security group used in Restricted - Internal rights)
+- Review auto-labeling simulation reports if applicable
+- Confirm co-authoring setting is still enabled after any tenant configuration changes
+- Review any new Microsoft Purview feature releases that affect label behaviour
+
+**Label change request process:**
+
+New sub-labels or changes to existing encryption rights should go through a lightweight approval process involving the Label Owner and a business stakeholder. Changes to encryption rights on existing labels affect documents already in circulation — users who received encrypted files under the old rights may lose access. Test any encryption rights changes in a non-production tenant or with a small pilot group first.
+
+---
+
+### 12.2 Adding a New Label
 
 ```powershell
 # Example: Add "Confidential - Financial" for the finance team
@@ -636,7 +775,7 @@ New-Label -Name "Confidential-Financial" `
 Set-LabelPolicy -Identity "IAC - Confidential Label Policy" -AddLabels "Confidential-Financial"
 ```
 
-### 9.2 Removing a Duplicate or Unwanted Label
+### 12.3 Removing a Duplicate or Unwanted Label
 
 ```powershell
 # Find the label's ImmutableId
@@ -648,7 +787,7 @@ Remove-Label -Identity "<ImmutableId>" -Confirm:$false
 
 > **Note:** Removed labels enter a "pending deletion" state and may still appear in `Get-Label` output for several hours. This is normal Purview behaviour.
 
-### 9.3 Changing Encryption Rights on an Existing Label
+### 12.4 Changing Encryption Rights on an Existing Label
 
 ```powershell
 # Example: Give the security team access to Restricted - Internal
@@ -656,7 +795,7 @@ Set-Label -Identity "Restricted - Internal" `
     -EncryptionRightsDefinitions "securityteam@acme2m365.onmicrosoft.com:OWNER"
 ```
 
-### 9.4 Modifying Policy Scope (Exclusions)
+### 12.5 Modifying Policy Scope (Exclusions)
 
 ```powershell
 # Exclude contractors from Confidential labels
@@ -675,7 +814,7 @@ Set-LabelPolicy -Identity "IAC - Confidential Label Policy" `
 Get-LabelPolicy | Format-Table Name, ExchangeLocationException -AutoSize
 ```
 
-### 9.5 Auditing Label Usage
+### 12.6 Auditing Label Usage
 
 ```powershell
 # Purview Audit Log — label application events
@@ -685,7 +824,7 @@ Search-UnifiedAuditLog -StartDate (Get-Date).AddDays(-7) -EndDate (Get-Date) `
     Select-Object CreationDate, UserIds, Operations, AuditData
 ```
 
-### 9.6 Emergency: Remove All Policies
+### 12.7 Emergency: Remove All Policies
 
 If you need to roll back and remove mandatory labelling urgently:
 
