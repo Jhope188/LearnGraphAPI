@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System-Preferred Auth Carousel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: #0f1117;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    gap: 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 14px;
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  /* Navigation */
+  .nav {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .nav button {
+    background: #1e2130;
+    border: 1px solid #2d3148;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+  }
+
+  .nav button:hover { background: #2a2f4a; }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+
+  .nav .counter {
+    color: #aaa;
+    font-size: 13px;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* Slide container */
+  .stage {
+    width: 600px;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+  }
+
+  .slide.active { display: flex; }
+
+  /* ─── SLIDE 1 – Cover ─── */
+  #s1 {
+    background: linear-gradient(135deg, #0f1b3d 0%, #1a0533 60%, #0d1f3c 100%);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 48px;
+  }
+
+  #s1 .eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #00b4d8;
+    margin-bottom: 20px;
+  }
+
+  #s1 h2 {
+    font-size: 34px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 20px;
+  }
+
+  #s1 h2 span { color: #7c3aed; }
+
+  #s1 .sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+    max-width: 420px;
+  }
+
+  #s1 .tag-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  #s1 .tag {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  #s1 .glow {
+    position: absolute;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  #s1 .glow-purple { background: #7c3aed; top: -60px; right: -60px; }
+  #s1 .glow-blue   { background: #0ea5e9; bottom: -60px; left: -60px; }
+
+  /* ─── SLIDE 2 – What is it ─── */
+  #s2 {
+    background: linear-gradient(160deg, #0f1b3d 0%, #0d1a2e 100%);
+    padding: 44px 48px;
+    justify-content: center;
+  }
+
+  #s2 .slide-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #00b4d8;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  #s2 h3 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+
+  #s2 .card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  #s2 .card .icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  #s2 .card .body { flex: 1; }
+
+  #s2 .card .title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  #s2 .card .desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+  }
+
+  /* ─── SLIDE 3 – DevTools capture ─── */
+  #s3 {
+    background: linear-gradient(160deg, #0a1628 0%, #11082a 100%);
+    padding: 40px 44px;
+    justify-content: center;
+  }
+
+  #s3 .slide-label, #s4 .slide-label, #s5 .slide-label, #s6 .slide-label, #s7 .slide-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #a78bfa;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  #s3 h3 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  #s3 .context {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  .code-block {
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+
+  .code-block .code-header {
+    background: #161b22;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .code-block .code-header .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-red    { background: #ff5f56; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green  { background: #27c93f; }
+
+  .code-block .code-header .filename {
+    font-size: 11px;
+    color: #8b949e;
+    margin-left: 6px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+
+  .code-block pre {
+    padding: 16px 20px;
+    font-size: 11.5px;
+    line-height: 1.7;
+    overflow-x: auto;
+    color: #e6edf3;
+  }
+
+  .c-key    { color: #79c0ff; }
+  .c-string { color: #a5d6ff; }
+  .c-bool-t { color: #56d364; }
+  .c-bool-f { color: #f85149; }
+  .c-val    { color: #d2a8ff; }
+  .c-muted  { color: #6e7681; }
+
+  #s3 .step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124,58,237,0.2);
+    border: 1px solid rgba(124,58,237,0.4);
+    color: #a78bfa;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* ─── SLIDE 4 – Graph Explorer attempt ─── */
+  #s4 {
+    background: linear-gradient(160deg, #0a1628 0%, #0d1a2e 100%);
+    padding: 40px 44px;
+    justify-content: center;
+  }
+
+  #s4 h3 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  #s4 .context {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  .method-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .method-pill {
+    background: #ff9500;
+    color: #000;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .endpoint-pill {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #8b949e;
+    font-size: 10.5px;
+    padding: 3px 12px;
+    border-radius: 4px;
+    font-family: monospace;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ─── SLIDE 5 – The Error ─── */
+  #s5 {
+    background: linear-gradient(160deg, #1a0808 0%, #0d0f1a 100%);
+    padding: 40px 44px;
+    justify-content: center;
+  }
+
+  #s5 h3 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  #s5 .context {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  .error-banner {
+    background: rgba(248,81,73,0.12);
+    border: 1px solid rgba(248,81,73,0.4);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .error-banner .err-code {
+    font-size: 12px;
+    font-weight: 800;
+    color: #f85149;
+    white-space: nowrap;
+  }
+
+  .error-banner .err-msg {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  .quote-block {
+    background: rgba(255,255,255,0.04);
+    border-left: 3px solid #f85149;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+  }
+
+  .quote-block .quote-text {
+    font-size: 14px;
+    font-style: italic;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.5;
+  }
+
+  .quote-block .quote-source {
+    font-size: 11px;
+    color: #f85149;
+    margin-top: 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .insight-box {
+    background: rgba(255,149,0,0.08);
+    border: 1px solid rgba(255,149,0,0.25);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.55;
+  }
+
+  .insight-box strong { color: #f5a623; }
+
+  /* ─── SLIDE 6 – Why this matters ─── */
+  #s6 {
+    background: linear-gradient(160deg, #0a1628 0%, #0d1a2e 100%);
+    padding: 44px 48px;
+    justify-content: center;
+  }
+
+  #s6 h3 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+
+  .why-item {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 18px;
+    align-items: flex-start;
+  }
+
+  .why-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .why-body .why-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+
+  .why-body .why-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+  }
+
+  /* ─── SLIDE 7 – CTA ─── */
+  #s7 {
+    background: linear-gradient(135deg, #0f1b3d 0%, #1a0533 60%, #0d1f3c 100%);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 48px;
+  }
+
+  #s7 .glow { position: absolute; width: 250px; height: 250px; border-radius: 50%; filter: blur(70px); opacity: 0.18; pointer-events: none; }
+  #s7 .glow-purple { background: #7c3aed; bottom: -40px; left: -40px; }
+  #s7 .glow-blue   { background: #0ea5e9; top: -40px; right: -40px; }
+
+  #s7 h3 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  #s7 h3 span { color: #a78bfa; }
+
+  #s7 .body-text {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.65;
+    max-width: 400px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  #s7 .cta-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  #s7 .cta-primary {
+    background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+  }
+
+  #s7 .cta-secondary {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.7);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  #s7 .hashtags {
+    margin-top: 28px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    position: relative;
+    line-height: 1.8;
+  }
+
+  /* Slide dots */
+  .dots {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .dot.active {
+    background: #7c3aed;
+    transform: scale(1.3);
+  }
+
+  /* Branding footer */
+  .brand {
+    position: absolute;
+    bottom: 16px;
+    right: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<h1>LinkedIn Carousel Preview</h1>
+
+<div class="stage" id="stage">
+
+  <!-- SLIDE 1: Cover -->
+  <div class="slide active" id="s1">
+    <div class="glow glow-purple"></div>
+    <div class="glow glow-blue"></div>
+    <div class="eyebrow">Microsoft Entra ID · Deep Dive</div>
+    <h2>I tried to script<br><span>System-Preferred Auth</span><br>via Graph API.</h2>
+    <p class="sub">Microsoft said no — and the error message told me exactly why. Here's what DevTools revealed.</p>
+    <div class="tag-row">
+      <span class="tag">#EntraID</span>
+      <span class="tag">#GraphAPI</span>
+      <span class="tag">#MFA</span>
+      <span class="tag">#M365Security</span>
+    </div>
+    <div class="brand">inforcer</div>
+  </div>
+
+  <!-- SLIDE 2: What is it -->
+  <div class="slide" id="s2">
+    <div class="slide-label">Background · Slide 2 of 7</div>
+    <h3>What is System-Preferred<br>Authentication?</h3>
+
+    <div class="card">
+      <div class="icon">🔐</div>
+      <div class="body">
+        <div class="title">Automatic method ranking</div>
+        <div class="desc">Entra automatically presents the most secure MFA method the user has registered — passkeys and TAP at the top, passwords at the bottom.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="icon">🤖</div>
+      <div class="body">
+        <div class="title">Microsoft-managed by default</div>
+        <div class="desc">No per-user config needed. When set to "Microsoft managed," Microsoft enables it on their schedule across your tenant.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="icon">📱</div>
+      <div class="body">
+        <div class="title">New: Apply to primary auth too</div>
+        <div class="desc">A preview toggle now extends system-preferred logic to primary authentication — not just MFA step-up.</div>
+      </div>
+    </div>
+    <div class="brand">inforcer</div>
+  </div>
+
+  <!-- SLIDE 3: DevTools capture -->
+  <div class="slide" id="s3">
+    <div class="slide-label">Discovery · Slide 3 of 7</div>
+    <div class="step-badge">🔍 Step 1 — DevTools</div>
+    <h3>I flipped the toggle.<br>DevTools told me the truth.</h3>
+    <p class="context">Enabled "Apply to both primary and multifactor authentication" in the portal, then captured the outbound PATCH request.</p>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="filename">PATCH · authenticationMethodsPolicy · Request Payload</div>
+      </div>
+      <pre><span class="c-key">systemCredentialPreferences</span>: {
+  <span class="c-key">state</span>: <span class="c-string">"default"</span>,
+  <span class="c-key">includeTargets</span>: [{
+    <span class="c-key">id</span>: <span class="c-string">"all_users"</span>,
+    <span class="c-key">targetType</span>: <span class="c-string">"group"</span>
+  }],
+  <span class="c-key">excludeTargets</span>: [],
+  <span class="c-key">isSystemDefaultPrimaryAuthEnabled</span>: <span class="c-bool-t">true</span>
+}</pre>
+    </div>
+    <div class="brand">inforcer</div>
+  </div>
+
+  <!-- SLIDE 4: Graph Explorer attempt -->
+  <div class="slide" id="s4">
+    <div class="slide-label">Experiment · Slide 4 of 7</div>
+    <h3>Looks scriptable.<br>So I tried Graph Explorer.</h3>
+    <p class="context">Took the exact property from DevTools and ran a PATCH against the same endpoint.</p>
+
+    <div class="method-bar">
+      <span class="method-pill">PATCH</span>
+      <span class="endpoint-pill">graph.microsoft.com/beta/policies/authenticationMethodsPolicy</span>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+        <div class="filename">Request Body</div>
+      </div>
+      <pre>{
+  <span class="c-key">"systemCredentialPreferences"</span>: {
+    <span class="c-key">"isSystemDefaultPrimaryAuthEnabled"</span>: <span class="c-bool-t">true</span>
+  }
+}</pre>
+    </div>
+
+    <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 14px; line-height: 1.5;">
+      Clean payload. Valid endpoint. Correct property name from the portal's own traffic. Should work, right?
+    </p>
+    <div class="brand">inforcer</div>
+  </div>
+
+  <!-- SLIDE 5: The Error -->
+  <div class="slide" id="s5">
+    <div class="slide-label">Finding · Slide 5 of 7</div>
+    <h3>Nope. 400 Bad Request.</h3>
+    <p class="context">Microsoft's API returned this immediately — no ambiguity.</p>
+
+    <div class="error-banner">
+      <div class="err-code">400 Bad Request</div>
+      <div class="err-msg">badRequest · 1289ms</div>
+    </div>
+
+    <div class="quote-block">
+      <div class="quote-text">"IsSystemDefaultPrimaryAuthEnabled can only be modified through the Admin UX interface."</div>
+      <div class="quote-source">Graph API Response · April 2026</div>
+    </div>
+
+    <div class="insight-box">
+      <strong>What this means:</strong> Even though the portal uses this property in its own PATCH call, Microsoft has intentionally blocked programmatic access to it. The API and the UX don't have the same permissions — by design.
+    </div>
+    <div class="brand">inforcer</div>
+  </div>
+
+  <!-- SLIDE 6: Why this matters -->
+  <div class="slide" id="s6">
+    <div class="slide-label">Takeaways · Slide 6 of 7</div>
+    <h3>Why this matters for<br>M365 automation</h3>
+
+    <div class="why-item">
+      <div class="why-num">1</div>
+      <div class="why-body">
+        <div class="why-title">Not every portal setting is scriptable</div>
+        <div class="why-desc">Microsoft intentionally gates certain controls to the Admin UX. DevTools can show you the property — but the API may still block you.</div>
+      </div>
+    </div>
+
+    <div class="why-item">
+      <div class="why-num">2</div>
+      <div class="why-body">
+        <div class="why-title">Configuration drift risk for automation teams</div>
+        <div class="why-desc">If your IaC or drift detection tooling reads authenticationMethodsPolicy, this property won't surface through Graph — you need portal-side monitoring.</div>
+      </div>
+    </div>
+
+    <div class="why-item">
+      <div class="why-num">3</div>
+      <div class="why-body">
+        <div class="why-title">DevTools is still your best friend</div>
+        <div class="why-desc">Even when Graph blocks you, intercepting portal traffic tells you the exact data model — invaluable for documentation and compliance evidence.</div>
+      </div>
+    </div>
+
+    <div class="why-item">
+      <div class="why-num">4</div>
+      <div class="why-body">
+        <div class="why-title">Enable it — just do it manually</div>
+        <div class="why-desc">System-preferred auth is a genuine security uplift. The ranking hierarchy ensures users get passkeys and Authenticator before passwords.</div>
+      </div>
+    </div>
+    <div class="brand">inforcer</div>
+  </div>
+
+  <!-- SLIDE 7: CTA -->
+  <div class="slide" id="s7">
+    <div class="glow glow-purple"></div>
+    <div class="glow glow-blue"></div>
+    <div class="slide-label" style="position:relative;">CTA · Slide 7 of 7</div>
+    <h3>Know your tenant.<br><span>Know its limits.</span></h3>
+    <p class="body-text">
+      Security configuration isn't just about flipping the right switches — it's about knowing which ones you can actually automate and which ones need a human in the loop.
+    </p>
+    <div class="cta-row">
+      <a class="cta-primary" href="#">Follow for more Entra deep dives</a>
+      <a class="cta-secondary" href="#">inforcer.com</a>
+    </div>
+    <div class="hashtags">
+      #EntraID &nbsp;#GraphAPI &nbsp;#MicrosoftEntra &nbsp;#M365Security<br>
+      #ZeroTrust &nbsp;#MFA &nbsp;#Passkeys &nbsp;#IdentitySecurity
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<div class="nav">
+  <button id="prev" onclick="navigate(-1)" disabled>← Prev</button>
+  <div class="counter" id="counter">1 / 7</div>
+  <button id="next" onclick="navigate(1)">Next →</button>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsEl = document.getElementById('dots');
+  let current = 0;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    dotsEl.children[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    dotsEl.children[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+    document.getElementById('prev').disabled = current === 0;
+    document.getElementById('next').disabled = current === slides.length - 1;
+  }
+
+  function navigate(dir) { goTo(current + dir); }
+
+  // Keyboard nav
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' && current < slides.length - 1) navigate(1);
+    if (e.key === 'ArrowLeft' && current > 0) navigate(-1);
+  });
+</script>
+</body>
+</html>
