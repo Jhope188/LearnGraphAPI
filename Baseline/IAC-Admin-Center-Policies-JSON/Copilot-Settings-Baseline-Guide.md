@@ -532,31 +532,33 @@ This is a low-friction, high-value governance control. It reduces liability risk
 
 ## 5. Summary Baseline Table
 
-| # | Setting | Category |  Baseline | Priority | EU/EFTA Only |
-|---|---|---|---|---|---|
-| 1 | Web search for Microsoft 365 Copilot | User Access / Data Access | Enable with monitoring | Medium | No |
-| 2 | Pin Microsoft 365 Copilot Chat | User Access | Enable post-governance readiness | Low | No |
-| 3 | Pin Copilot apps to Windows taskbar | User Access | Enable post-governance readiness | Low | No |
-| 4 | Opal (Frontier) | User Access | **Disabled** | High | No |
-| 5 | **Flexible inferencing during peak load periods** | User Access | **Disabled** (Do not allow) for regulated orgs | **Critical** | **Yes** |
-| 6 | Microsoft Copilot for Security | User Access | Configure audit in Security Copilot portal | High | No |
-| 7 | M365 Copilot self-service purchases | User Access | **Do not allow** | High | No |
-| 8 | M365 Copilot in admin centers | User Access | Enable; exclude via security group if needed | Medium | No |
-| 9 | Copilot Frontier | User Access | **Disabled** | High | No |
-| 10 | Copilot in Edge | User Access | Configure Edge policy; enforce Entra sign-in | Medium | No |
-| 11 | Copilot in Bing, Edge, and Windows | User Access | Enforce Entra sign-in for EDP | High | No |
-| 12 | Copilot pay-as-you-go billing | User Access | **Disable** unless scoped billing policy exists | High | No |
-| 13 | People Skills | Data Access | **Disabled** until DPIA/legal review | High | No |
-| 14 | Data security and compliance | Data Access | Complete all Purview readiness steps | Critical | No |
-| 15 | Copilot in Power Platform and Dynamics 365 | Data Access | Restrict makers; apply DLP policies | High | No |
-| 16 | AI providers (subprocessors) | Data Access | **Disabled** until legal/privacy review | High | No |
-| 17 | Agents | Data Access | Restrict to vetted agents only | High | No |
-| 18 | Copilot image generation | Copilot Actions | Enable with acceptable use policy | Medium | No |
-| 19 | Copilot video generation | Copilot Actions | **Disabled** until legal/governance review | High | No |
-| 20 | Copilot in Teams meetings | Copilot Actions | Enabled (during only) for general users | Medium | No |
-| 21 | Copilot custom dictionary | Other Settings | Configure for terminology-heavy orgs | Low | No |
-| 22 | Copilot diagnostic logs | Other Settings | Use only for active support incidents | Medium | No |
-| 23 | Copilot AI disclaimer | Other Settings | **Enable (Bold) + custom policy URL** | High | No |
+| # | Setting | Category | Baseline | Security Recommendation | Priority | EU/EFTA Only |
+|---|---|---|---|---|---|---|
+| 1 | Web search for Microsoft 365 Copilot | User Access / Data Access | Enable with monitoring | ⚠️ Enable with caution — monitor for data leakage via grounded web results | Medium | No |
+| 2 | Pin Microsoft 365 Copilot Chat | User Access | Enable post-governance readiness | ✅ Low risk — cosmetic setting, enable after governance controls are in place | Low | No |
+| 3 | Pin Copilot apps to Windows taskbar | User Access | Enable post-governance readiness | ✅ Low risk — cosmetic setting, enable after governance controls are in place | Low | No |
+| 4 | Opal (Frontier) | User Access | **Disabled** | 🔴 Disable — frontier model with limited transparency; do not enable without risk assessment | High | No |
+| 5 | **Flexible inferencing during peak load periods** | User Access | **Disabled** (Do not allow) for regulated orgs | 🔴 Disable — allows data processing outside tenant region; regulatory and sovereignty risk | **Critical** | **Yes** |
+| 6 | Microsoft Copilot for Security | User Access | Configure audit in Security Copilot portal | ⚠️ Enable selectively — restrict to Security Operations team; configure audit logging | High | No |
+| 7 | M365 Copilot self-service purchases | User Access | **Do not allow** | 🔴 Disable — prevents uncontrolled license sprawl and shadow AI adoption | High | No |
+| 8 | M365 Copilot in admin centers | User Access | Enable; exclude via security group if needed | ⚠️ Enable with scoping — exclude non-admin staff to reduce attack surface | Medium | No |
+| 9 | Copilot Frontier | User Access | **Disabled** | 🔴 Disable — same risk profile as Opal; no production use without formal approval | High | No |
+| 10 | Copilot in Edge | User Access | Configure Edge policy; enforce Entra sign-in | ⚠️ Enable with controls — enforce Entra sign-in to ensure Enterprise Data Protection applies | Medium | No |
+| 11 | Copilot in Bing, Edge, and Windows | User Access | Enforce Entra sign-in for EDP | 🔴 Enforce Entra sign-in — without it, interactions are treated as consumer and not protected | High | No |
+| 12 | Copilot pay-as-you-go billing | User Access | **Disable** unless scoped billing policy exists | 🔴 Disable — prevents unexpected cost exposure and uncontrolled consumption | High | No |
+| 13 | People Skills | Data Access | **Disabled** until DPIA/legal review | 🔴 Disable — exposes employee skill data to AI inference; GDPR/privacy risk | High | No |
+| 14 | Data security and compliance | Data Access | Complete all Purview readiness steps | 🔴 Must complete before Copilot rollout — oversharing is the #1 Copilot security risk | Critical | No |
+| 15 | Copilot in Power Platform and Dynamics 365 | Data Access | Restrict makers; apply DLP policies | ⚠️ Restrict — limit maker access and enforce DLP policies to prevent data exfiltration | High | No |
+| 16 | AI providers (subprocessors) | Data Access | **Disabled** until legal/privacy review | 🔴 Disable — third-party AI processing introduces data residency and contractual risk | High | No |
+| 17 | Agents | Data Access | Restrict to vetted agents only | 🔴 Restrict — only allow agents from a vetted and approved list; block third-party by default | High | No |
+| 18 | Copilot image generation | Copilot Actions | Enable with acceptable use policy | ⚠️ Enable with policy — publish acceptable use guidelines to prevent misuse | Medium | No |
+| 19 | Copilot video generation | Copilot Actions | **Disabled** until legal/governance review | 🔴 Disable — deepfake/IP risk; do not enable without legal sign-off | High | No |
+| 20 | Copilot in Teams meetings | Copilot Actions | Enabled (during only) for general users | ⚠️ Enable with scope — restrict to "during meeting only" to limit transcript exposure | Medium | No |
+| 21 | Copilot custom dictionary | Other Settings | Configure for terminology-heavy orgs | ✅ Low risk — improves output accuracy; no security concerns | Low | No |
+| 22 | Copilot diagnostic logs | Other Settings | Use only for active support incidents | ⚠️ Enable only when needed — diagnostic data may contain sensitive content; disable after use | Medium | No |
+| 23 | Copilot AI disclaimer | Other Settings | **Enable (Bold) + custom policy URL** | 🔴 Enable — legal and compliance requirement; users must see AI-generated content notice | High | No |
+
+---
 
 ---
 
