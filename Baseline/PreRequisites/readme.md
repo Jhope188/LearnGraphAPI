@@ -127,7 +127,7 @@ This is a **two-sided** connection:
 
 > **Note:** It can take up to 15 minutes for the connection status to update after enabling the Defender-side toggle.  
 > **Note:** The **Endpoints** entry under Settings requires Step 4 (provisioning) to be completed first.
-
+![Defender Intune Configuration](./DefenderIntuneConnector.png)
 ![Defender Intune Configuration](./DefenderinIntune.png)
 
 ---
@@ -153,6 +153,8 @@ For data to appear in Cloud Discovery, all three links must be in place:
 > ⚠️ **Enabling the toggle alone is not enough.** Data will only appear once real devices are onboarded to MDE and generating traffic. In a fresh tenant with no enrolled devices, the dashboard will remain empty until the first device enrolls.
 
 > **Note:** After enabling, allow up to **2 hours** for the first discovery data to appear. The dashboard filter will change from the empty state to **"Defender-managed endpoints"** once data begins flowing.
+![Defender for CloudApps](./DefenderForCloudApps.png)
+
 
 ---
 
