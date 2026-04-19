@@ -97,6 +97,9 @@ Sign in to https://security.microsoft.com as a Global or Security Admin.
 Navigate to **Assets → Devices** to trigger provisioning if the portal hasn't been activated yet.  
 Complete the initial setup wizard or dismiss it to proceed with manual configuration.
 
+![Defender Setup](./DefenderSetup.png)
+
+
 ---
 
 ## Step 5. Verify Tamper Protection
@@ -122,6 +125,8 @@ This is a **two-sided** connection:
 
 > **Note:** It can take up to 15 minutes for the connection status to update after enabling the Defender-side toggle.  
 > **Note:** The **Endpoints** entry under Settings requires Step 4 (provisioning) to be completed first.
+
+![Defender Intune Configuration](./DefenderinIntune.png)
 
 ---
 
