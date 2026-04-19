@@ -180,7 +180,7 @@ Set to **Not configured**.
 Intune → Tenant administration → Connectors and tokens → Windows data  
 Enable features requiring Windows diagnostic data.
 
-![Intune Diag Data](./IntuneDiagData.png)
+![Intune Diag Data](./IntuneTenantDiagData.png)
 
 ---
 
