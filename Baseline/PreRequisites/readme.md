@@ -1,6 +1,4 @@
-# Microsoft 365 Business Premium
-
-## Manual Prerequisites Before Deploying Policies
+## Manual Prerequisites Before Deploying Policies via Inforcer
 
 These settings **must be completed manually** in the tenant **before** deploying policies.  
 Follow the steps **in order**. The checklist is grouped by portal for clarity.
@@ -17,11 +15,12 @@ Follow the steps **in order**. The checklist is grouped by portal for clarity.
 | 4 | Provision Microsoft Defender for Endpoint (open Defender portal) | Defender |
 | 5 | Verify Tamper Protection is On (enabled by default) | Defender |
 | 6 | Enable Microsoft Defender for Endpoint connector (Defender + Intune) | Defender / Intune |
-| 7 | Review Intune platform restrictions baseline | Intune |
-| 8 | Set Windows Hello for Business to **Not configured** | Intune |
-| 9 | Enable Windows diagnostic data for Intune | Intune |
-| 10 | Exclude break-glass accounts from all Conditional Access policies | Entra |
-| 11 | *(Optional)* Configure named locations (Blocked / Allowed countries) | Entra |
+| 7 | Enable MDE → Cloud Apps integration (enables Cloud Discovery) | Defender |
+| 8 | Review Intune platform restrictions baseline | Intune |
+| 9 | Set Windows Hello for Business to **Not configured** | Intune |
+| 10 | Enable Windows diagnostic data for Intune | Intune |
+| 11 | Exclude break-glass accounts from all Conditional Access policies | Entra |
+| 12 | *(Optional)* Configure named locations (Blocked / Allowed countries) | Entra |
 
 ---
 
@@ -58,7 +57,7 @@ Confirm both apps appear.
 
 MDM user scope controls who can enroll devices in Intune.
 
-**Path:** Entra → Devices → Enrollment → Microsoft Intune  
+**Path:** Entra admin center → **Mobility** → **Microsoft Intune**  
 Set **MDM user scope** to **All** or **Some**.
 
 ---
@@ -98,9 +97,15 @@ Complete the initial setup wizard or dismiss it to proceed with manual configura
 
 ## Step 5. Verify Tamper Protection
 
-Tamper Protection is **enabled by default** for all enterprise customers via [Built-in Protection](https://learn.microsoft.com/en-us/defender-endpoint/built-in-protection).  
-Verify it is On: Defender portal → **Settings → Endpoints → Advanced features**  
+Tamper Protection is **enabled by default** for all enterprise customers via [Built-in Protection](https://learn.microsoft.com/en-us/defender-endpoint/built-in-protection).
+
+**Path:** Defender portal → **Settings** → **Endpoints** → **Advanced features**  
 Confirm **Tamper Protection** is set to **On**.
+
+> ⚠️ **If you don't see "Endpoints" on the Settings page:**  
+> The Endpoints settings category only appears **after** Defender for Endpoint has been provisioned.  
+> Go back to **Step 4** — navigate to **Assets → Devices** and wait for provisioning to complete.  
+> Once provisioned, return to **Settings** and the **Endpoints** entry will appear.
 
 ---
 
@@ -108,14 +113,39 @@ Confirm **Tamper Protection** is set to **On**.
 
 This is a **two-sided** connection:
 
-1. **Defender portal** → Settings → Endpoints → Advanced features → Toggle **Microsoft Intune connection** to **On** → Save preferences  
+1. **Defender portal** → Settings → **Endpoints** → Advanced features → Toggle **Microsoft Intune connection** to **On** → Save preferences  
 2. **Intune admin center** → Endpoint security → Microsoft Defender for Endpoint → Confirm **Connection status** shows **Enabled**
 
-> **Note:** It can take up to 15 minutes for the connection status to update after enabling the Defender-side toggle.
+> **Note:** It can take up to 15 minutes for the connection status to update after enabling the Defender-side toggle.  
+> **Note:** The **Endpoints** entry under Settings requires Step 4 (provisioning) to be completed first.
 
 ---
 
-## Step 7. Review Intune Platform Restrictions
+## Step 7. Enable MDE → Cloud Apps Integration (Cloud Discovery)
+
+This is a **separate toggle** from the Intune connector in Step 6. It enables Microsoft Defender for Endpoint to feed endpoint traffic data into Defender for Cloud Apps, which powers the **Cloud Discovery** Shadow IT dashboard.
+
+**Path:** Defender portal → **Settings** → **Cloud Apps** → **Microsoft Defender for Endpoint** → toggle **"Enable Microsoft Defender for Endpoint integration with Microsoft Defender for Cloud Apps"** → **Save**
+
+### Why this matters
+
+Without this toggle, Cloud Discovery shows an empty welcome screen — no apps, no traffic, no Shadow IT visibility — even if MDE is provisioned and devices are enrolled. This integration is what routes the endpoint network traffic data into Cloud Discovery.
+
+### Dependency chain
+
+For data to appear in Cloud Discovery, all three links must be in place:
+
+1. **Devices enrolled in Intune** (Step 2 + user devices completing enrollment)
+2. **Intune ↔ MDE connector enabled** (Step 6)
+3. **MDE → Cloud Apps toggle enabled** (this step)
+
+> ⚠️ **Enabling the toggle alone is not enough.** Data will only appear once real devices are onboarded to MDE and generating traffic. In a fresh tenant with no enrolled devices, the dashboard will remain empty until the first device enrolls.
+
+> **Note:** After enabling, allow up to **2 hours** for the first discovery data to appear. The dashboard filter will change from the empty state to **"Defender-managed endpoints"** once data begins flowing.
+
+---
+
+## Step 8. Review Intune Platform Restrictions
 
 Intune → **Devices → Device onboarding → Enrollment → Device platform restriction**  
 Ensure required platforms are allowed.  
@@ -123,27 +153,27 @@ Recommended: Block personal devices unless explicitly required.
 
 ---
 
-## Step 8. Windows Hello for Business
+## Step 9. Windows Hello for Business
 
 Intune → Devices → Enrollment → Windows Hello for Business  
 Set to **Not configured**.
 
 ---
 
-## Step 9. Enable Windows Diagnostic Data
+## Step 10. Enable Windows Diagnostic Data
 
 Intune → Tenant administration → Connectors and tokens → Windows data  
 Enable features requiring Windows diagnostic data.
 
 ---
 
-## Step 10. Break-Glass Account Exclusions
+## Step 11. Break-Glass Account Exclusions
 
 Exclude emergency access accounts from **all** Conditional Access policies.
 
 ---
 
-## Step 11. Optional – Named Locations
+## Step 12. Optional – Named Locations
 
 Create:
 - **IAC – Blocked Countries**
