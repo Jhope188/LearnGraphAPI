@@ -62,6 +62,8 @@ MDM user scope controls who can enroll devices in Intune.
 **Path:** Entra admin center → **Mobility** → **Microsoft Intune**  
 Set **MDM user scope** to **All** or **Some**.
 
+![Intune MDM](./IntuneMDM.png)
+
 ---
 
 ## Step 3. Enable Exchange Organization Configuration (Exchange Online)
