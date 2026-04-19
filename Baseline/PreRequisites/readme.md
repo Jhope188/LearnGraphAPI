@@ -162,6 +162,8 @@ Intune → **Devices → Device onboarding → Enrollment → Device platform re
 Ensure required platforms are allowed.  
 Recommended: Block personal devices unless explicitly required.
 
+![Intune Platform Restriction](./IntunePlatformRestriction.png)
+
 ---
 
 ## Step 9. Windows Hello for Business
@@ -175,6 +177,8 @@ Set to **Not configured**.
 
 Intune → Tenant administration → Connectors and tokens → Windows data  
 Enable features requiring Windows diagnostic data.
+
+![Intune Diag Data](./IntuneDiagData.png)
 
 ---
 
