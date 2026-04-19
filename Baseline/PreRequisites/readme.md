@@ -37,7 +37,7 @@ Create both service principals **before** configuring Conditional Access so they
   - Required for passkey registration in Microsoft Authenticator
   - Must be excluded from certain CA policies (device compliance / APP) to avoid blocking passkey registration
  
-![Intune Service Principal](https://github.com/Jhope188/LearnGraphAPI/blob/main/Images/APIBreakdown.png)
+![Intune Service Principal](./IntuneServicePrincipal.png)
 
 ### How
 
