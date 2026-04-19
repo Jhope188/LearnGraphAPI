@@ -51,7 +51,7 @@ New-MgServicePrincipal -AppId "ea890292-c8c8-4433-b5ea-b09d0668e1a6"
 | AppId | Display Name | Purpose |
 |---|---|---|
 | `d4ebce55-015a-49b5-a083-c84d1797ae8c` | **Microsoft Intune Enrollment** | Handles device enrollment flows (MDM enrollment, Autopilot, hybrid join, PRT acquisition) |
-| `ea890292-c8c8-4433-b5ea-b09d0668e1a6` | **Azure Credential Configuration Endpoint Service** | Internal Azure service for credential/configuration endpoint operations |
+| `ea890292-c8c8-4433-b5ea-b09d0668e1a6` | **Azure Credential Configuration Endpoint Service** | Internal Azure service for credential/configuration endpoint operations, Required if Passkeys are being blocked from Registration |
 
 ### Verify
 
