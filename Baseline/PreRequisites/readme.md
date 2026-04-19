@@ -114,6 +114,8 @@ Confirm **Tamper Protection** is set to **On**.
 > Go back to **Step 4** — navigate to **Assets → Devices** and wait for provisioning to complete.  
 > Once provisioned, return to **Settings** and the **Endpoints** entry will appear.
 
+![Defender Tamper Protection](./DefenderTamperProtection.png)
+
 ---
 
 ## Step 6. Enable Defender for Endpoint Connector (Intune + Defender)
