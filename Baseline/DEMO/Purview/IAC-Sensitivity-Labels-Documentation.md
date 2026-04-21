@@ -840,6 +840,251 @@ Remove-LabelPolicy -Identity "IAC - Restricted Label Policy" -Confirm:$false
 
 ---
 
+## 13. Purview Information Protection Super User
+
+> **References:**
+> - [Microsoft Learn — Configure super users for Azure Information Protection](https://learn.microsoft.com/en-us/azure/information-protection/configure-super-users)
+> - [Microsoft Learn — AIPService PowerShell module](https://learn.microsoft.com/en-us/powershell/module/aipservice/)
+> - [Microsoft Learn — Enable-AipServiceSuperUserFeature](https://learn.microsoft.com/en-us/powershell/module/aipservice/enable-aipservicesuperuserfeature)
+> - [Microsoft Learn — Add-AipServiceSuperUserGroup](https://learn.microsoft.com/en-us/powershell/module/aipservice/add-aipservicesuperusergroup)
+
+### 13.1 What Is It?
+
+The **Purview Information Protection Super User** is a tenant-level capability that grants designated users or a designated security group the ability to **decrypt any RMS/MIP-protected content in the tenant** — regardless of who originally encrypted it, what rights template was used, or whether the original owner's account still exists.
+
+**Naming history — same feature, same cmdlets, three names:**
+
+| Era | Branding | Notes |
+|-----|----------|-------|
+| Pre-2018 | **RMS Super User** | Azure Rights Management Service era |
+| 2018–2023 | **AIP Super User** | Azure Information Protection rebranding |
+| 2023–present | **Purview Information Protection Super User** | Microsoft Purview rebranding |
+
+The PowerShell cmdlets (`Enable-AipServiceSuperUserFeature`, `Add-AipServiceSuperUserGroup`) retain the `AipService` prefix regardless of current branding. The module is `AIPService`, not `Purview` — this is consistent with how Microsoft has preserved cmdlet names across rebrands to avoid breaking existing scripts.
+
+**What it can do:**
+
+- Open and read any document or email protected with any sensitivity label encryption in the tenant
+- Re-encrypt or re-protect content (decrypt → apply new label → re-encrypt)
+- Recover content when the original owner's account has been deleted or disabled
+- Unlock content encrypted under labels whose rights definitions no longer include any active principals
+- Act as a forensic or compliance tool to review encrypted content for legal, HR, or regulatory purposes
+
+**What it cannot do:**
+
+- Bypass Microsoft 365 RBAC or SharePoint/Teams permissions — Super User is an AIP/RMS-layer capability only
+- Access unencrypted content the user doesn't otherwise have SharePoint or Exchange permissions to read
+- Operate without audit logging — all Super User decryption events are logged
+
+---
+
+### 13.2 Why Do You Need It as a Purview Administrator?
+
+Without a configured Super User group, the following scenarios create **permanent data loss or business-critical blockages**:
+
+| Scenario | Risk Without Super User |
+|----------|------------------------|
+| **Employee leaves or is terminated** | Files encrypted under `Restricted - Internal` with that user's personal key become permanently inaccessible if no Super User can recover them |
+| **`Restricted - Internal` admin key changes** | If `$adminRights` was set to a single UPN and that account is deleted, all Restricted - Internal documents are locked forever |
+| **Legal hold or eDiscovery** | Legal team needs to read encrypted Restricted documents for a regulatory investigation but lacks decryption rights |
+| **Label migration** | Re-encrypting a large volume of documents during a label taxonomy change requires Super User rights to decrypt first |
+| **Broken encryption template** | An encryption template deleted or corrupted in Entra ID (via the AIP/RMS service) leaves documents encrypted against a non-existent template — only a Super User can recover them |
+| **HR investigation** | HR needs to read encrypted files on a device being reviewed — the file owner may not be cooperative |
+
+> **For this taxonomy specifically:** The `Restricted - Internal` label encrypts content using `$adminRights = "<AdminEmail>:OWNER"`. If that admin account is ever deleted or its UPN changes, every document ever encrypted under Restricted - Internal becomes permanently inaccessible — unless a Super User group is configured. This is the single most important operational risk in this entire label deployment.
+
+---
+
+### 13.3 How to Configure
+
+#### Prerequisites
+
+- **Role required:** Global Administrator or Azure Information Protection Administrator
+- **Module required:** `AIPService` PowerShell module
+- **Security group:** A mail-enabled security group in Entra ID (e.g., `SG-AIP-SuperUsers@domain.com`) — membership should be tightly controlled and reviewed quarterly
+
+```powershell
+# Install the AIPService module if not already installed
+Install-Module -Name AIPService -Scope CurrentUser -Force
+Import-Module AIPService
+```
+
+#### Step 1: Connect to the AIP Service
+
+```powershell
+Connect-AipService
+# Browser sign-in will prompt — use Global Admin or AIP Admin credentials
+```
+
+#### Step 2: Enable the Super User Feature
+
+The feature is **disabled by default** in all tenants. It must be explicitly enabled before any group can be assigned.
+
+```powershell
+Enable-AipServiceSuperUserFeature
+
+# Verify it's enabled
+Get-AipServiceSuperUserFeature
+# Expected output: Enabled
+```
+
+> ⚠️ **Enable only when needed.** Microsoft's guidance is to enable the feature when you need it and disable it when the task is complete. Leaving it permanently enabled with a broad group increases the blast radius if a Super User account is compromised.
+
+#### Step 3: Assign the Super User Group
+
+Microsoft recommends using a **group** rather than individual users, so that membership can be audited and changed without re-running the cmdlet.
+
+```powershell
+# Assign a mail-enabled security group
+Add-AipServiceSuperUserGroup -GroupEmailAddress "SG-AIP-SuperUsers@M365x93722695.onmicrosoft.com"
+
+# Verify the assignment
+Get-AipServiceSuperUserGroup
+# Returns the group email address
+
+# To check if any individual Super Users are also set (legacy approach)
+Get-AipServiceSuperUser
+```
+
+> ℹ️ **Group vs. individual:** `Add-AipServiceSuperUserGroup` assigns a group. `Add-AipServiceSuperUser` assigns an individual UPN. Microsoft recommends the group approach — it separates the capability grant from the access grant, and group membership changes are audited in Entra ID.
+
+#### Step 4: Disable When Not in Use (Recommended)
+
+```powershell
+# Disable after use
+Disable-AipServiceSuperUserFeature
+
+# The group assignment is retained — re-enable quickly when needed without re-assigning
+Enable-AipServiceSuperUserFeature
+```
+
+#### Full Setup Script
+
+```powershell
+# Super-User-Setup.ps1
+# One-time setup for AIP/Purview Super User group
+
+param(
+    [Parameter(Mandatory)]
+    [string]$SuperUserGroupEmail  # e.g. "SG-AIP-SuperUsers@M365x93722695.onmicrosoft.com"
+)
+
+Import-Module AIPService -ErrorAction Stop
+Connect-AipService -ErrorAction Stop
+
+# Enable feature
+Enable-AipServiceSuperUserFeature
+Write-Host "Feature state: $(Get-AipServiceSuperUserFeature)" -ForegroundColor Green
+
+# Assign group
+Add-AipServiceSuperUserGroup -GroupEmailAddress $SuperUserGroupEmail
+Write-Host "Super User Group: $(Get-AipServiceSuperUserGroup)" -ForegroundColor Green
+
+# Disable until needed
+Disable-AipServiceSuperUserFeature
+Write-Host "Feature disabled. Re-enable with: Enable-AipServiceSuperUserFeature" -ForegroundColor Yellow
+```
+
+---
+
+### 13.4 How to Use It (Operational Runbook)
+
+#### Scenario A: Recover a Restricted - Internal Document
+
+A Restricted - Internal document was encrypted against `admin@M365x93722695.onmicrosoft.com:OWNER` and that account has been deleted. A Super User member needs to recover it.
+
+```powershell
+# 1. Enable the feature
+Connect-AipService
+Enable-AipServiceSuperUserFeature
+
+# 2. The Super User logs into the machine as themselves (their own account must be a
+#    member of the SG-AIP-SuperUsers group)
+
+# 3. Open the document in an Office app or use the AIP client to decrypt:
+#    Right-click the file → Sensitivity → Remove Sensitivity Label
+#    OR use the AIP Unified Labeling Client (if installed):
+#    Right-click → Classify and protect → Remove protection
+
+# 4. Re-protect with appropriate label or new encryption rights
+#    (e.g., apply "Restricted - Internal" with updated $adminRights pointing to
+#    the new admin or security group)
+
+# 5. Disable the feature when done
+Disable-AipServiceSuperUserFeature
+```
+
+#### Scenario B: Bulk Decrypt for eDiscovery
+
+The compliance team needs to scan Restricted documents for a regulatory audit. Using the AIP Unified Labeling Scanner or Content Explorer with Super User rights:
+
+```powershell
+# Enable Super User
+Connect-AipService
+Enable-AipServiceSuperUserFeature
+
+# Run your eDiscovery or compliance scan (Content Search, Compliance Manager,
+# or the AIP Scanner in discovery mode)
+# Super User rights allow the scanner to open encrypted files for inspection
+
+# When complete
+Disable-AipServiceSuperUserFeature
+```
+
+#### Scenario C: Label Migration (Re-Encrypt at Scale)
+
+Changing encryption rights on `Restricted - Internal` for all existing documents:
+
+```powershell
+# 1. Enable Super User
+Enable-AipServiceSuperUserFeature
+
+# 2. Use Get-AipFileStatus + Set-AipFileLabel to bulk re-label
+#    (requires AIP Unified Labeling Client installed)
+Get-ChildItem -Path "\\fileserver\restricted" -Recurse -File |
+    ForEach-Object {
+        Set-AipFileLabel -Path $_.FullName -LabelId "<new-label-guid>" -JustificationMessage "Label migration"
+    }
+
+# 3. Disable when migration complete
+Disable-AipServiceSuperUserFeature
+```
+
+---
+
+### 13.5 Governance & Audit
+
+**Who should be in the Super User group:**
+
+| Role | Justification |
+|------|---------------|
+| Information Protection Administrator | Operational label management and recovery |
+| Legal / eDiscovery team lead | Regulated content access for investigations |
+| CISO or Deputy CISO | Emergency access and incident response |
+| **NOT** general helpdesk or IT admins | Super User is high-privilege — limit to named individuals with a business need |
+
+**Audit logging:**
+
+All Super User decryption events are written to the **Azure Information Protection audit log**. Query via:
+
+```powershell
+# AIP usage log (requires AIPService module)
+Get-AipServiceUserLog -Path "C:\AIPLogs" -FromDate (Get-Date).AddDays(-30)
+
+# Also visible in Microsoft Purview Audit (unified audit log)
+Search-UnifiedAuditLog -StartDate (Get-Date).AddDays(-7) -EndDate (Get-Date) `
+    -Operations "SensitivityLabelApplied","RMSDecrypt" -ResultSize 100
+```
+
+**Quarterly review checklist:**
+
+- Verify `Get-AipServiceSuperUserFeature` returns `Disabled` (only enable on demand)
+- Review `Get-AipServiceSuperUserGroup` — confirm group is still correct
+- Review group membership in Entra ID — ensure no stale members
+- Review AIP audit logs for unexpected Super User decryption activity
+
+---
+
 ## Appendix: Tenant Label Inventory (Post-Deployment)
 
 | # | Label | Priority | Scope | Encryption | Parent |
