@@ -23,6 +23,7 @@
     Reference:
       https://www.thepurviewpractitioner.com/tools/taxonomy
       https://learn.microsoft.com/purview/sensitivity-labels
+      https://learn.microsoft.com/en-us/purview/default-sensitivity-labels-policies
 
 .PARAMETER TenantDomain
     Your tenant's primary domain (e.g., contoso.onmicrosoft.com). Used to build
