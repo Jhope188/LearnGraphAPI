@@ -49,7 +49,7 @@
 
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string]$TenantDomain,
 
     [Parameter(Mandatory = $false)]
@@ -59,15 +59,21 @@ param(
     [switch]$DryRun
 )
 
-# Build admin email from domain if not provided
-if (-not $AdminEmail) {
-    $AdminEmail = "admin@$TenantDomain"
-}
-
 Import-Module ExchangeOnlineManagement -ErrorAction Stop
 
 # ============================================================================
-# CONNECT
+# MODULE VERSION CHECK - Modern label scheme requires v3.7+ for IsParentLabel
+# ============================================================================
+$exoVersion = (Get-Module ExchangeOnlineManagement).Version
+if ($exoVersion -lt [Version]"3.0.0") {
+    Write-Host "[WARN] ExchangeOnlineManagement v$exoVersion detected. v3.0.0+ required for modern label scheme." -ForegroundColor Yellow
+    Write-Host "[..] Updating module now..." -ForegroundColor Yellow
+    Update-Module ExchangeOnlineManagement -Force -ErrorAction Stop
+    Write-Host "[OK] Module updated. Please restart this script in a fresh PowerShell session." -ForegroundColor Green
+    exit 1
+} else {
+    Write-Host "[OK] ExchangeOnlineManagement v$exoVersion" -ForegroundColor Green
+}
 # ============================================================================
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
@@ -75,27 +81,41 @@ Write-Host "  IAC Sensitivity Label Deployment" -ForegroundColor Cyan
 Write-Host "  Purview Practitioner 4-Group Taxonomy" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 if ($DryRun) { Write-Host "  DRY RUN MODE - No changes will be made" -ForegroundColor Yellow }
-Write-Host "  Tenant Domain: $TenantDomain" -ForegroundColor Gray
-Write-Host "  Admin Email:   $AdminEmail" -ForegroundColor Gray
+Write-Host "  Tenant Domain: $(if ($TenantDomain) { $TenantDomain } else { '(auto-detect after sign-in)' })" -ForegroundColor Gray
+Write-Host "  Admin Email:   $(if ($AdminEmail) { $AdminEmail } else { '(auto-detect after sign-in)' })" -ForegroundColor Gray
 Write-Host ""
 
 try {
     Get-Label -ErrorAction Stop | Out-Null
     Write-Host "[OK] Already connected to Security & Compliance" -ForegroundColor Green
 } catch {
-    Write-Host "[..] Connecting to Security & Compliance PowerShell..." -ForegroundColor Yellow
+    Write-Host "[..] Connecting to Security & Compliance PowerShell (browser sign-in)..." -ForegroundColor Yellow
     Connect-IPPSSession -ErrorAction Stop
     Write-Host "[OK] Connected" -ForegroundColor Green
 }
+
+# Auto-detect signed-in account and derive domain/email if not supplied
+$connectedUser = (Get-ConnectionInformation | Select-Object -First 1).UserPrincipalName
+if (-not $AdminEmail) {
+    $AdminEmail = $connectedUser
+    Write-Host "[OK] AdminEmail set to signed-in account: $AdminEmail" -ForegroundColor Green
+}
+if (-not $TenantDomain) {
+    $TenantDomain = $AdminEmail.Split('@')[1]
+    Write-Host "[OK] TenantDomain derived from account: $TenantDomain" -ForegroundColor Green
+}
+
+# Cache all existing labels once to avoid repeated Get-Label calls
+Write-Host "[..] Fetching existing labels..." -ForegroundColor Yellow
+$script:LabelCache = @(Get-Label -ErrorAction SilentlyContinue | Where-Object { $_.Mode -ne 'PendingDeletion' })
+Write-Host "[OK] Found $($script:LabelCache.Count) existing label(s) (PendingDeletion excluded)" -ForegroundColor Green
 
 # ============================================================================
 # HELPERS
 # ============================================================================
 function Get-LabelByDisplayName {
     param([Parameter(Mandatory)] [string]$DisplayName)
-    Get-Label -ErrorAction SilentlyContinue |
-        Where-Object { $_.DisplayName -eq $DisplayName } |
-        Select-Object -First 1
+    $script:LabelCache | Where-Object { $_.DisplayName -eq $DisplayName } | Select-Object -First 1
 }
 
 function Ensure-Label {
@@ -105,6 +125,9 @@ function Ensure-Label {
         [Parameter(Mandatory)] [string]$Tooltip,
         [string]$Comment,
         [string]$ParentImmutableId,
+
+        # Mark this label as a parent/group so sub-labels can be created under it
+        [switch]$IsParentLabel,
 
         # Scoping - parent labels can protect containers
         [string[]]$ContentType,
@@ -131,8 +154,14 @@ function Ensure-Label {
 
     $existing = Get-LabelByDisplayName -DisplayName $DisplayName
     if ($existing) {
-        Write-Host "  [EXISTS] $DisplayName" -ForegroundColor Gray
-        return $existing
+        if ($IsParentLabel -and -not $existing.IsLabelGroup) {
+            Write-Host "  [ERROR] '$DisplayName' exists but is NOT a label group. Cannot create sub-labels under it." -ForegroundColor Red
+            Write-Host "  [ERROR] Delete this label and re-run, or create it as a Label Group via the Purview portal." -ForegroundColor Red
+            return $null
+        } else {
+            Write-Host "  [EXISTS] $DisplayName" -ForegroundColor Gray
+            return $existing
+        }
     }
 
     if ($DryRun) {
@@ -178,6 +207,7 @@ function Ensure-Label {
         $params["ApplyWaterMarkingLayout"]   = "Diagonal"
     }
 
+
     # Encryption
     if ($EncryptionEnabled) {
         $params["EncryptionEnabled"] = $true
@@ -195,9 +225,55 @@ function Ensure-Label {
     }
 
     Write-Host "  [CREATING] $DisplayName" -ForegroundColor Green
-    $result = New-Label @params
-    Start-Sleep -Seconds 2  # Allow Purview to propagate
-    return $result
+    try {
+        # For modern label scheme, IsParentLabel must be set at creation time
+        if ($IsParentLabel) {
+            try {
+                $params["IsLabelGroup"] = $true
+                # Label groups do not support ContentType parameter — remove it
+                $params.Remove("ContentType") | Out-Null
+                $result = New-Label @params
+            } catch {
+                if ($_.Exception.Message -like '*IsLabelGroup*' -or $_.Exception.Message -like '*not recognized*') {
+                    Write-Host "  [ERROR] IsLabelGroup parameter not supported by this module version (v$exoVersion)." -ForegroundColor Red
+                    Write-Host "  [ERROR] Run: Update-Module ExchangeOnlineManagement -Force  then restart PowerShell." -ForegroundColor Red
+                    return $null
+                }
+                Write-Host "  [ERROR] Failed to create label group '$DisplayName': $_" -ForegroundColor Red
+                return $null
+            }
+            # Validate the label group was actually created correctly
+            Start-Sleep -Seconds 3
+            $check = Get-Label -Identity $result.ImmutableId
+            if (-not $check.IsLabelGroup) {
+                Write-Host "  [ERROR] '$DisplayName' was created but IsLabelGroup=False. Sub-labels cannot be created under it." -ForegroundColor Red
+                Write-Host "  [ERROR] Delete this label, then create it as a Label Group via the Purview portal." -ForegroundColor Red
+                $script:LabelCache += $result
+                return $null
+            }
+            Write-Host "  [OK] '$DisplayName' created as label group (IsLabelGroup=True)" -ForegroundColor Green
+        } else {
+            $result = New-Label @params
+        }
+        $script:LabelCache += $result   # keep cache current
+        Start-Sleep -Seconds 2  # Allow Purview to propagate
+        return $result
+    } catch {
+        if ($_.Exception.Message -like '*already exists*') {
+            Write-Host "  [EXISTS - RECOVERED] $DisplayName already in Purview, fetching..." -ForegroundColor Yellow
+            $result = Get-Label | Where-Object { $_.DisplayName -eq $DisplayName } | Select-Object -First 1
+            if ($result) {
+                $script:LabelCache += $result
+                return $result
+            } else {
+                Write-Host "  [WARN] Could not retrieve existing label '$DisplayName'" -ForegroundColor Red
+                return $null
+            }
+        } else {
+            Write-Host "  [ERROR] Failed to create '$DisplayName': $_" -ForegroundColor Red
+            return $null
+        }
+    }
 }
 
 # ============================================================================
@@ -216,7 +292,7 @@ Write-Host ""
 # ============================================================================
 Write-Host "[1/4] Public" -ForegroundColor Cyan
 $public = Ensure-Label `
-    -Name "Public" `
+    -Name "Inforcer-Public" `
     -DisplayName "Public" `
     -Tooltip "No protection required. Safe to share externally." `
     -Comment "Information intended for public consumption. No restrictions." `
@@ -227,7 +303,7 @@ $public = Ensure-Label `
 # ============================================================================
 Write-Host "[2/4] General" -ForegroundColor Cyan
 $general = Ensure-Label `
-    -Name "General" `
+    -Name "Inforcer-General" `
     -DisplayName "General" `
     -Tooltip "Default label for everyday business content." `
     -Comment "Business data not intended for public consumption." `
@@ -241,16 +317,17 @@ $general = Ensure-Label `
 # ============================================================================
 Write-Host "[3/4] Confidential" -ForegroundColor Cyan
 $confidential = Ensure-Label `
-    -Name "Confidential" `
+    -Name "Inforcer-Confidential" `
     -DisplayName "Confidential" `
     -Tooltip "Select a sub-label. Encryption and markings applied based on audience." `
     -Comment "Sensitive business data. Select the appropriate sub-label." `
-    -ContentType @("Site", "UnifiedGroup")
+    -ContentType @("Site", "UnifiedGroup") `
+    -IsParentLabel
 
 # 3.1 Confidential / Internal - Encrypted to entire org
 Write-Host "  +-- Confidential - Internal" -ForegroundColor Cyan
 $confInternal = Ensure-Label `
-    -Name "Confidential-Internal" `
+    -Name "Inforcer-Confidential-Internal" `
     -DisplayName "Confidential - Internal" `
     -Tooltip "Encrypted for internal employees only. Content cannot leave the organisation unprotected." `
     -Comment "Confidential content encrypted for all internal users." `
@@ -265,7 +342,7 @@ $confInternal = Ensure-Label `
 # 3.2 Confidential / Third Parties - User picks recipients
 Write-Host "  +-- Confidential - Third Parties" -ForegroundColor Cyan
 $confThird = Ensure-Label `
-    -Name "Confidential-ThirdParties" `
+    -Name "Inforcer-Confidential-ThirdParties" `
     -DisplayName "Confidential - Third Parties" `
     -Tooltip "User selects authorised external recipients at time of sharing." `
     -Comment "Confidential content shared with named external recipients." `
@@ -281,7 +358,7 @@ $confThird = Ensure-Label `
 # 3.3 Confidential / Reporting - Encrypted to entire org
 Write-Host "  +-- Confidential - Reporting" -ForegroundColor Cyan
 $confReporting = Ensure-Label `
-    -Name "Confidential-Reporting" `
+    -Name "Inforcer-Confidential-Reporting" `
     -DisplayName "Confidential - Reporting" `
     -Tooltip "Confidential reports and analytics. Encrypted for internal use." `
     -Comment "Reports, dashboards, and analytics - internal only." `
@@ -299,16 +376,17 @@ $confReporting = Ensure-Label `
 # ============================================================================
 Write-Host "[4/4] Restricted" -ForegroundColor Cyan
 $restricted = Ensure-Label `
-    -Name "Restricted" `
+    -Name "Inforcer-Restricted" `
     -DisplayName "Restricted" `
     -Tooltip "Select a sub-label. Highest protection - full encryption and markings." `
     -Comment "Highly sensitive data. Significant business impact if leaked." `
-    -ContentType @("Site", "UnifiedGroup")
+    -ContentType @("Site", "UnifiedGroup") `
+    -IsParentLabel
 
 # 4.1 Restricted / Internal - Template-encrypted to admin/named group only
 Write-Host "  +-- Restricted - Internal" -ForegroundColor Cyan
 $restInternal = Ensure-Label `
-    -Name "Restricted-Internal" `
+    -Name "Inforcer-Restricted-Internal" `
     -DisplayName "Restricted - Internal" `
     -Tooltip "Encrypted for specific internal recipients only." `
     -Comment "Restricted content - admin-controlled access only." `
@@ -324,7 +402,7 @@ $restInternal = Ensure-Label `
 # 4.2 Restricted / Third Parties - User picks recipients
 Write-Host "  +-- Restricted - Third Parties" -ForegroundColor Cyan
 $restThird = Ensure-Label `
-    -Name "Restricted-ThirdParties" `
+    -Name "Inforcer-Restricted-ThirdParties" `
     -DisplayName "Restricted - Third Parties" `
     -Tooltip "User selects authorised recipients. Do Not Forward enforced." `
     -Comment "Restricted content shared with named external recipients." `
