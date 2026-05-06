@@ -1,6 +1,6 @@
 # Sensitivity Label Taxonomy: IAC vs Microsoft Default
 
-> **Author:** IAC / M365 Solutions Architecture  
+> **Author:** IAC / Jhope
 > **Date:** May 2026  
 > **Reference:** [Microsoft Default Sensitivity Labels & Policies](https://learn.microsoft.com/en-us/purview/default-sensitivity-labels-policies) · [Get Started with Sensitivity Labels](https://learn.microsoft.com/en-us/purview/get-started-with-sensitivity-labels)
 
