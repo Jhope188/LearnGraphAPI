@@ -22,26 +22,13 @@ $contexts = @(
 foreach ($ctx in $contexts) {
     Write-Host "Processing: $($ctx.DisplayName) ($($ctx.Id))..." -NoNewline
 
-    # Check if it already exists
-    $existing = Get-MgIdentityConditionalAccessAuthenticationContextClassReference -AuthenticationContextClassReferenceId $ctx.Id -ErrorAction SilentlyContinue
-
-    if ($existing) {
-        # Update existing
-        Update-MgIdentityConditionalAccessAuthenticationContextClassReference `
-            -AuthenticationContextClassReferenceId $ctx.Id `
-            -DisplayName $ctx.DisplayName `
-            -Description $ctx.Description `
-            -IsAvailable:$ctx.IsAvailable
-        Write-Host " Updated" -ForegroundColor Yellow
-    } else {
-        # Create new
-        New-MgIdentityConditionalAccessAuthenticationContextClassReference `
-            -Id $ctx.Id `
-            -DisplayName $ctx.DisplayName `
-            -Description $ctx.Description `
-            -IsAvailable:$ctx.IsAvailable
-        Write-Host " Created" -ForegroundColor Green
-    }
+    # Auth context slots c1-c25 are pre-provisioned by Microsoft — always PATCH, never POST
+    Update-MgIdentityConditionalAccessAuthenticationContextClassReference `
+        -AuthenticationContextClassReferenceId $ctx.Id `
+        -DisplayName $ctx.DisplayName `
+        -Description $ctx.Description `
+        -IsAvailable:$ctx.IsAvailable
+    Write-Host " Done" -ForegroundColor Green
 }
 
 Write-Host "`nVerifying..." -ForegroundColor Cyan
