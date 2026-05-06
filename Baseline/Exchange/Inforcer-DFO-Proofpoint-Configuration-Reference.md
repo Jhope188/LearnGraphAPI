@@ -73,7 +73,7 @@ Enhanced Filtering for Connectors (also called "skip listing") allows EOP to see
 
 ## Policy-by-Policy Decisions
 
-The following table maps each policy in the Inforcer DFO baseline to a deploy/configure decision for Proofpoint-fronted tenants.
+The following table maps each policy in the IAC DFO baseline to a deploy/configure decision for Proofpoint-fronted tenants.
 
 | Defender for Office Policy | Deploy? | Configuration Guidance for Proofpoint-Fronted Tenants |
 |---|---|---|
