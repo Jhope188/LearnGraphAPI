@@ -138,7 +138,7 @@ Outbound spam policy applies to mail leaving M365 mailboxes before it reaches an
 
 ## CIS Benchmark Alignment Reference
 
-The table below maps each policy in the Inforcer baseline to the relevant CIS Microsoft 365 Foundations v6.0.0 controls, with notes on how the Proofpoint-fronted configuration still satisfies them.
+The table below maps each policy in the IAC DFO baseline to the relevant CIS Microsoft 365 Foundations v6.0.0 controls, with notes on how the Proofpoint-fronted configuration still satisfies them.
 
 | Control ID | Level | Policy | Notes for Proofpoint-Fronted Environments |
 |---|---|---|---|
@@ -152,7 +152,7 @@ The table below maps each policy in the Inforcer baseline to the relevant CIS Mi
 | CIS 2.1.12 – 2.1.14 | **L1** | Connection / Spam Filter Hygiene | No IP allowlists, safe list off, no allowed-domain bypass. **Critical:** do not allowlist the Proofpoint egress IPs in Connection Filter — use Enhanced Filtering for Connectors (EFC) instead so original sender IP is evaluated. |
 | CIS 2.1.15 | **L1** | Outbound Spam | Outbound limits — applies to mail leaving M365 mailboxes before Proofpoint relay or direct send. |
 
-> **Inforcer Deployment Note**
+> **IAC Deployment Note**
 > All **L1 controls** in CIS Section 2.1 must be enforced regardless of SEG presence. **L2 controls** (Safe Links, Safe Attachments, Anti-Phishing) are the Inforcer default for Defender P1 / P2 customers. **Licensing constraint:** Safe Attachments and Safe Links require Defender for Office P1 minimum.
 
 ---
