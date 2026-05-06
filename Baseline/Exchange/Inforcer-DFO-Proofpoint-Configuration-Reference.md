@@ -1,20 +1,20 @@
 # Defender for Office Policy Deployment
 ## Proofpoint-Fronted M365 Tenants
 
-**Configuration Deltas for Inforcer Baseline Deployment**
+**Configuration Deltas for Exchange Baseline Deployment**
 
 ---
 
 ## Executive Summary
 
-This reference covers the Inforcer Defender for Office (DFO) baseline when the customer tenant routes inbound mail through a third-party Secure Email Gateway (SEG) — specifically Proofpoint Essentials or Proofpoint Enterprise (TAP / URL Defense). The dominant MSP pattern is:
+This reference covers the Defender for Office (DFO) baseline when the customer tenant routes inbound mail through a third-party Secure Email Gateway (SEG) — specifically Proofpoint Essentials or Proofpoint Enterprise (TAP / URL Defense). The dominant MSP pattern is:
 
 **`Internet → Proofpoint → M365 (via inbound connector) → Mailbox`**
 
 Outbound mail typically also traverses Proofpoint via an M365 outbound connector.
 
 > **Core Guidance**
-> - All eight policies in the Inforcer DFO baseline should be deployed. None become redundant when Proofpoint is in front of M365.
+> - All eight policies in the DFO baseline should be deployed. None become redundant when Proofpoint is in front of M365.
 > - Two policies require configuration changes: **Safe Links** (rewrite scope) and **Inbound Spam** (Enhanced Filtering for Connectors).
 > - The single most important prerequisite is **Enhanced Filtering for Connectors (skip listing)** on the Proofpoint inbound connector — without it, SPF, DMARC, and EOP's ML signals are broken.
 
@@ -236,7 +236,7 @@ Common ICES products: **Abnormal Security, Avanan (Check Point), IRONSCALES, Mat
 
 ## Document Metadata
 
-*Document type:* Internal Inforcer configuration reference
+*Document type:* Defender for Office configuration reference
 *Scope:* MSP customers with Proofpoint Essentials or Proofpoint Enterprise fronting M365
-*Baseline source:* Inforcer DFO policy set (Anti-Phishing, Anti-Malware, Safe Attachments, Safe Links, Inbound Spam, Outbound Spam, External Email Alert, LimitedAccess-RequestByUser)
+*Baseline source:* IAC DFO policy set (Anti-Phishing, Anti-Malware, Safe Attachments, Safe Links, Inbound Spam, Outbound Spam, External Email Alert, LimitedAccess-RequestByUser)
 *Framework alignment:* CIS Microsoft 365 Foundations Benchmark v6.0.0, Section 2.1
