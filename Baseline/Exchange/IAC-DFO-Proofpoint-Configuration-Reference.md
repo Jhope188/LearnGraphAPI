@@ -24,7 +24,7 @@ Outbound mail typically also traverses Proofpoint via an M365 outbound connector
 
 ### Why the policies still matter with a SEG in front
 
-A common misconception is that a third-party SEG replaces Defender for Office. It does not. The Inforcer baseline remains applicable because Defender protects mail surfaces and scenarios Proofpoint does not cover:
+A common misconception is that a third-party SEG replaces Defender for Office. It does not. The IAC - DFO baseline remains applicable because Defender protects mail surfaces and scenarios Proofpoint does not cover:
 
 - **Internal-to-internal mail** — never traverses Proofpoint; only Defender inspects it.
 - **Collaboration workloads** — SharePoint Online, OneDrive for Business, and Microsoft Teams file sharing. Proofpoint TAP is email-only.
@@ -126,7 +126,7 @@ With EFC configured correctly, EOP regains the ability to evaluate spam based on
 
 ### Outbound spam
 
-Outbound spam policy applies to mail leaving M365 mailboxes before it reaches any relay. Deploy the Inforcer baseline as-is:
+Outbound spam policy applies to mail leaving M365 mailboxes before it reaches any relay. Deploy the IAC - DFO baseline as-is:
 
 - External recipient limit: **500/hour** (CIS 2.1.15 L1 requires outbound limits).
 - Internal recipient limit: **1000/hour**.
@@ -153,13 +153,13 @@ The table below maps each policy in the IAC DFO baseline to the relevant CIS Mic
 | CIS 2.1.15 | **L1** | Outbound Spam | Outbound limits — applies to mail leaving M365 mailboxes before Proofpoint relay or direct send. |
 
 > **IAC Deployment Note**
-> All **L1 controls** in CIS Section 2.1 must be enforced regardless of SEG presence. **L2 controls** (Safe Links, Safe Attachments, Anti-Phishing) are the Inforcer default for Defender P1 / P2 customers. **Licensing constraint:** Safe Attachments and Safe Links require Defender for Office P1 minimum.
+> All **L1 controls** in CIS Section 2.1 must be enforced regardless of SEG presence. **L2 controls** (Safe Links, Safe Attachments, Anti-Phishing) are the IAC - DFO default for Defender P1 / P2 customers. **Licensing constraint:** Safe Attachments and Safe Links require Defender for Office P1 minimum.
 
 ---
 
 ## Verification & Assessment Checklist
 
-Use this checklist when delivering an Inforcer security assessment against a Proofpoint-fronted tenant. Findings flagged as critical should be remediated before any baseline policy deployment.
+Use this checklist when delivering an IAC - DFO security assessment against a Proofpoint-fronted tenant. Findings flagged as critical should be remediated before any baseline policy deployment.
 
 ### Critical verifications
 
@@ -172,7 +172,7 @@ Use this checklist when delivering an Inforcer security assessment against a Pro
 ### Policy verifications
 
 - [ ] **Anti-Phishing Policy:** Mailbox intelligence enabled, impersonation protection configured with customer VIP list.
-- [ ] **Anti-Malware Policy:** Common Attachment Types Filter enabled with full Inforcer extension list.
+- [ ] **Anti-Malware Policy:** Common Attachment Types Filter enabled with full IAC - DFO extension list.
 - [ ] **Safe Attachments:** Applied to email with Block action; Safe Attachments for SPO/OneDrive/Teams enabled.
 - [ ] **Safe Links:** Rewrite disabled for email, enabled for Teams and Office apps; time-of-click protection on.
 - [ ] **Inbound Spam Filter:** Quarantine as default action; no allowed domains; bulk threshold tuned to 6.
@@ -204,7 +204,7 @@ Allowlisting violates CIS 2.1.12 (L1) and degrades EOP's ability to detect compr
 
 ### "Anti-spam with Proofpoint in front is just noise."
 
-Without EFC configured, this is true — EOP is flying blind. With EFC, EOP evaluates mail based on the original sender and provides a genuine second-layer judgement. The Inforcer recommendation is always: configure EFC first, then tune anti-spam conservatively so Defender catches what Proofpoint missed without re-classifying mail Proofpoint already passed.
+Without EFC configured, this is true — EOP is flying blind. With EFC, EOP evaluates mail based on the original sender and provides a genuine second-layer judgement. The IAC - DFO recommendation is always: configure EFC first, then tune anti-spam conservatively so Defender catches what Proofpoint missed without re-classifying mail Proofpoint already passed.
 
 ---
 
@@ -228,7 +228,7 @@ Without EFC configured, this is true — EOP is flying blind. With EFC, EOP eval
 | Pattern | Architecture | DFO Implications |
 |---|---|---|
 | **Traditional SEG** | `Internet → SEG → M365` (MX-based) | EFC required, Safe Links rewrite collision, anti-spam tuning needed. **This document applies.** |
-| **ICES** | `Internet → M365`, with API inspection post-delivery | No EFC requirement, no Safe Links collision, Defender sees original sender natively. **This document does not apply** — deploy Inforcer DFO baseline as-is. |
+| **ICES** | `Internet → M365`, with API inspection post-delivery | No EFC requirement, no Safe Links collision, Defender sees original sender natively. **This document does not apply** — deploy IAC - DFO baseline as-is. |
 
 Common ICES products: **Abnormal Security, Avanan (Check Point), IRONSCALES, Material Security.** When assessing a customer, always confirm the architecture pattern before applying SEG-specific guidance — ask whether mail flows through an MX-based relay or via API inspection.
 
