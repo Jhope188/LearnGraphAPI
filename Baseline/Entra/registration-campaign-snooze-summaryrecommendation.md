@@ -8,6 +8,7 @@
 | MS Learn — Authentication Methods Activity Report | Official Microsoft Documentation | [link](https://learn.microsoft.com/entra/identity/authentication/howto-authentication-methods-activity) |
 | MC1279092 — Passkeys in Registration Campaigns Update | Official Microsoft Message Center (via DeltaPulse) | [link](https://deltapulse.app/item/MC1279092) |
 | Daniel Bradley — Registration Campaign Delays Explained | Community / Microsoft MVP Blog | [link](https://ourcloudnetwork.com/microsoft-entra-passkeys-registration-campaign-delays-explained/) |
+| Daniel Bradley — Free Interactive Entra Authentication Methods Report | Community / Microsoft MVP Blog | [link](https://ourcloudnetwork.com/create-a-free-interactive-entra-authentication-methods-report/) |
 
 ---
 
