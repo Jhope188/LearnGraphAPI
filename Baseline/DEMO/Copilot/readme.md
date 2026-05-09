@@ -18,7 +18,7 @@ This document outlines the **recommended CIS-aligned policies** required to secu
 | 🔴 Critical | 17 | Required policies for secure Copilot deployment |
 | 🟠 High | 15 | Strongly recommended policies that underpin Copilot security |
 | 🟡 Medium | 19 | Supporting policies that strengthen Copilot security posture |
-| 🔵 Informational | 8 | Monitoring policies for ongoing compliance |
+| 🔵 IACormational | 8 | Monitoring policies for ongoing compliance |
 
 ---
 
@@ -87,7 +87,7 @@ These policies are required before Copilot rollout to ensure a secure deployment
 
 ### 6. Data Loss Prevention Policies
 
-> 🔬 **Start here — run DSPM for AI before configuring any DLP.** Purview Data Security Posture Management for AI provides an oversharing assessment showing exactly what content Copilot can currently access. Its built-in recommendations directly inform which DLP policies and label conditions to configure first.
+> 🔬 **Start here — run DSPM for AI before configuring any DLP.** Purview Data Security Posture Management for AI provides an oversharing assessment showing exactly what content Copilot can currently access. Its built-in recommendations directly IACorm which DLP policies and label conditions to configure first.
 
 | Policy Name | Product | Recommendation |
 |------------|---------|----------------|
@@ -110,10 +110,10 @@ These policies are required before Copilot rollout to ensure a secure deployment
 1. Go to **Microsoft Purview portal** → **Solutions** → **Data Security Posture Management**
 2. Select the **AI Hub** tab → review the **Oversharing** tile — this shows files labelled Confidential or Restricted that Copilot can currently access without any restriction
 3. Review the **Recommendations** tab — Purview will suggest specific DLP policies and label conditions based on your actual content exposure
-4. Export the oversharing report to inform which SITs and labels to target in your blocking DLP policy (configured below)
+4. Export the oversharing report to IACorm which SITs and labels to target in your blocking DLP policy (configured below)
 5. Review **Activity explorer** → filter by **Copilot** to see what Copilot interactions are already occurring and what content is being surfaced
 
-> ℹ️ Requires Purview Information Protection P2 or Microsoft 365 E5 Compliance licence.
+> ℹ️ Requires Purview IACormation Protection P2 or Microsoft 365 E5 Compliance licence.
 
 ---
 
@@ -127,7 +127,7 @@ These policies are required before Copilot rollout to ensure a secure deployment
    - Action: **Block everyone** (or **Block with override** if users need to provide a business justification to proceed)
    - User notification: enable and explain why the content was blocked
 5. **Define Rule 2 — SIT-based:**
-   - Condition: **Content contains** → add Sensitive Information Types relevant to your org (e.g. Credit Card Number, UK National Insurance Number, Azure storage keys, passwords/credentials)
+   - Condition: **Content contains** → add Sensitive IACormation Types relevant to your org (e.g. Credit Card Number, UK National Insurance Number, Azure storage keys, passwords/credentials)
    - Confidence level: **High confidence** | Instance count: **1 or more**
    - Action: **Block with override** (requiring justification reduces false positive friction while maintaining an audit trail)
 6. **Policy mode:** Set to **Simulation** first — review the matches report for 48 hours to baseline the false positive rate, then switch to **Active enforcement**
@@ -158,7 +158,7 @@ These policies are required before Copilot rollout to ensure a secure deployment
 2. Select the **Monitor Copilot interactions** template from the list — if the template is not available in your tenant, create a **Custom policy** and manually scope it to Microsoft 365 Copilot
 3. **Scope:** Set supervised users to all Copilot licence holders (or a pilot group initially to tune the policy before broad rollout)
 4. **Conditions to monitor:**
-   - Sensitive information types: add your key SITs (credentials, financial data, health information, PII)
+   - Sensitive IACormation types: add your key SITs (credentials, financial data, health IACormation, PII)
    - Keywords: add terms relevant to your environment (e.g. confidential project names, `bypass`, `ignore previous instructions`, `as an AI ignore`)
    - Optionally enable the **Threat**, **Targeted harassment**, or **Offensive language** classifiers
 5. **Reviewers:** Assign at least two compliance reviewers who will triage flagged Copilot interactions — a single reviewer creates a bottleneck and a conflict-of-interest risk
@@ -270,9 +270,9 @@ These policies strengthen the overall security context around Copilot and are re
 | Password Protection | Entra | Weak passwords + Copilot = easy account compromise + data access |
 | Software OATH tokens Authentication configuration | Entra | Ensure strong auth methods available for Copilot users |
 | CIS - 5.1.3.1 - Dynamic Group for Guest Users [L1] - v6.0.0 | Entra | Ensures guest lifecycle management — Copilot respects group-based access |
-| INF - Client Approved IP Range | Entra | Named locations underpin CA policy enforcement |
-| INF-NL01 - Approved Countries | Entra | Named locations underpin CA policy enforcement |
-| INF - MSP Service Center | Entra | Named locations underpin CA policy enforcement |
+| IAC - Client Approved IP Range | Entra | Named locations underpin CA policy enforcement |
+| IAC-NL01 - Approved Countries | Entra | Named locations underpin CA policy enforcement |
+| IAC - MSP Service Center | Entra | Named locations underpin CA policy enforcement |
 | TiB - Allowed Countries | Entra | Named locations underpin CA policy enforcement |
 | Organization Technical Contact | M365 Admin Center | Ensures proper communication channel for Copilot-related notifications |
 | Guest user directory access | M365 Admin Center | Controls what guests can discover via directory — Copilot respects directory permissions |
@@ -286,7 +286,7 @@ These policies strengthen the overall security context around Copilot and are re
 
 ---
 
-## 🔵 Informational — Ongoing Monitoring Policies
+## 🔵 IACormational — Ongoing Monitoring Policies
 
 These policies should be in place and monitored for drift to maintain Copilot readiness.
 
@@ -337,8 +337,8 @@ These policies should be in place and monitored for drift to maintain Copilot re
 | 26 | Password Protection *(§5.2.3.2/§5.2.3.3)* | 🟡 Medium |
 | 27 | Software OATH tokens Authentication configuration | 🟡 Medium |
 | 28 | CIS - 5.1.3.1 - Dynamic Group for Guest Users [L1] 🆕 | 🟡 Medium |
-| 29 | INF - Client Approved IP Range | 🟡 Medium |
-| 30 | INF-NL01 - Approved Countries + TiB - Allowed Countries + INF - MSP Service Center | 🟡 Medium |
+| 29 | IAC - Client Approved IP Range | 🟡 Medium |
+| 30 | IAC-NL01 - Approved Countries + TiB - Allowed Countries + IAC - MSP Service Center | 🟡 Medium |
 
 ### Purview (13 policies)
 
@@ -356,7 +356,7 @@ These policies should be in place and monitored for drift to maintain Copilot re
 | 40 | CIS - Confidential Label Policy *(§3.3.1)* | 🔴 Critical |
 | 41 | Adaptive Protection (Insider Risk + DLP) 🆕 | 🟠 High |
 | 42 | Communication Compliance for Copilot 🆕 | 🟡 Medium |
-| 43 | Unified Audit Logging *(§6.1.1)* | 🔵 Informational |
+| 43 | Unified Audit Logging *(§6.1.1)* | 🔵 IACormational |
 
 ### SharePoint (6 policies)
 
@@ -366,8 +366,8 @@ These policies should be in place and monitored for drift to maintain Copilot re
 | 45 | External sharing settings *(§7.2.3)* | 🔴 Critical |
 | 46 | Allow syncing only on computers joined to specific domains *(§7.3.2)* | 🟠 High |
 | 47 | CIS - 7.2.9 - Guest Access Auto-Expiration [L1] 🆕 | 🟡 Medium |
-| 48 | SharePoint External Sharing | 🔵 Informational |
-| 49 | Idle session sign-out | 🔵 Informational |
+| 48 | SharePoint External Sharing | 🔵 IACormational |
+| 49 | Idle session sign-out | 🔵 IACormational |
 
 ### Exchange (2 policies)
 
@@ -434,10 +434,10 @@ Before enabling Copilot licenses, address these in order:
 
 ### Phase 4 — Validate & Enable
 21. ✅ Re-run Copilot Readiness check — target all checks passed
-22. ✅ Apply "Copilot Readiness" tags to all 59 policies in Inforcer
+22. ✅ Apply "Copilot Readiness" tags to all 59 policies in IACorcer
 23. ✅ Enable Copilot licenses for pilot group
 24. ✅ Monitor audit logs, DLP alerts, and Communication Compliance matches for 2 weeks before broader rollout
 
 ---
 
-*CIS Microsoft 365 Foundations Benchmark v6.0.0 — Copilot Readiness Policy Recommendations — inforcer2M365 tenant.*
+*CIS Microsoft 365 Foundations Benchmark v6.0.0 — Copilot Readiness Policy Recommendations — IACorcer2M365 tenant.*
