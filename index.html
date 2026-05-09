@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jon Hope — Microsoft MVP | conditionalaccess.tech</title>
+<meta name="description" content="Jon Hope, Microsoft MVP for Security: Identity and Access. M365 Solutions Architect at inforcer.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:      #08132a;
+    --navy-card: #0d1f3c;
+    --blue:      #1e56c8;
+    --blue-hi:   #3b7ff5;
+    --teal:      #00c2b3;
+    --white:     #ffffff;
+    --text:      #c8d8f0;
+    --muted:     #5f7aaa;
+    --border:    rgba(255,255,255,0.07);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(30,86,200,0.16) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -100px; left: -100px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,194,179,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    height: 60px;
+    padding: 0 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(8,19,42,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-brand span { color: var(--teal); }
+
+  .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+
+  .nav-link {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .nav-link:hover { color: var(--white); }
+
+  .nav-btn {
+    font-size: 0.78rem;
+    font-weight: 500;
+    background: var(--blue);
+    color: var(--white);
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .nav-btn:hover { background: var(--blue-hi); }
+
+  /* PAGE */
+  .page { position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 80px 5vw 60px;
+  }
+
+  .hero-inner {
+    width: 100%;
+    max-width: 1160px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hero-left { min-width: 0; }
+
+  .mvp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(30,86,200,0.15);
+    border: 1px solid rgba(59,127,245,0.25);
+    border-radius: 100px;
+    padding: 0.32rem 0.85rem 0.32rem 0.4rem;
+    margin-bottom: 1.4rem;
+    animation: fadeUp 0.5s 0.1s both;
+  }
+
+  .mvp-icon {
+    width: 24px; height: 24px;
+    background: var(--blue);
+    border-radius: 4px;
+    transform: rotate(45deg);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .mvp-icon span {
+    transform: rotate(-45deg);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.5rem;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .mvp-label {
+    font-size: 0.67rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue-hi);
+  }
+
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3.2rem, 6.5vw, 5.8rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    color: var(--white);
+    animation: fadeUp 0.6s 0.2s both;
+  }
+  .hero-name .teal { color: var(--teal); }
+
+  .hero-role {
+    margin-top: 1.1rem;
+    font-size: 0.93rem;
+    color: var(--muted);
+    animation: fadeUp 0.5s 0.32s both;
+  }
+  .hero-role strong { color: var(--text); font-weight: 500; }
+
+  .hero-bio {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #7a9cc8;
+    max-width: 480px;
+    line-height: 1.75;
+    animation: fadeUp 0.5s 0.42s both;
+  }
+
+  .hero-actions {
+    margin-top: 1.8rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    animation: fadeUp 0.5s 0.52s both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.68rem 1.35rem;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn-blue { background: var(--blue); color: #fff; border: 1px solid transparent; }
+  .btn-blue:hover { background: var(--blue-hi); transform: translateY(-1px); }
+  .btn-outline { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.11); }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); }
+
+  /* PROFILE CARD */
+  .profile-card {
+    background: var(--navy-card);
+    border: 1px solid rgba(59,127,245,0.18);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeUp 0.7s 0.28s both;
+  }
+
+  .card-top {
+    background: linear-gradient(160deg, #0f2550, #091e42);
+    padding: 1.6rem 1.4rem 1.4rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .card-top::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--teal));
+  }
+
+  .avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue), var(--teal));
+    margin: 0 auto 0.9rem;
+    display: grid;
+    place-items: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+
+  .card-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--white);
+    margin-bottom: 0.18rem;
+  }
+
+  .card-subtitle {
+    font-size: 0.72rem;
+    color: var(--teal);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  .card-tags {
+    display: flex;
+    gap: 0.35rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 0.8rem;
+  }
+
+  .tag {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.55rem;
+    border-radius: 20px;
+    background: rgba(30,86,200,0.2);
+    border: 1px solid rgba(59,127,245,0.2);
+    color: var(--blue-hi);
+  }
+
+  .card-links {
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .card-link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all 0.15s;
+    color: var(--text);
+  }
+  .card-link:hover {
+    background: rgba(59,127,245,0.09);
+    border-color: rgba(59,127,245,0.25);
+    transform: translateX(2px);
+  }
+
+  .link-icon {
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .link-main { font-size: 0.8rem; font-weight: 400; line-height: 1; }
+  .link-sub  { font-size: 0.67rem; color: var(--muted); display: block; margin-top: 0.12rem; }
+
+  /* SECTIONS */
+  .section {
+    position: relative; z-index: 1;
+    padding: 4.5rem 5vw;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-inner { max-width: 1160px; margin: 0 auto; }
+
+  .eyebrow {
+    font-size: 0.67rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+  }
+
+  .section-heading {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+    color: var(--white);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 460px;
+    margin-bottom: 2.25rem;
+  }
+
+  /* GRIDS */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem;
+  }
+
+  /* FOCUS CARDS */
+  .focus-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    transition: border-color 0.18s, transform 0.18s;
+  }
+  .focus-card:hover { border-color: rgba(59,127,245,0.3); transform: translateY(-2px); }
+
+  .focus-icon {
+    width: 38px; height: 38px;
+    border-radius: 9px;
+    background: rgba(30,86,200,0.18);
+    border: 1px solid rgba(59,127,245,0.18);
+    display: grid;
+    place-items: center;
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .focus-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--white);
+    margin-bottom: 0.35rem;
+  }
+
+  .focus-card p { font-size: 0.8rem; color: var(--muted); line-height: 1.58; }
+
+  /* RESOURCE CARDS */
+  .resource-card {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    transition: border-color 0.18s, transform 0.18s;
+    position: relative;
+  }
+  .resource-card:hover { border-color: rgba(0,194,179,0.3); transform: translateY(-2px); }
+
+  .resource-type {
+    font-size: 0.63rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+
+  .resource-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--white);
+    line-height: 1.3;
+    padding-right: 1.5rem;
+  }
+
+  .resource-card p { font-size: 0.79rem; color: var(--muted); line-height: 1.55; }
+
+  .resource-arrow {
+    position: absolute;
+    top: 1.2rem; right: 1.2rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    transition: transform 0.15s, color 0.15s;
+  }
+  .resource-card:hover .resource-arrow { transform: translate(2px,-2px); color: var(--teal); }
+
+  /* CTA */
+  .cta-band {
+    position: relative; z-index: 1;
+    padding: 2.5rem 5vw 4.5rem;
+  }
+
+  .cta-box {
+    max-width: 1160px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(30,86,200,0.13), rgba(0,194,179,0.06));
+    border: 1px solid rgba(59,127,245,0.2);
+    border-radius: 14px;
+    padding: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--teal), transparent);
+  }
+
+  .cta-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--white);
+    margin-bottom: 0.25rem;
+  }
+  .cta-box p { font-size: 0.85rem; color: var(--muted); }
+  .cta-btns { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 1.4rem 5vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .footer-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .footer-brand span { color: var(--teal); }
+  footer p { font-size: 0.73rem; color: #2a3d5e; }
+
+  /* ANIMATION */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .profile-card { max-width: 400px; }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .nav-link { display: none; }
+  }
+  @media (max-width: 520px) {
+    .grid-3 { grid-template-columns: 1fr; }
+    .hero-name { font-size: 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">conditionalaccess<span>.tech</span></a>
+  <div class="nav-right">
+    <a href="#focus" class="nav-link">Focus</a>
+    <a href="#resources" class="nav-link">Resources</a>
+    <a href="#writing" class="nav-link">Writing</a>
+    <a href="https://medium.com/@jhope188" target="_blank" class="nav-btn">Read on Medium</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+
+      <div class="hero-left">
+        <div class="mvp-pill">
+          <div class="mvp-icon"><span>MVP</span></div>
+          <span class="mvp-label">Microsoft Most Valuable Professional</span>
+        </div>
+        <h1 class="hero-name">Jon<br><span class="teal">Hope.</span></h1>
+        <p class="hero-role"><strong>M365 Solutions Architect</strong> at inforcer &nbsp;·&nbsp; Security: Identity &amp; Access</p>
+        <p class="hero-bio">I help MSPs and enterprise teams lock down Microsoft 365 through smarter identity configuration, Conditional Access policy, and ITDR. If it touches Entra ID, I've probably written about it.</p>
+        <div class="hero-actions">
+          <a href="https://medium.com/@jhope188" target="_blank" class="btn btn-blue">✍️ Read My Writing</a>
+          <a href="https://www.linkedin.com/in/jhope188/" target="_blank" class="btn btn-outline">Connect on LinkedIn</a>
+        </div>
+      </div>
+
+      <div class="profile-card">
+        <div class="card-top">
+          <div class="avatar">JH</div>
+          <div class="card-name">Jon Hope</div>
+          <div class="card-subtitle">Microsoft MVP · Identity &amp; Access</div>
+          <div class="card-tags">
+            <span class="tag">Entra ID</span>
+            <span class="tag">Conditional Access</span>
+            <span class="tag">ITDR</span>
+            <span class="tag">Zero Trust</span>
+          </div>
+        </div>
+        <div class="card-links">
+          <a href="https://medium.com/@jhope188" target="_blank" class="card-link">
+            <div class="link-icon" style="background:rgba(0,0,0,0.25)">✍️</div>
+            <div><span class="link-main">Medium</span><span class="link-sub">@jhope188</span></div>
+          </a>
+          <a href="https://github.com/Jhope188" target="_blank" class="card-link">
+            <div class="link-icon" style="background:rgba(20,20,30,0.4)">🐙</div>
+            <div><span class="link-main">GitHub</span><span class="link-sub">Jhope188</span></div>
+          </a>
+          <a href="https://www.linkedin.com/in/jhope188/" target="_blank" class="card-link">
+            <div class="link-icon" style="background:rgba(0,119,181,0.25)">💼</div>
+            <div><span class="link-main">LinkedIn</span><span class="link-sub">jhope188</span></div>
+          </a>
+          <a href="https://www.inforcer.com" target="_blank" class="card-link">
+            <div class="link-icon" style="background:rgba(30,86,200,0.25)">🛡️</div>
+            <div><span class="link-main">inforcer</span><span class="link-sub">M365 Security Platform</span></div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOCUS -->
+  <section class="section" id="focus">
+    <div class="section-inner">
+      <div class="eyebrow">What I work on</div>
+      <h2 class="section-heading">Focus Areas</h2>
+      <p class="section-desc">The M365 security topics I write about, speak on, and architect every day.</p>
+      <div class="grid-3">
+        <div class="focus-card">
+          <div class="focus-icon">🔐</div>
+          <h3>Conditional Access</h3>
+          <p>Zero Trust access policies that work in production. MFA enforcement, device compliance, FIDO2, and named locations.</p>
+        </div>
+        <div class="focus-card">
+          <div class="focus-icon">🪪</div>
+          <h3>Entra ID &amp; Identity</h3>
+          <p>Identity is the foundation of everything in M365. Hardening your IdP is the single highest-leverage security move you can make.</p>
+        </div>
+        <div class="focus-card">
+          <div class="focus-icon">🔍</div>
+          <h3>ITDR &amp; Defender for Identity</h3>
+          <p>Behavioral baselines and signal correlation. Knowing what normal looks like so you can catch what isn't.</p>
+        </div>
+        <div class="focus-card">
+          <div class="focus-icon">🛡️</div>
+          <h3>Privileged Identity Management</h3>
+          <p>Just-in-time access and standing privilege elimination. Nobody needs permanent Global Admin.</p>
+        </div>
+        <div class="focus-card">
+          <div class="focus-icon">🏢</div>
+          <h3>MSP Security at Scale</h3>
+          <p>Multi-tenant M365 hardening for managed service providers. Consistent baselines across hundreds of client tenants.</p>
+        </div>
+        <div class="focus-card">
+          <div class="focus-icon">⚙️</div>
+          <h3>Security Baselines</h3>
+          <p>CIS benchmarks, Secure Score, and practical configuration management. Standards that actually get deployed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESOURCES -->
+  <section class="section" id="resources">
+    <div class="section-inner">
+      <div class="eyebrow">From the GitHub</div>
+      <h2 class="section-heading">Resources &amp; Reference</h2>
+      <p class="section-desc">Open reference material, cheat sheets, and baselines. All public, all free.</p>
+      <div class="grid-2">
+        <a href="https://jhope188.github.io/LearnGraphAPI/" target="_blank" class="resource-card">
+          <span class="resource-type">Reference Guide</span>
+          <h3>Microsoft Graph API Cheat Sheet</h3>
+          <p>A practical, engineer-focused reference for discovering and using Microsoft Graph endpoints that return Entra ID data.</p>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a href="https://github.com/Jhope188/LearnGraphAPI/tree/main/Baseline/Entra" target="_blank" class="resource-card">
+          <span class="resource-type">Baseline</span>
+          <h3>Entra ID Security Baseline</h3>
+          <p>Configuration reference and baseline documentation for hardening Entra ID tenants. Built for MSPs and enterprise architects.</p>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a href="https://conditionalaccess.tech/identity-is-everything.html" class="resource-card">
+          <span class="resource-type">Blog Post</span>
+          <h3>Identity Is Everything</h3>
+          <p>A human-first guide to Entra ID, Zero Trust, RBAC, and ITDR. Defense in depth explained through everyday life.</p>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a href="https://github.com/Jhope188" target="_blank" class="resource-card">
+          <span class="resource-type">GitHub</span>
+          <h3>All Repositories</h3>
+          <p>Browse all public repos including Graph API tooling, Entra baselines, and M365 security reference material.</p>
+          <span class="resource-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITING -->
+  <section class="section" id="writing">
+    <div class="section-inner">
+      <div class="eyebrow">Latest thinking</div>
+      <h2 class="section-heading">Writing</h2>
+      <p class="section-desc">Practical content on M365 identity security. No fluff, no vendor spin.</p>
+      <div class="grid-2">
+        <a href="https://conditionalaccess.tech/identity-is-everything.html" class="resource-card">
+          <span class="resource-type">Identity Security</span>
+          <h3>Identity Is Everything: What ITDR and Your Front Door Have in Common</h3>
+          <p>Defense in depth, Zero Trust, RBAC, and ITDR explained through everyday life. The insider threat scenario that shows why signal correlation matters.</p>
+          <span class="resource-arrow">↗</span>
+        </a>
+        <a href="https://medium.com/@jhope188" target="_blank" class="resource-card">
+          <span class="resource-type">Medium</span>
+          <h3>More on Medium</h3>
+          <p>Follow along for regular writing on Conditional Access, Entra ID hardening, MSP security strategy, and the latest from the M365 security landscape.</p>
+          <span class="resource-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-band">
+    <div class="cta-box">
+      <div>
+        <h2>Let's talk M365 security.</h2>
+        <p>MSP or enterprise — Conditional Access, ITDR, or identity hardening. Reach out on LinkedIn.</p>
+      </div>
+      <div class="cta-btns">
+        <a href="https://www.linkedin.com/in/jhope188/" target="_blank" class="btn btn-blue">Connect on LinkedIn</a>
+        <a href="https://medium.com/@jhope188" target="_blank" class="btn btn-outline">Read on Medium</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-brand">conditionalaccess<span>.tech</span></div>
+    <p>Jon Hope · Microsoft MVP · Security: Identity &amp; Access</p>
+    <p>© 2026</p>
+  </footer>
+
+</div>
+</body>
+</html>
