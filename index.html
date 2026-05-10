@@ -448,6 +448,85 @@
   .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
   .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.1rem; }
 
+  /* ENTRA NEWS CARD */
+  .entra-news-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.1rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.07) 0%, rgba(30,86,200,0.09) 100%);
+    border: 1px solid rgba(0,194,179,0.22);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.18s, transform 0.18s;
+  }
+  .entra-news-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--teal), var(--blue), transparent);
+  }
+  .entra-news-card:hover { border-color: rgba(0,194,179,0.45); transform: translateY(-2px); }
+
+  .entra-news-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid rgba(0,194,179,0.35);
+    flex-shrink: 0;
+    background: rgba(0,194,179,0.12);
+    display: grid;
+    place-items: center;
+  }
+  .entra-news-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .entra-news-avatar-fallback {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    color: var(--teal);
+  }
+
+  .entra-news-content { flex: 1; min-width: 0; }
+
+  .entra-news-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: rgba(0,194,179,0.1);
+    border: 1px solid rgba(0,194,179,0.22);
+    border-radius: 20px;
+    padding: 0.18rem 0.6rem;
+  }
+
+  .entra-news-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--white);
+    margin: 0.45rem 0 0.3rem;
+    letter-spacing: -0.02em;
+  }
+  .entra-news-dot { color: var(--teal); }
+
+  .entra-news-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+  .entra-news-desc strong { color: var(--text); font-weight: 500; }
+
+  .entra-news-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--teal);
+  }
+
   .focus-card {
     background: var(--navy-card);
     border: 1px solid var(--border);
@@ -787,6 +866,19 @@
           <span class="resource-arrow">&#x2197;</span>
         </a>
       </div>
+
+      <a href="entra-news.html" class="entra-news-card">
+        <div class="entra-news-avatar">
+          <img src="https://github.com/merill.png?size=128" alt="Merill Fernando" onerror="this.style.display='none';this.parentElement.querySelector('.entra-news-avatar-fallback').style.display='flex'">
+          <div class="entra-news-avatar-fallback" style="display:none">M</div>
+        </div>
+        <div class="entra-news-content">
+          <span class="entra-news-badge">17 features &bull; 15 issues</span>
+          <h3 class="entra-news-title">Entra<span class="entra-news-dot">.</span>News</h3>
+          <p class="entra-news-desc">Curated by Merill Fernando &mdash; the Microsoft Entra community&rsquo;s most-read weekly digest. Including <strong>🥇&nbsp;#1</strong>, <strong>🥈&nbsp;#2</strong> &amp; <strong>🥉&nbsp;#3 Most Popular Post</strong>.</p>
+          <span class="entra-news-cta">View all features &#x2197;</span>
+        </div>
+      </a>
     </div>
   </section>
 
