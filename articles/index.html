@@ -148,7 +148,9 @@
 
           const detail = await detailRes.json();
           const article = detail.files?.find(
-            f => /^articles\/.+\.html$/i.test(f.filename) && f.status !== 'removed'
+            f => /^articles\/.+\.html$/i.test(f.filename)
+              && !/\/index\.html$/i.test(f.filename)
+              && f.status !== 'removed'
           );
 
           if (article) {
