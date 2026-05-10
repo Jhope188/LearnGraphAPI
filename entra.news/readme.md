@@ -2,6 +2,7 @@
 
 **Author:** Jon Hope | M365 Solutions Architect at Inforcer  
 **Medium:** [medium.com/@jhope188](https://medium.com/@jhope188) 
+
 **Blog** [conditionalaccess.tech](https://conditionalaccess.tech)   
 **Followers:** 94  
 **Last Updated:** May 10, 2026
