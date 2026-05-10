@@ -1,10 +1,10 @@
 # Jon Hope — Medium Blog Portfolio & Entra News Features
 
 **Author:** Jon Hope | M365 Solutions Architect at Inforcer  
-**Medium:** [medium.com/@jhope188](https://medium.com/@jhope188)  
-**Blog** [condtionalaccess.tech](https://conditionalaccess.tech/articles)  
-**Followers:** 89  
-**Last Updated:** May 3, 2026
+**Medium:** [medium.com/@jhope188](https://medium.com/@jhope188) 
+**Blog** [conditionalaccess.tech](https://conditionalaccess.tech)   
+**Followers:** 94  
+**Last Updated:** May 10, 2026
 
 ---
 
@@ -12,15 +12,15 @@
 
 | Metric | Value |
 |--------|-------|
-| **Total Articles** | 35 (34 published, 1 draft) |
-| **Entra News Features** | 17 (across 15 issues) |
+| **Total Articles** | 35 (all published) |
+| **Entra News Features** | 18 (across 16 issues) |
 | **🥇 #1 Most Popular Post** | 1 (Issue #141) |
 | **🥈 #2 Most Popular Post** | 1 (Issue #143) |
 | **🥉 #3 Most Popular Post** | 1 (Issue #147) |
 | **Double-Feature Issues** | 2 (Issues #141 & #142 — two articles each) |
 | **Featured in Back-to-Back Issues** | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
 | **Unique Articles Featured** | 15 of 34 published (44%) |
-| **Publication Period** | September 2025 — April 2026 |
+| **Publication Period** | September 2025 — May 2026 |
 | **Primary Focus** | Conditional Access, Identity Security, Secure Cloud Foundation, MSP Operations |
 
 ---
@@ -54,6 +54,7 @@
 
 | # | Article | Date | 👏 | 💬 | Entra News |
 |---|---------|------|-----|-----|------------|
+| 35 | **Conditional Access: The Safety Net** | May 10 | — | — | ✅ [#148](https://entra.news/p/entra-news-148-this-week-in-microsoft) |
 | 34 | **Conditional Access Foundations: The Bottom of the Stack (And Why It Matters Most)** | Apr 22 | — | — | 🥉 [#147](https://entra.news/p/entra-news-147-this-week-in-microsoft) + ✅ [#146](https://entra.news/p/entra-news-146-this-week-in-microsoft) |
 | 33 | **Copilot SCU's: Wait, I owe how much?!** | Apr 9 | — | — | — |
 | 32 | **Conditional Access: Location, Location, Location — and the Gaps We Create** | Apr 3 | — | — | ✅ [#144](https://entra.news/p/entra-news-144-this-week-in-microsoft) |
@@ -111,13 +112,16 @@
 | 2 | **Getting Started with SC-300: Users and Groups in Entra** | Sep 29 | 2 | — | — |
 | 1 | **First Post** | Sep 29 | 2 | — | — |
 
-> 📝 **Note:** 1 additional article is scheduled for publication: *"Conditional Access: The Safety Net"* (May 11, 2026), bringing the total pipeline to 35.
-
 ---
 
 ## 🌟 Entra News Feature Details
 
 [Entra News](https://entra.news) is the premier weekly Microsoft Entra community newsletter curated by **Merill Fernando** (Microsoft Identity PM). It is the most widely-read digest in the Microsoft Identity community. Being featured represents recognition by the editorial team as a valuable community contribution.
+
+### Feature #18 — Issue #148 (May 10, 2026)
+- **Article:** Conditional Access: The Safety Net
+- **Section:** 🚦 Conditional Access
+- **Context:** Featured in the Conditional Access section alongside Tom Wechsler (Continuous Access Evaluation), Ali Tajran (CA Policy Maximum Limit), and others. Issue #148 covered World Passkey Day announcements including Entra ID account recovery GA and passkey-preferred authentication preview.
 
 ### Feature #17 — Issue #147 (May 3, 2026) 🥉
 - **Article:** Conditional Access Foundations: The Bottom of the Stack (And Why It Matters Most)
@@ -231,7 +235,7 @@
 
 | Section | Times Featured |
 |---------|---------------|
-| 🚦 Conditional Access | 8 |
+| 🚦 Conditional Access | 9 |
 | 🚀 Most Popular Posts | 3 (🥇 #1, 🥈 #2, 🥉 #3) |
 | 📒 Tenant Configuration | 2 |
 | 🥷 Security | 2 |
@@ -250,8 +254,8 @@
 | February 2026 | 4 | 3 |
 | March 2026 | 4 | 4 |
 | April 2026 | 4 | 3 |
-| May 2026 | — | 1 |
-| **Total** | **34** | **17** |
+| May 2026 | 1 | 2 |
+| **Total** | **35** | **18** |
 
 ---
 
@@ -294,7 +298,7 @@ Jan 2026  ████████ Onboard to Inforcer → Security That Scales 
 Feb 2026  ████████ Perimeter (#135) → Azure Isn't Infinite → MFA for All (#137) → Time-Bound (#138)
 Mar 2026  ████████ Finding the Gaps (#140 → 🥇#141) → BS in Business Standard (#141) → CA Analyzer + Backup & Recovery (#142 × 2)
 Apr 2026  ████████████ Location, Location, Location (#144) → CA Analyzer 🥈 (#143) → Copilot SCU Wait I Owe How Much → CA Foundations: Bottom of the Stack (#146)
-May 2026  ██ CA Foundations: Bottom of the Stack 🥉 (#147)
+May 2026  ████ CA Foundations: Bottom of the Stack 🥉 (#147) → The Safety Net (#148)
 ```
 
 ---
@@ -308,4 +312,4 @@ May 2026  ██ CA Foundations: Bottom of the Stack 🥉 (#147)
 
 ---
 
-*Document generated: May 3, 2026*
+*Document generated: May 10, 2026*
