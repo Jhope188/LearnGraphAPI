@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Latest Article — Jon Hope</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #08132a;
+      --navy-card: #0d1f3c;
+      --blue: #1e56c8;
+      --blue-hi: #3b7ff5;
+      --teal: #00c2b3;
+      --white: #ffffff;
+      --text: #c8d8f0;
+      --muted: #5f7aaa;
+      --border: rgba(255,255,255,0.07);
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 56px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 32px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--blue-hi);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 28px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .article-name {
+      color: var(--blue-hi);
+      font-weight: 500;
+      margin-top: 16px;
+      font-size: 0.95rem;
+      min-height: 1.4em;
+    }
+
+    .fallback {
+      margin-top: 24px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .fallback a {
+      color: var(--blue-hi);
+      text-decoration: none;
+    }
+
+    .fallback a:hover {
+      text-decoration: underline;
+    }
+
+    /* Error state */
+    .error-icon {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">conditionalaccess.tech</div>
+    <div class="spinner" id="spinner"></div>
+    <div class="error-icon" id="errorIcon">⚠️</div>
+    <h1 id="heading">Finding the latest article…</h1>
+    <p id="subtext">Checking commit history for the most recently published article.</p>
+    <div class="article-name" id="articleName"></div>
+    <div class="fallback" id="fallback"></div>
+  </div>
+
+  <script>
+    const REPO = 'Jhope188/LearnGraphAPI';
+    const FALLBACK_ARTICLE = 'identity-is-everything.html';
+    const BASE_URL = 'https://conditionalaccess.tech/articles/';
+
+    async function redirectToLatest() {
+      try {
+        // Get the commits that touched the articles/ folder, newest first
+        const commitsRes = await fetch(
+          `https://api.github.com/repos/${REPO}/commits?path=articles&per_page=20`
+        );
+
+        if (!commitsRes.ok) throw new Error('GitHub API error');
+
+        const commits = await commitsRes.json();
+        if (!Array.isArray(commits) || commits.length === 0) throw new Error('No commits found');
+
+        // Walk commits until we find one that added/modified an HTML article
+        for (const commit of commits) {
+          const detailRes = await fetch(
+            `https://api.github.com/repos/${REPO}/commits/${commit.sha}`
+          );
+          if (!detailRes.ok) continue;
+
+          const detail = await detailRes.json();
+          const article = detail.files?.find(
+            f => /^articles\/.+\.html$/i.test(f.filename) && f.status !== 'removed'
+          );
+
+          if (article) {
+            const filename = article.filename.split('/').pop();
+            const title = filename.replace(/-/g, ' ').replace(/\.html$/i, '');
+            document.getElementById('articleName').textContent = title;
+            document.getElementById('subtext').textContent = 'Redirecting you now…';
+
+            // Short pause so user sees the article name
+            setTimeout(() => {
+              window.location.replace(BASE_URL + filename);
+            }, 600);
+            return;
+          }
+        }
+
+        throw new Error('No HTML article found in recent commits');
+
+      } catch (err) {
+        console.error(err);
+        showFallback();
+      }
+    }
+
+    function showFallback() {
+      document.getElementById('spinner').style.display = 'none';
+      document.getElementById('errorIcon').style.display = 'block';
+      document.getElementById('heading').textContent = 'Could not auto-detect';
+      document.getElementById('subtext').textContent = 'Falling back to the most recent known article.';
+      document.getElementById('fallback').innerHTML =
+        `<a href="${BASE_URL}${FALLBACK_ARTICLE}">Go to latest article →</a>`;
+
+      setTimeout(() => {
+        window.location.replace(BASE_URL + FALLBACK_ARTICLE);
+      }, 2500);
+    }
+
+    redirectToLatest();
+  </script>
+</body>
+</html>
