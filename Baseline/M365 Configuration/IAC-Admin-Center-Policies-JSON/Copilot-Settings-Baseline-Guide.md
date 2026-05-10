@@ -122,7 +122,7 @@ Opal is a Frontier (experimental) capability. It should not be deployed broadly 
 
 > **⚠️ EU/EFTA Exclusive Setting** — This setting is only visible in tenants whose sign-up country/region is in the EU or EFTA. It will not appear in US, UK, or other non-EU tenant admin centers. Tenants with multi-geo licenses are also excluded.
 
-![Flexible inferencing setting visible in the Contoso Electronics EU tenant Copilot Settings page](./copilot-eu-flex-routing-setting.png)
+![Flexible inferencing setting visible in the Contoso Electronics EU tenant Copilot Settings page](https://github.com/Jhope188/LearnGraphAPI/blob/main/Baseline/M365%20Configuration/IAC-Admin-Center-Policies-JSON/Images/EU_vs_US_Copilot_Comparison.png)
 *The "Flexible inferencing during peak load periods" setting appearing in an EU-tenanted Microsoft 365 admin center (Contoso Electronics example). This setting does not appear in non-EU tenants.*
 
 | Field | Value |
