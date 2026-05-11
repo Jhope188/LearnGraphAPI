@@ -134,7 +134,7 @@
 
   <script>
     const REPO = 'Jhope188/LearnGraphAPI';
-    const FALLBACK_ARTICLE = 'identity-is-everything.html';
+    const FALLBACK_ARTICLE = 'identity/identity-is-everything.html';
     const BASE_URL = 'https://conditionalaccess.tech/articles/';
 
     async function redirectToLatest() {
@@ -164,14 +164,15 @@
           );
 
           if (article) {
-            const filename = article.filename.split('/').pop();
-            const title = filename.replace(/-/g, ' ').replace(/\.html$/i, '');
+            // Preserve full path after articles/ (e.g. conditional-access/safety-net.html)
+            const relativePath = article.filename.replace(/^articles\//, '');
+            const title = relativePath.split('/').pop().replace(/-/g, ' ').replace(/\.html$/i, '');
             document.getElementById('articleName').textContent = title;
             document.getElementById('subtext').textContent = 'Redirecting you now…';
 
             // Short pause so user sees the article name
             setTimeout(() => {
-              window.location.replace(BASE_URL + filename);
+              window.location.replace(BASE_URL + relativePath);
             }, 600);
             return;
           }
