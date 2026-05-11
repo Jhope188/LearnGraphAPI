@@ -225,7 +225,7 @@ This attack is especially insidious because it appears as a legitimate Microsoft
 
 ### 1.5 Block Access to Exchange Web Services (EWS)
 
-![Baseline Security Mode - EWS](https://github.com/Jhope188/LearnGraphAPI/blob/main/Baseline/M365%20Configuration/IAC-Admin-Center-Policies-JSON/Images/BaselineSecurityMode.png)
+![Baseline Security Mode - EWS](https://github.com/Jhope188/LearnGraphAPI/blob/main/Baseline/AdminCenter/Images/BaselineSecurityMode.png)
 
 | Attribute | Detail |
 |-----------|--------|
