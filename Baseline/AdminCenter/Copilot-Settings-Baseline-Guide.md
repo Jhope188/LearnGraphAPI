@@ -118,7 +118,7 @@ Opal is a Frontier (experimental) capability. It should not be deployed broadly 
 
 ### 1.5 Flexible Inferencing During Peak Load Periods *(EU/EFTA Tenants Only)*
 
-![Copilot Settings - Flexible Routing](https://github.com/Jhope188/LearnGraphAPI/blob/main/Baseline/IAC-Admin-Center-Policies-JSON/Images/EU_vs_US_Copilot_Comparison.png)
+![Copilot Settings - Flexible Routing](https://github.com/Jhope188/LearnGraphAPI/blob/main/Baseline/AdminCenter/Images/EU_vs_US_Copilot_Comparison.png)
 
 > **⚠️ EU/EFTA Exclusive Setting** — This setting is only visible in tenants whose sign-up country/region is in the EU or EFTA. It will not appear in US, UK, or other non-EU tenant admin centers. Tenants with multi-geo licenses are also excluded.
 
