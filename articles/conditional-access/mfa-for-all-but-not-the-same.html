@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAb0ElEQVR42u17aXicV5Xme++31r6ptFiStViWdzleEidOSGwIpIesLBJheQiQJjBNhmaGoemhAVkZ1qEXep4hNANPw0AzPe2iITQhgSQkNkmcxI7teJNtWXtJVapS7VXf99W33HvnhxMauiGA7fYTZri/qn7o0XPPec97zn3fU8Dvz+/P78//z4dcjn8yOjpKx8fHyfCL30+tXy/Gxsb4//PBHR4elsS">
+  <link rel="apple-touch-icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAb0ElEQVR42u17aXicV5Xme++31r6ptFiStViWdzleEidOSGwIpIesLBJheQiQJjBNhmaGoemhAVkZ1qEXep4hNANPw0AzPe2iITQhgSQkNkmcxI7teJNtWXtJVapS7VXf99W33HvnhxMauiGA7fYTZri/qn7o0XPPec97zn3fU8Dvz+/P78//z4dcjn8yOjpKx8fHyfCL30+tXy/Gxsb4//PBHR4elsS">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conditional Access: MFA for All… But Not the Same — Jon Hope</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0a0f1e;
+      --deep: #0d1630;
+      --teal: #00c2b3;
+      --teal-dim: #007e76;
+      --off-white: #f0ede8;
+      --warm-gray: #b0a99f;
+      --accent: #ff5c35;
+      --card-bg: #111827;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .back-btn {
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      background: rgba(10,15,30,0.88);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #c8d8f0;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-family: 'DM Sans', sans-serif;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      transition: background 0.2s;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+    body {
+      background: var(--navy);
+      color: var(--off-white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 8vw 4rem;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,194,179,0.10) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,92,53,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-label {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.2s forwards;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+      color: var(--off-white);
+      opacity: 0;
+      animation: fadeUp 0.7s 0.35s forwards;
+    }
+
+    .hero h1 span {
+      color: var(--teal);
+      display: block;
+    }
+
+    .hero-sub {
+      margin-top: 2rem;
+      max-width: 580px;
+      font-size: 1.1rem;
+      color: var(--warm-gray);
+      opacity: 0;
+      animation: fadeUp 0.7s 0.5s forwards;
+    }
+
+    .hero-meta {
+      margin-top: 2.5rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--teal-dim);
+      opacity: 0;
+      animation: fadeUp 0.6s 0.65s forwards;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(0,194,179,0.12);
+      color: var(--teal);
+      border: 1px solid rgba(0,194,179,0.25);
+      border-radius: 3px;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-top: 0.25rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 8vw;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--warm-gray);
+      opacity: 0;
+      animation: fadeUp 0.6s 1s forwards;
+    }
+
+    .scroll-line {
+      width: 40px;
+      height: 1px;
+      background: var(--teal);
+      animation: pulse 2s infinite;
+    }
+
+    /* ── BODY LAYOUT ── */
+    .content {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 6vw 8rem;
+    }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 2.8vw, 1.9rem);
+      line-height: 1.4;
+      color: var(--off-white);
+      border-left: 3px solid var(--teal);
+      padding-left: 1.5rem;
+      margin: 3.5rem 0;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section-marker {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 4rem 0 1.5rem;
+    }
+
+    .section-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      line-height: 1;
+      color: var(--teal);
+      opacity: 0.25;
+      min-width: 2.5rem;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+      letter-spacing: 0.04em;
+      color: var(--off-white);
+      line-height: 1.05;
+    }
+
+    /* ── BODY COPY ── */
+    p {
+      font-size: 1.05rem;
+      color: #c8c3bc;
+      margin-bottom: 1.4rem;
+    }
+
+    strong { color: var(--off-white); font-weight: 500; }
+    em { color: var(--warm-gray); }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,194,179,0.3);
+      transition: border-color 0.2s;
+    }
+    a:hover { border-color: var(--teal); }
+
+    /* ── CALLOUT CARDS ── */
+    .callout {
+      background: var(--card-bg);
+      border: 1px solid rgba(0,194,179,0.15);
+      border-radius: 4px;
+      padding: 1.5rem 1.75rem;
+      margin: 2.5rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .callout::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal), transparent);
+    }
+
+    .callout.warning { border-color: rgba(255,92,53,0.2); }
+    .callout.warning::before { background: linear-gradient(90deg, var(--accent), transparent); }
+    .callout.warning .callout-label { color: var(--accent); }
+
+    .callout.updated { border-color: rgba(245,200,66,0.2); }
+    .callout.updated::before { background: linear-gradient(90deg, #f5c842, transparent); }
+    .callout.updated .callout-label { color: #f5c842; }
+
+    .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+    .callout p { margin: 0; font-size: 0.95rem; }
+    .callout-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--teal);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-left: 3px solid var(--teal);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: #a8d5cf;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .code-block .comment { color: #5f7a6a; }
+    .code-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal-dim);
+      margin-bottom: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* ── APP EXCLUSION TABLE ── */
+    .app-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-size: 0.9rem;
+    }
+
+    .app-table th {
+      text-align: left;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--teal);
+      padding: 0.75rem 1rem;
+      background: rgba(0,194,179,0.07);
+      border-bottom: 1px solid rgba(0,194,179,0.15);
+    }
+
+    .app-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: #c8c3bc;
+      vertical-align: top;
+    }
+
+    .app-table tr:last-child td { border-bottom: none; }
+    .app-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .app-name { color: var(--off-white); font-weight: 500; display: block; }
+    .app-guid { font-family: 'Courier New', monospace; font-size: 0.75rem; color: var(--teal-dim); }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+    .status-keep    { background: rgba(0,194,179,0.12); color: var(--teal); }
+    .status-remove  { background: rgba(255,92,53,0.12); color: var(--accent); }
+    .status-review  { background: rgba(245,200,66,0.12); color: #f5c842; }
+
+    /* ── FEEDBACK BLOCK ── */
+    .feedback-block {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+      margin: 2rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .feedback-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--teal-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--off-white);
+      flex-shrink: 0;
+    }
+
+    .feedback-text { font-size: 0.9rem; color: #c8c3bc; }
+    .feedback-name { font-size: 0.75rem; color: var(--teal); margin-bottom: 0.35rem; font-weight: 500; }
+
+    /* ── CLOSING CTA ── */
+    .cta-block {
+      margin-top: 5rem;
+      padding: 3rem;
+      background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+      border: 1px solid rgba(0,194,179,0.2);
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .cta-block h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      color: var(--off-white);
+    }
+
+    .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+
+    .btn {
+      display: inline-block;
+      background: var(--teal);
+      color: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      border-radius: 2px;
+      text-decoration: none;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    .btn:hover { opacity: 0.85; border: none; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin: 3.5rem 0;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .hero { padding: 5rem 6vw 3rem; }
+      .app-table { font-size: 0.82rem; }
+      .cta-block { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Conditional Access Series · February 2026</div>
+  <h1>MFA for All…<span>But Not the Same.</span></h1>
+  <p class="hero-sub">The foundational policy looks simple. One name. One rule. But behind ACME — GLOBAL — GRANT — MFA — All-Users is a decade of trial, error, and production scars.</p>
+  <div class="hero-meta">
+    <span>Conditional Access</span>
+    <span>Feb 16, 2026</span>
+    <span>7 min read</span>
+    <span class="hero-badge">✅ Entra News #137</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <p>Last week I was recording some videos on pushing out Conditional Access policies and ran into something familiar: <a href="https://share.vidyard.com/watch/kocjRP4syUjq2kWtvtGKQy" target="_blank">a missing service principal</a>.</p>
+
+  <p>That failure forced me to revisit one of my foundational policies — the one I've used for years. And instead of just fixing it quietly, I decided to document it.</p>
+
+  <p>Because if you've worked in Microsoft Entra ID long enough, you've felt the pain:</p>
+
+  <p>A device failing to join Intune. A MAM policy breaking due to Defender. Passkey enrollment failing. A Conditional Access policy that looked perfect but didn't deploy. We've all discovered the hard way that <strong>identity is unforgiving</strong>.</p>
+
+  <div class="pull-quote">
+    "Over time, I built a standard approach for 'MFA for All Users.' I'm not saying it's best practice. I'm saying it's what I adopted through trial, error, and production scars."
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">Examining the Policy</span>
+  </div>
+
+  <p>The policy name tells the full story:</p>
+
+  <div class="callout">
+    <div class="callout-label">Policy Name Convention</div>
+    <span class="callout-icon">📋</span>
+    <p><strong>ACME — GLOBAL — GRANT — MFA — All-Users</strong><br><br>
+    <strong>GLOBAL</strong> → Targets all users and all apps<br>
+    <strong>GRANT</strong> → Requires something (MFA)<br>
+    <strong>Foundation Policy</strong> → One of the six every tenant should have</p>
+  </div>
+
+  <p>This is the baseline. Everything builds from here.</p>
+
+  <figure style="margin: 2.5rem 0; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255,255,255,0.07);">
+    <img src="images/CALayers.png" alt="Conditional Access layered approach: Foundations, Baseline, Apps/Devices, P2 and ZTCA" style="width: 100%; display: block;">
+  </figure>
+
+  <!-- SECTION 2 -->
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">User Exclusions — The Easy Part</span>
+  </div>
+
+  <p>First stop: excluded groups.</p>
+
+  <p><strong>Breakglass accounts are excluded.</strong> This is intentional and aligned with best practice — see <a href="https://medium.com/@jhope188/securecloudfoundation-not-another-breakglass-b631b5e95e05" target="_blank">Not Another Breakglass</a>. This is one of a couple policies to include the CA — GlobalExclusions group. You have to be careful that you don't treat this like breakglass and end up adding one person to a group and then they bypass everything.</p>
+
+  <p>Next: <strong>directory synchronization accounts</strong>.</p>
+
+  <p>Most hybrid environments use Microsoft Entra Connect to sync on-prem identities to Entra. If that sync identity is forced through MFA, synchronization breaks. This approach was reinforced the first time I ran Maester — specifically test <a href="https://maester.dev/docs/tests/MT.1020/" target="_blank">MT.1020</a>, which recommends excluding service accounts like the Microsoft Entra Connect Sync Account from Conditional Access policies.</p>
+
+  <p>Instead of manually hunting sync accounts in every tenant, I standardized the exclusion. Is direct assignment cleaner? Possibly. Does this approach prevent human error across multiple tenants? Absolutely.</p>
+
+  <p>A great piece of feedback I received came from <a href="https://github.com/jkerai1/" target="_blank">Jay</a>:</p>
+
+  <div class="feedback-block">
+    <div class="feedback-avatar">J</div>
+    <div>
+      <div class="feedback-name">Jay · GitHub: jkerai1</div>
+      <div class="feedback-text">"You shouldn't need to exclude the directory synchronization account anymore — as long as Entra Connect is up to date."</div>
+    </div>
+  </div>
+
+  <p>That stopped me for a minute. Because for years, excluding the sync account from Conditional Access was considered standard practice. So what changed?</p>
+
+  <!-- SECTION 3 -->
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">What Changed in Version 2.5.76.0</span>
+  </div>
+
+  <div class="callout updated">
+    <div class="callout-label">🔄 Updated Content</div>
+    <p>Starting with Entra Connect version <strong>2.5.76.0</strong>, Microsoft moved synchronization to Application-Based Authentication (ABA) by default when upgrading from legacy configurations. <a href="https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/reference-connect-version-history#25760" target="_blank">Reference: Microsoft Learn</a></p>
+  </div>
+
+  <p>This means sync no longer relies on a username/password user account. It uses a service principal instead. Authentication is certificate-based, non-interactive, and <strong>not subject to user-targeted Conditional Access policies</strong>.</p>
+
+  <p>In other words: <em>the original reason we excluded the directory sync user may no longer apply in modern deployments</em>. This needs to be evaluated on a case-by-case basis.</p>
+
+  <!-- SECTION 4 -->
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">The Real Issue: Missing Service Principal</span>
+  </div>
+
+  <p>The policy failed because one of four excluded service principals didn't exist in the tenant. That's when the troubleshooting began.</p>
+
+  <p>Here are the excluded apps — use <a href="https://aka.ms/AppNames" target="_blank">aka.ms/AppNames</a> to find app names by GUID:</p>
+
+  <div class="code-block">
+    <div class="code-label">excludeApplications — Policy Config</div>
+    <pre><span class="comment">// Excluded from ACME — GLOBAL — GRANT — MFA — All-Users</span>
+"excludeApplications": [
+  "00000012-0000-0000-c000-000000000000", <span class="comment">// Microsoft Rights Management Services</span>
+  "d4ebce55-015a-49b5-a083-c84d1797ae8c", <span class="comment">// Microsoft Intune Enrollment</span>
+  "372140e0-b3b7-4226-8ef9-d57986796201", <span class="comment">// Azure Windows VM Sign-In</span>
+  "0000000a-0000-0000-c000-000000000000"   <span class="comment">// Microsoft Intune (Legacy — Removed)</span>
+]</pre>
+  </div>
+
+  <table class="app-table">
+    <thead>
+      <tr>
+        <th>Application</th>
+        <th>Purpose</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <span class="app-name">Microsoft Rights Management Services</span>
+          <span class="app-guid">00000012-0000-0000-c000-000000000000</span>
+        </td>
+        <td>Encryption, IRM, sensitivity label enforcement</td>
+        <td><span class="status-badge status-keep">Keep</span></td>
+      </tr>
+      <tr>
+        <td>
+          <span class="app-name">Microsoft Intune Enrollment</span>
+          <span class="app-guid">d4ebce55-015a-49b5-a083-c84d1797ae8c</span>
+        </td>
+        <td>Azure AD Join, Autopilot, Company Portal, MDM bootstrap</td>
+        <td><span class="status-badge status-review">Review</span></td>
+      </tr>
+      <tr>
+        <td>
+          <span class="app-name">Azure Windows VM Sign-In</span>
+          <span class="app-guid">372140e0-b3b7-4226-8ef9-d57986796201</span>
+        </td>
+        <td>RDP to Entra-joined Azure VMs, AVD flows</td>
+        <td><span class="status-badge status-review">Review</span></td>
+      </tr>
+      <tr>
+        <td>
+          <span class="app-name">Microsoft Intune</span>
+          <span class="app-guid">0000000a-0000-0000-c000-000000000000</span>
+        </td>
+        <td>Device policy sync, compliance, app deployment (post-enrollment)</td>
+        <td><span class="status-badge status-remove">Removed</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 5 -->
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">Microsoft Rights Management Services</span>
+  </div>
+
+  <p>If you're using Purview sensitivity labels, this exclusion is often required. Encryption and IRM flows authenticate through this service principal, and blocking it with MFA can break label enforcement silently.</p>
+
+  <p>Tony Redmond has an excellent breakdown: <a href="https://office365itpros.com/2024/02/12/conditional-access-mfa-email/" target="_blank">office365itpros.com — Conditional Access MFA &amp; Email</a></p>
+
+  <!-- SECTION 6 -->
+  <div class="section-marker">
+    <span class="section-num">06</span>
+    <span class="section-title">Microsoft Intune Enrollment</span>
+  </div>
+
+  <p>This is the operationally necessary exclusion and the one that caused my failure. Intune Enrollment handles:</p>
+
+  <p>Azure AD Join · Autopilot · Company Portal enrollment · Initial MDM bootstrap</p>
+
+  <p>If MFA blocks this flow, <strong>enrollment fails</strong>. This was the missing service principal in my tenant. In my case, the principal had never been instantiated — it simply didn't exist.</p>
+
+  <div class="callout updated">
+    <div class="callout-label">🔄 Updated — CIS Guidance</div>
+    <p><a href="https://www.linkedin.com/in/henrik-piecha/" target="_blank">Henrik Piecha</a> pointed out that updated CIS guidance now leans in the opposite direction — specifically recommending <strong>stronger protection</strong> of Microsoft Intune Enrollment, including sign-in frequency controls.<br><br>
+    Reference: <a href="https://www.tenable.com/audits/items/CIS_Microsoft_365_Foundations_v5.0.0_L1_E3.audit:ae279571f175251c280c8ea1e670c846" target="_blank">CIS Microsoft 365 Foundations v5.0.0</a></p>
+  </div>
+
+  <p>I've previously excluded Intune Enrollment due to legacy workflows, hybrid join complexity, Autopilot edge cases, and troubleshooting scenarios. But guidance evolves. Platforms mature. And what once required exclusion may now deserve intentional hardening instead.</p>
+
+  <!-- SECTION 7 -->
+  <div class="section-marker">
+    <span class="section-num">07</span>
+    <span class="section-title">Microsoft Intune — Removed</span>
+  </div>
+
+  <p>This handles post-enrollment traffic: device policy sync, compliance checks, app deployment, configuration updates. This exclusion is legacy in my environment. Honestly? <strong>I would remove this today unless absolutely necessary.</strong></p>
+
+  <p>In hindsight, this was likely added during troubleshooting. I suspect many environments have similar historical exclusions that were never revisited. The more critical exclusion is Intune Enrollment above.</p>
+
+  <!-- SECTION 8 -->
+  <div class="section-marker">
+    <span class="section-num">08</span>
+    <span class="section-title">Azure Windows VM Sign-In</span>
+  </div>
+
+  <p>Used when RDP-ing into Entra-joined Azure VMs, using the Azure AD Login extension, or in certain AVD flows. Originally excluded after running into MFA issues when testing Entra-joined VMs. <a href="https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-windows" target="_blank">Microsoft documentation</a> even suggests excluding it in some scenarios.</p>
+
+  <p>Was it architecturally ideal? Probably not. But it fixed the problem quickly.</p>
+
+  <!-- SECTION 9 -->
+  <div class="section-marker">
+    <span class="section-num">09</span>
+    <span class="section-title">The Bigger Design Question</span>
+  </div>
+
+  <p>Excluding an app is easy. But is it the right approach? I explored whether a device filter would be cleaner:</p>
+
+  <div class="code-block">
+    <div class="code-label">Device Filter — Alternative Approach</div>
+    <pre>device.trustType -ne "AzureAD"</pre>
+  </div>
+
+  <p>The idea: instead of excluding Azure Windows VM Sign-In from the policy, conditionally allow only trusted, Entra-joined devices and keep everything else enforced. Architecturally, that feels more mature than a blanket exclusion.</p>
+
+  <p>However, <a href="https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-windows?pivots=identity-extension-vm" target="_blank">Microsoft documentation</a> introduces an important limitation:</p>
+
+  <div class="callout warning">
+    <div class="callout-label">Platform Limitation</div>
+    <span class="callout-icon">⚠️</span>
+    <p>When a Conditional Access policy requires a compliant device for the Azure Windows VM Sign-In resource and the connection is initiated from a <strong>Windows Server device</strong>, compliance evaluation isn't supported. OS-based filtering becomes unreliable for this flow.</p>
+  </div>
+
+  <p>What looked like a cleaner alternative now has technical constraints. It's not just about what we <em>want</em> Conditional Access to enforce — it's about what the platform can realistically evaluate for that specific resource.</p>
+
+  <div class="pull-quote">
+    "Not all exclusions are equal. And not all Conditional Access controls apply uniformly across every workload."
+  </div>
+
+  <!-- SECTION 10 -->
+  <div class="section-marker">
+    <span class="section-num">10</span>
+    <span class="section-title">The Swiss Cheese Effect</span>
+  </div>
+
+  <p>Fabian Bader wrote an excellent article on FOCI (Family of Client IDs): <a href="https://cloudbrothers.info/en/conditional-access-bypasses/" target="_blank">cloudbrothers.info — Conditional Access Bypasses</a></p>
+
+  <p>Some applications are part of token families. <strong>Excluding one can implicitly allow others.</strong> That creates a Swiss cheese effect in Conditional Access — each exclusion punches a hole, and holes compound.</p>
+
+  <div class="callout">
+    <div class="callout-label">Good News</div>
+    <span class="callout-icon">✅</span>
+    <p>Azure Windows VM Sign-In is <strong>not FOCI-based</strong>. But the lesson remains: one exclusion can create multiple unintended allowances. Before excluding any app, check: <a href="https://entrascopes.com/" target="_blank">entrascopes.com</a></p>
+  </div>
+
+  <p>For a deep dive on the topic, <a href="https://www.youtube.com/watch?v=yYQBeDFEkps&list=PLuPHrE2HRFpOpFWfE0XLE3LsuMh0_8-Kr&index=97" target="_blank">this video</a> covers it well. I've also added the relevant links to my <a href="https://github.com/Jhope188/ConditionalAccessPolicies/blob/main/README.md" target="_blank">CA Repo on GitHub</a>.</p>
+
+  <!-- SECTION 11 — To recreate service principals -->
+  <div class="section-marker">
+    <span class="section-num">11</span>
+    <span class="section-title">Recreating Missing Service Principals</span>
+  </div>
+
+  <p>If any of the service principals above don't exist in your tenant, run the script below to instantiate them. I've included all potential apps just in case:</p>
+
+  <div class="code-block">
+    <div class="code-label">PowerShell — Create Missing Service Principals</div>
+    <pre>Connect-MgGraph -Scopes "Application.ReadWrite.All"
+
+<span class="comment"># Microsoft Intune Enrollment</span>
+New-MgServicePrincipal -AppId "d4ebce55-015a-49b5-a083-c84d1797ae8c"
+
+<span class="comment"># Azure Windows VM Sign-In</span>
+New-MgServicePrincipal -AppId "372140e0-b3b7-4226-8ef9-d57986796201"
+
+<span class="comment"># Microsoft Rights Management Services</span>
+New-MgServicePrincipal -AppId "00000012-0000-0000-c000-000000000000"</pre>
+  </div>
+
+  <hr class="divider">
+
+  <!-- CLOSING -->
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">Final Thought</span>
+  </div>
+
+  <p>"MFA for All Users" sounds simple. It isn't.</p>
+
+  <p>What this experience reinforced:</p>
+
+  <p><strong>Global policies are foundations, not finished architecture.</strong> Exclusions accumulate over time. Service principals evolve. Documentation changes. And yesterday's quick fix can become today's blind spot.</p>
+
+  <p>Conditional Access isn't about making MFA universal. It's about making it <em>contextual</em>.</p>
+
+  <p>The real maturity in identity isn't enabling MFA everywhere. It's continuously reevaluating why you excluded something in the first place. Because in identity, <strong>every exception tells a story</strong>. And eventually, you have to revisit it.</p>
+
+  <p>With Audience Reporting in Conditional Access, we now have far better visibility into how policies affect users and workloads. That makes testing safer, analysis faster, and decisions more informed.</p>
+
+  <p>Every exclusion should be questioned. Every legacy workaround should be retested. Because in identity architecture, the right answer five years ago might not be the right answer today.</p>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on Conditional Access, M365 security, and the real-world thinking behind modern identity architecture.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>
