@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who Did You Let Into Your House? — Inforcer Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem;
+    border-radius: 8px; text-decoration: none;
+    font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+    z-index: 50; backdrop-filter: blur(8px);
+    transition: background 0.2s; min-height: 44px;
+    display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem max(40px, calc(50vw - 370px)) 4rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,194,179,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,92,53,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--teal); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 560px; font-size: 1.1rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: max(40px, calc(50vw - 370px));
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); opacity: 0; animation: fadeUp 0.6s 1s forwards;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--teal); animation: pulse 2s infinite; }
+
+  .content { max-width: 820px; width: 100%; margin: 0 auto; padding: 0 40px 8rem; }
+  @media (max-width: 900px) { .content { padding: 0 28px 6rem; } }
+  @media (max-width: 600px) { .content { padding: 0 18px 4rem; } }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.5;
+    color: var(--off-white); border-left: 3px solid var(--teal);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4rem 0 1.5rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.25; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout.danger { border-color: rgba(255,92,53,0.2); }
+  .callout.danger::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .callout.warn { border-color: rgba(245,200,66,0.2); }
+  .callout.warn::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .callout.danger .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: #f5c842; }
+
+  .persona-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: rgba(0,194,179,0.1);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .persona-card { background: var(--card-bg); padding: 1.5rem; position: relative; }
+  .persona-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .persona-card.trusted::before { background: var(--teal); }
+  .persona-card.vendor::before  { background: #f5c842; }
+  .persona-card.stranger::before{ background: var(--accent); }
+  .persona-emoji { font-size: 1.75rem; margin-bottom: 0.75rem; display: block; }
+  .persona-label {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 0.4rem;
+  }
+  .persona-card.trusted  .persona-label { color: var(--teal); }
+  .persona-card.vendor   .persona-label { color: #f5c842; }
+  .persona-card.stranger .persona-label { color: var(--accent); }
+  .persona-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+    letter-spacing: 0.05em; color: var(--off-white); margin-bottom: 0.6rem;
+  }
+  .persona-desc { font-size: 0.88rem; color: var(--warm-gray); line-height: 1.6; margin: 0 0 0.75rem; }
+  .persona-entra {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+    color: var(--teal-dim); padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .table-wrap { margin: 2.5rem 0; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.1); }
+  .table-label {
+    background: rgba(0,194,179,0.07); padding: 0.75rem 1.25rem;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+  }
+  table { width: 100%; border-collapse: collapse; background: var(--card-bg); font-size: 0.88rem; }
+  thead tr { background: rgba(0,194,179,0.05); }
+  th {
+    padding: 0.9rem 1rem; text-align: left; font-size: 0.68rem;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal-dim);
+    font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+    font-family: 'DM Sans', sans-serif;
+  }
+  td {
+    padding: 0.9rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a09890; vertical-align: top; line-height: 1.55;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,194,179,0.03); }
+  td strong { color: var(--off-white); }
+  .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px; white-space: nowrap;
+  }
+  .badge {
+    display: inline-block; font-size: 0.65rem; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 2px; font-weight: 500;
+  }
+  .badge-ok     { background: rgba(0,194,179,0.15); color: var(--teal); }
+  .badge-warn   { background: rgba(245,200,66,0.12); color: #f5c842; }
+  .badge-danger { background: rgba(255,92,53,0.15);  color: var(--accent); }
+
+  .defense-stack { margin: 3rem 0; display: flex; flex-direction: column; gap: 0; }
+  .layer {
+    padding: 0.9rem 1.5rem; border: 1px solid rgba(0,194,179,0.1);
+    display: flex; align-items: center; gap: 1rem;
+    transition: background 0.2s; cursor: default;
+  }
+  .layer:hover { background: rgba(0,194,179,0.05); }
+  .layer:first-child { border-radius: 4px 4px 0 0; }
+  .layer:last-child  { border-radius: 0 0 4px 4px; }
+  .layer-icon { font-size: 1.2rem; min-width: 2rem; text-align: center; }
+  .layer-text { font-size: 0.9rem; color: #a0998f; }
+  .layer-text strong { color: var(--off-white); display: block; font-size: 0.95rem; }
+  .layer-bar { margin-left: auto; height: 3px; border-radius: 2px; background: var(--teal); opacity: 0.4; }
+
+  .policy-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(0,194,179,0.1);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .policy-card { background: var(--card-bg); padding: 1.5rem; position: relative; }
+  .policy-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .policy-card.p1::before { background: linear-gradient(90deg, var(--teal), transparent); }
+  .policy-card.p2::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .policy-name {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); font-weight: 500; margin-bottom: 0.4rem;
+  }
+  .policy-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.25rem;
+    letter-spacing: 0.04em; color: var(--off-white); margin-bottom: 1rem;
+  }
+  .policy-list { list-style: none; padding: 0; margin: 0 0 1rem; }
+  .policy-list li {
+    font-size: 0.88rem; color: var(--warm-gray); padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: flex-start; gap: 0.6rem; line-height: 1.5;
+  }
+  .policy-list li:last-child { border-bottom: none; }
+  .policy-list li::before { content: '→'; color: var(--teal-dim); font-size: 0.8rem; margin-top: 1px; flex-shrink: 0; }
+  .policy-grant {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+    padding: 0.6rem 0.75rem; border-radius: 2px;
+  }
+  .p1 .policy-grant { background: rgba(0,194,179,0.08); color: var(--teal); }
+  .p2 .policy-grant { background: rgba(245,200,66,0.08); color: #f5c842; }
+
+  .checklist { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .check-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1rem 1.25rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); transition: background 0.2s;
+  }
+  .check-item:first-child { border-radius: 4px 4px 0 0; }
+  .check-item:last-child  { border-radius: 0 0 4px 4px; }
+  .check-item:not(:last-child) { border-bottom: none; }
+  .check-item:hover { background: rgba(0,194,179,0.04); }
+  .check-box {
+    width: 18px; height: 18px; border: 2px solid var(--teal-dim);
+    border-radius: 3px; flex-shrink: 0; margin-top: 3px; opacity: 0.5;
+  }
+  .check-text { font-size: 0.92rem; color: #a09890; line-height: 1.65; }
+  .check-text strong { display: block; color: var(--off-white); margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+  .series-nav {
+    margin-top: 5rem; padding: 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .series-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .series-nav-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .series-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .series-post {
+    display: flex; gap: 1rem; align-items: center;
+    padding: 0.6rem 0.75rem; border-radius: 3px;
+    font-size: 0.9rem; color: var(--warm-gray);
+  }
+  .series-post.current { background: rgba(0,194,179,0.07); color: var(--off-white); font-weight: 500; }
+  .series-post.upcoming { color: rgba(176,169,159,0.45); }
+  .series-post-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    color: var(--teal-dim); min-width: 1.5rem; opacity: 0.6;
+  }
+  .series-post.current .series-post-num { opacity: 1; color: var(--teal); }
+
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white);
+  }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  @media (max-width: 640px) {
+    .persona-grid { grid-template-columns: 1fr; }
+    .policy-grid  { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 18px 3rem; }
+    .scroll-hint { left: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<section class="hero">
+  <div class="hero-label">Identity Security Series — Part 4 of 5</div>
+  <h1>Who Did You<span>Let In?</span></h1>
+  <p class="hero-sub">Guest identity in Microsoft Entra is more complicated than most tenants realize. The problem isn't getting guests in. It's knowing who they actually are, whether you still trust them, and whether anyone is responsible for showing them the door.</p>
+  <div class="hero-meta">
+    <span>Entra External ID</span>
+    <span>June 9, 2026</span>
+    <span>10 min read</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<main class="content">
+
+  <p>Think about the different people who show up at your front door and how differently you treat each one. Your best friend walks in without knocking. A contractor arrives in a marked van with a work order. A stranger knocks and you look through the peephole before deciding. You already make risk-based trust decisions every single day.</p>
+
+  <p>The problem is most Entra tenants don't. Once a guest account lands in the directory, it's often treated the same regardless of who they are, where they came from, how strong their home tenant's security posture actually is, or whether they should still have access at all.</p>
+
+  <div class="pull-quote">
+    "Getting guests in is easy. Knowing what you're actually trusting when you let them in is the part most admins skip."
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">The Three Guest Personas</span>
+  </div>
+
+  <p>Before any configuration discussion, the trust model needs to be right. Guest accounts in Entra map directly to the kind of risk decisions you make at your front door every day.</p>
+
+  <div class="persona-grid">
+    <div class="persona-card trusted">
+      <span class="persona-emoji">🤝</span>
+      <div class="persona-label">Trusted Partner</div>
+      <div class="persona-title">Your Best Friend</div>
+      <p class="persona-desc">Known relationship. Strong security posture on their side. You've configured explicit inbound trust because you've verified what they enforce at home.</p>
+      <div class="persona-entra">B2B Collaboration Member · B2B Direct Connect</div>
+    </div>
+    <div class="persona-card vendor">
+      <span class="persona-emoji">🚐</span>
+      <div class="persona-label">Credential-Based Trust</div>
+      <div class="persona-title">The Contractor</div>
+      <p class="persona-desc">You let them in because of what they present. You're trusting the credential, not the person. And you don't know what's inside the van.</p>
+      <div class="persona-entra">B2B Collaboration Guest · Service Provider (GDAP)</div>
+    </div>
+    <div class="persona-card stranger">
+      <span class="persona-emoji">❓</span>
+      <div class="persona-label">No Prior Trust</div>
+      <div class="persona-title">The Stranger</div>
+      <p class="persona-desc">No organizational backing. No home tenant to trust. Personal email, OTP verification only. Maximum scrutiny required before anything.</p>
+      <div class="persona-entra">Other External Users · OTP Guests</div>
+    </div>
+  </div>
+
+  <p>The challenge is that Entra surfaces <strong>six distinct external user types</strong>, and they behave fundamentally differently in how they authenticate, where MFA completes, and what CA policy controls are safe to apply. Most tenants treat all six identically. That's where the gaps start.</p>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">Not All Guests Are the Same</span>
+  </div>
+
+  <p>When you configure a Conditional Access policy and select "Guest or external users," the portal gives you six checkboxes. Most admins check all of them and move on. That's a mistake. The populations behind those checkboxes behave fundamentally differently, and applying the wrong grant control <strong>silently blocks users instead of prompting them for MFA</strong>.</p>
+
+  <div class="table-wrap">
+    <div class="table-label">Entra Guest Types — CA Policy Reference</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Portal Checkbox Label</th>
+          <th>Graph API Value</th>
+          <th>Auth Strength Safe?</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>B2B collaboration guest users</strong></td>
+          <td><span class="mono">b2bCollaborationGuest</span></td>
+          <td><span class="badge badge-warn">⚠ Mixed</span></td>
+          <td>Heterogeneous — contains both Entra-backed AND non-Entra guests (Google, OTP, SAML). Use basic <span class="mono">mfa</span> only.</td>
+        </tr>
+        <tr>
+          <td><strong>B2B collaboration member users</strong></td>
+          <td><span class="mono">b2bCollaborationMember</span></td>
+          <td><span class="badge badge-ok">✓ Safe</span></td>
+          <td>Entra-backed only. Auth strength safe.</td>
+        </tr>
+        <tr>
+          <td><strong>B2B direct connect users</strong></td>
+          <td><span class="mono">b2bDirectConnectUser</span></td>
+          <td><span class="badge badge-ok">✓ Safe</span></td>
+          <td>Entra-backed only. Auth strength safe. Requires inbound trust configured — else blocked entirely, no prompt, no fallback.</td>
+        </tr>
+        <tr>
+          <td><strong>Local guest users</strong></td>
+          <td><span class="mono">internalGuest</span></td>
+          <td><span class="badge badge-ok">✓ Safe</span></td>
+          <td>Lives in your directory. Credentials managed by your tenant. Full auth strength support.</td>
+        </tr>
+        <tr>
+          <td><strong>Service provider users</strong></td>
+          <td><span class="mono">serviceProvider</span></td>
+          <td><span class="badge badge-warn">⚠ Conditional</span></td>
+          <td>GDAP/CSP partners. MFA always from home tenant. Auth strength applicable — but only if partner uses native Entra MFA. DUO/Custom Controls will block.</td>
+        </tr>
+        <tr>
+          <td><strong>Other external users</strong></td>
+          <td><span class="mono">otherExternalUser</span></td>
+          <td><span class="badge badge-danger">✗ Not Supported</span></td>
+          <td>Non-Entra IdP only. Auth strength NOT supported. Basic <span class="mono">mfa</span> only.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">The Credential Trust Problem</span>
+  </div>
+
+  <p>This is where the contractor analogy gets sharp. When you enable <strong>Trust MFA from home tenant</strong> in Cross-Tenant Access Settings, you're not just trusting the person. You're trusting the entire security posture of the tenant that issued their credential. The van looks right. The uniform looks right. But you don't know what's inside.</p>
+
+  <div class="defense-stack">
+    <div class="layer">
+      <span class="layer-icon">✅</span>
+      <div class="layer-text"><strong>What you think you're trusting</strong>Partner completed MFA. Their claim passes cross-tenant. User gets seamless access.</div>
+      <div class="layer-bar" style="width:80px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">⚠️</span>
+      <div class="layer-text"><strong>What you're actually trusting</strong>Their tenant's MFA enforcement. Which may allow SMS. Which may be inconsistently applied across their user population.</div>
+      <div class="layer-bar" style="width:55px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🚫</span>
+      <div class="layer-text"><strong>What breaks silently</strong>FIDO2, WHfB, and CBA are home-tenant-only methods for external users. You cannot enforce phishing-resistant MFA from the resource tenant side. Full stop.</div>
+      <div class="layer-bar" style="width:35px"></div>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <span class="callout-label">Critical — Custom Controls Gap</span>
+    <span class="callout-icon">🚫</span>
+    <p><strong>Custom Controls are not trusted cross-tenant.</strong> If a partner's home tenant uses DUO, RSA, or Silverfort via Custom Controls, their MFA claim cannot pass to the resource tenant. The user completes MFA at home and still gets blocked at your door. No prompt, no meaningful error message. This is the most common source of GDAP access failures in MSP environments and almost nobody plans for it in advance.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">The Two-Policy Reality</span>
+  </div>
+
+  <p>Most tenants run one guest CA policy. The right answer is two. Because <span class="mono">b2bCollaborationGuest</span> is a mixed population — Entra-backed AND non-Entra guests all land in the same bucket — applying authentication strength to it silently blocks non-Entra guests instead of prompting them for MFA.</p>
+
+  <div class="policy-grid">
+    <div class="policy-card p1">
+      <div class="policy-name">Policy 1 — Entra-Backed</div>
+      <div class="policy-title">Authentication Strength</div>
+      <ul class="policy-list">
+        <li>B2B collaboration member users</li>
+        <li>B2B direct connect users</li>
+        <li>Local guest users</li>
+        <li>Service provider users *</li>
+      </ul>
+      <div class="policy-grant">Grant: Modern MFA + TAP (WHfB, FIDO2, CBA, TAP)</div>
+    </div>
+    <div class="policy-card p2">
+      <div class="policy-name">Policy 2 — Mixed Population</div>
+      <div class="policy-title">Basic MFA Only</div>
+      <ul class="policy-list">
+        <li>B2B collaboration guest users</li>
+        <li>Other external users</li>
+      </ul>
+      <div class="policy-grant">Grant: Basic mfa — NOT authentication strength</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-label">MSP / CSP Environments</span>
+    <span class="callout-icon">⚠️</span>
+    <p>If any of your GDAP partners use DUO, RSA, Silverfort, or any Custom Controls MFA in their home tenant, exclude <span class="mono">serviceProvider</span> from authentication strength policies entirely. Scope the exclusion to specific known partner tenant IDs, not <span class="mono">AllExternalTenants</span>. This is the least-privilege approach and the one Microsoft documents in the GDAP FAQ.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">The Lifecycle Problem</span>
+  </div>
+
+  <p>Your best friend still has a key to your house from a project three years ago. You forgot they had it. They forgot they had it. But technically, they could still walk in.</p>
+
+  <p>This is the stale guest problem, and it exists in almost every tenant. The project ended, the contract finished, the partnership went quiet — but the accounts stayed. No one owns the offboarding. Nobody is watching the door after the visit ends.</p>
+
+  <p>The questions most organizations cannot answer: Who invited this guest? Does that person still work here? Is there a process for cleanup when the relationship ends? In most tenants, at least one of those answers is unknown.</p>
+
+  <div class="callout">
+    <span class="callout-label">Identity Governance</span>
+    <span class="callout-icon">🔄</span>
+    <p><strong>Entra ID Governance access reviews</strong> are the mechanism for automating the "does this person still need access?" question. Scoped to guest accounts, they require a sponsor or manager to periodically confirm access and auto-revoke on no response. If you're not running these, stale guests are accumulating right now. Set an expiration policy. Define who reviews it. Own the process for showing guests out when the relationship ends.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">Practical Checklist</span>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Audit Cross-Tenant Access Settings</strong>
+        Most tenants have never touched these from default. By default MFA and device claims from external orgs are not trusted — that's actually the safer starting point. Change it deliberately per partner, not globally.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Implement the two-policy split</strong>
+        Basic MFA for the mixed population (b2bCollaborationGuest + otherExternalUser). Authentication strength for Entra-backed types. Stop applying one policy across all six types.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>If you're an MSP: audit GDAP partners for Custom Controls MFA</strong>
+        DUO, RSA, Silverfort via Custom Controls will silently block partner technicians. Check this before your next partner onboards. Exclude serviceProvider from auth strength and scope to known partner tenant IDs.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Set up Entra ID Governance access reviews for guests</strong>
+        Scope to guest accounts. Require a sponsor to confirm access. Auto-revoke on no response. This is how stale guests get cleaned up at scale.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Set guest expiration policies</strong>
+        Perpetual guest access is a governance failure waiting to surface. Define a reasonable window tied to the nature of the relationship and require active renewal.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Know your guest population by type, not just by count</strong>
+        Export and sort by guestOrExternalUserTypes. Knowing you have 400 guests is far less useful than knowing how many are Entra-backed vs OTP vs Google federation and whether each population is covered by the right policy.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>The people you let into your house aren't all the same, and your security posture for external identities shouldn't treat them like they are. Guest identity is where the "identity is the perimeter" principle gets stress-tested by people entirely outside your control.</p>
+
+  <p>Getting this right means understanding what type of credential you're actually trusting, whether that trust is still warranted given the partner's security posture, and whether anyone owns the process for showing guests the door when the relationship ends.</p>
+
+  <p>This connects directly to everything else in this series. The CA policies that govern your own users have gaps when external identities enter the picture. The authentication methods you've invested in for your workforce don't automatically carry over. And groups, which we'll cover in the final post, are where guest access gets scoped and where the gaps compound when membership isn't maintained.</p>
+
+  <div class="series-nav">
+    <div class="series-nav-label">Entra Identity Foundations — Series</div>
+    <div class="series-posts">
+      <div class="series-post">
+        <span class="series-post-num">01</span>
+        <span>Identity Is Everything: What ITDR and Your Front Door Have in Common</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">02</span>
+        <span>Authentication Methods: The Spectrum from Password to Passkey</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">03</span>
+        <span>Passkeys: Security Only Works If People Will Actually Use It</span>
+      </div>
+      <div class="series-post current">
+        <span class="series-post-num">04</span>
+        <span>Who Did You Let Into Your House? Guest Identity in Microsoft Entra</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">05</span>
+        <span>Groups as Connective Tissue — and a handoff to the CA Foundations series</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Authentication Methods: The Spectrum — Inforcer Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem;
+    border-radius: 8px; text-decoration: none;
+    font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+    z-index: 50; backdrop-filter: blur(8px);
+    transition: background 0.2s; min-height: 44px;
+    display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 6rem max(40px, calc(50vw - 410px)) 4rem;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,194,179,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,92,53,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--teal); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 580px; font-size: 1.1rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem; flex-wrap: wrap;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem;
+    left: max(40px, calc(50vw - 410px));
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); opacity: 0; animation: fadeUp 0.6s 1s forwards;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--teal); animation: pulse 2s infinite; }
+
+  /* ── CONTENT ── */
+  .content {
+    max-width: 820px; width: 100%;
+    margin: 0 auto; padding: 0 40px 8rem;
+  }
+  @media (max-width: 900px) { .content { padding: 0 28px 6rem; } }
+  @media (max-width: 600px) { .content { padding: 0 18px 4rem; } }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.5;
+    color: var(--off-white); border-left: 3px solid var(--teal);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+
+  /* ── SECTION MARKERS ── */
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4rem 0 1.5rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.25; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  /* ── BODY COPY ── */
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout.danger { border-color: rgba(255,92,53,0.2); }
+  .callout.danger::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .callout.warn { border-color: rgba(245,200,66,0.2); }
+  .callout.warn::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .callout.ok { border-color: rgba(0,194,179,0.3); }
+  .callout.ok::before { background: linear-gradient(90deg, var(--teal), transparent); }
+  .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .callout.danger .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: #f5c842; }
+
+  /* ── DEFENSE STACK (reused from post 1) ── */
+  .defense-stack { margin: 3rem 0; display: flex; flex-direction: column; gap: 0; }
+  .layer {
+    padding: 0.9rem 1.5rem; border: 1px solid rgba(0,194,179,0.1);
+    display: flex; align-items: center; gap: 1rem;
+    transition: background 0.2s; cursor: default;
+  }
+  .layer:hover { background: rgba(0,194,179,0.05); }
+  .layer:first-child { border-radius: 4px 4px 0 0; }
+  .layer:last-child  { border-radius: 0 0 4px 4px; }
+  .layer-icon { font-size: 1.2rem; min-width: 2rem; text-align: center; }
+  .layer-text { font-size: 0.9rem; color: #a0998f; flex: 1; }
+  .layer-text strong { color: var(--off-white); display: block; font-size: 0.95rem; }
+  .layer-bar { margin-left: auto; height: 3px; border-radius: 2px; background: var(--teal); opacity: 0.4; flex-shrink: 0; }
+  .layer-badge {
+    margin-left: auto; flex-shrink: 0;
+    font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.25rem 0.6rem; border-radius: 2px; font-weight: 500; white-space: nowrap;
+  }
+  .badge-safe    { background: rgba(0,194,179,0.15); color: var(--teal); }
+  .badge-warn    { background: rgba(245,200,66,0.12); color: #f5c842; }
+  .badge-danger  { background: rgba(255,92,53,0.15);  color: var(--accent); }
+  .badge-neutral { background: rgba(176,169,159,0.12); color: var(--warm-gray); }
+
+  /* ── SPECTRUM TABLE ── */
+  .table-wrap { margin: 2.5rem 0; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.1); overflow-x: auto; }
+  .table-label {
+    background: rgba(0,194,179,0.07); padding: 0.75rem 1.25rem;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+    white-space: nowrap;
+  }
+  table { width: 100%; border-collapse: collapse; background: var(--card-bg); font-size: 0.88rem; min-width: 560px; }
+  thead tr { background: rgba(0,194,179,0.05); }
+  th {
+    padding: 0.9rem 1rem; text-align: left; font-size: 0.68rem;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal-dim);
+    font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+    font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  }
+  td {
+    padding: 0.85rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a09890; vertical-align: top; line-height: 1.55;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,194,179,0.03); }
+  td strong { color: var(--off-white); }
+  .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px; white-space: nowrap;
+  }
+  .badge {
+    display: inline-block; font-size: 0.65rem; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 2px;
+    font-weight: 500; white-space: nowrap;
+  }
+  .badge-ok     { background: rgba(0,194,179,0.15); color: var(--teal); }
+  .badge-yellow { background: rgba(245,200,66,0.12); color: #f5c842; }
+  .badge-red    { background: rgba(255,92,53,0.15);  color: var(--accent); }
+
+  /* ── PHISHING LINE ── */
+  .phish-divider {
+    display: flex; align-items: center; gap: 1rem;
+    margin: 0; padding: 0.75rem 1rem;
+    background: rgba(255,92,53,0.06);
+    border-top: 1px dashed rgba(255,92,53,0.35);
+    border-bottom: 1px dashed rgba(255,92,53,0.35);
+  }
+  .phish-divider-label {
+    font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; white-space: nowrap;
+  }
+  .phish-divider-line {
+    flex: 1; height: 1px; background: rgba(255,92,53,0.2);
+  }
+
+  /* ── MIGRATION LADDER ── */
+  .ladder { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .rung {
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    padding: 1.25rem 1.5rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); transition: background 0.2s; position: relative;
+  }
+  .rung:first-child { border-radius: 4px 4px 0 0; }
+  .rung:last-child  { border-radius: 0 0 4px 4px; }
+  .rung:not(:last-child) { border-bottom: none; }
+  .rung:hover { background: rgba(0,194,179,0.04); }
+  .rung::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+  }
+  .rung.step1::before { background: var(--accent); }
+  .rung.step2::before { background: #f5c842; }
+  .rung.step3::before { background: var(--teal); }
+  .rung-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1;
+    min-width: 2rem; text-align: center; margin-top: 2px;
+  }
+  .rung.step1 .rung-num { color: var(--accent); }
+  .rung.step2 .rung-num { color: #f5c842; }
+  .rung.step3 .rung-num { color: var(--teal); }
+  .rung-content { flex: 1; }
+  .rung-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem;
+    letter-spacing: 0.05em; color: var(--off-white); margin-bottom: 0.4rem;
+  }
+  .rung-desc { font-size: 0.9rem; color: #a09890; line-height: 1.65; margin: 0; }
+
+  /* ── SERIES NAV ── */
+  .series-nav {
+    margin-top: 5rem; padding: 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .series-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .series-nav-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .series-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .series-post {
+    display: flex; gap: 1rem; align-items: center;
+    padding: 0.6rem 0.75rem; border-radius: 3px;
+    font-size: 0.9rem; color: var(--warm-gray);
+  }
+  .series-post.current { background: rgba(0,194,179,0.07); color: var(--off-white); font-weight: 500; }
+  .series-post.upcoming { color: rgba(176,169,159,0.45); }
+  .series-post-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    color: var(--teal-dim); min-width: 1.5rem; opacity: 0.6;
+  }
+  .series-post.current .series-post-num { opacity: 1; color: var(--teal); }
+
+  /* ── CTA ── */
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white);
+  }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .hero { padding: 5rem 18px 3rem; }
+    .scroll-hint { left: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Identity Security Series — Part 2 of 5</div>
+  <h1>Authentication<span>Methods</span></h1>
+  <p class="hero-sub">Not all locks are created equal. The method you use to prove your identity determines what attacks you're vulnerable to — not just whether you're secure or not.</p>
+  <div class="hero-meta">
+    <span>Entra Authentication</span>
+    <span>May 26, 2026</span>
+    <span>9 min read</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<main class="content">
+
+  <p>In the last post we established that identity is your perimeter and MFA is the deadbolt. But we skipped over something important: not all deadbolts are the same. A combination lock, a keyed padlock, a high-security deadbolt, and a biometric lock all keep the door closed. They don't all keep a determined attacker out.</p>
+
+  <p>Authentication methods work exactly the same way. The question isn't just "do you have MFA?" It's what kind of MFA, and what does it actually fail against.</p>
+
+  <div class="pull-quote">
+    "Most organizations think they have MFA. What they actually have is the illusion of MFA — methods that stop casual attacks but fail the moment a threat actor is paying attention."
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">The Lock Analogy, Extended</span>
+  </div>
+
+  <p>In the physical world, we understand intuitively that locks have different failure modes. A padlock fails to bolt cutters. A combination lock fails to someone watching over your shoulder. A key fails when someone makes a copy. We don't treat all locks as equally secure just because they all "lock."</p>
+
+  <p>Authentication methods have the same structure. Each one fails against a specific class of attack. Understanding that isn't a technical exercise — it's the same risk judgment you already apply to your front door.</p>
+
+  <div class="defense-stack">
+    <div class="layer">
+      <span class="layer-icon">🔓</span>
+      <div class="layer-text">
+        <strong>Password only</strong>
+        The combination lock on a school locker. Anyone watching over your shoulder has everything they need. Spray it across a breach database and it works everywhere the user reused it.
+      </div>
+      <span class="layer-badge badge-danger">Fails to: phishing, spray, breach replay</span>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">📱</span>
+      <div class="layer-text">
+        <strong>SMS / Voice OTP</strong>
+        A key you can copy. The code exists somewhere in transit — the phone network — and can be intercepted. SIM swapping moves the number to an attacker's device. Real attacks, not theoretical ones.
+      </div>
+      <span class="layer-badge badge-danger">Fails to: SIM swap, SS7 intercept, real-time phishing</span>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🔢</span>
+      <div class="layer-text">
+        <strong>OATH TOTP (authenticator app codes)</strong>
+        A key stamped "Do Not Duplicate." Harder to copy, but the code is still a code. A convincing fake login page captures it in real time and replays it before it expires. Phishable.
+      </div>
+      <span class="layer-badge badge-warn">Fails to: real-time phishing, adversary-in-the-middle</span>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🔔</span>
+      <div class="layer-text">
+        <strong>Microsoft Authenticator push + number matching</strong>
+        A high-security deadbolt. Number matching broke the MFA fatigue attack — you can't approve a push you didn't initiate by accident. Still not phishing-resistant but significantly harder to abuse.
+      </div>
+      <span class="layer-badge badge-warn">Fails to: sophisticated AiTM phishing at scale</span>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🔐</span>
+      <div class="layer-text">
+        <strong>FIDO2 / Windows Hello for Business / Passkeys</strong>
+        The biometric lock. The credential is cryptographically bound to the specific origin it was created for and never leaves your device. A fake login page gets nothing useful. Cannot be phished. Full stop.
+      </div>
+      <span class="layer-badge badge-safe">Phishing-resistant</span>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">The Full Spectrum</span>
+  </div>
+
+  <p>Here's the full picture across every method Microsoft supports in Entra today. Two things to read in this table: how phishable the method is, and what the real-world friction looks like once it's deployed. The counterintuitive finding is that the most secure methods aren't always the highest friction — which matters when you're planning a migration.</p>
+
+  <div class="table-wrap">
+    <div class="table-label">Authentication Methods — Entra ID Reference</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Phishable?</th>
+          <th>SIM / Intercept Risk</th>
+          <th>User Friction</th>
+          <th>Entra Policy Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Password only</strong></td>
+          <td><span class="badge badge-red">Yes</span></td>
+          <td><span class="badge badge-neutral">N/A</span></td>
+          <td>Low to set, high to manage</td>
+          <td><span class="mono">Legacy auth</span></td>
+        </tr>
+        <tr>
+          <td><strong>SMS / Voice OTP</strong></td>
+          <td><span class="badge badge-red">Yes</span></td>
+          <td><span class="badge badge-red">Yes</span></td>
+          <td>Low</td>
+          <td><span class="mono">SMS</span></td>
+        </tr>
+        <tr>
+          <td><strong>OATH TOTP (app codes)</strong></td>
+          <td><span class="badge badge-red">Yes</span></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td>Medium</td>
+          <td><span class="mono">Software OATH token</span></td>
+        </tr>
+        <tr>
+          <td><strong>Authenticator push</strong></td>
+          <td><span class="badge badge-yellow">Reduced</span></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td>Low</td>
+          <td><span class="mono">Microsoft Authenticator</span></td>
+        </tr>
+        <tr>
+          <td><strong>Authenticator + number matching</strong></td>
+          <td><span class="badge badge-yellow">Harder</span></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td>Low</td>
+          <td><span class="mono">Microsoft Authenticator</span></td>
+        </tr>
+        <!-- PHISHING LINE -->
+        <tr style="padding:0">
+          <td colspan="5" style="padding:0; border:none;">
+            <div class="phish-divider">
+              <span class="phish-divider-label">⚠ Phishing-Resistant Line</span>
+              <span class="phish-divider-line"></span>
+              <span class="phish-divider-label">Methods below cannot be intercepted or replayed</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>CBA (Certificate-Based Auth)</strong></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td>Medium-High</td>
+          <td><span class="mono">Certificate-based authentication</span></td>
+        </tr>
+        <tr>
+          <td><strong>FIDO2 security key</strong></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td>Medium (hardware required)</td>
+          <td><span class="mono">FIDO2 security key</span></td>
+        </tr>
+        <tr>
+          <td><strong>Windows Hello for Business</strong></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td>Very low once enrolled</td>
+          <td><span class="mono">Windows Hello for Business</span></td>
+        </tr>
+        <tr>
+          <td><strong>Passkeys</strong></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td><span class="badge badge-ok">No</span></td>
+          <td>Low</td>
+          <td><span class="mono">Passkey (device-bound / synced)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">The Phishing-Resistant Line</span>
+  </div>
+
+  <p>That dividing line in the table is the most important concept in this entire post. Everything above it can be intercepted by a convincing fake login page. Everything below it cannot — and the reason is worth understanding, because it's not magic.</p>
+
+  <p>When you register a FIDO2 key or Windows Hello credential, the private key is generated on your device and never leaves it. When you authenticate, your device performs a cryptographic challenge-response that is <strong>bound to the exact origin</strong> it was created for. A fake Microsoft login page receives a challenge from a different origin. The credential refuses. The attack gets nothing useful.</p>
+
+  <p>The physical world equivalent: imagine a master key that only works on one specific door in the entire world, and the lock verifies the key is genuine before opening. You cannot trick it with a replica door. The credential knows the difference.</p>
+
+  <div class="callout ok">
+    <span class="callout-label">Phishing-Resistant — What It Actually Means</span>
+    <span class="callout-icon">🔐</span>
+    <p>Phishing-resistant authentication methods (FIDO2, WHfB, CBA, Passkeys) use <strong>asymmetric cryptography bound to the authenticating origin</strong>. The private key never leaves the device. There is no code, no token, no credential to intercept in transit. An adversary-in-the-middle attack captures nothing of value. This is fundamentally different from "harder to phish" — it is architecturally impossible to phish.</p>
+  </div>
+
+  <!-- CBA CALLOUT -->
+  <div class="callout">
+    <span class="callout-label">Certificate-Based Authentication — Quick Note</span>
+    <span class="callout-icon">📜</span>
+    <p>CBA sits in the same phishing-resistant tier as FIDO2 and WHfB and is the right answer for government, healthcare, and regulated environments already running smart card or PKI infrastructure. For most SMB and MSP environments without that foundation already in place, FIDO2 and passkeys are the more practical path. If your org issues PIV cards or has an existing PKI — CBA is worth a serious look. If it doesn't — keep moving.</p>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">The Number Matching Moment</span>
+  </div>
+
+  <p>Before we get to the migration, this one deserves its own section because it's recent, it's actionable, and it changed something real.</p>
+
+  <p>MFA fatigue attacks became a mainstream threat after a handful of high-profile breaches demonstrated the pattern: an attacker obtains a valid username and password, then hammers the target's phone with Authenticator push notifications at 2 AM until a tired or confused user approves one. Simple. Effective. Devastatingly low-tech.</p>
+
+  <div class="callout warn">
+    <span class="callout-label">MFA Fatigue — How It Works</span>
+    <span class="callout-icon">⚠️</span>
+    <p>The attacker has your credentials. They don't need your MFA code. They just need you to approve a push notification you didn't initiate. Spam enough of them and eventually someone approves one — by accident, by confusion, or by frustration. <strong>Number matching removes that attack surface entirely.</strong> The user must type a number shown on the sign-in screen into the Authenticator app. You cannot approve a push you didn't initiate because you don't have the number to type.</p>
+  </div>
+
+  <p>Microsoft enabled number matching by default across Authenticator in 2023. If your tenant predates that rollout and you haven't verified the setting, check it today. It costs nothing, requires no hardware, and eliminates one of the most common attack patterns against MFA-enabled organizations.</p>
+
+  <!-- SECTION 5 -->
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">The Config Problem Most Tenants Don't Know They Have</span>
+  </div>
+
+  <p>Here's the practitioner reality that doesn't show up in most documentation: <strong>most tenants have two places where authentication methods are configured</strong>, and they frequently contradict each other.</p>
+
+  <p>The <strong>unified Authentication Methods Policy</strong> lives under Entra ID Protection and is where all modern method configuration should happen. It gives you per-method control, group-based targeting, and a single source of truth. This is the right place to work.</p>
+
+  <p>The <strong>legacy MFA portal</strong> predates the unified policy and still exists in most tenants that predate 2022. It was the only option before the unified policy existed. Many organizations configured it years ago and haven't touched it since. The problem is that when both are active, they can silently override each other — a method you disabled in the unified policy may still be available because a legacy setting allows it, or a method you enabled isn't working because an old legacy block is still in place.</p>
+
+  <div class="callout danger">
+    <span class="callout-label">Critical — Audit Before You Migrate</span>
+    <span class="callout-icon">🚫</span>
+    <p><strong>Before you change any authentication method configuration, audit both locations.</strong> Entra Admin Center → Protection → Authentication Methods is the unified policy. The legacy portal is accessible via the old per-user MFA admin page. The migration path is to consolidate everything into the unified policy and disable the legacy settings — not manage both in parallel. Running both creates unpredictable behavior and makes troubleshooting a genuine pain. Your IT team needs to check this before any phishing-resistant rollout will be reliable.</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- MIGRATION -->
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Migration Ladder</span>
+  </div>
+
+  <p>You're not starting from zero. Most organizations have a mix — some users on SMS, some on the Authenticator app, a handful with hardware keys, and a long tail of legacy methods that nobody has cleaned up. The migration isn't a single step. It's a ladder, and the rungs matter.</p>
+
+  <div class="ladder">
+    <div class="rung step1">
+      <span class="rung-num">1</span>
+      <div class="rung-content">
+        <div class="rung-title">Get Everyone Off SMS and Voice OTP</div>
+        <p class="rung-desc">This is the most common attack surface and the easiest win. SMS and voice OTP are the methods most frequently abused in real-world attacks. They're also the methods most organizations enabled first because they required no hardware and users understood them. That logic made sense in 2018. It doesn't hold now. Migrate these users to Authenticator push first — same friction, significantly better security posture.</p>
+      </div>
+    </div>
+    <div class="rung step2">
+      <span class="rung-num">2</span>
+      <div class="rung-content">
+        <div class="rung-title">Set Authenticator + Number Matching as the Floor</div>
+        <p class="rung-desc">Once SMS is gone, Authenticator with number matching becomes the minimum bar for every user in the organization. It's not phishing-resistant, but it eliminates MFA fatigue attacks and it's deployable today without any hardware procurement or device enrollment dependency. Verify number matching is enforced — not just enabled — across your tenant before calling this step done.</p>
+      </div>
+    </div>
+    <div class="rung step3">
+      <span class="rung-num">3</span>
+      <div class="rung-content">
+        <div class="rung-title">Plan Your Phishing-Resistant Rollout</div>
+        <p class="rung-desc">This is where most organizations pause because the options feel complicated. Hardware FIDO2 keys work but require procurement, distribution, and a backup plan. Windows Hello for Business is low-friction but depends on managed device enrollment. Passkeys are the path that finally makes phishing-resistant MFA accessible for a general user population — and that's exactly what the next post in this series covers.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAKEAWAY -->
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>Authentication methods are not interchangeable. The method you choose determines what attacks you're exposed to, not just whether the door is locked. SMS MFA is better than nothing. It is not better than a phishing attack targeting your CFO on a Friday afternoon.</p>
+
+  <p>The good news is the migration path is clearer than it's ever been. Get off SMS. Put number matching on as the floor. Then plan the phishing-resistant rollout with methods that actually fit your user population — which means understanding what passkeys are, how they work, and why they finally solve the friction problem that held phishing-resistant MFA back for years.</p>
+
+  <p>That's next.</p>
+
+  <!-- SERIES NAV -->
+  <div class="series-nav">
+    <div class="series-nav-label">Entra Identity Foundations — Series</div>
+    <div class="series-posts">
+      <div class="series-post">
+        <span class="series-post-num">01</span>
+        <span>Identity Is Everything: What ITDR and Your Front Door Have in Common</span>
+      </div>
+      <div class="series-post current">
+        <span class="series-post-num">02</span>
+        <span>Authentication Methods: The Spectrum from Password to Passkey</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">03</span>
+        <span>Passkeys: Security Only Works If People Will Actually Use It</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">04</span>
+        <span>Who Did You Let Into Your House? Guest Identity in Microsoft Entra</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">05</span>
+        <span>Groups as Connective Tissue — and a handoff to the CA Foundations series</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>
