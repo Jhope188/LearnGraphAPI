@@ -1,6 +1,6 @@
 # Microsoft Defender for Endpoint — Deployment & Configuration Guide
 **Windows & macOS | Jon Hope | Microsoft MVP — M365 Security**
-Version 1.0 | April 2026 | Jon Hope | Microsoft MVP — M365 Security
+Version 1.3 | May 2026 | Jon Hope | Microsoft MVP — M365 Security
 
 ---
 
