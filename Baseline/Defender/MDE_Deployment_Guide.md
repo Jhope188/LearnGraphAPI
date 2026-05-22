@@ -59,7 +59,9 @@ Version 1.0 | April 2026 | Jon Hope | Microsoft MVP — M365 Security
     - 11.4 Policy Conflict Sources
     - 11.5 Event Log Locations
     - 11.6 macOS Diagnostic Commands
+    - 11.7 MDEValidator — Automated Configuration Validation
 12. [Things to Consider](#12-things-to-consider)
+- [Additional Resources](#additional-resources)
 - [Appendix A — Intune Policy Reference](#appendix-a--intune-policy-reference)
 - [Appendix B — macOS Profile Checklist](#appendix-b--macos-profile-checklist)
 
@@ -160,19 +162,21 @@ All prerequisites must be completed in order before deploying any policies.
 
 #### Step 1 — Create Required Enterprise Applications (Entra)
 
-Two service principals must exist before configuring Conditional Access so they appear as targetable cloud apps. These are not always auto-created in new tenants.
+Three service principals must exist before configuring Conditional Access and Defender MAM so they appear as targetable cloud apps. These are not always auto-created in new tenants.
 
 - **Microsoft Intune Enrollment** (`d4ebce55-015a-49b5-a083-c84d1797ae8c`): Without this, "Intune Enrollment" does not appear in Conditional Access cloud app selectors.
 - **Azure Credential Configuration Endpoint Service** (`ea890292-c8c8-4433-b5ea-b09d0668e1a6`): Required for passkey registration in Microsoft Authenticator. Must be excluded from device compliance / APP-enforcing CA policies.
+- **MicrosoftDefenderATP MAM** (`c2b688fe-48c0-464b-a89c-67041aa8fcb2`): Required for Defender for Endpoint Mobile Application Management (MAM) scenarios — enables MDE to function on MAM-enrolled devices without requiring full MDM enrollment. Register on the Defender portal side.
 
 ```powershell
 Connect-MgGraph -Scopes "Application.ReadWrite.All"
 
-New-MgServicePrincipal -AppId "d4ebce55-015a-49b5-a083-c84d1797ae8c"
-New-MgServicePrincipal -AppId "ea890292-c8c8-4433-b5ea-b09d0668e1a6"
+New-MgServicePrincipal -AppId "d4ebce55-015a-49b5-a083-c84d1797ae8c"  # Microsoft Intune Enrollment
+New-MgServicePrincipal -AppId "ea890292-c8c8-4433-b5ea-b09d0668e1a6"  # Azure Credential Configuration Endpoint Service
+New-MgServicePrincipal -AppId "c2b688fe-48c0-464b-a89c-67041aa8fcb2"  # MicrosoftDefenderATP MAM
 ```
 
-Verify: Entra admin center > Enterprise applications — confirm both apps appear.
+Verify: Entra admin center > Enterprise applications — confirm all three apps appear.
 
 #### Step 2 — Configure MDM User Scope (Entra)
 
@@ -856,6 +860,65 @@ Policy precedence in a hybrid-managed environment (highest to lowest):
 | `mdatp threat list` | Show threats detected on the device |
 | `sudo mdatp diagnostic create` | Generate a full diagnostic bundle for Microsoft Support |
 
+### 11.7 MDEValidator — Automated Configuration Validation
+
+**GitHub:** [https://github.com/NateHutch365/MDEValidator](https://github.com/NateHutch365/MDEValidator)
+
+MDEValidator is a PowerShell module by Nate Hutchinson that runs a comprehensive set of validation checks against MDE configuration on a Windows endpoint. It is the fastest way to confirm whether a device's Defender settings match your intended policy — and to produce a shareable report for documentation or escalation. Pair it with Nate's troubleshooting video (see Additional Resources) for a complete isolation workflow when Defender is suspected of causing performance issues.
+
+**Install and run:**
+
+```powershell
+# Clone or download the repo, then:
+Import-Module .\MDEValidator\MDEValidator.psd1
+
+# Console report — all checks
+Get-MDEValidationReport
+
+# Include onboarding status
+Get-MDEValidationReport -IncludeOnboarding
+
+# HTML report (ideal for documentation or client reporting)
+Get-MDEValidationReport -OutputFormat HTML -OutputPath "C:\Reports\MDEReport.html"
+
+# Return PowerShell objects for filtering
+$results = Get-MDEValidationReport -OutputFormat Object
+$results | Where-Object { $_.Status -eq 'Fail' }
+```
+
+**What MDEValidator checks:**
+
+| Check Category | What It Validates |
+|---|---|
+| Service Status | Windows Defender service running and set to auto-start |
+| Passive Mode | Whether Defender is in Active or Passive Mode |
+| Core Protections | Real-time protection, behavior monitoring, cloud-delivered protection, Block at First Sight |
+| Cloud Block Level | Explicit check for High / High Plus / Zero Tolerance setting |
+| Cloud Extended Timeout | Validates the 50-second timeout is configured |
+| Sample Submission | Confirms automatic sample submission is enabled (warns if set to "Always Prompt") |
+| Network Protection | Block mode vs Audit vs Disabled |
+| PUA Protection | Block vs Audit vs Disabled |
+| ASR Rules | Lists all rules and their mode (Audit / Block / Disabled) — flags if all are Audit-only |
+| Tamper Protection | Main Tamper Protection + Tamper Protection for Exclusions (separate check) |
+| Exclusion Visibility | Validates `HideExclusionsFromLocalAdmins` and local user exclusion visibility |
+| Disable Local Admin Merge | Confirms `DisableLocalAdminMerge` is set |
+| File Hash Computation | Validates `EnableFileHashComputation` is on |
+| Signature Update Settings | Interval and fallback order |
+| MDE Onboarding Status | Confirms device is onboarded to tenant |
+| Device Tags | Lists locally applied MDE tags |
+| Edge SmartScreen | SmartScreen enabled, PUA blocking, user override controls |
+| Policy Registry Verification | Optional cross-check of `Get-MpPreference` values against registry for Intune/GPO/SCCM |
+
+> ⚠️ **Known limitation with `HideExclusionsFromLocalAdmins`:** When this setting is enforced via Intune, it restricts access to the entire Intune Policy Manager registry path (`HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Policy Manager`). Running `-IncludePolicyVerification` on these devices will return Access Denied for policy registry sub-tests. This is expected behavior — the setting is working correctly.
+
+**When to use MDEValidator:**
+
+- After initial MDE deployment on the Pilot group — confirm all settings applied correctly before promoting to Standard
+- After any AV or EDR policy change — verify effective settings match intended configuration
+- When a user reports a security tool conflict or performance issue — run before opening exclusions
+- For quarterly compliance reporting — generate HTML reports as evidence of configuration state
+- When a device is flagged as misconfigured in the Defender portal — run locally to compare effective settings vs. portal view
+
 ---
 
 ## 12. Things to Consider
@@ -895,6 +958,28 @@ App Governance is a Defender for Cloud Apps feature included in the license that
 ### 12.8 Co-Management Conflict Avoidance
 
 If the environment uses both SCCM/ConfigMgr and Intune (co-management), Defender AV settings can receive conflicting values from both channels. Manage all Defender settings from a single source. Prefer Intune as the authoritative source. Move Defender workloads in SCCM to Intune authority as part of the MDE deployment project.
+
+---
+
+## Additional Resources
+
+### Configuration Reference Videos
+
+| Title | Author | Link | What It Covers |
+|---|---|---|---|
+| Hackers Love Your Default Defender Setup [Fix: Copy These Settings] | Ru Campbell | [Watch on YouTube](https://www.youtube.com/watch?v=R8btJ_SjwVk&t=243s) | Why default Defender AV settings leave endpoints exposed and the specific settings to harden — AV, NGP, and ASR best practices. Directly aligned with the Level 1 baseline in Section 6 of this guide. |
+
+### Troubleshooting and Validation Videos
+
+| Title | Author | Link | What It Covers |
+|---|---|---|---|
+| Defender Causing Performance Issues? [How to Test It] | Nate Hutchinson | [Watch on YouTube](https://www.youtube.com/watch?v=QIdPLoUiZso) | Step-by-step walkthrough of using MDE Troubleshooting Mode to isolate whether Defender is the cause of a performance or compatibility issue — directly aligned with Section 11.2 of this guide. |
+
+### Troubleshooting and Validation Tools
+
+| Tool | Author | Link | What It Does |
+|---|---|---|---|
+| MDEValidator | Nate Hutchinson | [github.com/NateHutch365/MDEValidator](https://github.com/NateHutch365/MDEValidator) | PowerShell module that validates MDE configuration settings on a Windows endpoint. Outputs Pass/Fail/Warn status per setting with console and HTML reporting. See Section 11.7 for full usage. |
 
 ---
 
