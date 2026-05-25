@@ -22,7 +22,7 @@ Personal technical writing site for **Jon Hope**, Microsoft MVP for Security: Id
 │   │
 │   ├── identity/
 │   │   ├── identity-is-everything.html        # PT01 — Identity Is Everything ✅ LIVE
-│   │   ├── authentication-methods.html        # PT02 — Authentication Methods (scheduled)
+│   │   ├── authentication-methods.html        # PT02 — Authentication Methods ✅ LIVE
 │   │   ├── passkeys.html                      # PT03 — Passkeys (scheduled)
 │   │   ├── who-did-you-let-in.html            # PT04 — Guest Identities (scheduled)
 │   │   ├── groups-connective-tissue.html      # PT05 — Groups as Connective Tissue (scheduled)
@@ -70,7 +70,7 @@ The hub uses a **tabbed layout** with three series:
 
 | Tab | Articles | Status |
 |-----|----------|--------|
-| **Identity** | 5 articles (PT01–PT05) | PT01 live, PT02–PT05 scheduled |
+| **Identity** | 5 articles (PT01–PT05) | PT01–PT02 live, PT03–PT05 scheduled |
 | **Governance** | 5 articles (PT01–PT05) | All scheduled |
 | **Conditional Access** | 1 article + placeholder | 1 live |
 
@@ -101,7 +101,7 @@ Scheduled releases are handled entirely by GitHub Actions — no manual publishi
 
 | Date | Series | Article |
 |------|--------|---------|
-| May 26, 2026 | Identity PT02 | Authentication Methods: The Spectrum |
+| ~~May 26, 2026~~ | ~~Identity PT02~~ | ~~Authentication Methods: The Spectrum~~ ✅ Released |
 | Jun 2, 2026 | Identity PT03 | Passkeys: Security Only Works If People Use It |
 | Jun 9, 2026 | Identity PT04 | Who Did You Let Into Your House? |
 | Jun 16, 2026 | Identity PT05 | Groups as Connective Tissue |
