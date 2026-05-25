@@ -339,3 +339,4 @@ az deployment group create \
 | Assign share-level permissions | [MS Learn](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-identity-assign-share-level-permissions) |
 | Configure file-level permissions (NTFS/ACLs) | [MS Learn](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-identity-configure-file-level-permissions) |
 | FSLogix profile containers with Entra ID | [MS Learn](https://learn.microsoft.com/en-us/fslogix/how-to-configure-profile-container-entra-id-hybrid) |
+| Azure Files Entra-only identities (macOS support) | [Azure Blog](https://azure.microsoft.com/en-us/blog/azure-files-entra-only-identities-advancing-cloud-native-identity-and-security/) |
