@@ -317,8 +317,8 @@ The following files accompany this guide and are used to deploy the storage acco
 
 | File | Description |
 | --- | --- |
-| [`iac.afpshare.mainbuild.bicep`](iac.afpshare.mainbuild.bicep) | Main Bicep template — deploys the storage account, file share, RBAC assignments, and configures AADKERB |
-| [`iac.afpshare.mainbuild.bicepparam`](iac.afpshare.mainbuild.bicepparam) | Parameters file — supply your storage account name, resource group, and Entra group object IDs here before deploying |
+| [`iac.afpshare.mainbuild.bicep`](bicep/iac.afpshare.mainbuild.bicep) | Main Bicep template — deploys the storage account, file share, RBAC assignments, and configures AADKERB |
+| [`iac.afpshare.mainbuild.bicepparam`](bicep/iac.afpshare.mainbuild.bicepparam) | Parameters file — supply your storage account name, resource group, and Entra group object IDs here before deploying |
 
 ### Deploy
 
