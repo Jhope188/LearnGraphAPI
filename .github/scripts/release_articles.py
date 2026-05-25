@@ -69,7 +69,7 @@ for series_name, (readme_path, url_prefix) in SERIES.items():
             r'<div class="article-card coming-soon"'
             r'\s+data-series="' + re.escape(series_name) + r'"'
             r'\s+data-file="' + re.escape(filename) + r'"'
-            r'>(.*?)</div>',
+            r'>(.*?<div class="article-card-footer"[^>]*>.*?</div>\s*)</div>',
             re.DOTALL
         )
         def activate(m):
