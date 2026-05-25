@@ -1,0 +1,62 @@
+name: Entra News Feature Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Entra News issue number (e.g. 151)'
+        required: true
+        type: number
+      article_title:
+        description: 'Your article title as it appears in the issue'
+        required: true
+        type: string
+      article_url:
+        description: 'Full URL to your article'
+        required: true
+        type: string
+      section:
+        description: 'Section it appeared in (e.g. Authentication, Conditional Access, Security, Most Popular Posts)'
+        required: true
+        type: string
+      issue_date:
+        description: 'Issue date (e.g. Jun 1, 2026)'
+        required: true
+        type: string
+      context:
+        description: 'Brief context note (other authors featured alongside, issue headline, etc.)'
+        required: false
+        type: string
+
+jobs:
+  update-entra-news:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run Entra News update script
+        env:
+          ISSUE_NUMBER:  ${{ github.event.inputs.issue_number }}
+          ARTICLE_TITLE: ${{ github.event.inputs.article_title }}
+          ARTICLE_URL:   ${{ github.event.inputs.article_url }}
+          SECTION:       ${{ github.event.inputs.section }}
+          ISSUE_DATE:    ${{ github.event.inputs.issue_date }}
+          CONTEXT:       ${{ github.event.inputs.context }}
+        run: python3 .github/scripts/update_entra_news.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add \
+            entra-news.html \
+            entra.news/readme.md \
+            index.html
+          git diff --staged --quiet && echo "No changes." || (
+            git commit -m "chore: entra news feature update — issue #${{ github.event.inputs.issue_number }}"
+            git push
+          )
