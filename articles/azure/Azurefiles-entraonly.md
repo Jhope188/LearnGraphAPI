@@ -3,6 +3,7 @@
 The Bicep file configures the storage account for AADKERB, but the steps below are required **once per storage account** after first deployment.
 Without these, users will see _"not authorized"_ errors even with correct RBAC assigned.
 
+[Enable EntraID Kerberos on Azure File Share - macOS walkthrough](https://headsinthecloud.blog/2025/12/29/azure-file-share-with-entra-kerberos-authentication-seamless-access-for-windows-and-macos-devices/)
 ---
 
 ## Pre-Flight Checklist
@@ -178,7 +179,6 @@ This error occurs when `allowSharedKeyAccess: false` is set on the storage accou
 
 ![No permissions set error in portal](images/no%20permissionsset.png)
 
-![Manage File Access blade](images/ManageFileAccess%20.png)
 
 ![Storage key access disabled](images/StorageKeyAccessoff.png)
 
