@@ -2,7 +2,7 @@ name: Scheduled Article Release
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # Runs daily at 12:00 UTC (7am EST / 8am EDT)
+    - cron: '0 12 * * 1'  # Runs every Monday at 12:00 UTC (7am EST / 8am EDT)
   workflow_dispatch:        # Lets you trigger it manually from the GitHub Actions tab for testing
 
 jobs:
@@ -22,7 +22,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add articles/index.html
+          git add \
+            articles/index.html \
+            articles/identity/readme.md \
+            articles/governance/readme.md
           git diff --staged --quiet && echo "No changes to release today." || (
             git commit -m "chore: scheduled article release $(date +%Y-%m-%d)"
             git push
