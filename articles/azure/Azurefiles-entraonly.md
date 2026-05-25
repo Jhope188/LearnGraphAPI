@@ -92,6 +92,8 @@ Get-AzStorageAccountKey `
 
 > The output should include `kerb1` and `kerb2` alongside `key1` and `key2`. If only `key1`/`key2` are returned, the command did not complete successfully — re-run it and check for errors.
 
+![Kerberos keys verified in PowerShell output](images/checkkerbkeys.png)
+
 > 📖 [Enable Microsoft Entra Kerberos authentication — MS Learn](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-identity-auth-hybrid-identities-enable)
 
 ---
@@ -102,7 +104,7 @@ Get-AzStorageAccountKey `
 
 **Enable Entra Kerberos on the storage account:**
 
-![Enable storage account access](images/EnableStorageAccess.png)
+![Enable Entra Kerberos configuration](images/EnableEntraConfiguration.png)
 
 **Assign share-level permissions (RBAC):**
 
