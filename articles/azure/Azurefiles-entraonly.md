@@ -18,6 +18,8 @@ Before troubleshooting access issues, confirm all of the following are complete:
 | 5 | `CloudKerberosTicketRetrievalEnabled` policy enabled on AVD hosts (via Intune) | Each host pool | ☐ |
 | 6 | Users are members of the correct Entra groups used in the RBAC assignments | Per user | ☐ |
 | 7 | Waited ~30 mins for RBAC to propagate before testing | After each deploy | ☐ |
+| 8 | _(macOS only)_ App Registration manifest updated — `cifs` lowercase + `kdc_enable_cloud_group_sids` tag | Tenant | ☐ |
+| 9 | _(macOS only)_ PSSO + Kerberos SSO mobileconfig deployed to macOS devices via Intune | Each device | ☐ |
 
 ---
 
@@ -75,7 +77,20 @@ New-AzStorageAccountKey `
     -KeyName kerb1
 ```
 
-![Kerberos key generated in portal](images/StorageAccessKey.png)
+```
+New-AzStorageAccountKey -ResourceGroupName 'IAC-AZE2-RG1' -AccountName 'iacaze2files' -KeyName kerb1; New-AzStorageAccountKey -ResourceGroupName 'IAC-AZE2-RG1' -AccountName 'iacaze2files' -KeyName kerb2
+```
+
+**Verify the key was generated:**
+
+```powershell
+Get-AzStorageAccountKey `
+    -ResourceGroupName "<clientid>-<Region>-RG1" `
+    -AccountName "<storageAccountName>" `
+    -ListKerbKey
+```
+
+> The output should include `kerb1` and `kerb2` alongside `key1` and `key2`. If only `key1`/`key2` are returned, the command did not complete successfully — re-run it and check for errors.
 
 > 📖 [Enable Microsoft Entra Kerberos authentication — MS Learn](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-identity-auth-hybrid-identities-enable)
 
@@ -121,6 +136,7 @@ Set-AzStorageFileAcl `
     -FilePath "/" `
     -Acl "O:SYG:SYD:(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;;0x1200a9;;;AU)(A;OICIIO;SDGXGWGR;;;AU)"
 ```
+
 
 > The ACL string above grants full control to SYSTEM (`SY`) and Built-in Admins (`BA`), and read/execute + create files/folders to Authenticated Users (`AU`) — standard FSLogix root ACL.
 
@@ -195,6 +211,101 @@ Verify the user is a **direct member** of the group assigned the SMB Contributor
 ### Kerberos key not generated
 
 If Step 2 (Generate Kerberos Key) was skipped, users cannot get a Kerberos ticket. Run the `New-AzStorageAccountKey -KeyName kerb1` command and retry.
+
+---
+
+## macOS Access — Additional Requirements
+
+> macOS SMB access via Entra Kerberos requires **Platform SSO (PSSO)** enrolled via Intune and a **Kerberos SSO mobileconfig** deployed to the device. Without these, macOS cannot obtain a Kerberos ticket from Entra — the SMB mount will fail regardless of RBAC or ACL configuration.
+>
+> An unmanaged/personal Mac **cannot** connect via AADKERB. Use Azure Storage Explorer with OAuth instead.
+
+### Step A — Update the App Registration Manifest
+
+Two changes are required on the auto-generated Entra app (`[Storage Account] <storageAccountName>.file.core.windows.net`):
+
+1. Open **Entra ID** > **App registrations** > **All Applications** > find the storage account app
+2. Go to **Manifest**
+3. Ensure `cifs` is **lowercase** in the service principal name (macOS Kerberos is case-sensitive)
+4. Add the following tag to enable correct SID handling for cloud groups:
+
+```json
+"kdc_enable_cloud_group_sids"
+```
+
+> Without `cifs` in lowercase, macOS Kerberos ticket requests will fail silently.
+
+### Step B — Deploy Kerberos SSO Mobileconfig via Intune
+
+Deploy a custom Kerberos SSO extension mobileconfig to macOS devices in addition to your existing PSSO policy. Replace `YOUR_TENANT_ID` with your Entra tenant ID:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>ExtensionData</key>
+            <dict>
+                <key>usePlatformSSOTGT</key>
+                <true/>
+                <key>performKerberosOnly</key>
+                <true/>
+                <key>preferredKDCs</key>
+                <array>
+                    <string>kkdcp://login.microsoftonline.com/YOUR_TENANT_ID/kerberos</string>
+                </array>
+            </dict>
+            <key>ExtensionIdentifier</key>
+            <string>com.apple.AppSSOKerberos.KerberosExtension</string>
+            <key>Hosts</key>
+            <array>
+                <string>windows.net</string>
+                <string>.windows.net</string>
+            </array>
+            <key>Realm</key>
+            <string>KERBEROS.MICROSOFTONLINE.COM</string>
+            <key>PayloadDisplayName</key>
+            <string>Single Sign-On Extensions Payload for Microsoft Entra ID Cloud Kerberos</string>
+            <key>PayloadType</key>
+            <string>com.apple.extensiblesso</string>
+            <key>Type</key>
+            <string>Credential</string>
+        </dict>
+    </array>
+    <key>PayloadDisplayName</key>
+    <string>Kerberos SSO Extension for macOS — Microsoft Entra ID Cloud Kerberos</string>
+    <key>PayloadEnabled</key>
+    <true/>
+    <key>PayloadScope</key>
+    <string>System</string>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+</dict>
+</plist>
+```
+
+### Step C — Mount from macOS
+
+Once PSSO and the mobileconfig are deployed, mount via Finder:
+
+1. **Finder** > **Go** > **Connect to Server** (`⌘K`)
+2. Enter: `smb://<storageAccountName>.file.core.windows.net/<shareName>`
+3. Sign in as **Registered User** with your Entra credentials
+
+**Verify Kerberos ticket was issued:**
+
+```bash
+klist
+```
+
+The output should show a ticket for `cifs/<storageAccountName>.file.core.windows.net@KERBEROS.MICROSOFTONLINE.COM`.
+
+> 📖 [Credit: headsinthecloud.blog — Azure File Share with Entra Kerberos: Windows and macOS](https://headsinthecloud.blog/2025/12/29/azure-file-share-with-entra-kerberos-authentication-seamless-access-for-windows-and-macos-devices/)
 
 ---
 
