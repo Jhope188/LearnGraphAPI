@@ -1,0 +1,121 @@
+{
+  "createdDateTime": "2026-02-26T15:31:16.949545Z",
+  "description": "",
+  "lastModifiedDateTime": "2026-02-26T15:31:16.949545Z",
+  "name": "Windows 11 Anti-Virus Exclusions",
+  "platforms": "windows10",
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 2,
+  "technologies": "mdm,microsoftSense",
+  "id": "1989f421-5352-4859-bd1b-68d883bb950b",
+  "templateReference": {
+    "templateId": "45fea5e9-280d-4da1-9792-fb5736da0ca9_1",
+    "templateFamily": "endpointSecurityAntivirus",
+    "templateDisplayName": "Microsoft Defender Antivirus exclusions",
+    "templateDisplayVersion": "Version 1"
+  },
+  "settings@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies('1989f421-5352-4859-bd1b-68d883bb950b')/settings",
+  "settings": [
+    {
+      "id": "0",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingCollectionInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_excludedpaths",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "aaf04adc-c639-464f-b4a7-152e784092e8"
+        },
+        "simpleSettingCollectionValue": [
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\PME, %Programfiles(x86)%\\MspPlatform\\FileCacheServiceAgent"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\RequestHandlerAgent, %ProgramData%\\MspPlatform"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%ProgramData%\\MSPPlatform\\Ecosystem Agent\\"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingCollectionInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_excludedprocesses",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "96b046ed-f138-4250-9ae0-b0772a93d16f"
+        },
+        "simpleSettingCollectionValue": [
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\CacheService\\N-able.CacheService.exe"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\PME\\ThirdPartyPatch\\7z.exe"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\PME\\ThirdPartyPatch\\ThirdPartyPatch.exe"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\PME\\Installers\\CacheServiceSetup.exe"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\PME\\Installers\\RPCServerServiceSetup.exe"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform\\PME\\Diagnostics\\PME.Diagnostics.exe"
+          },
+          {
+            "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+            "settingValueTemplateReference": null,
+            "value": "%Programfiles(x86)%\\MspPlatform/RequestHandlerAgent\\RequestHandlerAgent.exe"
+          }
+        ]
+      }
+    }
+  ],
+  "assignments@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies('1989f421-5352-4859-bd1b-68d883bb950b')/assignments",
+  "assignments": [
+    {
+      "id": "1989f421-5352-4859-bd1b-68d883bb950b_adadadad-808e-44e2-905a-0b7873a8a531",
+      "source": "direct",
+      "sourceId": "1989f421-5352-4859-bd1b-68d883bb950b",
+      "target": {
+        "@odata.type": "#microsoft.graph.allDevicesAssignmentTarget",
+        "deviceAndAppManagementAssignmentFilterId": null,
+        "deviceAndAppManagementAssignmentFilterType": "none"
+      }
+    },
+    {
+      "id": "1989f421-5352-4859-bd1b-68d883bb950b_acacacac-9df4-4c7d-9d50-4ef0226f57a9",
+      "source": "direct",
+      "sourceId": "1989f421-5352-4859-bd1b-68d883bb950b",
+      "target": {
+        "@odata.type": "#microsoft.graph.allLicensedUsersAssignmentTarget",
+        "deviceAndAppManagementAssignmentFilterId": null,
+        "deviceAndAppManagementAssignmentFilterType": "none"
+      }
+    }
+  ]
+}

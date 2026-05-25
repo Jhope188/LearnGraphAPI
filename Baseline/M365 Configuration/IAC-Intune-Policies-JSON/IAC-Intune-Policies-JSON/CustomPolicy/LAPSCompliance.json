@@ -1,0 +1,19 @@
+{
+   "Rules":[ 
+        { 
+           "SettingName":"WindowsLAPSProcessing",
+           "Operator":"IsEquals",
+           "DataType":"Boolean",
+           "Operand":true,
+           "MoreInfoUrl":"https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview",
+           "RemediationStrings":[ 
+              { 
+                 "Language":"en_US",
+                 "Title":"Windows LAPS is not processing",
+                 "Description": "No recent events was found indicating that Windows LAPS is processing. Please check the Windows LAPS event log for more information."
+              }
+           ]
+        }
+     ]
+}
+    

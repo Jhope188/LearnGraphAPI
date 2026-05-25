@@ -1,0 +1,72 @@
+{
+  "ExportDate": "2026-01-25 21:03:47",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "PolicyConfig": {
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies/$entity",
+    "modifiedDateTime": "2026-01-25T20:28:34.8897188Z",
+    "conditions": {
+      "clientApplications": null,
+      "authenticationFlows": null,
+      "devices": null,
+      "platforms": null,
+      "signInRiskLevels": [],
+      "locations": {
+        "excludeLocations": [
+          "1fe18182-5167-4fb6-8fd7-e092917b97bc"
+        ],
+        "includeLocations": [
+          "All"
+        ]
+      },
+      "applications": {
+        "includeUserActions": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "excludeApplications": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "users": {
+        "excludeUsers": [
+          "a1197d08-a831-4c41-ad33-c384964d1f07"
+        ],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeRoles": [],
+        "includeGroups": [],
+        "excludeGroups": [
+          "96437e0d-3d7c-4e28-b9bf-0fa68eabbff7",
+          "ec9e4975-1c27-41ac-ad9c-e346eff08a0b"
+        ],
+        "includeGuestsOrExternalUsers": null,
+        "excludeGuestsOrExternalUsers": null,
+        "includeRoles": []
+      },
+      "clientAppTypes": [
+        "all"
+      ],
+      "servicePrincipalRiskLevels": [],
+      "insiderRiskLevels": null,
+      "userRiskLevels": []
+    },
+    "displayName": "IAC - GLOBAL – BLOCK – Countries not Allowed",
+    "sessionControls": null,
+    "createdDateTime": "2026-01-20T11:23:14.5456622Z",
+    "state": "enabled",
+    "grantControls": {
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('6bfbd7ba-fb48-424a-bdfb-b0934275c980')/grantControls/authenticationStrength/$entity",
+      "customAuthenticationFactors": [],
+      "authenticationStrength": null,
+      "builtInControls": [
+        "block"
+      ],
+      "termsOfUse": [],
+      "operator": "OR"
+    },
+    "templateId": null,
+    "id": "6bfbd7ba-fb48-424a-bdfb-b0934275c980"
+  },
+  "SourcePolicyId": "6bfbd7ba-fb48-424a-bdfb-b0934275c980"
+}

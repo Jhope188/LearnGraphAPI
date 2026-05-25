@@ -1,0 +1,50 @@
+{
+  "ExportDate": "2026-01-25 21:17:01",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "AttributeSetConfig": {
+    "description": "https://www.welkasworld.com/post/conditional-access-essentials-custom-security-attributes-in-entra-id-and-cross-tenant-scenarios",
+    "id": "ConditionalAccessTaggedApps",
+    "maxAttributesPerSet": 25
+  },
+  "AttributeDefinitions": [
+    {
+      "status": "Available",
+      "isCollection": true,
+      "description": "https://www.welkasworld.com/post/conditional-access-essentials-custom-security-attributes-in-entra-id-and-cross-tenant-scenarios",
+      "name": "policyRequirement",
+      "type": "String",
+      "usePreDefinedValuesOnly": true,
+      "attributeSet": "ConditionalAccessTaggedApps",
+      "id": "ConditionalAccessTaggedApps_policyRequirement",
+      "isSearchable": true,
+      "allowedValues": [
+        {
+          "isActive": true,
+          "id": "legacyAuthAllowed"
+        },
+        {
+          "isActive": true,
+          "id": "requireCompliantDevice"
+        },
+        {
+          "isActive": true,
+          "id": "DoNotRequireMFA"
+        },
+        {
+          "isActive": true,
+          "id": "blockGuests"
+        },
+        {
+          "isActive": true,
+          "id": "blockExternals"
+        }
+      ]
+    }
+  ],
+  "AttributeSetId": "ConditionalAccessTaggedApps",
+  "Notes": {
+    "ExportedBy": "admin@M365x93722695.onmicrosoft.com",
+    "Description": "Custom Security Attribute Set export for IAC",
+    "AttributeCount": 1
+  }
+}

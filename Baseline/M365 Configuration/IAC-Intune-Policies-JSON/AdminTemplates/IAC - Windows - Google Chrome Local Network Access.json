@@ -1,0 +1,17 @@
+{
+  "ExportDate": "2026-01-16 18:38:21",
+  "Settings": null,
+  "Assignments": null,
+  "PolicyType": "AdminTemplate",
+  "Policy": {
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "displayName": "IAC - Windows - Google Chrome Local Network Access",
+    "createdDateTime": "2026-01-16T14:47:59.4567187Z",
+    "lastModifiedDateTime": "2026-01-16T23:25:18.9213819Z",
+    "id": "1dbe13e6-193a-4a80-877d-2f26f90cf309",
+    "policyConfigurationIngestionType": "builtIn",
+    "description": ""
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "ExportDate": "2026-01-16 18:38:04",
+  "Assignments": null,
+  "PolicyType": "DeviceConfiguration",
+  "Policy": {
+    "deviceManagementApplicabilityRuleOsVersion": null,
+    "deviceManagementApplicabilityRuleDeviceMode": null,
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "displayName": "IAC - Windows - Disable access to Windows Update Configuration Profile",
+    "deviceManagementApplicabilityRuleOsEdition": null,
+    "createdDateTime": "2026-01-16T14:47:48.4540871Z",
+    "lastModifiedDateTime": "2026-01-16T23:26:13.3694756Z",
+    "description": null,
+    "@odata.type": "#microsoft.graph.windows10CustomConfiguration",
+    "omaSettings": [
+      {
+        "isReadOnly": false,
+        "secretReferenceValueId": null,
+        "displayName": "RemoveUserAccessToWindowsUpdate",
+        "omaUri": "./Device/Vendor/MSFT/Policy/Config/Update/SetDisableUXWUAccess",
+        "description": "Removes user access to Windows Update features.",
+        "@odata.type": "#microsoft.graph.omaSettingInteger",
+        "value": 1,
+        "isEncrypted": false
+      },
+      {
+        "isReadOnly": false,
+        "secretReferenceValueId": null,
+        "displayName": "UpdateNotificationLevel",
+        "omaUri": "./Device/Vendor/MSFT/Policy/Config/Update/UpdateNotificationLevel",
+        "description": null,
+        "@odata.type": "#microsoft.graph.omaSettingInteger",
+        "value": 1,
+        "isEncrypted": false
+      }
+    ],
+    "supportsScopeTags": true,
+    "id": "93ba2a73-4341-4387-bb38-81737f039cea",
+    "version": 2
+  }
+}

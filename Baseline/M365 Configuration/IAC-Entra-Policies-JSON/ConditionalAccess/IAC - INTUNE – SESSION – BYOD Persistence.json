@@ -1,0 +1,93 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "6064391a-c4b7-4991-b87f-e7a98fcd23aa",
+        "DisplayName": "CA - GlobalExclusions"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:12",
+  "PolicyConfig": {
+    "sessionControls": {
+      "secureSignInSession": null,
+      "disableResilienceDefaults": null,
+      "persistentBrowser": {
+        "isEnabled": true,
+        "mode": "never"
+      },
+      "cloudAppSecurity": null,
+      "signInFrequency": {
+        "frequencyInterval": "timeBased",
+        "isEnabled": true,
+        "value": 9,
+        "authenticationType": "primaryAndSecondaryAuthentication",
+        "type": "hours"
+      },
+      "applicationEnforcedRestrictions": null
+    },
+    "state": "disabled",
+    "grantControls": null,
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "6064391a-c4b7-4991-b87f-e7a98fcd23aa"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "devices": {
+        "deviceFilter": {
+          "rule": "device.isCompliant -eq True",
+          "mode": "exclude"
+        }
+      },
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - INTUNE – SESSION – BYOD Persistence",
+    "templateId": null
+  },
+  "SourcePolicyId": "63b18c92-507d-425b-be41-48b5d75d8963",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

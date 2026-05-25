@@ -1,0 +1,78 @@
+{
+  "ExportDate": "2026-01-16 18:38:17",
+  "Settings": [
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "user_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge_managedfavorites",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+              "settingDefinitionId": "user_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge_managedfavorites_managedfavorites",
+              "settingInstanceTemplateReference": null,
+              "simpleSettingValue": {
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+                "value": "[   {     \"name\": \"Inforcer\",     \"url\": \"https://us.inforcer.com\"   } ]",
+                "settingValueTemplateReference": null
+              }
+            }
+          ],
+          "value": "user_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge_managedfavorites_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge_favoritesbarenabled",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge_favoritesbarenabled_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "1"
+    }
+  ],
+  "Assignments": {
+    "sourceId": "4048e77e-8c3a-4353-891f-314989dc0273",
+    "id": "4048e77e-8c3a-4353-891f-314989dc0273_656e073b-f717-4a5d-9f5a-d4d35783bca9",
+    "source": "direct",
+    "target": {
+      "@odata.type": "#microsoft.graph.groupAssignmentTarget",
+      "deviceAndAppManagementAssignmentFilterId": null,
+      "groupId": "656e073b-f717-4a5d-9f5a-d4d35783bca9",
+      "deviceAndAppManagementAssignmentFilterType": "none"
+    }
+  },
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "Edge Policy to set custom favorites for the orginization",
+    "createdDateTime": "2026-01-16T14:49:57.4047005Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:16.2486787Z",
+    "id": "4048e77e-8c3a-4353-891f-314989dc0273",
+    "platforms": "windows10",
+    "settingCount": 2,
+    "name": "IAC - Windows - Edge Favorites Profile"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "6064391a-c4b7-4991-b87f-e7a98fcd23aa",
+        "DisplayName": "CA - GlobalExclusions"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:18",
+  "PolicyConfig": {
+    "sessionControls": {
+      "applicationEnforcedRestrictions": {
+        "isEnabled": true
+      },
+      "secureSignInSession": null,
+      "disableResilienceDefaults": null,
+      "cloudAppSecurity": null,
+      "signInFrequency": null,
+      "persistentBrowser": null
+    },
+    "state": "disabled",
+    "grantControls": null,
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "6064391a-c4b7-4991-b87f-e7a98fcd23aa"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "authenticationFlows": null,
+      "clientAppTypes": [
+        "browser"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "locations": null,
+      "platforms": {
+        "includePlatforms": [
+          "all"
+        ],
+        "excludePlatforms": [
+          "android",
+          "iOS",
+          "macOS",
+          "linux"
+        ]
+      },
+      "devices": {
+        "deviceFilter": {
+          "rule": "device.isCompliant -eq True -and device.trustType -eq \"ServerAD\"",
+          "mode": "exclude"
+        }
+      },
+      "insiderRiskLevels": null,
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "Office365"
+        ]
+      },
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - APP - SESSION - O365 - Timeoutsettings",
+    "templateId": null
+  },
+  "SourcePolicyId": "3836e733-e555-4a7e-ad7d-8ad2d5d6a1f1",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

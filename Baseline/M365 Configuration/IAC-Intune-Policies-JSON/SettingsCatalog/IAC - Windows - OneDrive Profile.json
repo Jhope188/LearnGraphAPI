@@ -1,0 +1,135 @@
+{
+  "ExportDate": "2026-01-16 18:38:19",
+  "Settings": [
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "user_vendor_msft_policy_config_onedrivengscv2~policy~onedrivengsc_disablepersonalsync",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "user_vendor_msft_policy_config_onedrivengscv2~policy~onedrivengsc_disablepersonalsync_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_desktop_checkbox",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_desktop_checkbox_1",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_documents_checkbox",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_documents_checkbox_1",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_pictures_checkbox",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_pictures_checkbox_1",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_dropdown",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_dropdown_0",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_kfmoptinnowizard_textbox",
+              "settingInstanceTemplateReference": null,
+              "simpleSettingValue": {
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+                "value": "4da6157b-5e3b-40ec-aadc-6034e223e01a",
+                "settingValueTemplateReference": null
+              }
+            }
+          ],
+          "value": "device_vendor_msft_policy_config_onedrivengscv2.updates~policy~onedrivengsc_kfmoptinnowizard_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "1"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_onedrivengscv2~policy~onedrivengsc_silentaccountconfig",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [],
+          "value": "device_vendor_msft_policy_config_onedrivengscv2~policy~onedrivengsc_silentaccountconfig_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "2"
+    }
+  ],
+  "Assignments": {
+    "sourceId": "20432b94-fddf-4cda-a70b-ac34ef914836",
+    "id": "20432b94-fddf-4cda-a70b-ac34ef914836_adadadad-808e-44e2-905a-0b7873a8a531",
+    "source": "direct",
+    "target": {
+      "@odata.type": "#microsoft.graph.allDevicesAssignmentTarget",
+      "deviceAndAppManagementAssignmentFilterId": "f7db2eb9-8257-4530-8753-781f0b416e3f",
+      "deviceAndAppManagementAssignmentFilterType": "include"
+    }
+  },
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "",
+    "createdDateTime": "2026-01-16T14:50:33.9084044Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:17.4451771Z",
+    "id": "20432b94-fddf-4cda-a70b-ac34ef914836",
+    "platforms": "windows10",
+    "settingCount": 3,
+    "name": "IAC - Windows - OneDrive Profile"
+  }
+}

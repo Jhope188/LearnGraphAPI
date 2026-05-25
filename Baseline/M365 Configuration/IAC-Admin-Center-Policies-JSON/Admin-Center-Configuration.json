@@ -1,0 +1,202 @@
+{
+  "SelfServicePurchasePolicies": [
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LH3L",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Power Automate per user"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LH2H",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Power Apps per user"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0H9MP",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Power BI Pro"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0HDB1",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Project Plan 1"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0HDB0",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Project Plan 3"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0HD33",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Visio Plan 1"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0HD32",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Visio Plan 2"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0KXG6",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Power Automate RPA"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0H6RP",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Power BI Premium per user"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0HHS9",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Windows 365 Enterprise"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0J203",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Windows 365 Business"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0HX99",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Windows 365 Business with Windows Hybrid Benefit"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0HVZG",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Viva Learning"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LH3N",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Dynamics 365 Marketing"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LHWP",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Dynamics 365 Marketing Attach"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LH05",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Microsoft 365 F3"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LHVK",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Dynamics 365 Marketing Additional Application"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LHWM",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Dynamics 365 Marketing Additional Non-Prod Application"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0PW0V",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Viva Goals"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0LSGZ",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Power Automate Per User with Attended RPA Plan"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0J1FV",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Teams Exploratory"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0S3X1",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Python in Excel"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0RM8K",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Teams Premium"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0N8SL",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Microsoft Purview Discovery"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0N8SS",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Microsoft ClipChamp"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0MM8R",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Microsoft 365 Copilot"
+    },
+    {
+      "PolicyValue": "Disabled",
+      "ProductId": "CFQ7TTC0JN4R",
+      "PolicyId": "AllowSelfServicePurchase",
+      "ProductName": "Teams Essentials"
+    }
+  ],
+  "TenantInfo": {
+    "Scopes": [
+      "DeviceManagementConfiguration.Read.All",
+      "DeviceManagementConfiguration.ReadWrite.All",
+      "Directory.Read.All",
+      "email",
+      "Group.Read.All",
+      "Group.ReadWrite.All",
+      "openid",
+      "Policy.Read.All",
+      "Policy.ReadWrite.Authorization",
+      "Policy.ReadWrite.ConditionalAccess",
+      "Policy.ReadWrite.DeviceConfiguration",
+      "profile",
+      "DeviceManagementApps.Read.All"
+    ],
+    "Account": "admin@M365x37845673.onmicrosoft.com",
+    "TenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+  },
+  "ExportDate": "2026-01-17 16:10:41",
+  "AuthorizationPolicy": {
+    "AllowedToUseSSPR": true,
+    "BlockMsolPowerShell": false,
+    "DisplayName": "Authorization Policy",
+    "DefaultUserRolePermissions": {
+      "AllowedToCreateTenants": false,
+      "AllowedToReadOtherUsers": true,
+      "AllowedToReadBitlockerKeysForOwnedDevice": true,
+      "AllowedToCreateApps": false,
+      "AllowedToCreateSecurityGroups": false
+    },
+    "Description": "Used to manage authorization related settings across the company.",
+    "AllowedToSignUpEmailBasedSubscriptions": false,
+    "Id": "authorizationPolicy",
+    "AllowEmailVerifiedUsersToJoinOrganization": true
+  }
+}

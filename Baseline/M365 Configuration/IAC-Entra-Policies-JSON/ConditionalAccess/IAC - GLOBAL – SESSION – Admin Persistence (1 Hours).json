@@ -1,0 +1,133 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      }
+    ],
+    "IncludeRoles": [
+      {
+        "Id": "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "0526716b-113d-4c15-b2c8-68e3c22b9f80",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "158c047a-c907-4556-b7ef-446551a6b5f7",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "17315797-102d-40b4-93e0-432062caca18",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "e6d1a23a-da11-4be4-9570-befc86d067a7",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "62e90394-69f5-4237-9190-012177145e10",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "8ac3fc64-6eca-42ea-9e69-59f4c7b60eb2",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "7be44c8a-adaf-4e2a-84d6-ab2649e08a13",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "e8611ab8-c189-46e8-94e1-60213ab1f814",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "DisplayName": "Unknown"
+      }
+    ],
+    "IncludeUsers": [],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:11",
+  "PolicyConfig": {
+    "sessionControls": {
+      "secureSignInSession": null,
+      "disableResilienceDefaults": null,
+      "persistentBrowser": {
+        "isEnabled": true,
+        "mode": "never"
+      },
+      "cloudAppSecurity": null,
+      "signInFrequency": {
+        "frequencyInterval": "timeBased",
+        "isEnabled": true,
+        "value": 1,
+        "authenticationType": "primaryAndSecondaryAuthentication",
+        "type": "hours"
+      },
+      "applicationEnforcedRestrictions": null
+    },
+    "state": "disabled",
+    "grantControls": null,
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [
+          "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3",
+          "0526716b-113d-4c15-b2c8-68e3c22b9f80",
+          "158c047a-c907-4556-b7ef-446551a6b5f7",
+          "17315797-102d-40b4-93e0-432062caca18",
+          "e6d1a23a-da11-4be4-9570-befc86d067a7",
+          "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+          "62e90394-69f5-4237-9190-012177145e10",
+          "8ac3fc64-6eca-42ea-9e69-59f4c7b60eb2",
+          "7be44c8a-adaf-4e2a-84d6-ab2649e08a13",
+          "e8611ab8-c189-46e8-94e1-60213ab1f814",
+          "194ae4cb-b126-40b2-bd5b-6091b380977d"
+        ],
+        "includeUsers": [],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "browser"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - GLOBAL – SESSION – Admin Persistence (1 Hours)",
+    "templateId": null
+  },
+  "SourcePolicyId": "6d984e86-d898-48e5-b80a-a862bc4b7040",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

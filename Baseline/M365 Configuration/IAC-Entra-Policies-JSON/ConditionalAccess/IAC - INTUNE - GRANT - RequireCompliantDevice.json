@@ -1,0 +1,89 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "33a0d7cd-c3b2-4252-b441-3697e7453046",
+        "DisplayName": "CA - DeviceExclusions"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:17",
+  "PolicyConfig": {
+    "sessionControls": null,
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [
+        "compliantDevice",
+        "domainJoinedDevice"
+      ],
+      "authenticationStrength": null,
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('87435d25-9ea5-47b4-9c16-5d6575396fc9')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "33a0d7cd-c3b2-4252-b441-3697e7453046"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "authenticationFlows": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "locations": {
+        "excludeLocations": [
+          "AllTrusted"
+        ],
+        "includeLocations": [
+          "AllTrusted"
+        ]
+      },
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - INTUNE - GRANT - RequireCompliantDevice",
+    "templateId": null
+  },
+  "SourcePolicyId": "87435d25-9ea5-47b4-9c16-5d6575396fc9",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

@@ -1,0 +1,32 @@
+{
+  "ExportedDate": "2026-01-20 11:08:03",
+  "ODataType": "#microsoft.graph.countryNamedLocation",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a",
+  "DisplayName": "IAC - Blocked Countries",
+  "SourceLocationId": "12a14ddd-df08-455c-9196-4b112db40ee9",
+  "LocationType": "Country",
+  "LocationConfig": {
+    "includeUnknownCountriesAndRegions": true,
+    "displayName": "IAC - Blocked Countries",
+    "isTrusted": null,
+    "countriesAndRegions": [
+      "AF",
+      "DZ",
+      "BY",
+      "BR",
+      "CN",
+      "CU",
+      "IR",
+      "IQ",
+      "NL",
+      "NG",
+      "KP",
+      "PK",
+      "RU",
+      "SD",
+      "SY",
+      "VE",
+      "VN"
+    ]
+  }
+}

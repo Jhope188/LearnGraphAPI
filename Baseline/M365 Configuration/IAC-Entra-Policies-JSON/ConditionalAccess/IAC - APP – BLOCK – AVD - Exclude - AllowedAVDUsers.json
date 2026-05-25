@@ -1,0 +1,87 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "21344a9f-6ef0-4181-970a-15202237ac4b",
+        "DisplayName": "AVD-ExternalUsers"
+      },
+      {
+        "Id": "0007f38d-c059-4dac-91bf-ed108dda8d02",
+        "DisplayName": "AVDUsers"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:16",
+  "PolicyConfig": {
+    "sessionControls": null,
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [
+        "block"
+      ],
+      "authenticationStrength": null,
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('c9daf693-95d8-4be9-bba7-02ec159acfd5')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "21344a9f-6ef0-4181-970a-15202237ac4b",
+          "0007f38d-c059-4dac-91bf-ed108dda8d02"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "0af06dc6-e4b5-4f28-818e-e78e62d137a5",
+          "9cdead84-a844-4324-93f2-b2e6bb768d07"
+        ]
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - APP – BLOCK – AVD - Exclude - AllowedAVDUsers",
+    "templateId": null
+  },
+  "SourcePolicyId": "c9daf693-95d8-4be9-bba7-02ec159acfd5",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

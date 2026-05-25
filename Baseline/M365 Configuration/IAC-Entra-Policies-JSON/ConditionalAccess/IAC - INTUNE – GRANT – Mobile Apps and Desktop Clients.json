@@ -1,0 +1,88 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [
+      {
+        "Id": "d29b2b05-8046-44ba-8758-1e26182fcf32",
+        "DisplayName": "Unknown"
+      }
+    ],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "8782b8eb-5554-4d69-a496-1106cf10aac4",
+        "DisplayName": "CA - ServiceAccounts"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:10",
+  "PolicyConfig": {
+    "sessionControls": null,
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [
+        "compliantDevice"
+      ],
+      "authenticationStrength": null,
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('53c80126-ae17-4053-acc1-1d1afbfd8090')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "8782b8eb-5554-4d69-a496-1106cf10aac4"
+        ],
+        "excludeRoles": [
+          "d29b2b05-8046-44ba-8758-1e26182fcf32"
+        ],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "mobileAppsAndDesktopClients"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - INTUNE – GRANT – Mobile Apps and Desktop Clients",
+    "templateId": null
+  },
+  "SourcePolicyId": "53c80126-ae17-4053-acc1-1d1afbfd8090",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

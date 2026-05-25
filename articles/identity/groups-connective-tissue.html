@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groups as Connective Tissue — Inforcer Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88); border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none;
+    font-size: 0.88rem; font-family: 'DM Sans', sans-serif; z-index: 50;
+    backdrop-filter: blur(8px); transition: background 0.2s; min-height: 44px;
+    display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative; min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem max(40px, calc(50vw - 410px)) 4rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,194,179,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,92,53,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.75rem;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--teal);
+    margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--teal); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 580px; font-size: 1.1rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem; flex-wrap: wrap;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: max(40px, calc(50vw - 410px));
+    display: flex; align-items: center; gap: 0.75rem; font-size: 0.75rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.6s 1s forwards;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--teal); animation: pulse 2s infinite; }
+
+  .content { max-width: 820px; width: 100%; margin: 0 auto; padding: 0 40px 8rem; }
+  @media (max-width: 900px) { .content { padding: 0 28px 6rem; } }
+  @media (max-width: 600px) { .content { padding: 0 18px 4rem; } }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.5;
+    color: var(--off-white); border-left: 3px solid var(--teal);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4rem 0 1.5rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.25; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout.danger { border-color: rgba(255,92,53,0.2); }
+  .callout.danger::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .callout.warn { border-color: rgba(245,200,66,0.2); }
+  .callout.warn::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .callout.danger .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: #f5c842; }
+
+  /* ── PERSONA GRID (reused) ── */
+  .persona-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: rgba(0,194,179,0.1);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .persona-card { background: var(--card-bg); padding: 1.5rem; position: relative; }
+  .persona-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .persona-card.c1::before { background: var(--teal); }
+  .persona-card.c2::before { background: #f5c842; }
+  .persona-card.c3::before { background: var(--accent); }
+  .persona-emoji { font-size: 1.75rem; margin-bottom: 0.75rem; display: block; }
+  .persona-label {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 0.4rem;
+  }
+  .persona-card.c1 .persona-label { color: var(--teal); }
+  .persona-card.c2 .persona-label { color: #f5c842; }
+  .persona-card.c3 .persona-label { color: var(--accent); }
+  .persona-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
+    letter-spacing: 0.05em; color: var(--off-white); margin-bottom: 0.5rem;
+  }
+  .persona-desc { font-size: 0.85rem; color: var(--warm-gray); line-height: 1.6; margin: 0 0 0.75rem; }
+  .persona-entra {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+    color: var(--teal-dim); padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ── MIGRATION LADDER ── */
+  .ladder { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .rung {
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    padding: 1.25rem 1.5rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); transition: background 0.2s; position: relative;
+  }
+  .rung:first-child { border-radius: 4px 4px 0 0; }
+  .rung:last-child  { border-radius: 0 0 4px 4px; }
+  .rung:not(:last-child) { border-bottom: none; }
+  .rung:hover { background: rgba(0,194,179,0.04); }
+  .rung::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+  }
+  .rung.step1::before { background: var(--accent); }
+  .rung.step2::before { background: #f5c842; }
+  .rung.step3::before { background: var(--teal); }
+  .rung.step4::before { background: rgba(0,194,179,0.4); }
+  .rung-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2rem; line-height: 1;
+    min-width: 2rem; text-align: center; margin-top: 2px;
+  }
+  .rung.step1 .rung-num { color: var(--accent); }
+  .rung.step2 .rung-num { color: #f5c842; }
+  .rung.step3 .rung-num { color: var(--teal); }
+  .rung.step4 .rung-num { color: var(--teal-dim); }
+  .rung-content { flex: 1; }
+  .rung-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem;
+    letter-spacing: 0.05em; color: var(--off-white); margin-bottom: 0.4rem;
+  }
+  .rung-desc { font-size: 0.9rem; color: #a09890; line-height: 1.65; margin: 0; }
+
+  /* ── DEFENSE STACK ── */
+  .defense-stack { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .layer {
+    padding: 0.9rem 1.5rem; border: 1px solid rgba(0,194,179,0.1);
+    display: flex; align-items: center; gap: 1rem; transition: background 0.2s;
+  }
+  .layer:hover { background: rgba(0,194,179,0.05); }
+  .layer:first-child { border-radius: 4px 4px 0 0; }
+  .layer:last-child  { border-radius: 0 0 4px 4px; }
+  .layer-icon { font-size: 1.2rem; min-width: 2rem; text-align: center; }
+  .layer-text { font-size: 0.9rem; color: #a0998f; flex: 1; }
+  .layer-text strong { color: var(--off-white); display: block; font-size: 0.95rem; }
+  .layer-bar { margin-left: auto; height: 3px; border-radius: 2px; background: var(--teal); opacity: 0.4; flex-shrink: 0; }
+
+  /* ── CA HANDOFF BLOCK ── */
+  .handoff-block {
+    margin-top: 4rem; padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.07), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.25); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .handoff-block::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .handoff-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1rem;
+  }
+  .handoff-block h3 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+    letter-spacing: 0.04em; color: var(--off-white); margin-bottom: 1rem;
+  }
+  .handoff-block p { margin-bottom: 1rem; font-size: 0.95rem; }
+  .handoff-block p:last-of-type { margin-bottom: 1.5rem; }
+
+  /* ── SERIES NAV ── */
+  .series-nav {
+    margin-top: 5rem; padding: 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .series-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .series-nav-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .series-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .series-post {
+    display: flex; gap: 1rem; align-items: center; padding: 0.6rem 0.75rem;
+    border-radius: 3px; font-size: 0.9rem; color: var(--warm-gray);
+  }
+  .series-post.current { background: rgba(0,194,179,0.07); color: var(--off-white); font-weight: 500; }
+  .series-post.done { color: var(--warm-gray); }
+  .series-post-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    color: var(--teal-dim); min-width: 1.5rem; opacity: 0.6;
+  }
+  .series-post.current .series-post-num { opacity: 1; color: var(--teal); }
+
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white);
+  }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-outline {
+    display: inline-block; background: transparent; color: var(--teal);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; border: 1px solid var(--teal);
+    transition: all 0.2s; margin-left: 1rem;
+  }
+  .btn-outline:hover { background: rgba(0,194,179,0.1); }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px; white-space: nowrap;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  @media (max-width: 640px) {
+    .persona-grid { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 18px 3rem; }
+    .scroll-hint { left: 18px; }
+    .btn-outline { margin-left: 0; margin-top: 0.75rem; display: block; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<section class="hero">
+  <div class="hero-label">Identity Security Series — Part 5 of 5</div>
+  <h1>Groups:<span>The Connective Tissue</span></h1>
+  <p class="hero-sub">Everything in this series — authentication methods, passkeys, CA policy, guest access — is enforced through group membership. Get groups wrong and the rest of your identity work fails quietly in the background.</p>
+  <div class="hero-meta">
+    <span>Entra Identity</span>
+    <span>June 9, 2026</span>
+    <span>10 min read</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<main class="content">
+
+  <p>We've covered why identity is the perimeter, how authentication methods differ, why passkeys finally solve the friction problem, and how guest identities introduce trust problems most tenants haven't thought through. All of that work — every policy, every control, every phishing-resistant credential — gets enforced through group membership. Groups are where abstract identity strategy becomes concrete access control.</p>
+
+  <p>Get groups right and the rest of your identity posture scales. Get them wrong and you spend the next three years fighting access gaps, stale memberships, CA exclusions that nobody can explain, and a slowly deepening dependency on an AD environment you were supposed to be migrating away from.</p>
+
+  <div class="pull-quote">
+    "Identity lives and dies by groups. Every MFA policy, every CA exclusion, every app assignment, every privileged role — it's all groups underneath. The cleaner your groups, the more your security controls actually work."
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">Why Groups Are the Control Plane</span>
+  </div>
+
+  <p>Look at everything covered in this series through the lens of group membership and a pattern emerges.</p>
+
+  <div class="defense-stack">
+    <div class="layer">
+      <span class="layer-icon">🔑</span>
+      <div class="layer-text">
+        <strong>Authentication Method Targeting</strong>
+        When you enable passkeys or restrict SMS OTP in the unified Authentication Methods Policy, you scope it to groups. The rollout is only as clean as the group membership.
+      </div>
+      <div class="layer-bar" style="width:80px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">📋</span>
+      <div class="layer-text">
+        <strong>Conditional Access Policies</strong>
+        Every CA policy has an include and an exclude. Both are groups. The exclude group is where exceptions live — and where ungoverned groups create the gaps attackers look for.
+      </div>
+      <div class="layer-bar" style="width:70px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">👤</span>
+      <div class="layer-text">
+        <strong>Passkey Profiles</strong>
+        Device-bound for admins, synced for standard users. That segmentation is enforced through group-based passkey profile targeting. No clean groups, no clean segmentation.
+      </div>
+      <div class="layer-bar" style="width:60px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🤝</span>
+      <div class="layer-text">
+        <strong>Guest Access Scoping</strong>
+        What a guest can reach inside your tenant is determined by the groups they're added to. Stale group membership is stale access. Access review scope is a group.
+      </div>
+      <div class="layer-bar" style="width:50px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🛡️</span>
+      <div class="layer-text">
+        <strong>PIM Role Assignments</strong>
+        Privileged Identity Management activates roles through group membership. The security of your admin tier is only as strong as the integrity of those groups.
+      </div>
+      <div class="layer-bar" style="width:40px"></div>
+    </div>
+  </div>
+
+  <p>Groups aren't a supporting character in this story. They're the mechanism through which every control in this series actually functions. A group with stale membership silently undermines every policy that targets it.</p>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">The AD Dependency Problem</span>
+  </div>
+
+  <p>Most organizations in the SMB and MSP space sit somewhere on a spectrum between "still fully on-prem AD" and "genuinely cloud-native." Very few are at either extreme. The majority are in a hybrid middle ground that they've been trying to move out of for years without a clear path.</p>
+
+  <p>The honest reason hybrid stays sticky isn't technology. It's group dependency. Every time a new app gets provisioned with an AD security group, every time a new printer gets configured with a domain group, every time a new share gets NTFS permissions from an AD object — you're building a new dependency on the on-prem directory that makes leaving harder. Not impossible. Just harder, and more expensive to unwind later.</p>
+
+  <div class="callout danger">
+    <span class="callout-label">The Hidden Cost of AD Group Sprawl</span>
+    <span class="callout-icon">⚠️</span>
+    <p>Every AD group with no Entra equivalent is a dependency that ties at least one workflow to on-prem infrastructure. Over time these accumulate quietly: a shared drive here, a legacy app there, a printer group that nobody can touch. The cost isn't visible until you try to decommission a domain controller and realize how many things still depend on it. The time to audit is now, not when you're forced to.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">The Groups-First Migration Strategy</span>
+  </div>
+
+  <p>The path out of hybrid dependency isn't a single migration event. It's a gradual transfer of group authority from AD to Entra, one persona and one workflow at a time. The principle is simple: stop building new things that depend on AD groups, and start moving existing workflows to Entra groups as the opportunity arises.</p>
+
+  <p>The key is identifying personas — the logical groupings of users by what they need access to — and building those as clean Entra groups from the start. Not AD groups written back. Entra-native groups with Entra-native membership management.</p>
+
+  <div class="persona-grid">
+    <div class="persona-card c1">
+      <span class="persona-emoji">🏗️</span>
+      <div class="persona-label">Start Here</div>
+      <div class="persona-title">New Apps First</div>
+      <p class="persona-desc">Every new SaaS app, every new integration, every new tool gets provisioned with Entra groups. Printix, not print server groups. Teams channels, not AD distribution lists. Each new deployment is an AD dependency you never built.</p>
+      <div class="persona-entra">Entra Security Group · Dynamic where possible</div>
+    </div>
+    <div class="persona-card c2">
+      <span class="persona-emoji">🗺️</span>
+      <div class="persona-label">Map and Move</div>
+      <div class="persona-title">Persona Migration</div>
+      <p class="persona-desc">Map your org by business unit and role. Create clear Entra group structures for each persona. For every group you create in Entra, ask: what on-prem resource still requires the AD version? Then make that list your migration backlog.</p>
+      <div class="persona-entra">Group Writeback v2 · Source of Authority transfer</div>
+    </div>
+    <div class="persona-card c3">
+      <span class="persona-emoji">🧹</span>
+      <div class="persona-label">Clean as You Go</div>
+      <div class="persona-title">Remove Stale Dependency</div>
+      <p class="persona-desc">Every share that moves to SharePoint is an NTFS permission group you can retire. Every printer that moves to Printix is a domain group you can delete. Every legacy app that modernizes is another thread cut. AD fades when you stop feeding it.</p>
+      <div class="persona-entra">Access Reviews · Ownership assignment · Lifecycle policy</div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">The Hybrid Bridge — Group Writeback v2</span>
+  </div>
+
+  <p>For organizations that still have legitimate on-prem dependencies, Group Writeback v2 via Entra Cloud Sync is the bridge that makes an AD-minimized design possible without going cold turkey. It allows Entra-managed groups to be written back into AD, which means you can manage group membership in Entra while still satisfying the NTFS permissions and legacy app requirements that haven't migrated yet.</p>
+
+  <p>The key word is <em>bridge</em>. Writeback isn't a permanent architecture. It's a transitional tool that lets you establish Entra as the control plane for group membership today, while the on-prem dependencies are still being wound down. The goal is to shrink the list of things that need writeback, not to make writeback permanent.</p>
+
+  <div class="callout">
+    <span class="callout-label">Source of Authority Transfer</span>
+    <span class="callout-icon">🔄</span>
+    <p><strong>Group Source of Authority (SOA)</strong> in Entra lets legacy AD groups transition to cloud ownership without breaking workflows that still depend on them. Combined with the recently GA'd ability to convert individual users from on-premises authority to cloud-managed, this gives you the tooling to transfer control systematically rather than in a single high-risk cutover. Every group you move to cloud SOA is a group that no longer requires a functioning AD environment to manage.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">Group Hygiene — The Part Most Orgs Skip</span>
+  </div>
+
+  <p>Clean group strategy and clean group hygiene are different problems. Strategy is about what groups you create and where. Hygiene is about whether those groups stay accurate over time. Most organizations have a reasonable strategy and almost no hygiene. The result is groups that were accurate when created and are increasingly wrong as time passes.</p>
+
+  <div class="ladder">
+    <div class="rung step1">
+      <span class="rung-num">1</span>
+      <div class="rung-content">
+        <div class="rung-title">Every Group Needs an Owner</div>
+        <p class="rung-desc">Mystery groups — groups with no assigned owner, no documentation, no clear purpose — are where your access review process breaks down. If nobody owns a group, nobody is responsible for its accuracy. Assign ownership at creation and enforce it. No owner, no group should exist.</p>
+      </div>
+    </div>
+    <div class="rung step2">
+      <span class="rung-num">2</span>
+      <div class="rung-content">
+        <div class="rung-title">Use Dynamic Membership Where the Logic Is Stable</div>
+        <p class="rung-desc">If the rule for group membership is predictable — department equals Finance, job title contains Manager, assigned license includes Intune — dynamic groups are more reliable than manually maintained groups because the membership stays accurate without human intervention. The logic is the source of truth, not someone's last bulk import.</p>
+      </div>
+    </div>
+    <div class="rung step3">
+      <span class="rung-num">3</span>
+      <div class="rung-content">
+        <div class="rung-title">Run Access Reviews on Security-Sensitive Groups</div>
+        <p class="rung-desc">Passkey profile groups, CA exclusion groups, PIM role assignment groups — these are the groups where stale membership has direct security consequences. Scope access reviews to them specifically. Require the group owner to confirm membership periodically. Auto-revoke on no response. The same access review mechanism from the guest post applies here.</p>
+      </div>
+    </div>
+    <div class="rung step4">
+      <span class="rung-num">4</span>
+      <div class="rung-content">
+        <div class="rung-title">CA Exclusion Groups Deserve Special Attention</div>
+        <p class="rung-desc">The exclusion list in a Conditional Access policy is where the attack surface lives. Every account in a CA exclusion group bypasses whatever that policy enforces. These groups should have the smallest possible membership, clear justification for every member, regular review cycles, and ideally PIM-scoped access to be added to them at all. The CA Foundations series covers this in detail — this is the handoff point.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- GOVERNANCE HANDOFF -->
+  <div class="handoff-block">
+    <div class="handoff-label">What Comes Next</div>
+    <h3>The M365 Governance Series</h3>
+    <p>This series established the why and the what of identity security: why identity is the perimeter, what authentication methods actually protect you against, how passkeys make phishing resistance accessible, how guest identities introduce trust you haven't examined, and how groups are the mechanism that makes all of it real.</p>
+    <p>But knowing the controls exist and maintaining them are different problems entirely. The M365 Governance series picks up exactly here — with the question of why groups fail over time even in tenants that built them correctly, and what it looks like to own identity governance as a continuous operating model rather than a periodic audit event.</p>
+    <p>The first post in that series starts with the same problem this post ends on: nobody owns the scissors. Groups accumulate without owners. Dynamic rules drift without audits. Access reviews produce approvals instead of decisions. The governance series is about closing that gap — systematically, sustainably, at scale.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Continue to the Governance Series</a>
+    <a href="https://conditionalaccess.tech" class="btn-outline">Back to Home</a>
+  </div>
+
+  <!-- DUAL SERIES NAV -->
+  <div class="series-nav">
+    <div class="series-nav-label">Identity Foundations Series — Completed</div>
+    <div class="series-posts">
+      <div class="series-post done">
+        <span class="series-post-num">01</span>
+        <span>Identity Is Everything: What ITDR and Your Front Door Have in Common</span>
+      </div>
+      <div class="series-post done">
+        <span class="series-post-num">02</span>
+        <span>Authentication Methods: The Spectrum from Password to Passkey</span>
+      </div>
+      <div class="series-post done">
+        <span class="series-post-num">03</span>
+        <span>Passkeys: Security Only Works If People Will Actually Use It</span>
+      </div>
+      <div class="series-post done">
+        <span class="series-post-num">04</span>
+        <span>Who Did You Let Into Your House? Guest Identity in Microsoft Entra</span>
+      </div>
+      <div class="series-post done">
+        <span class="series-post-num">05</span>
+        <span>Groups as Connective Tissue — The Handoff to Governance</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="series-nav" style="margin-top: 1.5rem;">
+    <div class="series-nav-label">M365 Governance Series — Now Starting</div>
+    <div class="series-posts">
+      <div class="series-post current">
+        <span class="series-post-num">01</span>
+        <span>Groups Are the Connective Tissue — and Nobody Owns the Scissors</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">02</span>
+        <span>The Governance Gap — Why Settings and Control Are Not the Same Thing</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">03</span>
+        <span>The Cleanup Campaign That Never Ends — Why Lifecycle Governance Wins</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">04</span>
+        <span>AI Readiness Is a Governance Audit You Haven't Done Yet</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">05</span>
+        <span>The Ownership Operating Model — Making Governance Continuous</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>

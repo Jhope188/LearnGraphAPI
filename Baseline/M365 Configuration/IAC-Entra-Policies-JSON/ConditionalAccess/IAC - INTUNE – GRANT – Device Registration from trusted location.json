@@ -1,0 +1,108 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "33a0d7cd-c3b2-4252-b441-3697e7453046",
+        "DisplayName": "CA - DeviceExclusions"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:10",
+  "PolicyConfig": {
+    "sessionControls": null,
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [],
+      "authenticationStrength": {
+        "combinationConfigurations@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('33b49c12-465b-4dba-9785-fa7ccc326703')/grantControls/authenticationStrength/combinationConfigurations",
+        "allowedCombinations": [
+          "windowsHelloForBusiness",
+          "fido2",
+          "x509CertificateMultiFactor",
+          "deviceBasedPush",
+          "temporaryAccessPassOneTime",
+          "temporaryAccessPassMultiUse",
+          "password,microsoftAuthenticatorPush",
+          "password,softwareOath",
+          "password,hardwareOath",
+          "password,sms",
+          "password,voice",
+          "federatedMultiFactor",
+          "microsoftAuthenticatorPush,federatedSingleFactor",
+          "softwareOath,federatedSingleFactor",
+          "hardwareOath,federatedSingleFactor",
+          "sms,federatedSingleFactor",
+          "voice,federatedSingleFactor"
+        ],
+        "requirementsSatisfied": "mfa",
+        "modifiedDateTime": "2021-12-01T08:00:00Z",
+        "id": "00000000-0000-0000-0000-000000000002",
+        "createdDateTime": "2021-12-01T08:00:00Z",
+        "description": "Combinations of methods that satisfy strong authentication, such as a password + SMS",
+        "policyType": "builtIn",
+        "displayName": "Multifactor authentication",
+        "combinationConfigurations": []
+      },
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('33b49c12-465b-4dba-9785-fa7ccc326703')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "33a0d7cd-c3b2-4252-b441-3697e7453046"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [
+          "urn:user:registerdevice"
+        ],
+        "includeApplications": []
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - INTUNE – GRANT – Device Registration from trusted location",
+    "templateId": null
+  },
+  "SourcePolicyId": "33b49c12-465b-4dba-9785-fa7ccc326703",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

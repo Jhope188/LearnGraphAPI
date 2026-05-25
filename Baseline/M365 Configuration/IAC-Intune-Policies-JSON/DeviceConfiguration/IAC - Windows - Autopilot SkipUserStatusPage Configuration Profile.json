@@ -1,0 +1,43 @@
+{
+  "ExportDate": "2026-01-16 18:38:04",
+  "Assignments": {
+    "sourceId": "4437e79b-5789-4d79-b8ef-dbb6f8c0b725",
+    "id": "4437e79b-5789-4d79-b8ef-dbb6f8c0b725_132d08c7-0a4b-4ded-aefb-aa4a92923539",
+    "source": "direct",
+    "intent": "apply",
+    "target": {
+      "@odata.type": "#microsoft.graph.groupAssignmentTarget",
+      "deviceAndAppManagementAssignmentFilterId": null,
+      "groupId": "132d08c7-0a4b-4ded-aefb-aa4a92923539",
+      "deviceAndAppManagementAssignmentFilterType": "none"
+    }
+  },
+  "PolicyType": "DeviceConfiguration",
+  "Policy": {
+    "deviceManagementApplicabilityRuleOsVersion": null,
+    "deviceManagementApplicabilityRuleDeviceMode": null,
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "displayName": "IAC - Windows - Autopilot SkipUserStatusPage Configuration Profile",
+    "deviceManagementApplicabilityRuleOsEdition": null,
+    "createdDateTime": "2026-01-16T14:47:43.8718357Z",
+    "lastModifiedDateTime": "2026-01-16T23:26:12.3928724Z",
+    "description": null,
+    "@odata.type": "#microsoft.graph.windows10CustomConfiguration",
+    "omaSettings": [
+      {
+        "value": true,
+        "displayName": "SkipUserStatusPage",
+        "omaUri": "./Vendor/MSFT/DMClient/Provider/MS DM Server/FirstSyncStatus/SkipUserStatusPage",
+        "secretReferenceValueId": null,
+        "isEncrypted": false,
+        "description": null,
+        "@odata.type": "#microsoft.graph.omaSettingBoolean"
+      }
+    ],
+    "supportsScopeTags": true,
+    "id": "4437e79b-5789-4d79-b8ef-dbb6f8c0b725",
+    "version": 2
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "ExportDate": "2026-01-16 18:38:18",
+  "Settings": [
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edgev77.3~policy~microsoft_edge~startup_restoreonstartup",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edgev77.3~policy~microsoft_edge~startup_restoreonstartup_restoreonstartup",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "device_vendor_msft_policy_config_microsoft_edgev77.3~policy~microsoft_edge~startup_restoreonstartup_restoreonstartup_4",
+                "settingValueTemplateReference": null
+              }
+            }
+          ],
+          "value": "device_vendor_msft_policy_config_microsoft_edgev77.3~policy~microsoft_edge~startup_restoreonstartup_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "0"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge~startup_homepagelocation",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge~startup_homepagelocation_homepagelocation",
+              "settingInstanceTemplateReference": null,
+              "simpleSettingValue": {
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+                "value": "https://myapps.microsoft.com/",
+                "settingValueTemplateReference": null
+              }
+            }
+          ],
+          "value": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge~startup_homepagelocation_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "1"
+    },
+    {
+      "settingInstance": {
+        "auditRuleInformation": null,
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge~startup_restoreonstartupurls",
+        "settingInstanceTemplateReference": null,
+        "choiceSettingValue": {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingCollectionInstance",
+              "settingDefinitionId": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge~startup_restoreonstartupurls_restoreonstartupurlsdesc",
+              "settingInstanceTemplateReference": null,
+              "simpleSettingCollectionValue": [
+                {
+                  "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+                  "value": "https://myapps.microsoft.com/",
+                  "settingValueTemplateReference": null
+                }
+              ]
+            }
+          ],
+          "value": "device_vendor_msft_policy_config_microsoft_edge~policy~microsoft_edge~startup_restoreonstartupurls_1",
+          "settingValueTemplateReference": null
+        }
+      },
+      "id": "2"
+    }
+  ],
+  "Assignments": {
+    "sourceId": "96ce4fe3-820d-4240-a878-a53822efea03",
+    "id": "96ce4fe3-820d-4240-a878-a53822efea03_0a496479-9067-4b42-b4f7-4c144151e8e1",
+    "source": "direct",
+    "target": {
+      "@odata.type": "#microsoft.graph.groupAssignmentTarget",
+      "deviceAndAppManagementAssignmentFilterId": null,
+      "groupId": "0a496479-9067-4b42-b4f7-4c144151e8e1",
+      "deviceAndAppManagementAssignmentFilterType": "none"
+    }
+  },
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "This is a standard Homepage profile to set myapps.microsoft.com as the Edge Homepage",
+    "createdDateTime": "2026-01-16T14:50:15.718261Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:16.4536825Z",
+    "id": "96ce4fe3-820d-4240-a878-a53822efea03",
+    "platforms": "windows10",
+    "settingCount": 3,
+    "name": "IAC - Windows - Edge Homepage Profile"
+  }
+}

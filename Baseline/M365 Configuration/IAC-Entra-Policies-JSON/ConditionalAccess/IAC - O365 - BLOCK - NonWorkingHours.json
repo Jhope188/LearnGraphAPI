@@ -1,0 +1,91 @@
+{
+  "ExportDate": "2026-01-28 01:11:23",
+  "SourcePolicyId": "8b6e642a-8d67-4111-9100-88dcf19a66c3",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "AssignmentDetails": {
+    "IncludeUsers": [
+      {
+        "Id": "274c4644-56e5-4ce1-8f30-13457b94c6e5",
+        "DisplayName": "User Principal"
+      }
+    ],
+    "ExcludeGroups": [
+      {
+        "Id": "96437e0d-3d7c-4e28-b9bf-0fa68eabbff7",
+        "DisplayName": "Azure-Breakglass"
+      }
+    ],
+    "IncludeGroups": [],
+    "ExcludeUsers": [],
+    "IncludeRoles": [],
+    "ExcludeRoles": []
+  },
+  "PolicyConfig": {
+    "displayName": "IAC - O365 - BLOCK - NonWorkingHours",
+    "state": "disabled",
+    "conditions": {
+      "userRiskLevels": [],
+      "signInRiskLevels": [],
+      "clientAppTypes": [
+        "all"
+      ],
+      "platforms": null,
+      "deviceStates": null,
+      "devices": null,
+      "applications": {
+        "includeApplications": [
+          "Office365"
+        ],
+        "excludeApplications": [],
+        "includeUserActions": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null
+      },
+      "users": {
+        "includeUsers": [
+          "274c4644-56e5-4ce1-8f30-13457b94c6e5"
+        ],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGroups": [
+          "96437e0d-3d7c-4e28-b9bf-0fa68eabbff7"
+        ],
+        "includeRoles": [],
+        "excludeRoles": [],
+        "includeGuestsOrExternalUsers": null,
+        "excludeGuestsOrExternalUsers": null
+      },
+      "locations": null,
+      "clientApplications": null,
+      "times": {
+        "includeDays": {
+          "timeZone": "UTC",
+          "daysOfWeek": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ],
+          "allDay": false,
+          "startTime": "09:00:00",
+          "endTime": "17:00:00"
+        },
+        "includeAllTimes": false,
+        "excludeRange": null,
+        "includeRange": null,
+        "excludeDays": null
+      }
+    },
+    "grantControls": {
+      "operator": "OR",
+      "builtInControls": [
+        "block"
+      ],
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "authenticationStrength": null
+    },
+    "sessionControls": null
+  }
+}

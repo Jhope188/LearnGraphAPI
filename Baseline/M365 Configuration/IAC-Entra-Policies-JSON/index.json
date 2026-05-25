@@ -1,0 +1,172 @@
+{
+  "TenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a",
+  "ExportedBy": "admin@M365x37845673.onmicrosoft.com",
+  "TotalPolicies": 27,
+  "ExportDate": "2026-01-16 20:58:08",
+  "NamedLocations": [],
+  "ConditionalAccessPolicies": [
+    {
+      "FileName": "IAC - GLOBAL – BLOCK - Legacy Authentication.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL – BLOCK - Legacy Authentication",
+      "Id": "88e31244-d731-4bad-97e8-a623506ed559"
+    },
+    {
+      "FileName": "IAC - GLOBAL - BLOCK - Device Code Auth Flow.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL - BLOCK - Device Code Auth Flow",
+      "Id": "4635c7c6-9fda-4a88-8791-c4353729a220"
+    },
+    {
+      "FileName": "IAC - GLOBAL - BLOCK - Unsupported Device Platforms.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL - BLOCK - Unsupported Device Platforms",
+      "Id": "49fb70f3-7de2-45a3-9263-f2b1f36db351"
+    },
+    {
+      "FileName": "IAC - INTUNE – GRANT – Device Registration from trusted location.json",
+      "State": "disabled",
+      "Name": "IAC - INTUNE – GRANT – Device Registration from trusted location",
+      "Id": "33b49c12-465b-4dba-9785-fa7ccc326703"
+    },
+    {
+      "FileName": "IAC - INTUNE – GRANT – Mobile Apps and Desktop Clients.json",
+      "State": "disabled",
+      "Name": "IAC - INTUNE – GRANT – Mobile Apps and Desktop Clients",
+      "Id": "53c80126-ae17-4053-acc1-1d1afbfd8090"
+    },
+    {
+      "FileName": "IAC - INTUNE – GRANT – Mobile Device Access Requirements.json",
+      "State": "disabled",
+      "Name": "IAC - INTUNE – GRANT – Mobile Device Access Requirements",
+      "Id": "70ab6ce0-a24c-44f6-b556-2c5a88ffeae1"
+    },
+    {
+      "FileName": "IAC - GLOBAL – SESSION – Admin Persistence (1 Hours).json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL – SESSION – Admin Persistence (1 Hours)",
+      "Id": "6d984e86-d898-48e5-b80a-a862bc4b7040"
+    },
+    {
+      "FileName": "IAC - INTUNE – SESSION – BYOD Persistence.json",
+      "State": "disabled",
+      "Name": "IAC - INTUNE – SESSION – BYOD Persistence",
+      "Id": "63b18c92-507d-425b-be41-48b5d75d8963"
+    },
+    {
+      "FileName": "IAC - INTUNE – SESSION – Block File Downloads On Unmanaged Devices.json",
+      "State": "disabled",
+      "Name": "IAC - INTUNE – SESSION – Block File Downloads On Unmanaged Devices",
+      "Id": "c9f17d79-f902-47eb-8209-d86cb926970f"
+    },
+    {
+      "FileName": "IAC - GLOBAL – SESSION – All Users Persistence (9-12 Hours).json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL – SESSION – All Users Persistence (9-12 Hours)",
+      "Id": "655c18b6-d254-4a32-a087-3ff9380abb68"
+    },
+    {
+      "FileName": "IAC - GLOBAL – BLOCK – Countries not Allowed.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL – BLOCK – Countries not Allowed",
+      "Id": "b0052c50-3891-4e84-abde-772c5b58bc15"
+    },
+    {
+      "FileName": "IAC - GLOBAL – BLOCK – Service Accounts.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL – BLOCK – Service Accounts",
+      "Id": "2a72176a-39ba-4223-8a10-3ca9595d06e4"
+    },
+    {
+      "FileName": "IAC - APP - BLOCK - SharePoint-OneDrive-NonTrustedLocations.json",
+      "State": "disabled",
+      "Name": "IAC - APP - BLOCK - SharePoint-OneDrive-NonTrustedLocations",
+      "Id": "8ee4b0d5-8daf-4e7e-9302-f718f9eb2208"
+    },
+    {
+      "FileName": "IAC - P2 - GLOBAL – GRANT – High-Risk Sign-Ins.json",
+      "State": "disabled",
+      "Name": "IAC - P2 - GLOBAL – GRANT – High-Risk Sign-Ins",
+      "Id": "294c064e-758e-4001-a5f1-5c0005b40f1a"
+    },
+    {
+      "FileName": "IAC - P2 - GLOBAL – GRANT – High-Risk Users.json",
+      "State": "disabled",
+      "Name": "IAC - P2 - GLOBAL – GRANT – High-Risk Users",
+      "Id": "b05adb67-c3a7-4010-bcf1-f1af0c1a46d9"
+    },
+    {
+      "FileName": "IAC - P2 - GLOBAL – GRANT – Medium-Risk Sign-Ins.json",
+      "State": "disabled",
+      "Name": "IAC - P2 - GLOBAL – GRANT – Medium-Risk Sign-Ins",
+      "Id": "7cefe2df-20c0-406b-8a93-0dc4a1323183"
+    },
+    {
+      "FileName": "IAC - P2 - GLOBAL – GRANT – Medium-Risk Users.json",
+      "State": "disabled",
+      "Name": "IAC - P2 - GLOBAL – GRANT – Medium-Risk Users",
+      "Id": "757381f0-144b-4091-ad5e-5402372a25e3"
+    },
+    {
+      "FileName": "IAC - GLOBAL - GRANT - MFA - AllAdmins.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL - GRANT - MFA - AllAdmins",
+      "Id": "0a906da3-3cbe-4227-a036-7fb9afc121e9"
+    },
+    {
+      "FileName": "IAC - APP – BLOCK – AVD - Exclude - AllowedAVDUsers.json",
+      "State": "disabled",
+      "Name": "IAC - APP – BLOCK – AVD - Exclude - AllowedAVDUsers",
+      "Id": "c9daf693-95d8-4be9-bba7-02ec159acfd5"
+    },
+    {
+      "FileName": "IAC - GLOBAL - GRANT - MFA - External-Guest-Users.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL - GRANT - MFA - External-Guest-Users",
+      "Id": "0ac710dc-f044-402b-8c55-96a379f9733e"
+    },
+    {
+      "FileName": "IAC - GLOBAL - BLOCK - Authentication Transfer.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL - BLOCK - Authentication Transfer",
+      "Id": "e8c3969f-9e28-48b5-b930-fef43c783ded"
+    },
+    {
+      "FileName": "IAC - INTUNE - GRANT - RequireCompliantDevice.json",
+      "State": "disabled",
+      "Name": "IAC - INTUNE - GRANT - RequireCompliantDevice",
+      "Id": "87435d25-9ea5-47b4-9c16-5d6575396fc9"
+    },
+    {
+      "FileName": "IAC - APP – BLOCK – AVD - NonTrustedLocations.json",
+      "State": "disabled",
+      "Name": "IAC - APP – BLOCK – AVD - NonTrustedLocations",
+      "Id": "620fe00f-2446-453f-b1b8-9e739bbaa282"
+    },
+    {
+      "FileName": "IAC - P2 - GLOBAL - BLOCK - RiskyUsers - RegisterSecurityInfoRequirements.json",
+      "State": "disabled",
+      "Name": "IAC - P2 - GLOBAL - BLOCK - RiskyUsers - RegisterSecurityInfoRequirements",
+      "Id": "29c95a7f-cbe1-4e82-a016-7c33d7b9dab2"
+    },
+    {
+      "FileName": "IAC - APP - SESSION - O365 - Timeoutsettings.json",
+      "State": "disabled",
+      "Name": "IAC - APP - SESSION - O365 - Timeoutsettings",
+      "Id": "3836e733-e555-4a7e-ad7d-8ad2d5d6a1f1"
+    },
+    {
+      "FileName": "IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions.json",
+      "State": "disabled",
+      "Name": "IAC - GLOBAL – BLOCK – Countries not Allowed - NoExclusions",
+      "Id": "6170d175-6a8f-4c81-8eac-9b4ec286bc97"
+    },
+    {
+      "FileName": "IAC - INTUNE - BLOCK - RequireCompliantDevice - NonTrustedLocations.json",
+      "State": "disabled",
+      "Name": "IAC - INTUNE - BLOCK - RequireCompliantDevice - NonTrustedLocations",
+      "Id": "d3edea14-047d-43ae-930b-0ea4e376cc05"
+    }
+  ],
+  "TotalLocations": 0
+}

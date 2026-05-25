@@ -1,0 +1,67 @@
+{
+  "ExportDate": "2026-01-25 21:03:56",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "PolicyConfig": {
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies/$entity",
+    "modifiedDateTime": "2026-01-25T20:35:12.5322535Z",
+    "conditions": {
+      "clientApplications": null,
+      "authenticationFlows": null,
+      "devices": null,
+      "platforms": null,
+      "signInRiskLevels": [],
+      "locations": {
+        "excludeLocations": [],
+        "includeLocations": [
+          "12a14ddd-df08-455c-9196-4b112db40ee9"
+        ]
+      },
+      "applications": {
+        "includeUserActions": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "excludeApplications": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "users": {
+        "excludeUsers": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeRoles": [],
+        "includeGroups": [],
+        "excludeGroups": [
+          "96437e0d-3d7c-4e28-b9bf-0fa68eabbff7"
+        ],
+        "includeGuestsOrExternalUsers": null,
+        "excludeGuestsOrExternalUsers": null,
+        "includeRoles": []
+      },
+      "clientAppTypes": [
+        "all"
+      ],
+      "servicePrincipalRiskLevels": [],
+      "insiderRiskLevels": null,
+      "userRiskLevels": []
+    },
+    "displayName": "IAC - GLOBAL \u2013 BLOCK \u2013 Countries not Allowed - NoExclusions",
+    "sessionControls": null,
+    "createdDateTime": "2026-01-20T11:28:39.5986971Z",
+    "state": "enabled",
+    "grantControls": {
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('d9fe9d51-f837-479c-90f0-446b57939ac1')/grantControls/authenticationStrength/$entity",
+      "customAuthenticationFactors": [],
+      "authenticationStrength": null,
+      "builtInControls": [
+        "block"
+      ],
+      "termsOfUse": [],
+      "operator": "OR"
+    },
+    "templateId": null,
+    "id": "d9fe9d51-f837-479c-90f0-446b57939ac1"
+  },
+  "SourcePolicyId": "d9fe9d51-f837-479c-90f0-446b57939ac1"
+}

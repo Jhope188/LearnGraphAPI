@@ -1,0 +1,21 @@
+{
+  "ExportDate": "2026-01-25 21:04:45",
+  "ODataType": "#microsoft.graph.countryNamedLocation",
+  "SourceLocationId": "1fe18182-5167-4fb6-8fd7-e092917b97bc",
+  "LocationConfig": {
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/namedLocations/$entity",
+    "countriesAndRegions": [
+      "GB",
+      "US"
+    ],
+    "displayName": "IAC - AllowedCountries",
+    "includeUnknownCountriesAndRegions": false,
+    "modifiedDateTime": "2026-01-25T20:11:32.8843077Z",
+    "createdDateTime": "2026-01-25T20:11:32.8843077Z",
+    "@odata.type": "#microsoft.graph.countryNamedLocation",
+    "countryLookupMethod": "clientIpAddress",
+    "id": "1fe18182-5167-4fb6-8fd7-e092917b97bc"
+  },
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "LocationType": "Country"
+}

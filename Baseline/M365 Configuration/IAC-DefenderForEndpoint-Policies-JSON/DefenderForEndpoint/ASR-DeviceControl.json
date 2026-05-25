@@ -1,0 +1,425 @@
+{
+  "createdDateTime": "2026-02-20T11:46:02.0112933Z",
+  "description": "",
+  "lastModifiedDateTime": "2026-02-20T11:46:02.0112933Z",
+  "name": "Windows 11 ASR Device Control",
+  "platforms": "windows10",
+  "roleScopeTagIds": [
+    "0"
+  ],
+  "settingCount": 20,
+  "technologies": "mdm,microsoftSense",
+  "id": "a4f24bc8-a0de-419f-9e7a-2cdd276ca49b",
+  "templateReference": {
+    "templateId": "0f2034c6-3cd6-4ee1-bd37-f3c0693e9548_1",
+    "templateFamily": "endpointSecurityAttackSurfaceReduction",
+    "templateDisplayName": "Device Control",
+    "templateDisplayVersion": "Version 1"
+  },
+  "settings@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies('a4f24bc8-a0de-419f-9e7a-2cdd276ca49b')/settings",
+  "settings": [
+    {
+      "id": "0",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_defender_allowfullscanremovabledrivescanning",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "3e830855-161b-495d-833c-a28f004ce677"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_defender_allowfullscanremovabledrivescanning_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "9ffa57a4-f4c7-4832-8f72-03c86489149f",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "1",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_dataprotection_allowdirectmemoryaccess",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "6368f074-9ebb-4492-8de6-9a360cd7cc5b"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_dataprotection_allowdirectmemoryaccess_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "65507cf9-eb47-4250-bc4d-3203a1652078",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "2",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_dmaguard_deviceenumerationpolicy",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "60e06b54-bea1-40f1-b2e1-b4c8bdfa4bd6"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_dmaguard_deviceenumerationpolicy_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "531c5701-6ba0-442a-8a3d-326282e96b82",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "3",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_storage_removablediskdenywriteaccess",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "c6cf4c83-3a28-4744-be79-3c2317df35fc"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_storage_removablediskdenywriteaccess_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "c123806c-8430-421b-ba5c-b92b9e396276",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "4",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_connectivity_allowusbconnection",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "bc92aa99-0993-4c65-a005-d5e5e6701486"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_connectivity_allowusbconnection_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "0859f615-a7f0-4043-b559-2ec927748de2",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "5",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_connectivity_allowbluetooth",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "5c10bf3f-d815-4f68-b9d2-1c71ea111793"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_connectivity_allowbluetooth_2",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "22424b5e-5950-4b05-982d-fb7359ac759c",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "6",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_bluetooth_allowadvertising",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "d6ead715-5428-4f4d-8319-cdc36859a9a6"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_bluetooth_allowadvertising_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "157fc668-25ea-4d32-aa04-283a756dcc6a",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "7",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_bluetooth_allowdiscoverablemode",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "edf51c88-6f17-48f6-ac78-4fdeb8a10b80"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_bluetooth_allowdiscoverablemode_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "ca751fac-3053-4dfe-aa76-7f550138a2de",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "8",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_bluetooth_allowprepairing",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "9e08feef-b150-4c91-85da-2e3437aa66b0"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_bluetooth_allowprepairing_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "4c6ec0ed-54ce-4355-be10-1f6969109613",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "9",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_bluetooth_allowpromptedproximalconnections",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "f1015b71-30b9-4933-a4bf-0ff6068a6d55"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_bluetooth_allowpromptedproximalconnections_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "a6867af2-5a01-4e8f-806a-35c590993db8",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "10",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_system_allowstoragecard",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "09592b67-f7d2-4fce-b411-3ab6c959edf2"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_system_allowstoragecard_1",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "1127482d-530b-425c-ac62-9d23299dcd2b",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "11",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_enableinstallationpolicylayering",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "aa31f13a-b613-4776-a27b-f1e278bfb65a"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_enableinstallationpolicylayering_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "e9bca933-0294-43f4-a4c6-d3a253fd2393",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "12",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_allowinstallationofmatchingdeviceids",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "6e705a22-96a3-4736-aeac-199815f44a91"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_allowinstallationofmatchingdeviceids_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "d164625e-3492-4b39-8bad-2e27fb5490fa",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "13",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_allowinstallationofmatchingdeviceinstanceids",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "5baa281c-d795-456b-8498-3c95dfb5ed3a"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_allowinstallationofmatchingdeviceinstanceids_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "9cba5671-00f1-4e81-b661-0cafdb2d66d0",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "14",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_allowinstallationofmatchingdevicesetupclasses",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "5c3a35f3-02b2-44e8-906a-3e80d0c47108"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_allowinstallationofmatchingdevicesetupclasses_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "6baa8cc3-fdad-41f4-99a8-f35322e1187b",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "15",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofdevicesnotdescribedbyotherpolicysettings",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "a85927b5-9669-4cfe-82b1-81bdc4d37466"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofdevicesnotdescribedbyotherpolicysettings_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "dd178fa3-0238-40c3-93af-d6e13ad9cac3",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "16",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofmatchingdeviceids",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "da5f14a8-5353-4ee7-91d9-e19fe925ee48"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofmatchingdeviceids_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "2c209851-c72a-4ebf-b37e-a1c1c689945b",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "17",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofmatchingdeviceinstanceids",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "b6d5cde6-400b-46e0-8691-cece0a322dd0"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofmatchingdeviceinstanceids_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "5092a81d-4e23-442d-88a8-4025999c36d1",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "18",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofmatchingdevicesetupclasses",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "9ee63839-0581-4830-9a55-5ed5defe2bde"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_deviceinstallation_preventinstallationofmatchingdevicesetupclasses_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "413b7fb3-cea0-46bf-82c6-0e95d3c85258",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    },
+    {
+      "id": "19",
+      "settingInstance": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+        "settingDefinitionId": "device_vendor_msft_policy_config_admx_deviceinstallation_deviceinstall_removable_deny",
+        "auditRuleInformation": null,
+        "settingInstanceTemplateReference": {
+          "settingInstanceTemplateId": "e3eb4037-0645-4f39-8c25-50e075b79065"
+        },
+        "choiceSettingValue": {
+          "value": "device_vendor_msft_policy_config_admx_deviceinstallation_deviceinstall_removable_deny_0",
+          "settingValueTemplateReference": {
+            "settingValueTemplateId": "ab0819f8-8e92-4e14-9f76-b7585045b578",
+            "useTemplateDefault": false
+          },
+          "children": []
+        }
+      }
+    }
+  ],
+  "assignments@odata.context": "https://graph.microsoft.com/beta/$metadata#deviceManagement/configurationPolicies('a4f24bc8-a0de-419f-9e7a-2cdd276ca49b')/assignments",
+  "assignments": [
+    {
+      "id": "a4f24bc8-a0de-419f-9e7a-2cdd276ca49b_adadadad-808e-44e2-905a-0b7873a8a531",
+      "source": "direct",
+      "sourceId": "a4f24bc8-a0de-419f-9e7a-2cdd276ca49b",
+      "target": {
+        "@odata.type": "#microsoft.graph.allDevicesAssignmentTarget",
+        "deviceAndAppManagementAssignmentFilterId": null,
+        "deviceAndAppManagementAssignmentFilterType": "none"
+      }
+    },
+    {
+      "id": "a4f24bc8-a0de-419f-9e7a-2cdd276ca49b_acacacac-9df4-4c7d-9d50-4ef0226f57a9",
+      "source": "direct",
+      "sourceId": "a4f24bc8-a0de-419f-9e7a-2cdd276ca49b",
+      "target": {
+        "@odata.type": "#microsoft.graph.allLicensedUsersAssignmentTarget",
+        "deviceAndAppManagementAssignmentFilterId": null,
+        "deviceAndAppManagementAssignmentFilterType": "none"
+      }
+    }
+  ]
+}

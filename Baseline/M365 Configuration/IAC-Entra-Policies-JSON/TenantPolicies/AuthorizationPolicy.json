@@ -1,0 +1,41 @@
+{
+  "ExportDate": "2026-01-25 20:58:55",
+  "SourceTenantId": "44176a9d-4a62-469c-a336-ad1f8e30927c",
+  "Notes": {
+    "CriticalSettings": [
+      "blockMsolPowerShell - Blocks legacy MSOL PowerShell module",
+      "allowedToSignUpEmailBasedSubscriptions - Email-based subscription signups",
+      "allowEmailVerifiedUsersToJoinOrganization - Email-verified user join",
+      "defaultUserRolePermissions - Default permissions for users"
+    ],
+    "Description": "Tenant authorization policy controlling default user permissions, guest access, and PowerShell access"
+  },
+  "PolicyType": "AuthorizationPolicy",
+  "PolicyConfig": {
+    "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#policies/authorizationPolicy/$entity",
+    "guestUserRoleId": "2af84b1e-32c8-42b7-82bc-daa82404023b",
+    "defaultUserRolePermissions": {
+      "allowedToReadOtherUsers": true,
+      "allowedToCreateTenants": false,
+      "permissionGrantPoliciesAssigned": [
+        "ManagePermissionGrantsForOwnedResource.microsoft-dynamically-managed-permissions-for-chat",
+        "ManagePermissionGrantsForOwnedResource.microsoft-dynamically-managed-permissions-for-team",
+        "ManagePermissionGrantsForSelf.microsoft-user-default-allow-consent-apps",
+        "ManagePermissionGrantsForSelf.microsoft-user-default-recommended"
+      ],
+      "allowedToCreateSecurityGroups": false,
+      "allowedToReadBitlockerKeysForOwnedDevice": true,
+      "allowedToCreateApps": false
+    },
+    "displayName": "Authorization Policy",
+    "description": "Used to manage authorization related settings across the company.",
+    "allowedToSignUpEmailBasedSubscriptions": false,
+    "allowUserConsentForRiskyApps": null,
+    "allowInvitesFrom": "everyone",
+    "allowedToUseSSPR": true,
+    "blockMsolPowerShell": true,
+    "allowEmailVerifiedUsersToJoinOrganization": false,
+    "id": "authorizationPolicy"
+  },
+  "PolicyId": "authorizationPolicy"
+}

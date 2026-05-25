@@ -1,0 +1,40 @@
+{
+  "ExportDate": "2026-01-16 18:38:16",
+  "Settings": {
+    "settingInstance": {
+      "auditRuleInformation": null,
+      "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+      "settingDefinitionId": "device_vendor_msft_policy_config_admx_windowsstore_removewindowsstore_2",
+      "settingInstanceTemplateReference": null,
+      "choiceSettingValue": {
+        "children": [],
+        "value": "device_vendor_msft_policy_config_admx_windowsstore_removewindowsstore_2_0",
+        "settingValueTemplateReference": null
+      }
+    },
+    "id": "0"
+  },
+  "Assignments": null,
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "Set “Turn off the Store application” = Enabled\n\n💡 This enforces the same Group Policy:\nComputer Configuration → Administrative Templates → Windows Components → Store → Turn off the Store application",
+    "createdDateTime": "2026-01-16T14:49:25.3445305Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:15.2817981Z",
+    "id": "1e766d82-04da-418f-b716-f231f277ee74",
+    "platforms": "windows10",
+    "settingCount": 1,
+    "name": "IAC - Windows - Block - WindowsStore"
+  }
+}

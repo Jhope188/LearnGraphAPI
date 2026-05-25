@@ -1,0 +1,85 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "c07caedd-cc1f-483e-8ff9-332f6aad189b",
+        "DisplayName": "CA - GuestExclusions"
+      },
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:17",
+  "PolicyConfig": {
+    "sessionControls": null,
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [
+        "mfa"
+      ],
+      "authenticationStrength": null,
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('0ac710dc-f044-402b-8c55-96a379f9733e')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [],
+        "excludeGroups": [
+          "c07caedd-cc1f-483e-8ff9-332f6aad189b",
+          "822cebe7-b527-405c-8bae-834782ec74cb"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": {
+          "guestOrExternalUserTypes": "serviceProvider",
+          "externalTenants": {
+            "@odata.type": "#microsoft.graph.conditionalAccessEnumeratedExternalTenants",
+            "members": [
+              "1b2f14e2-91f9-4876-9f59-3cb09b4ec310"
+            ],
+            "membershipKind": "enumerated"
+          }
+        },
+        "includeGuestsOrExternalUsers": {
+          "guestOrExternalUserTypes": "internalGuest,b2bCollaborationGuest,b2bCollaborationMember,b2bDirectConnectUser,otherExternalUser,serviceProvider"
+        }
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - GLOBAL - GRANT - MFA - External-Guest-Users",
+    "templateId": null
+  },
+  "SourcePolicyId": "0ac710dc-f044-402b-8c55-96a379f9733e",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passkeys: Security Only Works If People Use It — Inforcer Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88); border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none;
+    font-size: 0.88rem; font-family: 'DM Sans', sans-serif; z-index: 50;
+    backdrop-filter: blur(8px); transition: background 0.2s; min-height: 44px;
+    display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative; min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem max(40px, calc(50vw - 410px)) 4rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,194,179,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,92,53,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.75rem;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--teal);
+    margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--teal); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 580px; font-size: 1.1rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem; flex-wrap: wrap;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: max(40px, calc(50vw - 410px));
+    display: flex; align-items: center; gap: 0.75rem; font-size: 0.75rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.6s 1s forwards;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--teal); animation: pulse 2s infinite; }
+
+  .content { max-width: 820px; width: 100%; margin: 0 auto; padding: 0 40px 8rem; }
+  @media (max-width: 900px) { .content { padding: 0 28px 6rem; } }
+  @media (max-width: 600px) { .content { padding: 0 18px 4rem; } }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.5;
+    color: var(--off-white); border-left: 3px solid var(--teal);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4rem 0 1.5rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.25; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout.danger { border-color: rgba(255,92,53,0.2); }
+  .callout.danger::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .callout.warn { border-color: rgba(245,200,66,0.2); }
+  .callout.warn::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .callout.danger .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: #f5c842; }
+
+  /* ── COMPARE GRID (synced vs device-bound) ── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(0,194,179,0.1);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .compare-card { background: var(--card-bg); padding: 1.75rem; position: relative; }
+  .compare-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .compare-card.cloud::before { background: var(--teal); }
+  .compare-card.hardware::before { background: #f5c842; }
+  .compare-emoji { font-size: 1.75rem; margin-bottom: 0.75rem; display: block; }
+  .compare-label {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 0.4rem;
+  }
+  .compare-card.cloud .compare-label { color: var(--teal); }
+  .compare-card.hardware .compare-label { color: #f5c842; }
+  .compare-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
+    letter-spacing: 0.05em; color: var(--off-white); margin-bottom: 0.75rem;
+  }
+  .compare-desc { font-size: 0.88rem; color: var(--warm-gray); line-height: 1.6; margin: 0 0 1rem; }
+  .compare-list { list-style: none; padding: 0; margin: 0; }
+  .compare-list li {
+    font-size: 0.85rem; color: var(--warm-gray); padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; gap: 0.6rem; align-items: flex-start; line-height: 1.5;
+  }
+  .compare-list li:last-child { border-bottom: none; }
+  .compare-list li::before { content: '→'; color: var(--teal-dim); font-size: 0.8rem; margin-top: 1px; flex-shrink: 0; }
+  .compare-footer {
+    margin-top: 1rem; padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+  }
+  .compare-card.cloud .compare-footer { color: var(--teal-dim); }
+  .compare-card.hardware .compare-footer { color: #8a7e40; }
+
+  /* ── DEFENSE STACK ── */
+  .defense-stack { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .layer {
+    padding: 0.9rem 1.5rem; border: 1px solid rgba(0,194,179,0.1);
+    display: flex; align-items: center; gap: 1rem; transition: background 0.2s;
+  }
+  .layer:hover { background: rgba(0,194,179,0.05); }
+  .layer:first-child { border-radius: 4px 4px 0 0; }
+  .layer:last-child  { border-radius: 0 0 4px 4px; }
+  .layer-icon { font-size: 1.2rem; min-width: 2rem; text-align: center; }
+  .layer-text { font-size: 0.9rem; color: #a0998f; flex: 1; }
+  .layer-text strong { color: var(--off-white); display: block; font-size: 0.95rem; }
+
+  /* ── CHECKLIST ── */
+  .checklist { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .check-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1rem 1.25rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); transition: background 0.2s;
+  }
+  .check-item:first-child { border-radius: 4px 4px 0 0; }
+  .check-item:last-child  { border-radius: 0 0 4px 4px; }
+  .check-item:not(:last-child) { border-bottom: none; }
+  .check-item:hover { background: rgba(0,194,179,0.04); }
+  .check-box {
+    width: 18px; height: 18px; border: 2px solid var(--teal-dim);
+    border-radius: 3px; flex-shrink: 0; margin-top: 3px; opacity: 0.5;
+  }
+  .check-text { font-size: 0.92rem; color: #a09890; line-height: 1.65; }
+  .check-text strong { display: block; color: var(--off-white); margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+  /* ── SERIES NAV ── */
+  .series-nav {
+    margin-top: 5rem; padding: 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .series-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .series-nav-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .series-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .series-post {
+    display: flex; gap: 1rem; align-items: center; padding: 0.6rem 0.75rem;
+    border-radius: 3px; font-size: 0.9rem; color: var(--warm-gray);
+  }
+  .series-post.current { background: rgba(0,194,179,0.07); color: var(--off-white); font-weight: 500; }
+  .series-post.upcoming { color: rgba(176,169,159,0.45); }
+  .series-post-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    color: var(--teal-dim); min-width: 1.5rem; opacity: 0.6;
+  }
+  .series-post.current .series-post-num { opacity: 1; color: var(--teal); }
+
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white);
+  }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px; white-space: nowrap;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 18px 3rem; }
+    .scroll-hint { left: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<section class="hero">
+  <div class="hero-label">Identity Security Series — Part 3 of 5</div>
+  <h1>Passkeys:<span>Use It or Lose It</span></h1>
+  <p class="hero-sub">Phishing-resistant authentication has been technically possible for years. The reason most organizations haven't deployed it isn't the technology. It's that security nobody will use isn't actually security.</p>
+  <div class="hero-meta">
+    <span>Entra Authentication</span>
+    <span>June 2, 2026</span>
+    <span>9 min read</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<main class="content">
+
+  <p>There's a version of this post that opens with statistics about phishing attacks, credential theft rates, and breach costs. You've read that post a hundred times. It doesn't change behavior. Here's a different opening.</p>
+
+  <p>Last year a user got a new iPhone. They logged into their password manager, their photos were already there, their apps restored, their contacts synced. They opened their work email, got prompted to authenticate, tapped Face ID, and were in. They texted their IT admin: <em>"Wait, that's it? That was easy."</em></p>
+
+  <p>That moment — the "wait, that was easy" moment — is the entire argument for passkeys. Not the cryptography. Not the FIDO2 spec. Not the AAL2 compliance validation. The moment a user realizes the most secure way to log in is also the easiest way to log in is the moment adoption becomes possible.</p>
+
+  <div class="pull-quote">
+    "Security that people won't use isn't a security win. It's a policy document waiting for a workaround."
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">What's Actually Changed</span>
+  </div>
+
+  <p>This conversation has shifted significantly in the last six months. As of March 2026, synced passkeys and passkey profiles reached General Availability in Microsoft Entra ID. This isn't a preview feature to pilot with early adopters anymore. It's production-ready infrastructure that's being auto-rolled into tenants that already have FIDO2 enabled.</p>
+
+  <p>More importantly: if your tenant is in scope, Microsoft's managed registration campaign has already started nudging users to register passkeys after MFA. Not sometime in the future. Right now. The question isn't whether your users will encounter this. It's whether you planned the rollout or whether your helpdesk is about to find out through tickets.</p>
+
+  <div class="callout warn">
+    <span class="callout-label">Action Required — Check Your Tenant</span>
+    <span class="callout-icon">⚠️</span>
+    <p>If Passkeys (FIDO2) is already enabled in your tenant, automatic migration to passkey profiles is rolling through now, with completion expected by late May 2026. The Microsoft-managed registration campaign default is shifting from targeting Microsoft Authenticator to targeting passkeys directly, and the default user targeting is expanding from voice/text users to <strong>all MFA-capable users</strong>. Review your passkey profile configuration before that change reaches your tenant, not after.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">Synced vs Device-Bound: The Right Tool for the Right Person</span>
+  </div>
+
+  <p>The most common objection to passkey deployment is "but what happens when a user gets a new phone?" It's the right question, and for years the honest answer was "it's complicated." Synced passkeys change that answer to "nothing, it's already there."</p>
+
+  <p>But synced and device-bound passkeys are not interchangeable, and treating them as such is where most deployment plans go wrong. The right model is a segmented assurance model: different credential types for different risk profiles, enforced through passkey profiles in Entra.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card cloud">
+      <span class="compare-emoji">☁️</span>
+      <div class="compare-label">For Standard Users</div>
+      <div class="compare-title">Synced Passkeys</div>
+      <p class="compare-desc">Stored in a password manager (iCloud Keychain, Google Password Manager, 1Password, Bitwarden) and synced across all of the user's devices. Change phones, the passkey is already there. Still FIDO2-based, still phishing-resistant, validated by NIST SP 800-63B Supplement 1 as meeting AAL2 requirements.</p>
+      <ul class="compare-list">
+        <li>Knowledge workers, general workforce</li>
+        <li>BYOD and cross-device users</li>
+        <li>Anyone who has ever asked "what happens with my new phone"</li>
+        <li>The path to organization-wide phishing resistance at scale</li>
+      </ul>
+      <div class="compare-footer">Assurance: AAL2 · passkeyType: synced</div>
+    </div>
+    <div class="compare-card hardware">
+      <span class="compare-emoji">🔑</span>
+      <div class="compare-label">For Admins and Privileged Roles</div>
+      <div class="compare-title">Device-Bound Passkeys</div>
+      <p class="compare-desc">The private key is tied to specific hardware and never leaves it. YubiKeys, TPM chips, Windows Hello for Business on managed devices. Loss of the device means the credential is gone. Higher operational cost, higher assurance. The right answer for the accounts that attackers actually target.</p>
+      <ul class="compare-list">
+        <li>Global Admins and privileged role holders</li>
+        <li>Break-glass and emergency access accounts</li>
+        <li>Shared workstation environments</li>
+        <li>Regulated environments requiring AAL3</li>
+      </ul>
+      <div class="compare-footer">Assurance: AAL3 · passkeyType: deviceBound</div>
+    </div>
+  </div>
+
+  <p>Passkey profiles in Entra are what make this split operationally real. You can require hardware-bound passkeys for your Global Admins while allowing synced passkeys for the rest of the organization, all within a single authentication methods policy. You don't need separate tenants, separate configurations, or separate rollouts. One policy, two profiles, two risk tiers handled cleanly.</p>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">The Bootstrapping Paradox</span>
+  </div>
+
+  <p>Here's the problem nobody talks about in passkey deployment guides: how does a brand new employee register a passkey when they have no prior credential to authenticate with in the first place?</p>
+
+  <p>It's a genuine chicken-and-egg problem. Passkey enrollment requires authentication. Authentication requires something the user already has. A new employee has nothing yet. The old answer was to set a temporary password, let them log in, then have them register their authenticator. Every step of that process is a security gap. The temporary password is a phishable credential. The setup flow is an opportunity for a social engineering attack. The transition period is where things go wrong.</p>
+
+  <div class="callout">
+    <span class="callout-label">The Answer — Temporary Access Pass</span>
+    <span class="callout-icon">🎟️</span>
+    <p><strong>Temporary Access Pass (TAP)</strong> is a time-limited, single-use passcode that lets a new employee register their passkey without ever setting a password. An admin generates a TAP, the user redeems it once to bootstrap their authentication setup, and the TAP expires. No persistent password in the tenant, no phishable credential left behind. This is the correct onboarding flow for a passwordless organization — and most admins haven't deployed it yet. If your onboarding process still starts with "here's your temporary password," TAP is the fix.</p>
+  </div>
+
+  <p>TAP also solves the recovery scenario. User loses their phone or their hardware key. They can't log in. You generate a TAP, they use it once to register a new passkey, and they're back. No password reset, no SMS fallback, no regression to a weaker method. The recovery path is as strong as the initial enrollment path.</p>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">The Mental Model Problem</span>
+  </div>
+
+  <p>Ask a non-technical user what a passkey is. Then ask them what a security key is. Then a hardware key. A YubiKey. Passwordless. Windows Hello. Windows Hello for Business. Phone sign-in. Authenticator. They are not the same thing. To most users, they are completely indistinguishable words that IT keeps using interchangeably.</p>
+
+  <p>This is not a user failure. It's a communication failure. And it's one of the biggest practical barriers to passkey adoption that doesn't show up in any technical deployment guide.</p>
+
+  <div class="defense-stack">
+    <div class="layer">
+      <span class="layer-icon">❌</span>
+      <div class="layer-text">
+        <strong>What IT says</strong>
+        "We're rolling out FIDO2-based phishing-resistant passkeys via the Microsoft Authenticator app and supporting device-bound credentials through Windows Hello for Business on managed endpoints."
+      </div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🤔</span>
+      <div class="layer-text">
+        <strong>What the user hears</strong>
+        Something about passwords and Windows. There's probably a ticket to open.
+      </div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">✅</span>
+      <div class="layer-text">
+        <strong>What actually works</strong>
+        "Next time you log in, you'll tap your fingerprint instead of typing a password. That's it. It works on your phone, your laptop, and if you get a new phone, it's already there."
+      </div>
+    </div>
+  </div>
+
+  <p>The "unlock" concept is what lands. Users understand unlocking their phone. They do it dozens of times a day. Passkeys are just that same gesture applied to work logins. Once the mental model clicks, the resistance largely disappears. The job of the rollout communication isn't to explain cryptography. It's to make the new thing feel familiar before anyone is asked to use it.</p>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">The Assurance Question</span>
+  </div>
+
+  <p>The most common pushback from security-conscious admins when synced passkeys came up was "but are they really as secure as a hardware key?" It's a fair question and it deserves a straight answer: no, not quite. And that's fine, because the alternative for most users isn't a hardware key. It's Authenticator push or, worse, SMS OTP.</p>
+
+  <p>NIST SP 800-63B Supplement 1 validated synced passkeys as meeting AAL2 requirements. That's phishing-resistant enough for general workforce use. The private key is encrypted within the cloud provider's sync fabric. Compromising a synced passkey requires compromising both the user's cloud provider account and the device. For standard users, that's a dramatically higher bar than any legacy MFA method.</p>
+
+  <div class="callout">
+    <span class="callout-label">The Segmented Assurance Model</span>
+    <span class="callout-icon">🛡️</span>
+    <p>The right question isn't "which passkey type is more secure." It's "which passkey type is right for this risk profile." <strong>Standard users: synced passkeys at AAL2.</strong> Still phishing-resistant, deployable at scale, zero hardware logistics. <strong>Admins and privileged roles: device-bound at AAL3.</strong> Hardware-rooted, non-exportable, the highest assurance level available. You don't need everyone on a YubiKey. You need the accounts attackers actually target on the strongest credential available, and everyone else on something that's still phishing-resistant and that they will actually use.</p>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">Deployment Checklist</span>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Check your tenant's auto-migration status</strong>
+        If FIDO2 is already enabled, passkey profile migration is rolling now. Review MC1221452 in your Message Center. Know what your current settings will migrate into before Microsoft does it for you.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Configure passkey profiles before auto-migration completes</strong>
+        Create at least two profiles: device-bound for admins and privileged roles, synced for general workforce. Use group-based targeting. Don't leave this as a single default profile covering everyone.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Deploy Temporary Access Pass for onboarding and recovery</strong>
+        TAP should be the start of every new employee's authentication journey and the recovery path when credentials are lost. If your onboarding still starts with a temporary password, fix that first.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Write user communication in unlock language, not security language</strong>
+        Fingerprint, Face ID, tap to log in. Not FIDO2, not phishing-resistant, not passkey profile. The technical framing is for your deployment docs. The user-facing message is "logging in just got easier."
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Plan helpdesk for the new-device scenario before rollout</strong>
+        The most common support request will be "I got a new phone, how do I log in?" The answer should be TAP-driven re-enrollment, not a password reset. Train your helpdesk on the flow before users encounter it.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Require device-bound passkeys for all admin and privileged accounts</strong>
+        Scope a passkey profile with passkeyType: deviceBound to your Global Admin, Privileged Role Administrator, and security-sensitive groups. These are the accounts that matter most to attackers. They should have the strongest credentials available.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>Passkeys are no longer a preview feature, a future roadmap item, or something to evaluate next quarter. They're generally available, they're being auto-rolled into tenants, and the users in your organization are about to start seeing registration prompts whether you planned for it or not.</p>
+
+  <p>The good news is the deployment model is cleaner than it's ever been. Synced passkeys handle the scale problem — every knowledge worker with a phone or a laptop can be phishing-resistant without a YubiKey in the mail. Device-bound passkeys handle the admin problem — the accounts that actually matter to attackers get hardware-rooted credentials. TAP handles the bootstrapping problem. Passkey profiles handle the policy separation.</p>
+
+  <p>The only thing left is making sure users understand that the most secure way to log in is also the easiest way to log in. That's the story worth telling.</p>
+
+  <div class="series-nav">
+    <div class="series-nav-label">Entra Identity Foundations — Series</div>
+    <div class="series-posts">
+      <div class="series-post">
+        <span class="series-post-num">01</span>
+        <span>Identity Is Everything: What ITDR and Your Front Door Have in Common</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">02</span>
+        <span>Authentication Methods: The Spectrum from Password to Passkey</span>
+      </div>
+      <div class="series-post current">
+        <span class="series-post-num">03</span>
+        <span>Passkeys: Security Only Works If People Will Actually Use It</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">04</span>
+        <span>Who Did You Let Into Your House? Guest Identity in Microsoft Entra</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">05</span>
+        <span>Groups as Connective Tissue — and a handoff to the CA Foundations series</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>

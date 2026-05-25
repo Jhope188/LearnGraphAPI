@@ -1,0 +1,35 @@
+{
+  "PolicyConfig": {
+    "AdminDisplayName": "",
+    "IsDefault": true,
+    "IPAllowList": [],
+    "IPBlockList": [],
+    "EnableSafeList": false,
+    "DirectoryBasedEdgeBlockMode": "Default",
+    "Identity": "Default",
+    "Id": "Default",
+    "IsValid": true,
+    "ExchangeVersion": "0.20 (15.0.0.0)",
+    "Name": "Default",
+    "DistinguishedName": "CN=Default,CN=Hosted Connection Filter,CN=Transport Settings,CN=Configuration,CN=Inforcer2m365.onmicrosoft.com,CN=ConfigurationUnits,DC=GBRP302A001,DC=PROD,DC=OUTLOOK,DC=COM",
+    "ObjectCategory": "GBRP302A001.PROD.OUTLOOK.COM/Configuration/Schema/ms-Exch-Hosted-Connection-Filter-Policy",
+    "ObjectClass": [
+      "top",
+      "msExchHostedConnectionFilterPolicy"
+    ],
+    "WhenChanged": "2026-02-02T10:03:13-05:00",
+    "WhenCreated": "2026-02-02T10:03:07-05:00",
+    "WhenChangedUTC": "2026-02-02T15:03:13Z",
+    "WhenCreatedUTC": "2026-02-02T15:03:07Z",
+    "ExchangeObjectId": "7bc0bfac-f926-48f4-a282-7dc8c16cd083",
+    "OrganizationalUnitRoot": "Inforcer2m365.onmicrosoft.com",
+    "OrganizationId": "GBRP302A001.PROD.OUTLOOK.COM/Microsoft Exchange Hosted Organizations/Inforcer2m365.onmicrosoft.com - GBRP302A001.PROD.OUTLOOK.COM/ConfigurationUnits/Inforcer2m365.onmicrosoft.com/Configuration",
+    "Guid": "7bc0bfac-f926-48f4-a282-7dc8c16cd083",
+    "OriginatingServer": "ASGP302A01DC001.GBRP302A001.PROD.OUTLOOK.COM",
+    "ObjectState": "Unchanged"
+  },
+  "SourcePolicyName": "Default",
+  "SourceOrganization": "Inforcer2m365.onmicrosoft.com",
+  "ExportDate": "2026-02-27 10:19:34",
+  "RuleConfig": null
+}

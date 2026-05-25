@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="data:image/png;base64,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">
+  <link rel="apple-touch-icon" type="image/png" href="data:image/png;base64,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">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identity Is Everything</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a0f1e;
+    --deep: #0d1630;
+    --teal: #00c2b3;
+    --teal-dim: #007e76;
+    --off-white: #f0ede8;
+    --warm-gray: #b0a99f;
+    --accent: #ff5c35;
+    --card-bg: #111827;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(10,15,30,0.88);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-family: 'DM Sans', sans-serif;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+    transition: background 0.2s;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+  body {
+    background: var(--navy);
+    color: var(--off-white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6rem max(40px, calc(50vw - 370px)) 4rem;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,194,179,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,92,53,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 9rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    color: var(--off-white);
+    opacity: 0;
+    animation: fadeUp 0.7s 0.35s forwards;
+  }
+
+  .hero h1 span {
+    color: var(--teal);
+    display: block;
+  }
+
+  .hero-sub {
+    margin-top: 2rem;
+    max-width: 560px;
+    font-size: 1.1rem;
+    color: var(--warm-gray);
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+  }
+
+  .hero-meta {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 2rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-dim);
+    opacity: 0;
+    animation: fadeUp 0.6s 0.65s forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: max(40px, calc(50vw - 370px));
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+    opacity: 0;
+    animation: fadeUp 0.6s 1s forwards;
+  }
+
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--teal);
+    animation: pulse 2s infinite;
+  }
+
+  /* ── BODY LAYOUT ── */
+  .content {
+    max-width: 820px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 40px 8rem;
+  }
+  @media (max-width: 900px) {
+    .content { padding: 0 28px 6rem; }
+  }
+  @media (max-width: 600px) {
+    .content { padding: 0 18px 4rem; }
+  }
+
+  /* ── PULL QUOTE / SECTION INTRO ── */
+  .pull-quote {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1.4;
+    color: var(--off-white);
+    border-left: 3px solid var(--teal);
+    padding-left: 1.5rem;
+    margin: 3.5rem 0;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-marker {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 4rem 0 1.5rem;
+  }
+
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--teal);
+    opacity: 0.25;
+    min-width: 2.5rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em;
+    color: var(--off-white);
+    line-height: 1.05;
+  }
+
+  /* ── BODY COPY ── */
+  p {
+    font-size: 1.05rem;
+    color: #c8c3bc;
+    margin-bottom: 1.4rem;
+  }
+
+  strong {
+    color: var(--off-white);
+    font-weight: 500;
+  }
+
+  /* ── CALLOUT CARDS ── */
+  .callout {
+    background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px;
+    padding: 1.5rem 1.75rem;
+    margin: 2.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .callout::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+
+  .callout-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .callout p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .callout-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── LAYERED DEFENSE VISUAL ── */
+  .defense-stack {
+    margin: 3rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .layer {
+    padding: 0.9rem 1.5rem;
+    border: 1px solid rgba(0,194,179,0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .layer:hover { background: rgba(0,194,179,0.05); }
+
+  .layer:first-child { border-radius: 4px 4px 0 0; }
+  .layer:last-child  { border-radius: 0 0 4px 4px; }
+
+  .layer-icon { font-size: 1.2rem; min-width: 2rem; text-align: center; }
+  .layer-text { font-size: 0.9rem; color: #a0998f; }
+  .layer-text strong { color: var(--off-white); display: block; font-size: 0.95rem; }
+
+  .layer-bar {
+    margin-left: auto;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--teal);
+    opacity: 0.4;
+  }
+
+  /* ── ITDR SIGNAL TABLE ── */
+  .signal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(0,194,179,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 2.5rem 0;
+  }
+
+  .signal-cell {
+    background: var(--card-bg);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .signal-cell.header {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 500;
+    background: rgba(0,194,179,0.07);
+  }
+
+  .signal-label {
+    font-size: 0.8rem;
+    color: var(--warm-gray);
+    margin-bottom: 0.25rem;
+  }
+
+  .signal-value {
+    font-size: 0.95rem;
+    color: var(--off-white);
+    font-weight: 500;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    font-weight: 500;
+    margin-top: 0.3rem;
+  }
+
+  .badge-normal  { background: rgba(0,194,179,0.15); color: var(--teal); }
+  .badge-risk    { background: rgba(255,92,53,0.15); color: var(--accent); }
+  .badge-context { background: rgba(255,200,0,0.12); color: #f5c842; }
+
+  /* ── SERIES NAV ── */
+  .series-nav {
+    margin-top: 5rem; padding: 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .series-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .series-nav-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .series-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .series-post {
+    display: flex; gap: 1rem; align-items: center;
+    padding: 0.6rem 0.75rem; border-radius: 3px;
+    font-size: 0.9rem; color: var(--warm-gray);
+  }
+  .series-post.current { background: rgba(0,194,179,0.07); color: var(--off-white); font-weight: 500; }
+  .series-post.upcoming { color: rgba(176,169,159,0.45); }
+  .series-post-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    color: var(--teal-dim); min-width: 1.5rem; opacity: 0.6;
+  }
+  .series-post.current .series-post-num { opacity: 1; color: var(--teal); }
+
+  /* ── CLOSING CTA ── */
+  .cta-block {
+    margin-top: 5rem;
+    padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2);
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    color: var(--off-white);
+  }
+
+  .cta-block p {
+    max-width: 480px;
+    margin: 0 auto 1.75rem;
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    display: inline-block;
+    background: var(--teal);
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .btn:hover { opacity: 0.85; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin: 3.5rem 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .signal-grid { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 18px 3rem; }
+    .scroll-hint { left: 18px; }
+  }
+</style>
+</head>
+<body>
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Identity Security Series</div>
+  <h1>Identity<span>Is Everything.</span></h1>
+  <p class="hero-sub">You already understand identity security — you've been practicing it your whole life. You just didn't know it had a name.</p>
+  <div class="hero-meta">
+    <span>M365 Identity &amp; ITDR</span>
+    <span>May 2026</span>
+    <span>8 min read</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<!-- CONTENT -->
+<main class="content">
+
+  <p>Every time you walk into a bar and hand over your driver's license, you're participating in identity verification. That laminated card, issued by your state and maintained in a government database, is doing the same job as a modern Identity Provider (IdP) like Microsoft Entra ID. The concept isn't new. The scale and the stakes are.</p>
+
+  <p>In the physical world, identity security is <strong>hardwired into human instinct</strong>. We don't just take people at their word. We ask for credentials. We verify. We trust, but within limits. The problem is that computers don't come with that instinct built in. We have to engineer it deliberately, and that's exactly what <strong>Microsoft Entra Identity</strong> is designed to do.</p>
+
+  <div class="pull-quote">
+    "Identity is not a feature of M365 security — it is the foundation. Every file, every email, every application starts with a question: who are you, and should you be here?"
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">The Door You Already Lock</span>
+  </div>
+
+  <p>Think about your front door. You don't just close it, you lock it. Maybe you added a deadbolt. A Ring doorbell. A fence. A dog. Each layer doesn't replace the one before it; it compounds the protection. If a burglar gets past the fence, the dog barks. If they ignore the dog, the camera records them. If they somehow get inside anyway, the alarm screams.</p>
+
+  <p>That layered thinking, borrowed from your home security instincts, has a formal name in cybersecurity: <strong>Defense in Depth</strong>. And in Microsoft 365, it looks like this:</p>
+
+  <div class="defense-stack">
+    <div class="layer">
+      <span class="layer-icon">🔐</span>
+      <div class="layer-text"><strong>Multi-Factor Authentication</strong>Require proof beyond just a password. The deadbolt on your front door.</div>
+      <div class="layer-bar" style="width:90px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">📋</span>
+      <div class="layer-text"><strong>Conditional Access Policies</strong>Control when, where, and how users can log in. The fence with a locked gate.</div>
+      <div class="layer-bar" style="width:70px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🛡️</span>
+      <div class="layer-text"><strong>Privileged Identity Management</strong>Limit who holds the keys. Not everyone gets a copy of the master key.</div>
+      <div class="layer-bar" style="width:55px"></div>
+    </div>
+    <div class="layer">
+      <span class="layer-icon">🔍</span>
+      <div class="layer-text"><strong>ITDR &amp; Defender for Identity</strong>Monitor for threats even after someone is inside. The alarm system and the camera.</div>
+      <div class="layer-bar" style="width:40px"></div>
+    </div>
+  </div>
+
+  <p>Turning off a security default in M365 is the equivalent of taking the deadbolt off your door because the lock felt inconvenient. Technically, the door still closes. But you've just made every other layer work twice as hard.</p>
+
+  <!-- SECTION 2 -->
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">Zero Trust: Expect the Worst, Plan Accordingly</span>
+  </div>
+
+  <p>Here's an uncomfortable truth: <strong>with enough persistence and the right tools, a determined attacker will eventually get in</strong>. The goal of Zero Trust isn't to make breaches impossible. It's to make them survivable and detectable before they cause catastrophic damage.</p>
+
+  <div class="callout">
+    <span class="callout-label">Zero Trust Core Principle</span>
+    <span class="callout-icon">⚠️</span>
+    <p><strong>Assume Breach.</strong> Design your security posture under the assumption that an attacker is already inside your environment. It's not a matter of <em>if</em>, it's a matter of <em>when</em>, and whether you're ready for it when it happens.</p>
+  </div>
+
+  <p>In your home, this is the instinct that made you buy the alarm system <em>before</em> anything happened. You assumed that locks alone weren't enough. You thought about what you'd do if someone got past them. In the United States, some homeowners add a firearm as a last line of defense. That's not paranoia, that's layered contingency planning. Zero Trust is the enterprise version of exactly that thinking.</p>
+
+  <!-- SECTION 3 -->
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">Role-Based Access: Not Everyone Gets a Key to Every Room</span>
+  </div>
+
+  <p>When you have friends over, you don't give them unrestricted access to your entire home. You welcome them into the living room. You wouldn't let them into your bedroom while your partner is getting dressed. You might let a contractor into the basement, but only while you're there, and only for the duration of the job. Afterward, you change the code on the door.</p>
+
+  <p>This is <strong>Role-Based Access Control (RBAC)</strong> and <strong>Least Privilege</strong>: two of the most important concepts in identity security, and two that most organizations dramatically under-implement.</p>
+
+  <p>In M365, this means:</p>
+
+  <p><strong>Your HR team</strong> can access HR data, not company financials. <strong>Your finance team</strong> can see the financial systems, not personal HR records. <strong>Your IT admins</strong> may need elevated privileges occasionally, but those privileges should be <em>time-limited</em>, <em>approved on demand</em>, and <em>logged</em>. Permanent standing admin access is the equivalent of leaving the master key on a hook by the front door.</p>
+
+  <div class="callout">
+    <span class="callout-label">Identity Best Practice</span>
+    <span class="callout-icon">🗝️</span>
+    <p>Privileged Identity Management (PIM) in Microsoft Entra enables <strong>just-in-time access</strong>. Admins request elevated roles when needed, for a defined time window, with justification and approval. Standing privilege should be the exception, not the standard.</p>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">ITDR: Your Digital Behavioral Baseline</span>
+  </div>
+
+  <p>Here's where it gets interesting, and deeply human.</p>
+
+  <p>You are <strong>predictable</strong>. Not in a bad way, but in a way that makes you legible to the people who care about you. You wake up at roughly the same time. You commute the same route. You log in to your laptop around 8:30 AM from your home in Virginia. You check email, open Teams, pull up SharePoint. Day after day, a pattern forms. Your digital identity has a <em>rhythm</em>.</p>
+
+  <p>Now imagine your spouse opens Find My Friends and sees you driving to New York at 3 AM. Your kids notice you didn't pick them up from school. Your colleague realizes you haven't responded to a single message all day. These signals, independently minor but collectively alarming, trigger a welfare check. That's <strong>behavioral analysis in the physical world</strong>.</p>
+
+  <p><strong>Identity Threat Detection and Response (ITDR)</strong> does the same thing for your digital identity. It establishes what normal looks like, and alerts when something doesn't fit. Consider this real-world scenario:</p>
+
+  <div class="signal-grid">
+    <div class="signal-cell header">Signal Detected</div>
+    <div class="signal-cell header">ITDR Interpretation</div>
+
+    <div class="signal-cell">
+      <div class="signal-label">Week 1</div>
+      <div class="signal-value">Employee submits resignation. HR logs it in the HR system.</div>
+      <span class="badge badge-context">HR Event · No IT Alert Yet</span>
+    </div>
+    <div class="signal-cell">
+      <div class="signal-label">Context Available</div>
+      <div class="signal-value">ITDR correlates HR offboarding flag with identity activity monitoring</div>
+      <span class="badge badge-context">Elevated Watch Profile</span>
+    </div>
+
+    <div class="signal-cell">
+      <div class="signal-label">Week 2</div>
+      <div class="signal-value">User syncs 40 GB from SharePoint to a personal OneDrive at 11 PM</div>
+      <span class="badge badge-risk">Anomalous Volume · Off Hours</span>
+    </div>
+    <div class="signal-cell">
+      <div class="signal-label">Correlated with resignation flag</div>
+      <div class="signal-value">Bulk exfiltration pattern matches pre-departure insider threat profile</div>
+      <span class="badge badge-risk">Critical Alert · Investigate Now</span>
+    </div>
+
+    <div class="signal-cell">
+      <div class="signal-label">Same week</div>
+      <div class="signal-value">User emails 12 files to a personal Gmail address</div>
+      <span class="badge badge-risk">Data Leaving Tenant Boundary</span>
+    </div>
+    <div class="signal-cell">
+      <div class="signal-label">Three signals now correlated</div>
+      <div class="signal-value">Resignation + bulk sync + external email = high-confidence insider threat</div>
+      <span class="badge badge-risk">Escalate to Security Team</span>
+    </div>
+  </div>
+
+  <p>No single signal above is proof of wrongdoing on its own. People sync files. People email themselves things. But <strong>context changes everything</strong>. A good ITDR system like <strong>Microsoft Defender for Identity</strong> combined with Entra ID Protection doesn't just flag anomalies in isolation. It threads them together into a timeline that tells a story, and that story is often the one your security team needs to act on before it's too late.</p>
+
+  <p>The goal isn't to assume every departing employee is a thief. The goal is to catch the ones who are, before they walk out the door with your intellectual property, your customer data, or your competitive advantage.</p>
+
+  <hr class="divider">
+
+  <!-- CLOSING -->
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>You have been practicing identity security your entire life. You lock your doors. You verify credentials. You limit who can go where in your home. You assume people don't always have good intentions, not because you're cynical, but because you're pragmatic. And when something feels off, the people who know your patterns notice.</p>
+
+  <p>Microsoft Entra Identity, Conditional Access, RBAC, PIM, and ITDR are not exotic enterprise concepts. They are <strong>the digital expression of the same instincts</strong> that keep your home, your family, and your community safe. They just need to be turned on, configured correctly, and trusted to do their job.</p>
+
+  <p>The organizations getting breached today aren't losing because they lack the tools. They're losing because <strong>the default settings aren't enough</strong>, and security is still treated as a one-time checkbox rather than a living system that mirrors the vigilance we already apply in the rest of our lives.</p>
+
+  <p>Your identity is your perimeter. Protect it like your front door: with layers, with intention, and with the assumption that someone, eventually, is going to try the handle.</p>
+
+  <!-- SERIES NAV -->
+  <div class="series-nav">
+    <div class="series-nav-label">Entra Identity Foundations — Series</div>
+    <div class="series-posts">
+      <div class="series-post current">
+        <span class="series-post-num">01</span>
+        <span>Identity Is Everything: What ITDR and Your Front Door Have in Common</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">02</span>
+        <span>Authentication Methods: The Spectrum from Password to Passkey</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">03</span>
+        <span>Passkeys: Security Only Works If People Will Actually Use It</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">04</span>
+        <span>Who Did You Let Into Your House? Guest Identity in Microsoft Entra</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">05</span>
+        <span>Groups as Connective Tissue — and a handoff to the CA Foundations series</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+{
+  "ExportDate": "2026-01-16 18:38:13",
+  "Settings": {
+    "settingInstance": {
+      "auditRuleInformation": null,
+      "@odata.type": "#microsoft.graph.deviceManagementConfigurationGroupSettingCollectionInstance",
+      "settingDefinitionId": "device_vendor_msft_dmclient_provider_{providerid}",
+      "groupSettingCollectionValue": [
+        {
+          "children": [
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationChoiceSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_dmclient_provider_{providerid}_configrefresh_enabled",
+              "settingInstanceTemplateReference": null,
+              "choiceSettingValue": {
+                "children": [],
+                "value": "device_vendor_msft_dmclient_provider_{providerid}_configrefresh_enabled_true",
+                "settingValueTemplateReference": null
+              }
+            },
+            {
+              "auditRuleInformation": null,
+              "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+              "settingDefinitionId": "device_vendor_msft_dmclient_provider_{providerid}_configrefresh_cadence",
+              "settingInstanceTemplateReference": null,
+              "simpleSettingValue": {
+                "@odata.type": "#microsoft.graph.deviceManagementConfigurationIntegerSettingValue",
+                "value": 60,
+                "settingValueTemplateReference": null
+              }
+            }
+          ],
+          "settingValueTemplateReference": null
+        }
+      ],
+      "settingInstanceTemplateReference": null
+    },
+    "id": "0"
+  },
+  "Assignments": null,
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "https://techcommunity.microsoft.com/blog/windows-itpro-blog/intro-to-config-refresh-%E2%80%93-a-refreshingly-new-mdm-feature/4176921\n\n",
+    "createdDateTime": "2026-01-16T14:49:30.1868197Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:13.9348652Z",
+    "id": "ff4d6fb2-ab20-4b77-a9e5-0f3bc4bf20f4",
+    "platforms": "windows10",
+    "settingCount": 1,
+    "name": "IAC - Intune - Config Refresh"
+  }
+}

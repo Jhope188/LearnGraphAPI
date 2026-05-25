@@ -1,0 +1,83 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:12",
+  "PolicyConfig": {
+    "sessionControls": {
+      "secureSignInSession": null,
+      "disableResilienceDefaults": null,
+      "persistentBrowser": {
+        "isEnabled": true,
+        "mode": "never"
+      },
+      "cloudAppSecurity": null,
+      "signInFrequency": {
+        "frequencyInterval": "timeBased",
+        "isEnabled": true,
+        "value": 12,
+        "authenticationType": "primaryAndSecondaryAuthentication",
+        "type": "hours"
+      },
+      "applicationEnforcedRestrictions": null
+    },
+    "state": "disabled",
+    "grantControls": null,
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "locations": null,
+      "clientAppTypes": [
+        "browser"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "authenticationFlows": null,
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - GLOBAL – SESSION – All Users Persistence (9-12 Hours)",
+    "templateId": null
+  },
+  "SourcePolicyId": "655c18b6-d254-4a32-a087-3ff9380abb68",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

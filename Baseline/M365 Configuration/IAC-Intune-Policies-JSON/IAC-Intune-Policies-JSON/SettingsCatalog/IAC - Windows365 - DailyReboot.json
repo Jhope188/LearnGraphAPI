@@ -1,0 +1,50 @@
+{
+  "ExportDate": "2026-01-16 18:38:20",
+  "Settings": {
+    "settingInstance": {
+      "auditRuleInformation": null,
+      "@odata.type": "#microsoft.graph.deviceManagementConfigurationSimpleSettingInstance",
+      "settingDefinitionId": "device_vendor_msft_reboot_schedule_dailyrecurrent",
+      "settingInstanceTemplateReference": null,
+      "simpleSettingValue": {
+        "@odata.type": "#microsoft.graph.deviceManagementConfigurationStringSettingValue",
+        "value": "2024-03-31T02:30:00",
+        "settingValueTemplateReference": null
+      }
+    },
+    "id": "0"
+  },
+  "Assignments": {
+    "sourceId": "c907949a-67d4-4a35-88c8-35376227dd90",
+    "id": "c907949a-67d4-4a35-88c8-35376227dd90_9b355cc3-68a2-4c3e-b94b-4d7192b12011",
+    "source": "direct",
+    "target": {
+      "@odata.type": "#microsoft.graph.groupAssignmentTarget",
+      "deviceAndAppManagementAssignmentFilterId": null,
+      "groupId": "9b355cc3-68a2-4c3e-b94b-4d7192b12011",
+      "deviceAndAppManagementAssignmentFilterType": "none"
+    }
+  },
+  "PolicyType": "SettingsCatalog",
+  "Policy": {
+    "priorityMetaData": null,
+    "creationSource": null,
+    "description": "Intune Policy to reboot the Windows365 PC's Daily\nWeekly not working outside of insider preview version of Windows\nPC Reboot time 2025-01-01T02:30:00",
+    "createdDateTime": "2026-01-16T14:51:12.8266926Z",
+    "roleScopeTagIds": [
+      "0"
+    ],
+    "templateReference": {
+      "templateFamily": "none",
+      "templateDisplayVersion": null,
+      "templateId": "",
+      "templateDisplayName": null
+    },
+    "technologies": "mdm",
+    "lastModifiedDateTime": "2026-01-16T23:25:17.7868977Z",
+    "id": "c907949a-67d4-4a35-88c8-35376227dd90",
+    "platforms": "windows10",
+    "settingCount": 1,
+    "name": "IAC - Windows365 - DailyReboot"
+  }
+}

@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="data:image/png;base64,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">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entra.News Features — Jon Hope | conditionalaccess.tech</title>
+  <meta name="description" content="Jon Hope's features in Entra News — the Microsoft Entra community's most-read weekly digest, curated by Merill Fernando. 19 features across 17 issues including #1, #2, and #3 Most Popular Post.">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:      #08132a;
+      --navy-card: #0d1f3c;
+      --blue:      #1e56c8;
+      --blue-hi:   #3b7ff5;
+      --teal:      #00c2b3;
+      --white:     #ffffff;
+      --text:      #c8d8f0;
+      --muted:     #5f7aaa;
+      --border:    rgba(255,255,255,0.07);
+      --green:     #22c55e;
+      --gold:      #f59e0b;
+      --silver:    #94a3b8;
+      --bronze:    #c97c3a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px; right: -200px;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,194,179,0.1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      height: 60px;
+      padding: 0 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8,19,42,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-brand span { color: var(--teal); }
+
+    .nav-right { display: flex; align-items: center; gap: 1.5rem; }
+
+    .nav-link {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.15s;
+    }
+    .nav-link:hover { color: var(--white); }
+
+    .nav-btn {
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: var(--blue);
+      color: var(--white);
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-btn:hover { background: var(--blue-hi); }
+
+    .page { position: relative; z-index: 1; }
+
+    /* HERO */
+    .hero {
+      padding: 120px 5vw 60px;
+      position: relative;
+    }
+
+    .hero-inner {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--teal); }
+
+    .eyebrow {
+      font-size: 0.67rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .hero-title .dot { color: var(--teal); }
+
+    .hero-desc {
+      font-size: 0.95rem;
+      color: #7a9cc8;
+      max-width: 500px;
+      line-height: 1.75;
+      margin-bottom: 2rem;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item { text-align: left; }
+
+    .stat-val {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      color: var(--white);
+      line-height: 1;
+      display: block;
+    }
+    .stat-val .teal { color: var(--teal); }
+
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+      display: block;
+    }
+
+    /* MERILL CARD */
+    .merill-card {
+      background: var(--navy-card);
+      border: 1px solid rgba(0,194,179,0.18);
+      border-radius: 16px;
+      padding: 1.8rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .merill-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--teal), var(--blue));
+    }
+
+    .merill-avatar {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      margin: 0 auto 0.9rem;
+      overflow: hidden;
+      border: 2px solid rgba(0,194,179,0.35);
+      background: rgba(0,194,179,0.08);
+      display: grid;
+      place-items: center;
+    }
+    .merill-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .merill-avatar-fallback {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      color: var(--teal);
+    }
+
+    .merill-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--white);
+      margin-bottom: 0.15rem;
+    }
+
+    .merill-role {
+      font-size: 0.72rem;
+      color: var(--teal);
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
+
+    .merill-desc {
+      font-size: 0.77rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 1rem;
+    }
+
+    .merill-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--teal);
+      text-decoration: none;
+      border: 1px solid rgba(0,194,179,0.3);
+      border-radius: 6px;
+      padding: 0.4rem 0.85rem;
+      transition: background 0.15s;
+    }
+    .merill-link:hover { background: rgba(0,194,179,0.08); }
+
+    /* PODIUM SECTION */
+    .section {
+      position: relative; z-index: 1;
+      padding: 4rem 5vw;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-inner { max-width: 1160px; margin: 0 auto; }
+
+    .section-heading {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    .section-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    /* PODIUM CARDS */
+    .podium-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+
+    .podium-card {
+      background: var(--navy-card);
+      border-radius: 14px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid transparent;
+    }
+
+    .podium-card.gold   { border-color: rgba(245,158,11,0.35); background: linear-gradient(160deg, rgba(245,158,11,0.08), var(--navy-card)); }
+    .podium-card.silver { border-color: rgba(148,163,184,0.3); background: linear-gradient(160deg, rgba(148,163,184,0.06), var(--navy-card)); }
+    .podium-card.bronze { border-color: rgba(201,124,58,0.3);  background: linear-gradient(160deg, rgba(201,124,58,0.06), var(--navy-card)); }
+
+    .podium-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+    .podium-card.gold::before   { background: linear-gradient(90deg, var(--gold), transparent); }
+    .podium-card.silver::before { background: linear-gradient(90deg, var(--silver), transparent); }
+    .podium-card.bronze::before { background: linear-gradient(90deg, var(--bronze), transparent); }
+
+    .podium-medal {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .podium-rank {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .podium-card.gold   .podium-rank { color: var(--gold); }
+    .podium-card.silver .podium-rank { color: var(--silver); }
+    .podium-card.bronze .podium-rank { color: var(--bronze); }
+
+    .podium-issue {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .podium-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--white);
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+
+    .podium-card-link {
+      font-size: 0.72rem;
+      color: var(--teal);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-top: auto;
+    }
+    .podium-card-link:hover { text-decoration: underline; }
+
+    /* FEATURE TABLE / CARDS */
+    .feature-grid {
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .feature-row {
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      align-items: center;
+      gap: 1rem;
+      background: var(--navy-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      text-decoration: none;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .feature-row:hover { border-color: rgba(0,194,179,0.25); transform: translateX(3px); }
+
+    .feature-issue {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--teal);
+      line-height: 1;
+    }
+    .feature-issue-date { font-size: 0.65rem; color: var(--muted); margin-top: 0.15rem; }
+
+    .feature-title {
+      font-size: 0.86rem;
+      color: var(--white);
+      font-weight: 400;
+      line-height: 1.4;
+    }
+
+    .feature-section-badge {
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+      background: rgba(30,86,200,0.15);
+      border: 1px solid rgba(59,127,245,0.2);
+      color: var(--blue-hi);
+    }
+
+    .feature-section-badge.section-ca     { background: rgba(59,127,245,0.12); border-color: rgba(59,127,245,0.25); color: var(--blue-hi); }
+    .feature-section-badge.section-pop    { background: rgba(245,158,11,0.1);  border-color: rgba(245,158,11,0.3);  color: var(--gold); }
+    .feature-section-badge.section-sec    { background: rgba(34,197,94,0.1);   border-color: rgba(34,197,94,0.25);  color: var(--green); }
+    .feature-section-badge.section-auth   { background: rgba(0,194,179,0.1);   border-color: rgba(0,194,179,0.25);  color: var(--teal); }
+    .feature-section-badge.section-tenant { background: rgba(148,163,184,0.1); border-color: rgba(148,163,184,0.2); color: var(--silver); }
+    .feature-section-badge.section-dev    { background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.25); color: #a78bfa; }
+
+    /* FOOTER */
+    .cta-band { position: relative; z-index: 1; padding: 2.5rem 5vw 4.5rem; border-top: 1px solid var(--border); }
+
+    .cta-box {
+      max-width: 1160px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, rgba(30,86,200,0.13), rgba(0,194,179,0.06));
+      border: 1px solid rgba(59,127,245,0.2);
+      border-radius: 14px;
+      padding: 2.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--teal), transparent);
+    }
+
+    .cta-box h2 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--white); margin-bottom: 0.25rem; }
+    .cta-box p  { font-size: 0.85rem; color: var(--muted); }
+    .cta-btns  { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.68rem 1.35rem;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    .btn-blue    { background: var(--blue); color: #fff; border: 1px solid transparent; }
+    .btn-blue:hover { background: var(--blue-hi); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.11); }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.04); }
+
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 1.4rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+    .footer-brand { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem; color: var(--muted); }
+    .footer-brand span { color: var(--teal); }
+    footer p { font-size: 0.73rem; color: #2a3d5e; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 860px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .merill-card { max-width: 320px; }
+      .podium-grid { grid-template-columns: 1fr; }
+      .feature-row { grid-template-columns: 70px 1fr; }
+      .feature-section-badge { display: none; }
+      .nav-link { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="https://conditionalaccess.tech" class="nav-brand">conditional<span>access</span>.tech</a>
+    <div class="nav-right">
+      <a href="https://conditionalaccess.tech#writing" class="nav-link">Writing</a>
+      <a href="https://entra.news" target="_blank" class="nav-btn">Entra.News &#x2197;</a>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <div>
+          <a href="https://conditionalaccess.tech" class="back-link">&#x2190; Back to home</a>
+          <div class="eyebrow">Community recognition</div>
+          <h1 class="hero-title">Entra<span class="dot">.</span>News<br>Features</h1>
+          <p class="hero-desc">
+            <a href="https://entra.news" target="_blank" style="color:var(--teal);text-decoration:none;">Entra.News</a> is the Microsoft Entra community&rsquo;s most-read weekly digest, curated by
+            <a href="https://github.com/merill" target="_blank" style="color:var(--teal);text-decoration:none;">Merill Fernando</a> (Microsoft Identity PM).
+            Being picked up means your content was flagged as valuable to the broader identity security community.
+          </p>
+          <div class="stats-row">
+            <div class="stat-item">
+              <span class="stat-val"><span class="teal">19</span></span>
+              <span class="stat-label">Features</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-val"><span class="teal">17</span></span>
+              <span class="stat-label">Issues</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-val">🥇🥈🥉</span>
+              <span class="stat-label">Podium Finishes</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-val"><span class="teal">44<span style="font-size:1.1rem">%</span></span></span>
+              <span class="stat-label">Articles Featured</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="merill-card">
+          <div class="merill-avatar">
+            <img src="https://github.com/merill.png?size=200" alt="Merill Fernando"
+                 onerror="this.style.display='none';this.parentElement.querySelector('.merill-avatar-fallback').style.display='flex'">
+            <div class="merill-avatar-fallback" style="display:none">M</div>
+          </div>
+          <div class="merill-name">Merill Fernando</div>
+          <div class="merill-role">Microsoft Identity PM &bull; Newsletter Editor</div>
+          <p class="merill-desc">Curates Entra.News weekly — the most widely-read Microsoft Identity community digest. Features the best content from across the community each week.</p>
+          <a href="https://entra.news" target="_blank" class="merill-link">Visit Entra.News &#x2197;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PODIUM -->
+    <section class="section">
+      <div class="section-inner">
+        <div class="eyebrow">Top finishes</div>
+        <h2 class="section-heading">Podium Appearances</h2>
+        <p class="section-desc">Three articles reached the Most Popular Posts section — the top spot in each issue of Entra.News.</p>
+
+        <div class="podium-grid">
+
+          <div class="podium-card gold">
+            <span class="podium-medal">🥇</span>
+            <div class="podium-rank">#1 Most Popular Post</div>
+            <div class="podium-issue">Issue #141 &bull; March 22, 2026</div>
+            <h3>Conditional Access: Finding the Gaps in Your Entra CA Before Attackers Do!</h3>
+            <a href="https://entra.news/p/entra-news-141-this-week-in-microsoft" target="_blank" class="podium-card-link">View issue &#x2197;</a>
+          </div>
+
+          <div class="podium-card silver">
+            <span class="podium-medal">🥈</span>
+            <div class="podium-rank">#2 Most Popular Post</div>
+            <div class="podium-issue">Issue #143 &bull; April 5, 2026</div>
+            <h3>Conditional Access: CA Analyzer Product Updates</h3>
+            <a href="https://entra.news/p/entra-news-143-this-week-in-microsoft" target="_blank" class="podium-card-link">View issue &#x2197;</a>
+          </div>
+
+          <div class="podium-card bronze">
+            <span class="podium-medal">🥉</span>
+            <div class="podium-rank">#3 Most Popular Post</div>
+            <div class="podium-issue">Issue #147 &bull; May 3, 2026</div>
+            <h3>Conditional Access Foundations: The Bottom of the Stack (And Why It Matters Most)</h3>
+            <a href="https://entra.news/p/entra-news-147-this-week-in-microsoft" target="_blank" class="podium-card-link">View issue &#x2197;</a>
+          </div>
+
+        </div>
+
+        <!-- ALL FEATURES -->
+        <div class="eyebrow" style="margin-bottom:0.5rem">Complete record</div>
+        <h2 class="section-heading" style="margin-bottom:0.35rem">All 19 Features</h2>
+        <p class="section-desc">Every Entra.News appearance, newest first. Click any row to view that issue.</p>
+
+        <!-- ============================================================
+             TO ADD A NEW FEATURE: copy one <a class="feature-row"> block,
+             update the issue number, date, title, section badge class,
+             and href to the Entra.News issue URL.
+             Section badge classes: section-ca | section-pop | section-sec
+                                    section-auth | section-tenant | section-dev
+             ============================================================ -->
+        <div class="feature-grid">
+
+          <a href="https://entra.news/p/entra-news-150-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#150</div>
+              <div class="feature-issue-date">May 24, 2026</div>
+            </div>
+            <div class="feature-title">Identity Is Everything</div>
+            <span class="feature-section-badge section-auth">Authentication</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-148-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#148</div>
+              <div class="feature-issue-date">May 10, 2026</div>
+            </div>
+            <div class="feature-title">Conditional Access: The Safety Net</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-147-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#147</div>
+              <div class="feature-issue-date">May 3, 2026</div>
+            </div>
+            <div class="feature-title">🥉 Conditional Access Foundations: The Bottom of the Stack (And Why It Matters Most)</div>
+            <span class="feature-section-badge section-pop">Most Popular</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-146-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#146</div>
+              <div class="feature-issue-date">Apr 26, 2026</div>
+            </div>
+            <div class="feature-title">Conditional Access Foundations: The Bottom of the Stack (And Why It Matters Most)</div>
+            <span class="feature-section-badge section-auth">Authentication</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-144-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#144</div>
+              <div class="feature-issue-date">Apr 12, 2026</div>
+            </div>
+            <div class="feature-title">Conditional Access: Location, Location, Location — and the Gaps We Create</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-143-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#143</div>
+              <div class="feature-issue-date">Apr 5, 2026</div>
+            </div>
+            <div class="feature-title">🥈 Conditional Access: CA Analyzer Product Updates</div>
+            <span class="feature-section-badge section-pop">Most Popular</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-142-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#142</div>
+              <div class="feature-issue-date">Mar 29, 2026</div>
+            </div>
+            <div class="feature-title">Microsoft Entra ID Gets Native Backup and Recovery — What You Need to Know</div>
+            <span class="feature-section-badge section-tenant">Tenant Config</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-142-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#142</div>
+              <div class="feature-issue-date">Mar 29, 2026</div>
+            </div>
+            <div class="feature-title">Conditional Access: CA Analyzer Product Updates</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-141-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#141</div>
+              <div class="feature-issue-date">Mar 22, 2026</div>
+            </div>
+            <div class="feature-title">🥇 Conditional Access: Finding the Gaps in Your Entra CA Before Attackers Do!</div>
+            <span class="feature-section-badge section-pop">Most Popular</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-141-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#141</div>
+              <div class="feature-issue-date">Mar 22, 2026</div>
+            </div>
+            <div class="feature-title">Microsoft Licensing: The BS in Business Standard</div>
+            <span class="feature-section-badge section-tenant">Tenant Config</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-140-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#140</div>
+              <div class="feature-issue-date">Mar 15, 2026</div>
+            </div>
+            <div class="feature-title">Conditional Access: Finding the Gaps in Your Entra CA Before Attackers Do!</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-138-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#138</div>
+              <div class="feature-issue-date">Mar 1, 2026</div>
+            </div>
+            <div class="feature-title">Conditional Access Demo: Time-Bound Access</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-137-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#137</div>
+              <div class="feature-issue-date">Feb 22, 2026</div>
+            </div>
+            <div class="feature-title">Conditional Access: MFA for All… But Not the Same</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-135-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#135</div>
+              <div class="feature-issue-date">Feb 8, 2026</div>
+            </div>
+            <div class="feature-title">The Perimeter to a Secure Cloud Starts with Conditional Access</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-132-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#132</div>
+              <div class="feature-issue-date">Jan 18, 2026</div>
+            </div>
+            <div class="feature-title">Graph API Beginner Deep Dive</div>
+            <span class="feature-section-badge section-dev">DevOps &amp; PowerShell</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-131-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#131</div>
+              <div class="feature-issue-date">Jan 11, 2026</div>
+            </div>
+            <div class="feature-title">Security That Scales: Designing Repeatable Azure Alerts with KQL</div>
+            <span class="feature-section-badge section-sec">Security</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-125-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#125</div>
+              <div class="feature-issue-date">Nov 30, 2025</div>
+            </div>
+            <div class="feature-title">Secure Cloud Foundation: The Future Is Phishing-Resistant (Synced Passkeys)</div>
+            <span class="feature-section-badge section-auth">Authentication</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-120-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#120</div>
+              <div class="feature-issue-date">Oct 26, 2025</div>
+            </div>
+            <div class="feature-title">SC-300: Implementing Microsoft Identity and Access Administration</div>
+            <span class="feature-section-badge section-sec">Security</span>
+          </a>
+
+          <a href="https://entra.news/p/entra-news-118-this-week-in-microsoft" target="_blank" class="feature-row">
+            <div>
+              <div class="feature-issue">#118</div>
+              <div class="feature-issue-date">Oct 11, 2025</div>
+            </div>
+            <div class="feature-title">Secure Cloud Foundation: The Customer Conversation</div>
+            <span class="feature-section-badge section-ca">Conditional Access</span>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-band">
+      <div class="cta-box">
+        <div>
+          <h2>Read the full archive on Medium.</h2>
+          <p>34 published articles on Conditional Access, Entra ID, MSP security, and more.</p>
+        </div>
+        <div class="cta-btns">
+          <a href="https://medium.com/@jhope188" target="_blank" class="btn btn-blue">Read on Medium</a>
+          <a href="https://entra.news" target="_blank" class="btn btn-outline">Entra.News Archive</a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-brand">conditionalaccess<span>.tech</span></div>
+      <p>Jon Hope &middot; Microsoft MVP &middot; Security: Identity &amp; Access</p>
+      <p>&copy; 2026</p>
+    </footer>
+
+  </div>
+</body>
+</html>

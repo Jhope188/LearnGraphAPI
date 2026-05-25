@@ -1,0 +1,97 @@
+{
+    "Organization": "Inforcer2m365.onmicrosoft.com",
+    "ExportDate": "2026-02-27",
+    "BenchmarkVersion": "CIS Microsoft 365 Foundations Benchmark v6.0.0",
+    "AntiPhishingPolicies": [
+        {
+            "Name": "IAC - DfO - [Anti-Phishing] for [All Domains]",
+            "FileName": "IAC - DfO - _Anti-Phishing_ for _All Domains_.json",
+            "Enabled": true,
+            "CISControls": ["6.3.1"]
+        }
+    ],
+    "AntiSpamPolicies": [
+        {
+            "Name": "IAC - DfO - [Anti-Spam] [Inbound] [All Domains]",
+            "FileName": "IAC - DfO - _Anti-Spam_ _Inbound_ _All Domains_.json",
+            "Enabled": true,
+            "CISControls": ["6.3.2"]
+        }
+    ],
+    "OutboundSpamPolicies": [
+        {
+            "Name": "IAC - DfO - [Anti-Spam] [Outbound] [All Domains]",
+            "FileName": "IAC - DfO - _Anti-Spam_ _Outbound_ _All Domains_.json",
+            "Enabled": true,
+            "CISControls": ["6.2.1"]
+        }
+    ],
+    "AntiMalwarePolicies": [
+        {
+            "Name": "IAC - DfO - [Anti-Malware] for [All Domains]",
+            "FileName": "IAC - DfO - _Anti-Malware_ for _All Domains_.json",
+            "Enabled": true,
+            "CISControls": ["6.3.3"]
+        }
+    ],
+    "SafeLinksPolicies": [
+        {
+            "Name": "IAC - DfO - [Safe Links] for [All Domains]",
+            "FileName": "IAC - DfO - _Safe Links_ for _All Domains_.json",
+            "Enabled": true,
+            "CISControls": ["6.4.1"]
+        }
+    ],
+    "SafeAttachmentsPolicies": [
+        {
+            "Name": "IAC - DfO - [Safe Attachments] for [All Domains]",
+            "FileName": "IAC - DfO - _Safe Attachments_ for _All Domains_.json",
+            "Enabled": true,
+            "CISControls": ["6.4.2"]
+        }
+    ],
+    "ConnectionFilterPolicies": [
+        {
+            "Name": "Default",
+            "FileName": "Default.json",
+            "Notes": "Default connection filter - no custom IP allow/block lists"
+        }
+    ],
+    "MailFlowRules": [
+        {
+            "Name": "IAC - Alert External Email",
+            "FileName": "IAC---Alert-External-Email.json",
+            "State": "Enabled",
+            "Priority": 0,
+            "Purpose": "External email caution banner",
+            "CISControls": ["14.8"]
+        },
+        {
+            "Name": "IAC - Block External Auto-Forwarding Email",
+            "FileName": "IAC---Block-External-Auto-Forwarding-Email.json",
+            "State": "Enabled",
+            "Priority": 1,
+            "Purpose": "Block inbox-rule external forwarding",
+            "CISControls": ["13.8"]
+        },
+        {
+            "Name": "IAC - Block Malware",
+            "FileName": "IAC---Block-Malware.json",
+            "State": "Enabled",
+            "Priority": 2,
+            "Purpose": "Block dangerous attachment extensions",
+            "CISControls": ["9.7"]
+        }
+    ],
+    "PolicyCount": {
+        "Total": 10,
+        "AntiPhishing": 1,
+        "AntiSpamInbound": 1,
+        "OutboundSpam": 1,
+        "AntiMalware": 1,
+        "SafeLinks": 1,
+        "SafeAttachments": 1,
+        "ConnectionFilter": 1,
+        "MailFlowRules": 3
+    }
+}

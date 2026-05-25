@@ -1,0 +1,168 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [
+      {
+        "UPN": "AlexW@M365x37845673.OnMicrosoft.com",
+        "DisplayName": "Alex Wilber",
+        "Id": "b5c09c55-0ac4-49f0-b709-8b2497eb5034"
+      }
+    ],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      }
+    ],
+    "IncludeRoles": [
+      {
+        "Id": "c4e39bd9-1100-46d3-8c65-fb160da0071f",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "b0f54661-2d74-4c50-afa3-1ec803f12efe",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "29232cdf-9323-42fd-ade2-1d097af3e4de",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "62e90394-69f5-4237-9190-012177145e10",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "194ae4cb-b126-40b2-bd5b-6091b380977d",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "f28a1f50-f6e7-4571-818b-6a12f2af6b6c",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "fe930be7-5e62-47db-91af-98c3a49a38b1",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "158c047a-c907-4556-b7ef-446551a6b5f7",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "966707d0-3269-4727-9be2-8c3a10f19b9d",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "e8611ab8-c189-46e8-94e1-60213ab1f814",
+        "DisplayName": "Unknown"
+      },
+      {
+        "Id": "7be44c8a-adaf-4e2a-84d6-ab2649e08a13",
+        "DisplayName": "Unknown"
+      }
+    ],
+    "IncludeUsers": [],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:16",
+  "PolicyConfig": {
+    "sessionControls": null,
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [
+        "mfa"
+      ],
+      "authenticationStrength": null,
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('0a906da3-3cbe-4227-a036-7fb9afc121e9')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [
+          "c4e39bd9-1100-46d3-8c65-fb160da0071f",
+          "b0f54661-2d74-4c50-afa3-1ec803f12efe",
+          "b1be1c3e-b65d-4f19-8427-f6fa0d97feb9",
+          "29232cdf-9323-42fd-ade2-1d097af3e4de",
+          "62e90394-69f5-4237-9190-012177145e10",
+          "729827e3-9c14-49f7-bb1b-9608f156bbb8",
+          "194ae4cb-b126-40b2-bd5b-6091b380977d",
+          "f28a1f50-f6e7-4571-818b-6a12f2af6b6c",
+          "fe930be7-5e62-47db-91af-98c3a49a38b1",
+          "9b895d92-2cd3-44c7-9d02-a6ac2d5ea5c3",
+          "158c047a-c907-4556-b7ef-446551a6b5f7",
+          "966707d0-3269-4727-9be2-8c3a10f19b9d",
+          "e8611ab8-c189-46e8-94e1-60213ab1f814",
+          "7be44c8a-adaf-4e2a-84d6-ab2649e08a13"
+        ],
+        "includeUsers": [],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [
+          "b5c09c55-0ac4-49f0-b709-8b2497eb5034"
+        ],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": {
+          "guestOrExternalUserTypes": "serviceProvider",
+          "externalTenants": {
+            "@odata.type": "#microsoft.graph.conditionalAccessEnumeratedExternalTenants",
+            "members": [
+              "1b2f14e2-91f9-4876-9f59-3cb09b4ec310"
+            ],
+            "membershipKind": "enumerated"
+          }
+        },
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "All"
+        ]
+      },
+      "authenticationFlows": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": {
+        "includePlatforms": [
+          "all"
+        ],
+        "excludePlatforms": []
+      },
+      "locations": {
+        "excludeLocations": [],
+        "includeLocations": [
+          "All"
+        ]
+      },
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - GLOBAL - GRANT - MFA - AllAdmins",
+    "templateId": null
+  },
+  "SourcePolicyId": "0a906da3-3cbe-4227-a036-7fb9afc121e9",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}

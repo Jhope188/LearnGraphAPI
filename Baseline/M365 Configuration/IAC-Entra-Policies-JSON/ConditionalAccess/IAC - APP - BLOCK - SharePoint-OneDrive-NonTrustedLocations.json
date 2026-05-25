@@ -1,0 +1,93 @@
+{
+  "AssignmentDetails": {
+    "ExcludeUsers": [],
+    "ExcludeRoles": [],
+    "ExcludeGroups": [
+      {
+        "Id": "822cebe7-b527-405c-8bae-834782ec74cb",
+        "DisplayName": "Azure-Breakglass"
+      },
+      {
+        "Id": "21344a9f-6ef0-4181-970a-15202237ac4b",
+        "DisplayName": "AVD-ExternalUsers"
+      },
+      {
+        "Id": "6064391a-c4b7-4991-b87f-e7a98fcd23aa",
+        "DisplayName": "CA - GlobalExclusions"
+      }
+    ],
+    "IncludeRoles": [],
+    "IncludeUsers": [
+      {
+        "Id": "All",
+        "DisplayName": "All"
+      }
+    ],
+    "IncludeGroups": []
+  },
+  "ExportDate": "2026-01-16 20:58:13",
+  "PolicyConfig": {
+    "sessionControls": null,
+    "state": "disabled",
+    "grantControls": {
+      "operator": "OR",
+      "customAuthenticationFactors": [],
+      "termsOfUse": [],
+      "builtInControls": [
+        "block"
+      ],
+      "authenticationStrength": null,
+      "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('8ee4b0d5-8daf-4e7e-9302-f718f9eb2208')/grantControls/authenticationStrength/$entity"
+    },
+    "conditions": {
+      "servicePrincipalRiskLevels": [],
+      "users": {
+        "includeRoles": [],
+        "includeUsers": [
+          "All"
+        ],
+        "excludeGroups": [
+          "822cebe7-b527-405c-8bae-834782ec74cb",
+          "21344a9f-6ef0-4181-970a-15202237ac4b",
+          "6064391a-c4b7-4991-b87f-e7a98fcd23aa"
+        ],
+        "excludeRoles": [],
+        "excludeUsers": [],
+        "includeGroups": [],
+        "excludeGuestsOrExternalUsers": null,
+        "includeGuestsOrExternalUsers": null
+      },
+      "applications": {
+        "excludeApplications": [],
+        "includeAuthenticationContextClassReferences": [],
+        "applicationFilter": null,
+        "includeUserActions": [],
+        "includeApplications": [
+          "00000003-0000-0ff1-ce00-000000000000"
+        ]
+      },
+      "authenticationFlows": null,
+      "clientAppTypes": [
+        "all"
+      ],
+      "clientApplications": null,
+      "userRiskLevels": [],
+      "platforms": null,
+      "locations": {
+        "excludeLocations": [
+          "AllTrusted"
+        ],
+        "includeLocations": [
+          "All"
+        ]
+      },
+      "insiderRiskLevels": null,
+      "devices": null,
+      "signInRiskLevels": []
+    },
+    "displayName": "IAC - APP - BLOCK - SharePoint-OneDrive-NonTrustedLocations",
+    "templateId": null
+  },
+  "SourcePolicyId": "8ee4b0d5-8daf-4e7e-9302-f718f9eb2208",
+  "SourceTenantId": "4da6157b-5e3b-40ec-aadc-6034e223e01a"
+}
