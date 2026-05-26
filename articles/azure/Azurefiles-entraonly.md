@@ -340,3 +340,5 @@ az deployment group create \
 | Configure file-level permissions (NTFS/ACLs) | [MS Learn](https://learn.microsoft.com/en-us/azure/storage/files/storage-files-identity-configure-file-level-permissions) |
 | FSLogix profile containers with Entra ID | [MS Learn](https://learn.microsoft.com/en-us/fslogix/how-to-configure-profile-container-entra-id-hybrid) |
 | Azure Files Entra-only identities (macOS support) | [Azure Blog](https://azure.microsoft.com/en-us/blog/azure-files-entra-only-identities-advancing-cloud-native-identity-and-security/) |
+| Troubleshoot Azure Files SMB connectivity (port 445 blocked) | [MS Learn](https://learn.microsoft.com/troubleshoot/azure/azure-storage/files/connectivity/files-troubleshoot-smb-connectivity#cause-1-port-445-is-blocked) |
+| ISPs that allow/disallow port 445 | [TechNet](https://social.technet.microsoft.com/wiki/contents/articles/32346.azure-summary-of-isps-that-allow-disallow-access-from-port-445.aspx) |
