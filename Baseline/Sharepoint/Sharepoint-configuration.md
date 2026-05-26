@@ -140,7 +140,7 @@ SharePoint admin center → **Settings** → **OneDrive** → **Retention** tab
 }
 ```
 
-> ℹ️ **Note:** This is the same underlying SharePoint tenant property as setting **#5** (`OrphanedPersonalSitesRetentionPeriod`) and is configured in the same location in the admin center. It is **not a separate CIS control** — CIS covers this as a single requirement. Inforcer surfaces it as a distinct policy item to allow it to be tracked, baselined, and alerted on independently within the platform (e.g. as part of a different baseline group or remediation workflow). If #5 is compliant, this setting will be compliant by definition — they cannot be in different states.
+> ℹ️ **Note:** This is the same underlying SharePoint tenant property as setting **#5** (`OrphanedPersonalSitesRetentionPeriod`) and is configured in the same location in the admin center. It is **not a separate CIS control** — CIS covers this as a single requirement. M365 surfaces it as a distinct policy item to allow it to be tracked, baselined, and alerted on independently within the platform (e.g. as part of a different baseline group or remediation workflow). If #5 is compliant, this setting will be compliant by definition — they cannot be in different states.
 
 ---
 
@@ -182,7 +182,7 @@ Setting a default storage quota prevents data hoarding and ungoverned accumulati
 }
 ```
 
-> The recommended value is **`false`** — meaning macOS sync is **not** blocked. Inforcer monitors this setting to detect if it is ever unexpectedly enabled.
+> The recommended value is **`false`** — meaning macOS sync is **not** blocked. M365 monitors this setting to detect if it is ever unexpectedly enabled.
 
 **Check current value (PowerShell — macOS/PnP):**
 
@@ -198,11 +198,11 @@ Get-PnPTenant | Select-Object BlockMacSync
 
 > ⚠️ **Observed behaviour (March 2026):** The property is returned by `Get-PnPTenant` but with **no value** — the column header appears with a blank result. Microsoft has deprecated this property at both the UI and API level. It is no longer settable or readable in a meaningful way.
 
-> **Conclusion:** `BlockMacSync` is fully deprecated. The UI checkbox was removed from the modern admin center and the API property no longer returns a boolean value. Inforcer monitoring of this setting may show as unknown/null rather than `false`. **No remediation action is possible or required** — macOS sync blocking is not enforceable through this property in current tenants. Use Conditional Access device compliance policies if you need to restrict sync by device platform.
+> **Conclusion:** `BlockMacSync` is fully deprecated. The UI checkbox was removed from the modern admin center and the API property no longer returns a boolean value. M365 monitoring of this setting may show as unknown/null rather than `false`. **No remediation action is possible or required** — macOS sync blocking is not enforceable through this property in current tenants. Use Conditional Access device compliance policies if you need to restrict sync by device platform.
 
 **Rationale:**
 
-`BlockMacSync` is a legacy control from an era when the macOS OneDrive client lacked feature parity with Windows. The modern OneDrive client on macOS is fully supported by Microsoft, respects Conditional Access policies, supports sensitivity labels and DLP enforcement, and is functionally equivalent to the Windows client. This is a **drift detection** setting — Inforcer flags it if it deviates from `false` to catch accidental toggles during bulk policy changes.
+`BlockMacSync` is a legacy control from an era when the macOS OneDrive client lacked feature parity with Windows. The modern OneDrive client on macOS is fully supported by Microsoft, respects Conditional Access policies, supports sensitivity labels and DLP enforcement, and is functionally equivalent to the Windows client. This is a **drift detection** setting — M365 flags it if it deviates from `false` to catch accidental toggles during bulk policy changes.
 
 ---
 
@@ -229,7 +229,7 @@ SharePoint admin center → **Policies** → **Sharing** → set both sliders �
 | Guests must sign in using the same account invitations were sent to | `RequireAcceptingAccountMatchInvitedAccount` | `true` | ✅ Prevents invitation forwarding — recipient must use the exact email address the invite was sent to. Stops guests forwarding share links to unintended parties. |
 | Limit external sharing by domain | `SharingDomainRestrictionMode` + `SharingAllowedDomainList` | `AllowList` | ✅ Restricts sharing to approved partner domains only. Strong control for orgs with known, fixed external partners. Without this, users can share to any domain. |
 | Allow only users in specific security groups to share externally | `SharingAllowedDomainList` (group-scoped) | Enabled | ✅ Limits external sharing to a vetted subset of users (e.g. senior staff, sales team). Reduces accidental oversharing by standard employees. |
-| Allow guests to share items they don't own | **SPO PS:** `PreventExternalUsersFromResharing` = `true`<br>**Graph API (Inforcer):** `isResharingByExternalUsersEnabled` = `false` | Block resharing | ⚠️ **CIS: Block guest resharing.** If guests can reshare, content can spread beyond your intended audience with no audit trail. ⚠️ **Note: the two property names have inverted logic** — SPO PowerShell uses `PreventExternalUsersFromResharing: true` to block, while the Graph API / Inforcer uses `isResharingByExternalUsersEnabled: false` to block. They are the same underlying setting. |
+| Allow guests to share items they don't own | **SPO PS:** `PreventExternalUsersFromResharing` = `true`<br>**Graph API (M365):** `isResharingByExternalUsersEnabled` = `false` | Block resharing | ⚠️ **CIS: Block guest resharing.** If guests can reshare, content can spread beyond your intended audience with no audit trail. ⚠️ **Note: the two property names have inverted logic** — SPO PowerShell uses `PreventExternalUsersFromResharing: true` to block, while the Graph API / M365 uses `isResharingByExternalUsersEnabled: false` to block. They are the same underlying setting. |
 | Guest access to a site or OneDrive will automatically expire after this many days | `ExternalUserExpireInDays` | `30` | ✅ **CIS: Enable with 30 days.** Automatically revokes guest access after the set period. Without this, guest access persists indefinitely even when the business relationship ends. Reduces stale access risk significantly. |
 | People who use a verification code must reauthenticate after this many days | `EmailAttestationReAuthDays` | `15` | ✅ **CIS: Enable with 15 days.** Forces one-time-code users to re-verify periodically. Without this, a one-time code used once grants indefinite access from that browser session. |
 
@@ -375,7 +375,7 @@ Set-SPOTenant -EnableAzureADB2BIntegration $true
 Set-PnPTenant -EnableAzureADB2BIntegration $true
 ```
 
-> ℹ️ **Not currently Inforcer managed.** This setting is not yet read, audited, or remediated by Inforcer. Configuration must be done manually via PowerShell or the admin center UI where available. This is a candidate for a future Inforcer managed setting.
+> ℹ️ **Not currently M365 managed.** This setting is not yet read, audited, or remediated by M365. Configuration must be done manually via PowerShell or the admin center UI where available. This is a candidate for a future M365 managed setting.
 
 ---
 
@@ -425,7 +425,7 @@ When SharePoint detects a file that cannot be scanned for malware or has been id
 
 > **CIS recommended value:** `true` — block download of infected or unscanned files. A warning-only approach relies on user behaviour, which is not a reliable security control.
 
-> ℹ️ **Not currently Inforcer managed.** This is a candidate for a future Inforcer managed setting.
+> ℹ️ **Not currently M365 managed.** This is a candidate for a future M365 managed setting.
 
 ---
 
@@ -488,7 +488,7 @@ Legacy authentication protocols (IDCRL — Identity Client Runtime Library) cann
 **Admin Center Path:**
 SharePoint admin center → **Policies** → **Access control** → **Unmanaged devices**
 
-> ⚠️ **Auto-creates a Conditional Access policy.** Setting this in the SharePoint admin center automatically creates a CA policy in Entra ID targeting all users. This CA policy will not follow your ACME naming conventions and will be created out-of-band from your Inforcer-managed CA baseline. Review the Entra CA policies after configuring this setting.
+> ⚠️ **Auto-creates a Conditional Access policy.** Setting this in the SharePoint admin center automatically creates a CA policy in Entra ID targeting all users. This CA policy will not follow your ACME naming conventions and will be created out-of-band from your M365-managed CA baseline. Review the Entra CA policies after configuring this setting.
 
 **Configuration options:**
 
@@ -833,9 +833,9 @@ For a tenant-wide guest access review across all M365-connected SPO sites:
 
 ### 23. CA Policies — SPO Protection Recommendations
 
-Conditional Access policies are configured in Entra ID, not the SharePoint admin center. The following CA controls directly protect SharePoint Online and should be part of every Inforcer baseline that includes SPO governance.
+Conditional Access policies are configured in Entra ID, not the SharePoint admin center. The following CA controls directly protect SharePoint Online and should be part of every M365 baseline that includes SPO governance.
 
-> 📋 **Reference:** See the Inforcer CA Policy Reference document for full policy templates, ACME naming conventions, and FOCI bypass analysis.
+> 📋 **Reference:** See the M365 CA Policy Reference document for full policy templates, ACME naming conventions, and FOCI bypass analysis.
 
 **SPO-relevant CA policy summary:**
 
@@ -908,18 +908,18 @@ For sites identified as overshared, use **Initiate site access review** directly
 
 ---
 
-## Inforcer Managed Controls — CIS Mapping
+## M365 Managed Controls — CIS Mapping
 
-> All controls below marked (\*) are Inforcer Managed. CIS control numbers reference **CIS Microsoft 365 Foundations Benchmark v6.0.0**.
+> All controls below marked (\*) are M365 Managed. CIS control numbers reference **CIS Microsoft 365 Foundations Benchmark v6.0.0**.
 
-| # | Inforcer Setting | CIS Control | Level | Description |
+| # | M365 Setting | CIS Control | Level | Description |
 |---|-----------------|-------------|-------|-------------|
 | 1 | Allow Syncing Only on Domain-Joined Computers | 7.3.2 | **L2** | Restricts OneDrive sync to on-premises AD domain-joined devices. Does not apply to Entra ID joined devices — use Conditional Access for cloud-native environments. |
 | 2 | External Sharing (SharePoint) | 7.2.3 | **L1** | Limits SharePoint sharing to guests already in your Entra directory. Prevents new external accounts being created via sharing links. |
 | 3 | External Sharing (OneDrive) | 7.2.4 | **L2** | Limits OneDrive sharing to existing directory guests only. Must be equal to or more restrictive than SharePoint sharing level. |
 | 4 | Idle Session Sign-Out | 1.3.2 | **L1** | Signs out users on unmanaged devices after inactivity. CIS recommends ≤3 hours threshold with prior warning. |
 | 5 | OneDrive Deleted User Default Retention | *(no direct CIS control)* | — | Sets how many days a deleted user's OneDrive is retained. Default and CIS-aligned value is 180 days. |
-| 6 | OneDrive Retention | *(same as #5)* | — | Same underlying property as #5. Surfaced independently in Inforcer for separate tracking and alerting. |
+| 6 | OneDrive Retention | *(same as #5)* | — | Same underlying property as #5. Surfaced independently in M365 for separate tracking and alerting. |
 | 7 | OneDrive Storage Quota | *(no direct CIS control)* | — | Sets default storage cap per user OneDrive. Limits data hoarding, reduces DLP surface area. |
 | 8 | Block macOS Sync | *(drift detection)* | — | Drift detection — monitors if macOS sync is accidentally blocked. Fully deprecated setting; no enforcement action possible. |
 | 9 | SPO & OD External Sharing — Full Controls | 7.2.3 / 7.2.4 / 7.2.5 / 7.2.6 / 7.2.9 / 7.2.10 | **L1/L2** | Full sharing control set: domain allowlists, guest resharing prevention, security group scoping, automatic guest expiry, verification code reauthentication. |
@@ -927,7 +927,7 @@ For sites identified as overshared, use **Initiate site access review** directly
 | 11 | Sync File Type Exclusions | *(no direct CIS control)* | — | Blocks upload of specified file types via sync client (e.g. `.exe`, `.bat`, `.ps1`). |
 | 15 | Modern Authentication for SharePoint | 7.2.1 | **L1** | Blocks legacy IDCRL authentication at the SharePoint service layer. Complements the tenant-wide CA legacy auth block. |
 
-**Not yet Inforcer managed (candidates for future inclusion):**
+**Not yet M365 managed (candidates for future inclusion):**
 
 | # | Setting | CIS Control | Level | Notes |
 |---|---------|-------------|-------|-------|
@@ -940,7 +940,7 @@ For sites identified as overshared, use **Initiate site access review** directly
 
 ## Summary Table
 
-> **\* Inforcer Managed** — Inforcer can read, audit, and remediate this setting automatically.
+> **\* M365 Managed** — M365 can read, audit, and remediate this setting automatically.
 
 | # | Setting | JSON Field | Admin Center Location |
 |---|---------|-----------|----------------------|
