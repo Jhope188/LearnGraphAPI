@@ -70,132 +70,94 @@ There is no native "content is not encrypted" condition in Purview DLP for Excha
 
 ---
 
-## Deployment Script
+## Deployment Scripts
 
 > **Prerequisites:**  
 > - `ExchangeOnlineManagement` module v3+  
 > - Role: Compliance Administrator or DLP Compliance Management  
-> - Run `Connect-IPPSSession` before executing
+> - The `Confidential - Third Parties` sensitivity label must already exist and be published in your tenant
+
+### Scripts Provided
+
+Two scripts are included in `/Baseline/Purview/`:
+
+| Script | Purpose |
+|---|---|
+| `Connect-ConditionalAccessTech-And-CreateDlp.ps1` | **Wrapper script** — connects to your tenant and invokes the main DLP creation script. Use this. |
+| `Create-Dlp-ConfidentialThirdParty-NoRecipient.ps1` | **Core logic** — creates the policy and rule. Called by the wrapper. |
+
+### How to Deploy to Your Tenant
+
+**Option 1: Interactive Login (Recommended)**
 
 ```powershell
-#Requires -Version 7
-<#
-.SYNOPSIS
-    Creates the DLP policy: Confidential - Block External Third Party without Recipient
+cd /path/to/LearnGraphAPI/Baseline/Purview
 
-.DESCRIPTION
-    Blocks outbound email tagged with "Confidential - Third Parties" that does not
-    have IRM protection (PermissionControlled) applied. Catches misconfigured label
-    applications where the user-defined permissions dialog was skipped or bypassed.
-
-.PARAMETER TenantDomain
-    Your *.onmicrosoft.com domain (used to resolve label identity)
-
-.PARAMETER DryRun
-    If specified, shows what would be created without making changes
-
-.EXAMPLE
-    ./Create-DlpThirdPartyPolicy.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
-    ./Create-DlpThirdPartyPolicy.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -DryRun
-#>
-
-param(
-    [Parameter(Mandatory)]
-    [string]$TenantDomain,
-
-    [switch]$DryRun
-)
-
-$PolicyName = "Confidential - Block External Third Party without Recipient"
-$RuleName   = "Block-ConfThirdParty-NoEncryptionRecipient"
-$LabelName  = "Confidential - Third Parties"
-
-# ── Step 1: Resolve label ImmutableId ────────────────────────────────────────
-Write-Host "`n[INFO] Resolving label: $LabelName" -ForegroundColor Cyan
-
-$label = Get-Label -Identity $LabelName -ErrorAction SilentlyContinue
-if (-not $label) {
-    Write-Error "[ERROR] Label '$LabelName' not found. Verify the label exists and is published before creating this DLP policy."
-    exit 1
-}
-
-$labelId = $label.ImmutableId
-Write-Host "[OK]   Label resolved. ImmutableId: $labelId" -ForegroundColor Green
-
-# ── Step 2: Build label condition object ─────────────────────────────────────
-$labelCondition = @{
-    operator = "And"
-    groups   = @(
-        @{
-            operator = "Or"
-            name     = "Default"
-            labels   = @(
-                @{
-                    name = $labelId
-                    type = "Sensitivity"
-                }
-            )
-        }
-    )
-}
-
-# ── Step 3: Check if policy already exists ────────────────────────────────────
-$existingPolicy = Get-DlpCompliancePolicy -Identity $PolicyName -ErrorAction SilentlyContinue
-
-if ($existingPolicy) {
-    Write-Host "[EXISTS] Policy '$PolicyName' already exists — skipping creation." -ForegroundColor Yellow
-} else {
-    if ($DryRun) {
-        Write-Host "[DRY RUN] Would create policy: $PolicyName" -ForegroundColor Magenta
-    } else {
-        Write-Host "[CREATING] Policy: $PolicyName" -ForegroundColor Cyan
-        New-DlpCompliancePolicy `
-            -Name             $PolicyName `
-            -Comment          "Blocks outbound Confidential-Third Parties email where IRM recipients were not configured. Catches misconfigured user-defined permission label applications." `
-            -ExchangeLocation All `
-            -Mode             Enable
-        Write-Host "[OK]   Policy created." -ForegroundColor Green
-    }
-}
-
-# ── Step 4: Check if rule already exists ─────────────────────────────────────
-$existingRule = Get-DlpComplianceRule -Identity $RuleName -ErrorAction SilentlyContinue
-
-if ($existingRule) {
-    Write-Host "[EXISTS] Rule '$RuleName' already exists — skipping creation." -ForegroundColor Yellow
-} else {
-    if ($DryRun) {
-        Write-Host "[DRY RUN] Would create rule: $RuleName" -ForegroundColor Magenta
-        Write-Host "  Condition:  Label = $LabelName ($labelId)" -ForegroundColor Magenta
-        Write-Host "  Condition:  SentToScope = NotInOrganization" -ForegroundColor Magenta
-        Write-Host "  Exception:  MessageType = PermissionControlled" -ForegroundColor Magenta
-        Write-Host "  Action:     BlockAccess (Block everyone)" -ForegroundColor Magenta
-    } else {
-        Write-Host "[CREATING] Rule: $RuleName" -ForegroundColor Cyan
-        New-DlpComplianceRule `
-            -Name                            $RuleName `
-            -Policy                          $PolicyName `
-            -ContentContainsSensitivityLabel $labelCondition `
-            -SentToScope                     NotInOrganization `
-            -ExceptIfMessageTypeMatches      PermissionControlled `
-            -BlockAccess                     $true `
-            -NotifyUser                      Owner `
-            -NotifyPolicyTipCustomText       "This email is labeled Confidential - Third Parties but authorised recipients have not been configured. Re-open the email, re-apply the label, and select your authorised recipients before sending." `
-            -GenerateAlert                   $true `
-            -AlertProperties                 @{
-                AggregationType = "SimpleAggregation"
-                Threshold       = 1
-                TimeWindow      = 60
-            }
-        Write-Host "[OK]   Rule created." -ForegroundColor Green
-    }
-}
-
-# ── Step 5: Verify ────────────────────────────────────────────────────────────
-Write-Host "`n[INFO] Verification:" -ForegroundColor Cyan
-Get-DlpCompliancePolicy -Identity $PolicyName | Format-List Name, Mode, ExchangeLocation
-Get-DlpComplianceRule   -Identity $RuleName   | Format-List Name, Disabled, SentToScope, ExceptIfMessageTypeMatches, BlockAccess
+# Will prompt for interactive sign-in
+pwsh -NoProfile -File "./Connect-ConditionalAccessTech-And-CreateDlp.ps1"
 ```
+
+**Option 2: Specify Admin UPN**
+
+```powershell
+pwsh -NoProfile -File "./Connect-ConditionalAccessTech-And-CreateDlp.ps1" -AdminUpn "admin@yourtenant.onmicrosoft.com"
+```
+
+**Option 3: Dry-Run (Preview Without Deploying)**
+
+```powershell
+# Shows what would be created without making changes
+pwsh -NoProfile -File "./Connect-ConditionalAccessTech-And-CreateDlp.ps1" -DryRun
+```
+
+### Manual Deployment (If Not Using Wrapper)
+
+If you prefer to deploy directly without the wrapper:
+
+```powershell
+# Step 1: Connect to Security & Compliance PowerShell
+Connect-IPPSSession -UserPrincipalName "admin@yourtenant.onmicrosoft.com"
+
+# Step 2: Run the core script
+$scriptPath = "/path/to/LearnGraphAPI/Baseline/Purview/Create-Dlp-ConfidentialThirdParty-NoRecipient.ps1"
+& $scriptPath
+```
+
+### Script Parameters
+
+**Create-Dlp-ConfidentialThirdParty-NoRecipient.ps1:**
+```
+-TenantDomain <string>        Optional: Your tenant domain (e.g., contoso.onmicrosoft.com)
+-UserPrincipalName <string>   Optional: Admin UPN for Connect-IPPSSession
+-DryRun                        Optional: Preview mode (no changes made)
+```
+
+**Connect-ConditionalAccessTech-And-CreateDlp.ps1:**
+```
+-AdminUpn <string>            Optional: Admin UPN in your tenant
+-DryRun                        Optional: Preview mode (no changes made)
+```
+
+### What the Scripts Do
+
+1. **Ensure modules installed** — Installs/imports `ExchangeOnlineManagement` v3+
+2. **Connect to Security & Compliance** — Uses `Connect-IPPSSession` (interactive or UPN-based)
+3. **Resolve label** — Finds the `Confidential - Third Parties` label by display name
+4. **Create policy** — `New-DlpCompliancePolicy` (or skip if exists)
+5. **Create rule** — `New-DlpComplianceRule` with correct parameters:
+   - **Condition:** `-ContentContainsSensitiveInformation` (label ImmutableId)
+   - **Condition:** `-AccessScope NotInOrganization` (external recipients only)
+   - **Exception:** `-ExceptIfMessageTypeMatches PermissionControlled` (allow if encrypted)
+   - **Action:** `-BlockAccess $true`, `-NotifyUser Owner`
+   - **Alert:** `-GenerateAlert $true` with threshold of ≥3 events in 60-minute window
+6. **Verify** — Displays policy and rule confirmation
+
+### Important Notes
+
+- **Label must exist first** — The script fails gracefully if `Confidential - Third Parties` is not published in your tenant
+- **Idempotent** — Safe to run multiple times; skips policy/rule if already exists
+- **No manual prompts** — Set `-AdminUpn` to make login non-interactive, or omit for interactive sign-in
+- **Alert threshold** — Minimum of 3 events in the time window (service requirement)
 
 ---
 
@@ -261,6 +223,8 @@ This policy is one of the recommended set for the IAC label taxonomy. The comple
 
 Microsoft Purview DLP policies are managed through the **Security & Compliance PowerShell endpoint** (`Connect-IPPSSession`), not Microsoft Graph. Graph API does not expose DLP policy creation endpoints. To deploy this policy you must:
 
-1. Connect via `Connect-IPPSSession -UserPrincipalName admin@<tenant>`
-2. Run the deployment script above
+1. Connect via `Connect-IPPSSession` (interactive or with UPN)
+2. Run the provided wrapper script: `Connect-ConditionalAccessTech-And-CreateDlp.ps1`
 3. Verify via `Get-DlpCompliancePolicy` and `Get-DlpComplianceRule`
+
+The scripts handle all of this automatically.
