@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exchange Online Settings Reference</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f3; --bg3: #ebebea;
+    --text: #1a1a18; --text2: #5a5a57; --text3: #8a8a86;
+    --border: rgba(0,0,0,0.1); --border2: rgba(0,0,0,0.18);
+    --ok-bg: #eaf3de; --ok-text: #27500a;
+    --warn-bg: #faeeda; --warn-text: #633806;
+    --risk-bg: #fcebeb; --risk-text: #791f1f;
+    --info-bg: #e6f1fb; --info-text: #0c447c;
+    --neu-bg: #f1efe8; --neu-text: #5f5e5a;
+    --accent: #185fa5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a; --bg2: #252523; --bg3: #2e2e2b;
+      --text: #f0ede8; --text2: #a8a59f; --text3: #6e6c68;
+      --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+      --ok-bg: #173404; --ok-text: #c0dd97;
+      --warn-bg: #412402; --warn-text: #fac775;
+      --risk-bg: #501313; --risk-text: #f09595;
+      --info-bg: #042c53; --info-text: #b5d4f4;
+      --neu-bg: #2c2c2a; --neu-text: #b4b2a9;
+      --accent: #85b7eb;
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; padding: 2rem; }
+  .header { margin-bottom: 2rem; border-bottom: 0.5px solid var(--border2); padding-bottom: 1.5rem; }
+  .header h1 { font-size: 20px; font-weight: 500; margin-bottom: 4px; }
+  .header p { font-size: 13px; color: var(--text2); }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 1.25rem; }
+  input[type="text"] { flex: 1; min-width: 200px; padding: 7px 12px; border: 0.5px solid var(--border2); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 13px; outline: none; }
+  input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(24,95,165,0.12); }
+  select { padding: 7px 12px; border: 0.5px solid var(--border2); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 13px; cursor: pointer; outline: none; }
+  select:focus { border-color: var(--accent); }
+  .count { margin-left: auto; font-size: 12px; color: var(--text3); white-space: nowrap; }
+  .legend { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .leg { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; }
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+  .b-ok { background: var(--ok-bg); color: var(--ok-text); }
+  .b-warn { background: var(--warn-bg); color: var(--warn-text); }
+  .b-risk { background: var(--risk-bg); color: var(--risk-text); }
+  .b-info { background: var(--info-bg); color: var(--info-text); }
+  .b-neu { background: var(--neu-bg); color: var(--neu-text); }
+  .tbl-wrap { overflow-x: auto; border: 0.5px solid var(--border); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+  thead th { font-size: 11px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.05em; padding: 9px 12px; text-align: left; background: var(--bg2); border-bottom: 0.5px solid var(--border); white-space: nowrap; }
+  th:nth-child(1) { width: 17%; }
+  th:nth-child(2) { width: 21%; }
+  th:nth-child(3) { width: 10%; }
+  th:nth-child(4) { width: 9%; }
+  th:nth-child(5) { width: 43%; }
+  tbody tr { border-bottom: 0.5px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg2); }
+  td { padding: 9px 12px; font-size: 12px; vertical-align: top; color: var(--text); }
+  .grp { font-size: 11px; color: var(--text3); }
+  .mono { font-family: 'SF Mono', 'Consolas', monospace; font-size: 11px; color: var(--text2); word-break: break-word; }
+  .desc { font-size: 12px; color: var(--text2); line-height: 1.55; }
+  .no-results { text-align: center; padding: 2rem; color: var(--text3); font-size: 13px; }
+  @media (max-width: 700px) {
+    body { padding: 1rem; }
+    th:nth-child(1), td:nth-child(1) { display: none; }
+    th:nth-child(1) { width: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Exchange Online settings reference</h1>
+  <p>Organization configuration review — filter by group, risk level, or search by keyword.</p>
+</div>
+<div class="controls">
+  <input type="text" id="search" placeholder="Search settings or descriptions...">
+  <select id="grp-filter"><option value="">All groups</option></select>
+  <select id="risk-filter">
+    <option value="">All risk levels</option>
+    <option value="ok">OK</option>
+    <option value="warn">Review</option>
+    <option value="risk">Risk</option>
+    <option value="neu">Neutral</option>
+  </select>
+  <span class="count" id="count"></span>
+</div>
+<div class="legend">
+  <span class="leg"><span class="badge b-ok">OK</span> Recommended state</span>
+  <span class="leg"><span class="badge b-warn">Review</span> Worth evaluating</span>
+  <span class="leg"><span class="badge b-risk">Risk</span> Security concern</span>
+  <span class="leg"><span class="badge b-neu">Neutral</span> No security impact</span>
+</div>
+<div class="tbl-wrap">
+<table id="tbl">
+<thead><tr>
+  <th>Group</th><th>Setting</th><th>Value</th><th>Risk</th><th>Description</th>
+</tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+<script>
+const rows=[
+  {g:"Calendar & Meetings",s:"OnlineMeetingsByDefaultEnabled",v:"null",r:"warn",d:"Controls whether new meetings default to online (Teams) meetings. Null means not configured — falls back to per-user preference. In hybrid or Teams-first orgs this causes inconsistent meeting creation behavior across users."},
+  {g:"Calendar & Meetings",s:"ShortenEventScopeDefault",v:"None",r:"neu",d:"Defines the default scope for the 'shorten meetings' feature. None means users must opt in individually. No security impact."},
+  {g:"Calendar & Meetings",s:"DefaultMinutesToReduceShortEventsBy",v:"5",r:"neu",d:"When meeting shortening is active, events under a threshold are reduced by this many minutes. No security relevance."},
+  {g:"Calendar & Meetings",s:"DefaultMinutesToReduceLongEventsBy",v:"10",r:"neu",d:"Same as above but for longer events (typically 60+ minutes). No security relevance."},
+  {g:"Calendar & Meetings",s:"HybridRSVPEnabled",v:"true",r:"ok",d:"Allows attendees to indicate in-person vs. remote attendance on meeting invites. Useful for hybrid workplace planning. No security impact."},
+  {g:"Calendar & Meetings",s:"VisibleMeetingUpdateProperties",v:"Location,AllProperties:15",r:"warn",d:"Controls which property changes in a meeting update trigger attendee notifications. The ':15' suffix means changes within 15 minutes of the meeting trigger full notifications. Can leak meeting metadata to external attendees if not scoped properly."},
+  {g:"Calendar & Meetings",s:"MatchSenderOrganizerProperties",v:"false",r:"warn",d:"When true, Exchange validates that the sender of a meeting update matches the original organizer. False means spoofed meeting updates are not validated — a vector for calendar phishing attacks."},
+  {g:"Compliance & Auditing",s:"ElcProcessingDisabled",v:"false",r:"ok",d:"ELC (Managed Folder Assistant) enforces retention policies and litigation hold. False means ELC is running — the correct state. Disabling it prevents retention and hold processing from executing."},
+  {g:"Compliance & Auditing",s:"ReadTrackingEnabled",v:"false",r:"neu",d:"When enabled, senders receive automatic read receipts. Disabled by default to protect recipient privacy. Enabling org-wide is discouraged."},
+  {g:"Compliance & Auditing",s:"AuditDisabled",v:"false",r:"ok",d:"Controls whether mailbox audit logging is active tenant-wide. False means auditing is ON — the correct state. Required by CIS and Microsoft best practices."},
+  {g:"Compliance & Auditing",s:"DLPWaitOnSendEnabled",v:"false",r:"warn",d:"When enabled, outbound messages are held while DLP policies evaluate them before delivery. Disabled means DLP operates in detect mode — policy tips appear but messages are not blocked at send time."},
+  {g:"Compliance & Auditing",s:"DLPWaitOnSendTimeout",v:"9999",r:"warn",d:"Timeout in seconds for the DLP hold-on-send evaluation window. 9999 (~2.7 hours) is effectively unlimited. Dormant since WaitOnSend is disabled — but if enabled, this would cause extreme mail flow delays."},
+  {g:"Connectors & Actionable Messages",s:"ConnectorsEnabled",v:"true",r:"warn",d:"Master switch for Office 365 connectors. Microsoft is deprecating connectors in Teams in favor of Power Automate — leaving enabled exposes a legacy integration surface that is harder to audit."},
+  {g:"Connectors & Actionable Messages",s:"ConnectorsActionableMessagesEnabled",v:"true",r:"warn",d:"Allows actionable message buttons in emails to trigger actions in external services. This surface has been used in phishing attacks where malicious emails render convincing action buttons that exfiltrate tokens or trigger unauthorized actions."},
+  {g:"Connectors & Actionable Messages",s:"SmtpActionableMessagesEnabled",v:"true",r:"risk",d:"Extends actionable messages to emails received via SMTP — not just native Exchange. Allows external senders to embed actionable message markup in inbound email, significantly widening the phishing attack surface."},
+  {g:"Connectors & Actionable Messages",s:"ConnectorsEnabledForOutlook",v:"true",r:"warn",d:"Permits connector configuration within Outlook clients. Reduces visibility into active connectors since users configure them client-side rather than in the admin center."},
+  {g:"Connectors & Actionable Messages",s:"ConnectorsEnabledForTeams",v:"true",r:"warn",d:"Allows Teams connectors (legacy). Microsoft has announced deprecation in favor of Power Automate. Leaving enabled perpetuates a legacy path that won't receive security updates."},
+  {g:"Connectors & Actionable Messages",s:"ConnectorsEnabledForSharepoint",v:"true",r:"warn",d:"Allows connectors to post into SharePoint. Largely superseded by Power Automate. Same deprecation concern as Teams connectors."},
+  {g:"Connectors & Actionable Messages",s:"ConnectorsEnabledForYammer",v:"true",r:"neu",d:"Allows connectors for Viva Engage (Yammer). Relevant only if the org actively uses Viva Engage. No additional risk beyond the general connector surface."},
+  {g:"Distribution Groups & M365 Groups",s:"DistributionGroupDefaultOU",v:"null",r:"neu",d:"Defines where in Active Directory new distribution groups are created (hybrid only). Null means default OU placement. Only relevant in hybrid Exchange environments."},
+  {g:"Distribution Groups & M365 Groups",s:"DistributionGroupNameBlockedWordsList",v:"[]",r:"warn",d:"A list of words prohibited from distribution group names. Empty list means no naming guardrails — groups could be named to mimic privileged accounts (e.g. 'IT-Admins', 'Security-Team')."},
+  {g:"Distribution Groups & M365 Groups",s:"DistributionGroupNamingPolicy",v:"(empty)",r:"warn",d:"Enforces a naming convention for distribution groups. Empty means group names are unconstrained, making it harder to identify group purpose or ownership at scale."},
+  {g:"Distribution Groups & M365 Groups",s:"DirectReportsGroupAutoCreationEnabled",v:"false",r:"neu",d:"When enabled, automatically creates an M365 Group for each manager containing their direct reports. Disabled avoids group sprawl. Low security impact."},
+  {g:"Distribution Groups & M365 Groups",s:"DefaultGroupAccessType",v:"Private",r:"ok",d:"Sets the default privacy for new M365 Groups to Private — content is not discoverable by non-members. Recommended setting. Public groups expose content and membership to the entire tenant."},
+  {g:"Distribution Groups & M365 Groups",s:"IsGroupFoldersAndRulesEnabled",v:"false",r:"neu",d:"Controls whether M365 Groups can have shared folders and inbox rules. Enabling can improve collaboration but adds complexity to group mailbox management."},
+  {g:"Distribution Groups & M365 Groups",s:"EndUserDLUpgradeFlowsDisabled",v:"false",r:"warn",d:"When false, end users can upgrade classic distribution lists to M365 Groups without admin involvement. Can result in uncontrolled group creation and SharePoint site provisioning."},
+  {g:"Distribution Groups & M365 Groups",s:"IsGroupMemberAllowedToEditContent",v:"false",r:"ok",d:"Controls whether regular members (not owners) can edit shared group content. False means only owners can edit — appropriate for most orgs."},
+  {g:"EWS & REST API Access",s:"EwsEnabled",v:"null",r:"warn",d:"Master switch for Exchange Web Services API. Null means not explicitly configured — EWS defaults to enabled. A legacy SOAP API that should be explicitly set and restricted via application access policies."},
+  {g:"EWS & REST API Access",s:"EwsApplicationAccessPolicy",v:"null",r:"warn",d:"Controls which applications can access Exchange data via EWS. Null means no restriction — any app with valid credentials can access any mailbox. Should be set to EnforceAllowList or EnforceBlockList with explicit app entries."},
+  {g:"EWS & REST API Access",s:"EwsAllowList",v:"null",r:"neu",d:"Allowlist of user agent strings permitted to access EWS. Only relevant when EwsApplicationAccessPolicy is set to EnforceAllowList."},
+  {g:"EWS & REST API Access",s:"EwsBlockList",v:"null",r:"neu",d:"Blocklist of user agent strings denied EWS access. Only relevant when EwsApplicationAccessPolicy is set to EnforceBlockList."},
+  {g:"EWS & REST API Access",s:"EwsAllowOutlook",v:"null",r:"neu",d:"Controls whether classic Outlook can use EWS. Null inherits from EwsEnabled. Relevant for orgs forcing modern auth — blocking EWS for Outlook forces MAPI/HTTP which supports modern auth."},
+  {g:"EWS & REST API Access",s:"EwsAllowMacOutlook",v:"null",r:"neu",d:"Same as above but scoped to Outlook for Mac. Null inherits from EwsEnabled."},
+  {g:"EWS & REST API Access",s:"EwsAllowEntourage",v:"null",r:"neu",d:"Controls EWS access for the legacy Entourage client. Effectively obsolete — no modern deployment uses Entourage."},
+  {g:"FindTime (Meeting Polls)",s:"FindTimeAttendeeAuthenticationEnabled",v:"false",r:"risk",d:"When false, external attendees can participate in FindTime polls without authenticating. Anyone with the poll link can respond — exposing attendee availability and allowing time slot manipulation."},
+  {g:"FindTime (Meeting Polls)",s:"FindTimeOnlineMeetingOptionDisabled",v:"false",r:"neu",d:"When false, FindTime polls can include an option to make the resulting meeting online (Teams). Generally fine and improves usability for hybrid orgs."},
+  {g:"FindTime (Meeting Polls)",s:"FindTimeAutoScheduleDisabled",v:"false",r:"warn",d:"When false, FindTime can automatically schedule the meeting once a consensus is reached without organizer confirmation. Meetings can be booked without explicit organizer knowledge."},
+  {g:"FindTime (Meeting Polls)",s:"FindTimeLockPollForAttendeesEnabled",v:"false",r:"neu",d:"When false, attendees can continue to change their availability responses after submitting. Enabling locking prevents response manipulation. Low risk either way."},
+  {g:"Hybrid / Directory Sync",s:"AutodiscoverPartialDirSync",v:"false",r:"neu",d:"Used in hybrid Exchange deployments where Autodiscover points to on-premises for some users. False means all Autodiscover is handled cloud-side. Only relevant for active hybrid coexistence."},
+  {g:"Mail Flow & Addressing",s:"DisablePlusAddressInRecipients",v:"false",r:"warn",d:"Plus addressing (user+tag@domain.com) is enabled. While useful for filtering, it can be abused to probe mailbox existence or bypass simple address-based filtering rules."},
+  {g:"Mail Flow & Addressing",s:"SendFromAliasEnabled",v:"false",r:"neu",d:"Allows users to send email as a proxy address rather than their primary SMTP address. Disabled by default. Enabling improves alias usability but may cause unexpected From address behavior."},
+  {g:"Mail Flow & Addressing",s:"SharedDomainEmailAddressFlowEnabled",v:"true",r:"warn",d:"Enables mail flow for addresses shared across tenants. If the org doesn't intentionally share a domain across tenants, having this enabled is unexpected and worth investigating."},
+  {g:"Mail Flow & Addressing",s:"InRegionRoutingEnabled",v:"false",r:"neu",d:"Ensures mail between users in the same geographic region is routed within that region. Primarily a data residency and latency concern. False means standard global routing."},
+  {g:"Mail Flow & Addressing",s:"ByteEncoderTypeFor7BitCharsets",v:"0",r:"neu",d:"Controls encoding for 7-bit character sets in outbound SMTP. Value 0 is the default. Only relevant for specific legacy system interoperability issues."},
+  {g:"MailTips",s:"MailTipsAllTipsEnabled",v:"true",r:"ok",d:"Master switch enabling MailTips — the warning bar in Outlook that alerts senders before sending a potentially problematic message. Enabling is a CIS and Microsoft best practice."},
+  {g:"MailTips",s:"MailTipsExternalRecipientsTipsEnabled",v:"true",r:"ok",d:"Shows a MailTip when addressing external recipients. Helps prevent accidental data disclosure to external parties. Strongly recommended enabled."},
+  {g:"MailTips",s:"MailTipsGroupMetricsEnabled",v:"true",r:"ok",d:"Shows recipient count when addressing a distribution list. Helps users understand the scope of their message before sending to large groups."},
+  {g:"MailTips",s:"MailTipsLargeAudienceThreshold",v:"25",r:"warn",d:"The recipient count at which the 'large audience' MailTip triggers. 25 is the default but many orgs set this lower (10–15) to catch accidental broad sends earlier."},
+  {g:"MailTips",s:"MailTipsMailboxSourcedTipsEnabled",v:"true",r:"ok",d:"Shows MailTips from mailbox-level settings such as Out-of-Office status or moderated mailbox warnings. Recommended enabled."},
+  {g:"Message Recall",s:"MessageRecallEnabled",v:"null",r:"warn",d:"Controls whether cloud-based message recall is available. Null means not explicitly configured. Microsoft has been rolling out cloud recall as a default-on feature — behavior may vary by rollout state."},
+  {g:"Message Recall",s:"MessageRecallMaxRecallableAge",v:"365 days",r:"warn",d:"Sets how far back a sender can attempt to recall a message. 365 days is unusually long — standard practice is 30 days. A compromised account could attempt to recall messages sent up to a year ago, potentially destroying evidence."},
+  {g:"Message Recall",s:"RecallReadMessagesEnabled",v:"null",r:"warn",d:"Controls whether recall attempts are made against messages already read by the recipient. Null means the platform default applies."},
+  {g:"Message Recall",s:"MessageRecallAlertRecipientsEnabled",v:"false",r:"warn",d:"When false, recipients are not notified when a recall is attempted against their mailbox. A sender or attacker can silently attempt to pull back messages without the recipient ever knowing."},
+  {g:"Message Recall",s:"AutomaticForcedReadReceiptEnabled",v:"false",r:"ok",d:"When true, read receipts are forced on recalled messages. False is appropriate — forced read receipts on recalls can cause unintended privacy implications."},
+  {g:"Microsoft Bookings",s:"BookingsEnabled",v:"true",r:"warn",d:"Master switch enabling Microsoft Bookings. Bookings pages are externally accessible by default, exposing staff calendars and availability to the public without additional restrictions."},
+  {g:"Microsoft Bookings",s:"BookingsAuthEnabled",v:"false",r:"risk",d:"When false, customers can book appointments without authenticating. Anonymous users can book time with any Bookings-enabled staff member. Enabling authentication restricts booking to known/signed-in users."},
+  {g:"Microsoft Bookings",s:"BookingsExposureOfStaffDetailsRestricted",v:"false",r:"risk",d:"When false, staff names, photos, and availability details are visible to anyone viewing a public Bookings page. A significant privacy and social engineering risk — enumerates internal staff to external actors."},
+  {g:"Microsoft Bookings",s:"BookingsSocialSharingRestricted",v:"false",r:"warn",d:"When false, Bookings pages can be shared on social media platforms, distributing pages that expose staff availability and business information."},
+  {g:"Microsoft Bookings",s:"BookingsSearchEngineIndexDisabled",v:"false",r:"warn",d:"When false, Bookings pages are indexable by search engines. Staff names and availability can appear in public search results. Should be true for most enterprise orgs."},
+  {g:"Microsoft Bookings",s:"BookingsAddressEntryRestricted",v:"false",r:"neu",d:"When false, customers can enter any address when booking. Primarily a data quality concern."},
+  {g:"Microsoft Bookings",s:"BookingsPhoneNumberEntryRestricted",v:"false",r:"neu",d:"When false, customers can enter any phone number. Same data quality concern as address restriction."},
+  {g:"Microsoft Bookings",s:"BookingsNamingPolicyEnabled",v:"false",r:"warn",d:"When false, staff can name their Bookings pages freely. Enabling a naming policy prevents misleading or unofficial-sounding page names."},
+  {g:"Microsoft Bookings",s:"BookingsPaymentsEnabled",v:"false",r:"neu",d:"Controls whether Bookings can collect payments. Disabled means no payment processing."},
+  {g:"Microsoft Bookings",s:"BookingsSmsMicrosoftEnabled",v:"true",r:"warn",d:"When true, Microsoft can send SMS reminders to customers on behalf of your Bookings pages. Customer phone numbers are transmitted to Microsoft's SMS infrastructure. Review data handling obligations for regulated industries."},
+  {g:"Microsoft Bookings",s:"BookingsMembershipApprovalRequired",v:"false",r:"neu",d:"Controls whether membership approval is required for Bookings. No significant security impact in most deployments."},
+  {g:"Microsoft Bookings",s:"BookingsCreationOfCustomQuestionsRestricted",v:"false",r:"neu",d:"When false, staff can add custom questions to booking forms. Data quality and form governance concern."},
+  {g:"Microsoft Bookings",s:"BookingsNotesEntryRestricted",v:"false",r:"neu",d:"When false, customers can add free-text notes when booking. Minimal security impact."},
+  {g:"Microsoft Bookings",s:"BookingsNamingPolicyPrefixEnabled",v:"false",r:"neu",d:"Prefix enforcement for Bookings naming policy. Inactive since naming policy is disabled."},
+  {g:"Microsoft Bookings",s:"BookingsNamingPolicySuffixEnabled",v:"false",r:"neu",d:"Suffix enforcement for Bookings naming policy. Inactive since naming policy is disabled."},
+  {g:"Microsoft Bookings",s:"BookingsBlockedWordsEnabled",v:"false",r:"neu",d:"Blocked words list for Bookings page names. Inactive since naming policy is disabled."},
+  {g:"Mobile & Workspace",s:"OutlookPayEnabled",v:"true",r:"warn",d:"Enables payment request functionality within Outlook. In most enterprise environments this capability is unnecessary and represents a financial transaction surface within email."},
+  {g:"Mobile & Workspace",s:"OutlookMobileGCCRestrictionsEnabled",v:"false",r:"neu",d:"Enforces additional restrictions for Outlook Mobile in GCC environments. Only relevant for GCC tenants."},
+  {g:"Mobile & Workspace",s:"WorkspaceTenantEnabled",v:"true",r:"neu",d:"Enables room booking and hot-desk/workspace reservation capabilities. Benign unless the org has specific physical security requirements around desk booking visibility."},
+  {g:"Outlook Experience",s:"AppsForOfficeEnabled",v:"true",r:"warn",d:"Enables Office Add-ins in Outlook. Add-ins execute in the context of the user's mailbox and can read email content — a significant data exfiltration risk if not governed via the Add-ins admin policy."},
+  {g:"Outlook Experience",s:"LinkPreviewEnabled",v:"true",r:"warn",d:"Allows Outlook to generate rich link previews for URLs in emails. Preview generation calls out to the linked URL, which can confirm link viability to malicious senders and may leak recipient metadata."},
+  {g:"Outlook Experience",s:"AsyncSendEnabled",v:"true",r:"ok",d:"Allows Outlook to run add-in checks (like DLP or MailTips) asynchronously before sending. True is the correct state — enables pre-send policy checks without blocking the user experience."},
+  {g:"Outlook Experience",s:"WebSuggestedRepliesDisabled",v:"false",r:"neu",d:"When false, Outlook on the Web shows AI-generated suggested replies. Disabling is a privacy preference — content is processed by Microsoft's inference infrastructure. Consider disabling for regulated orgs."},
+  {g:"Outlook Experience",s:"OutlookTextPredictionDisabled",v:"false",r:"neu",d:"When false, Outlook shows inline text completion suggestions. Same privacy consideration as suggested replies. Consider disabling for regulated environments."},
+  {g:"Outlook Experience",s:"PublicComputersDetectionEnabled",v:"false",r:"warn",d:"When enabled, Exchange detects OWA access from public/shared computers and adjusts session security. Disabling means all sessions are treated the same regardless of device trust."},
+  {g:"Outlook Experience",s:"DefaultFolderPermissionRestricted",v:"false",r:"warn",d:"When false, users can grant others access to their default folders (Inbox, Calendar) without admin oversight. Enabling restriction prevents inadvertent over-sharing of sensitive mailbox folders."},
+  {g:"Outlook Experience",s:"FocusedInboxOn",v:"null",r:"neu",d:"Controls Focused Inbox feature tenant-wide. Null means not forced — users control it per-mailbox. Acceptable in most cases."},
+  {g:"Outlook Experience",s:"EnableOutlookEvents",v:"false",r:"neu",d:"When enabled, Outlook auto-detects events like flights and package deliveries from email content and adds them to the calendar. Disabled is a privacy-positive choice for sensitive environments."},
+  {g:"Outlook Experience",s:"ActionableMessagesExtenalAccessTokenEnabled",v:"false",r:"ok",d:"When false, actionable messages cannot use external access tokens. Keeping this false reduces the risk of actionable message token abuse by external senders."},
+  {g:"Public Folders",s:"PublicFoldersEnabled",v:"Local",r:"warn",d:"Public folders are enabled and hosted in Exchange Online. A legacy collaboration feature with limited modern governance controls. Their presence should be documented — they can contain sensitive data with minimal audit visibility."},
+  {g:"Public Folders",s:"DefaultPublicFolderDeletedItemRetention",v:"30 days",r:"ok",d:"Deleted items are retained for 30 days before permanent deletion. A reasonable default allowing recovery of accidentally deleted content."},
+  {g:"Public Folders",s:"DefaultPublicFolderMovedItemRetention",v:"7 days",r:"neu",d:"Items moved between public folders are retained in a recoverable state for 7 days. Default value — acceptable for most orgs."},
+  {g:"Public Folders",s:"DefaultPublicFolderIssueWarningQuota",v:"1.7 GB",r:"neu",d:"Sends a warning when a public folder reaches 1.7 GB. Default value — acceptable."},
+  {g:"Public Folders",s:"DefaultPublicFolderProhibitPostQuota",v:"2 GB",r:"neu",d:"Prevents new posts to a public folder once it reaches 2 GB. Default value — acceptable."},
+  {g:"Public Folders",s:"DefaultPublicFolderMaxItemSize",v:"Unlimited",r:"warn",d:"No maximum size restriction per item. Unlimited item size means users can post arbitrarily large attachments, potentially consuming significant storage and making quota management harder."},
+  {g:"Public Folders",s:"DefaultPublicFolderAgeLimit",v:"null",r:"neu",d:"No age limit configured for public folder items. Items persist indefinitely unless a retention policy is applied. Acceptable if covered by an org-wide retention policy."},
+  {g:"Public Folders",s:"PublicFolderShowClientControl",v:"false",r:"neu",d:"When false, Outlook clients do not show a toggle to enable/disable public folder access from the client side. Default and acceptable."},
+  {g:"Security & Anti-Spoofing",s:"RejectDirectSend",v:"true",r:"ok",d:"Blocks unauthenticated direct SMTP sends. A common attack vector: without this, an attacker who knows your MX record can inject mail directly into your tenant. Strongly recommended enabled. Trade-off: legacy devices using direct send (printers, MFPs) will break and must be reconfigured to use an authenticated SMTP relay."},
+  {g:"Security & Anti-Spoofing",s:"MaskClientIpInReceivedHeadersEnabled",v:"true",r:"ok",d:"Removes the originating client IP address from email headers on outbound mail. Prevents external recipients from seeing internal network IPs and reduces reconnaissance information in email headers. Recommended enabled."},
+  {g:"Security & Anti-Spoofing",s:"IPListBlocked",v:"[]",r:"warn",d:"A tenant-level IP blocklist for inbound mail. Empty means no manual IP-based blocking is configured. EOP/Defender handles most IP reputation blocking automatically, but this list allows enforcement of known bad IPs not caught by Microsoft's intelligence feeds."},
+  {g:"Security & Anti-Spoofing",s:"UnblockUnsafeSenderPromptEnabled",v:"true",r:"warn",d:"When true, users can override Exchange's unsafe sender classifications from Outlook. Gives end users the ability to unblock potentially malicious senders — consider disabling to enforce admin-only unblock actions."},
+];
+
+const tbody=document.getElementById('tbody');
+const searchEl=document.getElementById('search');
+const grpEl=document.getElementById('grp-filter');
+const riskEl=document.getElementById('risk-filter');
+const countEl=document.getElementById('count');
+const groups=[...new Set(rows.map(r=>r.g))].sort();
+groups.forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent=g;grpEl.appendChild(o);});
+const bCls={ok:'b-ok',warn:'b-warn',risk:'b-risk',neu:'b-neu'};
+const bLbl={ok:'OK',warn:'Review',risk:'Risk',neu:'Neutral'};
+function render(){
+  const q=searchEl.value.toLowerCase();
+  const gf=grpEl.value;
+  const rf=riskEl.value;
+  const f=rows.filter(r=>{
+    if(gf && r.g!==gf) return false;
+    if(rf && r.r!==rf) return false;
+    if(q && !r.s.toLowerCase().includes(q) && !r.d.toLowerCase().includes(q) && !r.g.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  if(f.length===0){tbody.innerHTML='<tr><td colspan="5" class="no-results">No settings match your filters.</td></tr>';}
+  else{tbody.innerHTML=f.map(r=>`<tr><td class="grp">${r.g}</td><td class="mono">${r.s}</td><td class="mono">${r.v}</td><td><span class="badge ${bCls[r.r]}">${bLbl[r.r]}</span></td><td class="desc">${r.d}</td></tr>`).join('');}
+  countEl.textContent=f.length+' / '+rows.length+' settings';
+}
+searchEl.addEventListener('input',render);
+grpEl.addEventListener('change',render);
+riskEl.addEventListener('change',render);
+render();
+</script>
+</body>
+</html>
