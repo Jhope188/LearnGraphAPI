@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CA Policy Analyzer — Major Update — conditionalaccess.tech</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+    --green:    #22c55e;
+    --yellow:   #f5c842;
+    --purple:   #a78bfa;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem;
+    border-radius: 8px; text-decoration: none;
+    font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+    z-index: 50; backdrop-filter: blur(8px);
+    transition: background 0.2s; min-height: 44px;
+    display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative; min-height: 88vh;
+    display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem clamp(4rem, 8vw, 12rem) 4rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 65% 35%, rgba(0,194,179,0.11) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 50% at 10% 85%, rgba(0,194,179,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.2rem, 8vw, 7.5rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--teal); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 580px; font-size: 1.05rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem; flex-wrap: wrap;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .hero-cta {
+    margin-top: 2.5rem; display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.6s 0.8s forwards;
+  }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-ghost {
+    display: inline-block; background: transparent; color: var(--teal);
+    border: 1px solid rgba(0,194,179,0.4);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--teal); background: rgba(0,194,179,0.06); }
+
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 8vw;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); opacity: 0; animation: fadeUp 0.6s 1.1s forwards;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--teal); animation: pulse 2s infinite; }
+
+  .content { max-width: min(1100px, 88vw); margin: 0 auto; padding: 0 4vw 8rem; }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.5rem); line-height: 1.55;
+    color: var(--off-white); border-left: 3px solid var(--teal);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4.5rem 0 1.75rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.22; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+  a { color: var(--teal); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+
+  /* Video embed */
+  .video-wrap {
+    margin: 3rem 0; border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(0,194,179,0.15); position: relative;
+  }
+  .video-label {
+    background: rgba(0,194,179,0.07); padding: 0.75rem 1.25rem;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .video-label span { color: var(--warm-gray); text-transform: none; letter-spacing: 0; font-size: 0.85rem; }
+  .video-iframe-wrap {
+    position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;
+    background: #000;
+  }
+  .video-iframe-wrap iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    border: none;
+  }
+  .video-placeholder {
+    background: rgba(0,194,179,0.04); padding: 3rem 2rem; text-align: center;
+    min-height: 280px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.75rem;
+  }
+  .video-placeholder-icon { font-size: 2.5rem; opacity: 0.3; }
+  .video-placeholder-text {
+    font-size: 0.85rem; color: var(--warm-gray); font-style: italic;
+  }
+
+  /* Changelog */
+  .changelog { margin: 2.5rem 0; }
+  .cl-item {
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 0 1.25rem; padding: 1.5rem;
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.08);
+    position: relative; transition: background 0.2s;
+  }
+  .cl-item:not(:last-child) { border-bottom: none; }
+  .cl-item:first-child { border-radius: 4px 4px 0 0; }
+  .cl-item:last-child  { border-radius: 0 0 4px 4px; }
+  .cl-item:hover { background: rgba(0,194,179,0.03); }
+  .cl-item::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 2px;
+  }
+  .cl-item.new::before  { background: var(--green); }
+  .cl-item.upd::before  { background: var(--yellow); }
+  .cl-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 500; padding: 0.2rem 0.55rem; border-radius: 2px;
+    min-width: 52px; height: 20px; margin-top: 4px;
+  }
+  .badge-new { background: rgba(34,197,94,0.15); color: var(--green); }
+  .badge-upd { background: rgba(245,200,66,0.12); color: var(--yellow); }
+  .cl-content {}
+  .cl-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+    letter-spacing: 0.04em; color: var(--off-white); margin-bottom: 0.4rem;
+    line-height: 1.1;
+  }
+  .cl-sub {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--teal-dim); font-weight: 500; margin-bottom: 0.6rem;
+  }
+  .cl-desc { font-size: 0.92rem; color: #a09890; line-height: 1.7; margin: 0; }
+  .cl-desc strong { color: var(--off-white); font-weight: 500; }
+  code {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px;
+  }
+
+  /* Framework cards */
+  .framework-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(0,194,179,0.08);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .fw-card { background: var(--card-bg); padding: 1.5rem; position: relative; }
+  .fw-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .fw-card.fwA::before { background: linear-gradient(90deg, var(--teal), transparent); }
+  .fw-card.fwB::before { background: linear-gradient(90deg, var(--purple), transparent); }
+  .fw-author {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem;
+    letter-spacing: 0.04em; color: var(--off-white); margin-bottom: 0.3rem;
+  }
+  .fw-handle {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+    color: var(--teal-dim); margin-bottom: 0.8rem; display: block;
+  }
+  .fw-card.fwB .fw-handle { color: rgba(167,139,250,0.6); }
+  .fw-desc { font-size: 0.88rem; color: var(--warm-gray); line-height: 1.65; margin: 0 0 1rem; }
+  .fw-desc strong { color: var(--off-white); }
+  .fw-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    border: 1px solid rgba(0,194,179,0.15); border-radius: 2px;
+    padding: 0.35rem 0.7rem; text-decoration: none; transition: all 0.2s;
+  }
+  .fw-link:hover { background: rgba(0,194,179,0.14); text-decoration: none; }
+  .fw-card.fwB .fw-link {
+    color: var(--purple); background: rgba(167,139,250,0.08);
+    border-color: rgba(167,139,250,0.15);
+  }
+  .fw-card.fwB .fw-link:hover { background: rgba(167,139,250,0.14); }
+
+  /* Score pillars */
+  .score-pillars {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: rgba(0,194,179,0.08);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .pillar { background: var(--card-bg); padding: 1.25rem; text-align: center; }
+  .pillar-pts {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3rem; line-height: 1;
+    color: var(--teal); margin-bottom: 0.25rem;
+  }
+  .pillar-label {
+    font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--warm-gray); font-weight: 500; margin-bottom: 0.4rem;
+  }
+  .pillar-desc { font-size: 0.8rem; color: #7a7470; line-height: 1.5; }
+
+  /* Link chip */
+  .link-chip {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,194,179,0.08); border: 1px solid rgba(0,194,179,0.2);
+    border-radius: 2px; padding: 0.4rem 0.9rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); text-decoration: none; transition: all 0.2s;
+  }
+  .link-chip:hover { background: rgba(0,194,179,0.14); text-decoration: none; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white);
+  }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .cta-links { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  @media (max-width: 640px) {
+    .framework-grid { grid-template-columns: 1fr; }
+    .score-pillars  { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 6vw 3rem; }
+  }
+
+  /* Video thumbnail click-through */
+  .video-thumb {
+    position: relative; display: block; text-decoration: none;
+    background: #000; overflow: hidden; cursor: pointer;
+  }
+  .video-thumb img {
+    width: 100%; display: block; opacity: 0.85;
+    transition: opacity 0.2s;
+  }
+  .video-thumb:hover img { opacity: 0.7; }
+  .video-play-btn {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 72px; height: 72px; border-radius: 50%;
+    background: rgba(255,0,0,0.88);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+  .video-thumb:hover .video-play-btn {
+    transform: translate(-50%, -50%) scale(1.08);
+    background: rgb(255,0,0);
+  }
+  .video-play-btn svg { margin-left: 5px; }
+  .video-thumb-label {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 1.5rem 1.25rem 1rem;
+    background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%);
+    font-size: 0.85rem; color: rgba(255,255,255,0.85);
+    font-family: 'DM Sans', sans-serif;
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; conditionalaccess.tech</a>
+
+<section class="hero">
+  <div class="hero-label">CA Policy Analyzer — Release Update — May 2026</div>
+  <h1>Big Drop.<span>Bigger Gaps Found.</span></h1>
+  <p class="hero-sub">Four major additions to the CA Policy Analyzer: persona-based coverage mapping, GitHub import for two popular Zero Trust frameworks, a Zero Trust baseline diff, and a rebuilt scoring engine. All live, all browser-based, no install required.</p>
+  <div class="hero-meta">
+    <span>Conditional Access</span>
+    <span>May 2026</span>
+    <span>Free Tool</span>
+  </div>
+  <div class="hero-cta">
+    <a href="https://jhope188.github.io/ca-policy-analyzer" class="btn" target="_blank">Launch the Analyzer</a>
+    <a href="https://github.com/Jhope188/ca-policy-analyzer" class="btn-ghost" target="_blank">View on GitHub</a>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    What Changed
+  </div>
+</section>
+
+<main class="content">
+
+  <p>A few months back I built this tool to solve a problem I kept running into in the field. You pull down a CA Policy Analyzer export, stare at 30 policies in various states of report-only, and try to piece together what's actually covered. It tells you what you have. It doesn't tell you whether the right people are protected by the right controls.</p>
+
+  <p>I was recently a guest on the <strong>Not Another Tech Podcast</strong>, where we dug into exactly that problem. Before we get into the changelog, watch the episode. It covers how I think about CA at scale, some of the gaps I see repeatedly across customer environments, and a walkthrough of the tool itself.</p>
+
+  <div class="section-marker">
+    <span class="section-num">00</span>
+    <span class="section-title">Not Another Tech Podcast</span>
+  </div>
+
+  <div class="video-wrap">
+    <div class="video-label">
+      ▶ Watch <span>Episode 11 — Conditional Access: Some Assembly Required — with Nate, Andy, Steve &amp; Jon Hope</span>
+    </div>
+    <a class="video-thumb" href="https://youtu.be/nSAEzmWoutk" target="_blank" rel="noopener">
+      <img src="natp-ep11-thumb.png"
+           alt="Not Another Tech Podcast Episode 11 — Conditional Access: Some Assembly Required with Jon Hope">
+      <div class="video-play-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <polygon points="5,3 19,12 5,21"/>
+        </svg>
+      </div>
+      <div class="video-thumb-label">Not Another Tech Podcast · Episode 11 — Click to watch on YouTube</div>
+    </a>
+  </div>
+
+  <p>During that conversation, Nate, Identity and SecOps Lead at <strong>Threatscape</strong>, raised something that stuck with me. He made the case that the real question isn't "do you have MFA policies" — it's "which personas have which controls enforced." Persona-based CA is how Threatscape structures their deployments, and it's a model that makes the coverage question answerable. Admins, standard users, guests, workload identities. Distinct populations with distinct risk profiles, and most tenants can't answer coverage questions per persona without manually working through every policy.</p>
+
+  <div class="pull-quote">
+    "The question isn't whether you have MFA policies. It's whether the right controls are enforced for every identity persona in your tenant."
+  </div>
+
+  <p>He also wanted the ability to <strong>import directly from a real-world CA framework on GitHub</strong>, rather than comparing against a generic template set. Both of those ideas are in this release.</p>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">Tool Walkthrough</span>
+  </div>
+
+  <div class="video-wrap">
+    <div class="video-label">
+      ▶ Watch <span>CA Policy Analyzer — Full Feature Walkthrough (May 2026 Update)</span>
+    </div>
+    <div class="video-placeholder">
+      <div class="video-placeholder-icon">▶</div>
+      <div class="video-placeholder-text">[ Add your walkthrough video here ]</div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">What's New</span>
+  </div>
+
+  <div class="changelog">
+
+    <div class="cl-item upd">
+      <div><span class="cl-badge badge-upd">Updated</span></div>
+      <div class="cl-content">
+        <div class="cl-sub">Templates Tab</div>
+        <div class="cl-title">Gap Analysis & Persona Baselines — Major Overhaul</div>
+        <p class="cl-desc">The template library was rebuilt around the persona model. Templates are now organized by identity type so you can see whether each persona population (admins, standard users, guests, workload identities) has the expected controls in place. Matching logic was tightened and partial match scoring was recalibrated across all 39 templates. This is the foundation the new Personas tab builds on.</p>
+      </div>
+    </div>
+
+    <div class="cl-item new">
+      <div><span class="cl-badge badge-new">New</span></div>
+      <div class="cl-content">
+        <div class="cl-sub">New Tab — Personas</div>
+        <div class="cl-title">Zero Trust Persona × Control Coverage</div>
+        <p class="cl-desc">The feature that came directly out of Nate's feedback. A cross-referenced matrix of your major user personas against the core CA control categories: MFA enforcement, authentication strength, device compliance, sign-in risk, legacy auth block, and more. <strong>Shows exactly where you have coverage, where you have gaps, and where controls exist but are partial</strong>, per persona. No more inferring coverage from a flat findings list.</p>
+      </div>
+    </div>
+
+    <div class="cl-item new">
+      <div><span class="cl-badge badge-new">New</span></div>
+      <div class="cl-content">
+        <div class="cl-sub">New Tab — Baseline Gap</div>
+        <div class="cl-title">Diff Against a Zero Trust Baseline</div>
+        <p class="cl-desc">Pulls in one of the two community CA frameworks below and runs a structural diff against your tenant's current policies. Not a score, not a checklist — an explicit line-by-line comparison of <strong>what the framework requires versus what you have configured</strong>. Each gap is explained with remediation guidance. Particularly useful when you're doing a customer-facing review and need to show your work, not just hand over a number.</p>
+      </div>
+    </div>
+
+    <div class="cl-item new">
+      <div><span class="cl-badge badge-new">New</span></div>
+      <div class="cl-content">
+        <div class="cl-sub">Scoring Engine</div>
+        <div class="cl-title">Zero Trust Logic & Scorecard</div>
+        <p class="cl-desc">The scoring model was rewritten with <strong>three weighted pillars</strong>: CIS Benchmark Alignment (50 pts), Template Coverage (25 pts), and Configuration Quality (25 pts). CIS is the dominant factor because it's the most defensible baseline. The Configuration Quality pillar applies per-severity deductions with caps per category, so findings move the score meaningfully without collapsing it. The scorecard now shows which pillar is dragging the number and why.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">GitHub Import — Two Frameworks</span>
+  </div>
+
+  <p>The Baseline Gap tab loads directly from two of the most-referenced community CA frameworks. One click pulls the full policy set from GitHub and diffs it against your tenant. Both are built on Claus Jespersen's persona framework, both are actively maintained.</p>
+
+  <div class="framework-grid">
+    <div class="fw-card fwA">
+      <div class="fw-author">Kenneth van Surksum</div>
+      <code class="fw-handle">kennethvs/cabaseline202510</code>
+      <p class="fw-desc">Community-maintained Zero Trust persona baseline, <strong>refreshed quarterly</strong>. The go-to reference for production-grade tenant hardening. Built around Claus Jespersen's framework structure with named exclusion groups, named locations, and a migration table.</p>
+      <a href="https://github.com/kennethvs/cabaseline202510" class="fw-link" target="_blank">↗ GitHub</a>
+    </div>
+    <div class="fw-card fwB">
+      <div class="fw-author">Joey Verlinden</div>
+      <code class="fw-handle">j0eyv/ConditionalAccessBaseline</code>
+      <p class="fw-desc">Persona-based baseline aligned with Microsoft's Zero Trust guidance. Includes <strong>67 CA policies, 33 exclusion groups, named location allow-lists</strong>, and a full DCToolbox-style restore bundle. Regularly updated, including Agent persona support added in recent versions.</p>
+      <a href="https://github.com/j0eyv/ConditionalAccessBaseline" class="fw-link" target="_blank">↗ GitHub</a>
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">Why these two</div>
+    <p>Both frameworks are grounded in the same Claus Jespersen persona model that underpins the Personas tab, which means the diff is meaningful rather than structural noise. If your tenant is modeled after either of these baselines, or you're considering adopting one, the gap output maps directly to what you'd need to implement.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">The Scoring Pillars</span>
+  </div>
+
+  <p>The old model fed everything into one bucket and returned a number. The new model separates CIS compliance, best-practice coverage, and configuration quality because they represent different things. A tenant can pass every CIS control and still have a Swiss cheese CA policy set — the three-pillar model surfaces that.</p>
+
+  <div class="score-pillars">
+    <div class="pillar">
+      <div class="pillar-pts">50</div>
+      <div class="pillar-label">CIS Alignment</div>
+      <p class="pillar-desc">19 controls from CIS M365 v6.0. L1 controls carry 3× weight. The dominant pillar because CIS is the most defensible baseline in the field.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-pts">25</div>
+      <div class="pillar-label">Template Coverage</div>
+      <p class="pillar-desc">Priority-weighted across 39 best-practice templates. High-priority controls (MFA, legacy auth block, device compliance) contribute more than optional hardening.</p>
+    </div>
+    <div class="pillar">
+      <div class="pillar-pts">25</div>
+      <div class="pillar-label">Config Quality</div>
+      <p class="pillar-desc">Starts at 25. Per-severity deductions with category caps. Two critical findings won't zero the pillar, but they will move it hard.</p>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">Try It</span>
+  </div>
+
+  <p>Runs entirely in your browser. No install, no backend, no data leaves your machine. Connects to Microsoft Graph with your own delegated credentials and reads your CA policies directly. Minimum role to run it is <strong>Security Reader</strong> once an admin has granted tenant-wide consent.</p>
+
+  <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin: 2rem 0 1.5rem;">
+    <a href="https://jhope188.github.io/ca-policy-analyzer" class="link-chip" target="_blank">↗ jhope188.github.io/ca-policy-analyzer</a>
+    <a href="https://github.com/Jhope188/ca-policy-analyzer" class="link-chip" target="_blank">↗ GitHub Source</a>
+  </div>
+
+  <p>Connect, run analysis, then start with the <strong>Personas</strong> tab if you want the coverage map, or <strong>Baseline Gap</strong> if you're doing a customer review. Dashboard gives you the score breakdown. CIS and Templates tabs sit behind the numbers.</p>
+
+  <div class="cta-block">
+    <h2>Free. Browser-based. No install.</h2>
+    <p>Connect your tenant in 30 seconds and get a full CA posture review. Your data never leaves your browser.</p>
+    <div class="cta-links">
+      <a href="https://jhope188.github.io/ca-policy-analyzer" class="btn" target="_blank">Launch the Analyzer</a>
+      <a href="https://medium.com/@jhope188" class="btn-ghost" target="_blank">More on Medium</a>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
