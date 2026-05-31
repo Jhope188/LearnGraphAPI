@@ -23,23 +23,24 @@
 2. [Step 1 — Restrict Environment Creation](#2-step-1--restrict-environment-creation)
 3. [Step 2 — Harden the Default Environment](#3-step-2--harden-the-default-environment)
 4. [Step 3 — Enable Managed Environments](#4-step-3--enable-managed-environments)
-5. [Step 4 — Implement Tenant-Level DLP Policies](#5-step-4--implement-tenant-level-dlp-policies)
-6. [Step 5 — Configure Tenant Isolation (Cross-Tenant)](#6-step-5--configure-tenant-isolation-cross-tenant)
-7. [Step 6 — Apply Conditional Access to Power Platform](#7-step-6--apply-conditional-access-to-power-platform)
-8. [Step 7 — Enable IP Firewall for Dataverse Environments](#8-step-7--enable-ip-firewall-for-dataverse-environments)
-9. [Step 8 — Configure Environment Security Groups & RBAC](#9-step-8--configure-environment-security-groups--rbac)
-10. [Step 9 — Configure Dataverse Auditing](#10-step-9--configure-dataverse-auditing)
-11. [Step 10 — Enable Microsoft Sentinel Integration](#11-step-10--enable-microsoft-sentinel-integration)
-12. [Step 11 — Copilot Studio (Agent) Security](#12-step-11--copilot-studio-agent-security)
-13. [Step 12 — Purview Integration & Sensitivity Labels](#13-step-12--purview-integration--sensitivity-labels)
-14. [Step 13 — Center of Excellence (CoE) Starter Kit](#14-step-13--center-of-excellence-coe-starter-kit)
-15. [Step 14 — Secure the Power Platform Admin Role](#15-step-14--secure-the-power-platform-admin-role)
-16. [Step 15 — Copilot & AI Governance Settings (Security Hub)](#16-step-15--copilot--ai-governance-settings-security-hub)
-17. [Step 16 — Advanced Connector Policies (Security Hub)](#17-step-16--advanced-connector-policies-security-hub)
-18. [Step 17 — Compliance & Auditing (Security Hub)](#18-step-17--compliance--auditing-security-hub)
-19. [Ongoing Governance Checklist](#19-ongoing-governance-checklist)
-20. [Licensing Reference](#20-licensing-reference)
-21. [Reference Links](#21-reference-links)
+5. [Step 4 — DLP Impact Assessment Before Deployment](#5-step-4--dlp-impact-assessment-before-deployment)
+6. [Step 5 — Implement Tenant-Level DLP Policies](#6-step-5--implement-tenant-level-dlp-policies)
+7. [Step 6 — Configure Tenant Isolation (Cross-Tenant)](#7-step-6--configure-tenant-isolation-cross-tenant)
+8. [Step 7 — Apply Conditional Access to Power Platform](#8-step-7--apply-conditional-access-to-power-platform)
+9. [Step 8 — Enable IP Firewall for Dataverse Environments](#9-step-8--enable-ip-firewall-for-dataverse-environments)
+10. [Step 9 — Configure Environment Security Groups & RBAC](#10-step-9--configure-environment-security-groups--rbac)
+11. [Step 10 — Configure Dataverse Auditing](#11-step-10--configure-dataverse-auditing)
+12. [Step 11 — Enable Microsoft Sentinel Integration](#12-step-11--enable-microsoft-sentinel-integration)
+13. [Step 12 — Copilot Studio (Agent) Security](#13-step-12--copilot-studio-agent-security)
+14. [Step 13 — Purview Integration & Sensitivity Labels](#14-step-13--purview-integration--sensitivity-labels)
+15. [Step 14 — Center of Excellence (CoE) Starter Kit](#15-step-14--center-of-excellence-coe-starter-kit)
+16. [Step 15 — Secure the Power Platform Admin Role](#16-step-15--secure-the-power-platform-admin-role)
+17. [Step 16 — Copilot & AI Governance Settings (Security Hub)](#17-step-16--copilot--ai-governance-settings-security-hub)
+18. [Step 17 — Advanced Connector Policies (Security Hub)](#18-step-17--advanced-connector-policies-security-hub)
+19. [Step 18 — Compliance & Auditing (Security Hub)](#19-step-18--compliance--auditing-security-hub)
+20. [Ongoing Governance Checklist](#20-ongoing-governance-checklist)
+21. [Licensing Reference](#21-licensing-reference)
+22. [Reference Links](#22-reference-links)
 
 ---
 
@@ -205,7 +206,217 @@ $environment = Get-AdminPowerAppEnvironment -EnvironmentName "YOUR-ENVIRONMENT-I
 
 ---
 
-## 5. Step 4 — Implement Tenant-Level DLP Policies
+## 5. Step 4 — DLP Impact Assessment Before Deployment
+
+> **⚠️ Do this before creating or modifying any DLP policy.** Skipping this step is the most common cause of production flow outages during Power Platform hardening. Suspended flows stop immediately — there is no grace period.
+
+The error below is what makers see when a DLP policy breaks their flow:
+
+```
+Flow suspended due to violation of Data Loss Prevention policy.
+Admin data policy 'Social Media Connectors' restricts the use of 
+/providers/Microsoft.PowerApps/apis/shared_teams with 
+/providers/Microsoft.PowerApps/apis/shared_rss.
+```
+
+This happens when two connectors used in the same flow are placed in **different data groups** (Business vs Non-Business) by a DLP policy. The fix is straightforward but the impact assessment must happen **before** you deploy, not after.
+
+---
+
+### Phase 1 — Inventory All Connector Usage Before Policy Changes
+
+Run this before creating or modifying any DLP policy. It maps every flow in an environment to the connectors it uses, so you can see exactly what would break before touching the policy.
+
+```powershell
+# Install if not already present
+Install-Module -Name Microsoft.PowerApps.Administration.PowerShell -Force
+Add-PowerAppsAccount
+
+# Step 1: Get all environments
+$environments = Get-AdminPowerAppEnvironment
+
+# Step 2: For each environment, enumerate flows and their connectors
+$results = @()
+foreach ($env in $environments) {
+    $flows = Get-AdminFlow -EnvironmentName $env.EnvironmentName
+    foreach ($flow in $flows) {
+        $connectors = $flow.Internal.properties.connectionReferences.PSObject.Properties
+        foreach ($connector in $connectors) {
+            $results += [PSCustomObject]@{
+                EnvironmentName = $env.DisplayName
+                FlowName        = $flow.DisplayName
+                FlowOwner       = $flow.Internal.properties.creator.userPrincipalName
+                ConnectorId     = $connector.Value.api.name
+                FlowState       = $flow.Internal.properties.state
+            }
+        }
+    }
+}
+
+# Step 3: Export to CSV for review
+$results | Export-Csv -Path ".\connector-inventory.csv" -NoTypeInformation
+Write-Host "Exported $($results.Count) connector-flow mappings to connector-inventory.csv"
+```
+
+---
+
+### Phase 2 — Identify Flows That Would Break Under a Proposed Policy Change
+
+Once you have the inventory, filter for connectors you're about to reclassify. This shows you exactly which flows and owners are at risk.
+
+```powershell
+# Define the connectors you're planning to move or block
+# Replace these with the actual connector API names from your policy change
+$connectorsBeingChanged = @(
+    "shared_rss",
+    "shared_twitter",
+    "shared_facebook",
+    "shared_dropbox"
+)
+
+# Find all flows using any of these connectors
+$atRiskFlows = $results | Where-Object { $_.ConnectorId -in $connectorsBeingChanged }
+
+# Show impact summary grouped by connector
+$atRiskFlows | Group-Object ConnectorId | ForEach-Object {
+    Write-Host "`nConnector: $($_.Name) — $($_.Count) flow(s) affected"
+    $_.Group | Select-Object FlowName, FlowOwner, EnvironmentName | Format-Table -AutoSize
+}
+
+# Export the at-risk list for stakeholder review
+$atRiskFlows | Export-Csv -Path ".\at-risk-flows.csv" -NoTypeInformation
+Write-Host "`nAt-risk flows exported to at-risk-flows.csv"
+```
+
+---
+
+### Phase 3 — Find Flows Already Suspended by DLP
+
+If a policy has already been applied and flows are broken, use this to find all currently suspended flows with the DLP violation reason:
+
+```powershell
+# Find all DLP-suspended flows across all environments
+$suspendedFlows = @()
+foreach ($env in $environments) {
+    Get-AdminFlow -EnvironmentName $env.EnvironmentName | 
+        Where-Object { 
+            $_.Internal.properties.state -eq "Suspended" -and
+            $_.Internal.properties.flowSuspensionReason -eq "CompanyDlpViolation"
+        } | ForEach-Object {
+            $suspendedFlows += [PSCustomObject]@{
+                EnvironmentName = $env.DisplayName
+                FlowName        = $_.DisplayName
+                FlowOwner       = $_.Internal.properties.creator.userPrincipalName
+                SuspendedAt     = $_.Internal.properties.flowSuspensionTime
+                SuspendReason   = $_.Internal.properties.flowSuspensionReason
+            }
+        }
+}
+
+$suspendedFlows | Format-Table -AutoSize
+$suspendedFlows | Export-Csv -Path ".\suspended-flows-dlp.csv" -NoTypeInformation
+Write-Host "Found $($suspendedFlows.Count) DLP-suspended flows"
+```
+
+---
+
+### Phase 4 — Fix a DLP Conflict and Resume Suspended Flows
+
+When a flow is suspended due to a DLP violation, **fixing the policy alone does not resume the flow**. Each suspended flow must be re-saved by its owner (or an admin) to trigger a fresh DLP evaluation.
+
+#### Fix Option A — Move the conflicting connector to the correct group (recommended)
+
+Example: RSS and Teams in different groups → move RSS to Business to match Teams.
+
+1. **Power Platform Admin Center** → **Data policies** → open the offending policy
+2. Find the conflicting connector (e.g., **RSS**) → **Move to Business**
+3. Verify the **default group** setting is appropriate
+4. **Save** the policy
+
+#### Fix Option B — Exclude a specific environment from a tenant-level policy
+
+When a legitimate use case exists in one environment but you want the broader restriction to remain:
+
+1. Open the policy → **Scope**
+2. Change from **All environments** to **All environments except**
+3. Add the specific environment(s) that need the exception
+4. Create a separate, appropriately scoped policy for the excluded environment
+5. **Save**
+
+> **Warning:** Excluded environments need their own policy — don't leave them with no DLP coverage.
+
+#### Fix Option C — Connector endpoint filtering instead of full block
+
+For HTTP and a handful of other connectors, you can allow the connector but restrict which endpoints it can reach, rather than a full block/group conflict:
+
+1. Policy → **Edit** → **Prebuilt connectors** → select the connector
+2. **Configure connector** → **Endpoint filtering**
+3. Add an allowlist of approved URLs/IP ranges
+4. All other destinations are denied
+
+---
+
+### Phase 5 — Resume Suspended Flows After Policy Fix
+
+**Owners receive an automated email** with a "Go to my flow" link (the notification shown in the screenshot). They can fix it themselves by:
+
+1. Clicking **Go to my flow**
+2. Opening the flow in edit mode
+3. Saving — no changes needed, the save re-triggers DLP evaluation
+4. The flow resumes if the policy now allows it
+
+**For admins managing flows on behalf of users:**
+
+```powershell
+# Re-save a specific flow to trigger DLP re-evaluation (admin)
+# Note: This does not change the flow — it forces a DLP re-check
+$environmentId = "YOUR-ENV-ID"
+$flowId = "YOUR-FLOW-ID"
+
+# Get the flow definition
+$flow = Get-AdminFlow -EnvironmentName $environmentId -FlowName $flowId
+
+# Re-enable via API (for flows owned by other users, admin context required)
+Set-AdminFlowOwnerRole -EnvironmentName $environmentId `
+                       -FlowName $flowId `
+                       -RoleName "CanEdit" `
+                       -PrincipalType "User" `
+                       -PrincipalObjectId "ADMIN-USER-OBJECT-ID"
+```
+
+> **Reality check:** There is no bulk-resume cmdlet for DLP-suspended flows. The most efficient path at scale is to fix the policy, then notify all affected owners (use your `suspended-flows.csv` export to build the email list) and ask them to re-save their flows. The CoE Starter Kit's **DLP Editor** tool also provides a UI for simulating policy changes and identifying impacted flows before deployment.
+
+---
+
+### DLP Pre-Deployment Checklist
+
+Run through this before **every** DLP policy creation or modification:
+
+- [ ] Run connector inventory script and export `connector-inventory.csv`
+- [ ] Identify connectors being reclassified and run impact filter — review `at-risk-flows.csv`
+- [ ] Notify affected flow owners **before** policy deployment with expected change date
+- [ ] Use the **CoE DLP Editor tool** for visual impact analysis if available
+- [ ] If any business-critical flows are at risk: coordinate with owners to either update their flow or create an environment-specific exception policy
+- [ ] Apply the policy change during a low-activity window (evenings/weekends for prod environments)
+- [ ] Immediately after deployment: run the suspended flows script to confirm scope matches expectation
+- [ ] Send follow-up notification to affected owners with re-save instructions and a deadline
+
+---
+
+### Common DLP Conflict Patterns and Resolutions
+
+| Conflict Pattern | Cause | Resolution |
+|---|---|---|
+| **RSS + Teams suspended** | RSS in Non-Business, Teams in Business | Move RSS to Business if used for internal content aggregation |
+| **SharePoint + Dropbox suspended** | Dropbox blocked/Non-Business, SharePoint Business | Move Dropbox to Blocked; replace flow logic with SharePoint-to-SharePoint or OneDrive |
+| **HTTP + any M365 connector** | HTTP blocked or Non-Business, M365 connectors Business | Keep HTTP blocked; rewrite flow to use specific certified connectors instead of raw HTTP |
+| **Custom connector + SharePoint** | Custom connector in Non-Business (default), SharePoint in Business | Classify the custom connector explicitly as Business if it's an internal approved service |
+| **Twitter/X + Teams** | Twitter blocked, Teams Business | Expected behavior — Twitter should be blocked. Inform owner to redesign flow without Twitter. |
+| **SQL Server + SharePoint** | SQL in Non-Business, SharePoint in Business | Move SQL to Business if connecting to internal corporate database; review with data owner first |
+
+---
+
+## 6. Step 5 — Implement Tenant-Level DLP Policies
 
 Power Platform DLP policies are **connector-based guardrails** that prevent makers from combining connectors that could cause data exfiltration. They are entirely separate from Microsoft Purview DLP.
 
@@ -293,7 +504,7 @@ $allEnvs | Where-Object { $_.EnvironmentName -notin $coveredEnvs } |
 
 ---
 
-## 6. Step 5 — Configure Tenant Isolation (Cross-Tenant)
+## 7. Step 6 — Configure Tenant Isolation (Cross-Tenant)
 
 Power Platform tenant isolation controls whether connectors using Azure AD authentication (SharePoint, Teams, Outlook, etc.) can connect **to or from other Azure AD tenants**. This is different from Azure AD tenant restrictions and only applies to Power Platform connectors.
 
@@ -332,7 +543,7 @@ Set-PowerAppTenantIsolationPolicy -TenantIsolationSettings $policy
 
 ---
 
-## 7. Step 6 — Apply Conditional Access to Power Platform
+## 8. Step 7 — Apply Conditional Access to Power Platform
 
 Standard Entra ID Conditional Access applies to the Power Platform cloud apps. This is separate from the per-app Conditional Access available in Managed Environments.
 
@@ -378,7 +589,7 @@ Available as a preview in Managed Environments. Allows CA policy scoped to indiv
 
 ---
 
-## 8. Step 7 — Enable IP Firewall for Dataverse Environments
+## 9. Step 8 — Enable IP Firewall for Dataverse Environments
 
 IP Firewall restricts Dataverse access to specific IP ranges. It works at the **network layer**, meaning it applies to both apps and direct API/SDK access. It also prevents **token replay attacks** — a stolen Dataverse access token cannot be used from outside the allowed IP range.
 
@@ -425,7 +636,7 @@ Prevents session hijacking in Dataverse by binding session cookies to the origin
 
 ---
 
-## 9. Step 8 — Configure Environment Security Groups & RBAC
+## 10. Step 9 — Configure Environment Security Groups & RBAC
 
 ### Environment Security Groups
 
@@ -469,7 +680,7 @@ Also restrict via Entra External Collaboration settings to prevent guests from a
 
 ---
 
-## 10. Step 9 — Configure Dataverse Auditing
+## 11. Step 10 — Configure Dataverse Auditing
 
 Dataverse auditing captures: user access events, data read/write operations, security role changes, and admin actions. This is required for forensic investigation and compliance.
 
@@ -507,7 +718,7 @@ Power Platform activity logs (admin, maker, and user activity) flow to Microsoft
 
 ---
 
-## 11. Step 10 — Enable Microsoft Sentinel Integration
+## 12. Step 11 — Enable Microsoft Sentinel Integration
 
 For organizations using Microsoft Sentinel, the **Microsoft Sentinel solution for Power Platform** provides:
 
@@ -538,7 +749,7 @@ For environments not using Sentinel, export Dataverse telemetry to Azure Applica
 
 ---
 
-## 12. Step 11 — Copilot Studio (Agent) Security
+## 13. Step 12 — Copilot Studio (Agent) Security
 
 Copilot Studio agents built on Power Platform introduce additional attack surface: they can connect to Dataverse, SharePoint, and external services, and they expose conversational interfaces that may be deployed publicly.
 
@@ -577,7 +788,7 @@ When agents use generative AI features that pull from knowledge sources:
 
 ---
 
-## 13. Step 12 — Purview Integration & Sensitivity Labels
+## 14. Step 13 — Purview Integration & Sensitivity Labels
 
 ### Enable Sensitivity Labels for Power Platform
 
@@ -610,7 +821,7 @@ If your organization uses Copilot Studio agents with generative AI:
 
 ---
 
-## 14. Step 13 — Center of Excellence (CoE) Starter Kit
+## 15. Step 14 — Center of Excellence (CoE) Starter Kit
 
 The CoE Starter Kit is a free, Microsoft-provided governance toolset built on Power Platform itself. It provides:
 
@@ -635,7 +846,7 @@ The CoE Starter Kit is a free, Microsoft-provided governance toolset built on Po
 
 ---
 
-## 15. Step 14 — Secure the Power Platform Admin Role
+## 16. Step 15 — Secure the Power Platform Admin Role
 
 ### Use PIM for Power Platform Administrator Role
 
@@ -665,7 +876,7 @@ The Dataverse **System Administrator** security role is the equivalent of a loca
 
 ---
 
-## 16. Step 15 — Copilot & AI Governance Settings (Security Hub)
+## 17. Step 16 — Copilot & AI Governance Settings (Security Hub)
 
 **Location in portal:** Power Platform Admin Center → **Copilot** (left nav) → **Settings**
 
@@ -736,7 +947,7 @@ This is a one-step action that prevents any agent in your tenant from using the 
 
 ---
 
-## 17. Step 16 — Advanced Connector Policies (Security Hub)
+## 18. Step 17 — Advanced Connector Policies (Security Hub)
 
 **Location in portal:** Power Platform Admin Center → **Security** (left nav) → **Data and privacy**
 
@@ -831,7 +1042,7 @@ Same as the Copilot Studio setting covered in Step 15. Keep **Off** until multi-
 
 ---
 
-## 18. Step 17 — Compliance & Auditing (Security Hub)
+## 19. Step 18 — Compliance & Auditing (Security Hub)
 
 **Location in portal:** Power Platform Admin Center → **Security** → **Compliance**
 
@@ -912,7 +1123,7 @@ The **Customer Lockbox** tile is visible in the Compliance section (Image 3). Th
 
 ---
 
-## 19. Ongoing Governance Checklist
+## 20. Ongoing Governance Checklist
 
 ### Monthly
 
@@ -939,7 +1150,7 @@ The **Customer Lockbox** tile is visible in the Compliance section (Image 3). Th
 
 ---
 
-## 20. Licensing Reference
+## 21. Licensing Reference
 
 | Feature | Required License |
 |---|---|
@@ -965,7 +1176,7 @@ The **Customer Lockbox** tile is visible in the Compliance section (Image 3). Th
 
 ---
 
-## 21. Reference Links
+## 22. Reference Links
 
 | Resource | URL |
 |---|---|
