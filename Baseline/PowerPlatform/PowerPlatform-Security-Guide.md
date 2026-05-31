@@ -3,7 +3,8 @@
 > **Scope:** Power Apps · Power Automate · Power Pages · Copilot Studio · Dataverse  
 > **Frameworks:** Microsoft Well-Architected Framework (Security), Microsoft Zero Trust, CIS Microsoft Dynamics 365 Power Platform Benchmark, Microsoft Cloud Security Benchmark (MCSB)  
 > **Admin Portal:** [Power Platform Admin Center](https://admin.powerplatform.microsoft.com)  
-> **Last Reviewed:** May 2026
+> **Last Reviewed:** May 2026  
+> **Updated:** Added Security Hub — Copilot Settings, Advanced Connector Policies, and Compliance/Auditing configurations (from portal review May 2026)
 
 ---
 
@@ -33,9 +34,12 @@
 13. [Step 12 — Purview Integration & Sensitivity Labels](#13-step-12--purview-integration--sensitivity-labels)
 14. [Step 13 — Center of Excellence (CoE) Starter Kit](#14-step-13--center-of-excellence-coe-starter-kit)
 15. [Step 14 — Secure the Power Platform Admin Role](#15-step-14--secure-the-power-platform-admin-role)
-16. [Ongoing Governance Checklist](#16-ongoing-governance-checklist)
-17. [Licensing Reference](#17-licensing-reference)
-18. [Reference Links](#18-reference-links)
+16. [Step 15 — Copilot & AI Governance Settings (Security Hub)](#16-step-15--copilot--ai-governance-settings-security-hub)
+17. [Step 16 — Advanced Connector Policies (Security Hub)](#17-step-16--advanced-connector-policies-security-hub)
+18. [Step 17 — Compliance & Auditing (Security Hub)](#18-step-17--compliance--auditing-security-hub)
+19. [Ongoing Governance Checklist](#19-ongoing-governance-checklist)
+20. [Licensing Reference](#20-licensing-reference)
+21. [Reference Links](#21-reference-links)
 
 ---
 
@@ -661,7 +665,254 @@ The Dataverse **System Administrator** security role is the equivalent of a loca
 
 ---
 
-## 16. Ongoing Governance Checklist
+## 16. Step 15 — Copilot & AI Governance Settings (Security Hub)
+
+**Location in portal:** Power Platform Admin Center → **Copilot** (left nav) → **Settings**
+
+This section covers the settings visible in Image 1. These are **tenant-level or environment-level controls** governing how generative AI features behave across Power Platform and Copilot Studio. Most of these default to **On** — a significant security risk for organizations that haven't reviewed them.
+
+---
+
+### Power Platform AI Settings
+
+| Setting | Location | Security Recommendation | Rationale |
+|---|---|---|---|
+| **Copilot feedback** | Tenant-level | **Off** for regulated environments | Controls whether users can submit feedback to Microsoft from Copilot interactions. Any feedback may contain prompt/response data. Disable to minimize data leaving your tenant. |
+| **Generative AI Settings** | Tenant-level | **Review and restrict** | Master toggle for AI feature availability in Power Platform products. Disable for environments where generative AI has not been risk-assessed. |
+| **Preview and experimental AI models** | Tenant-level | **Off** for production environments | Preview/experimental models may process data outside your geographic region and are subject to different terms. Microsoft explicitly states these are **not meant for production use**. Only enable in isolated developer environments. |
+| **AI prompts** | Tenant-level | **Off** if not governed | Controls whether makers see pre-built and custom prompts in generative AI experiences. Disable if your organization has not established an AI acceptable use policy. |
+| **External models** | Tenant-level (expandable) | **Off by default; explicit opt-in only** | See below — this is a critical control. |
+
+### ⚠️ External Models — Critical Control
+
+**What it does:** Allows Copilot Studio agents and Power Platform flows to use third-party LLMs (currently Anthropic, Mistral, and xAI/Grok) instead of Microsoft-hosted models.
+
+**Risk:** External models are hosted **outside Microsoft's infrastructure**. Data sent to these models is subject to each provider's own terms and data handling policies. Microsoft's own safety documentation explicitly notes that Grok (xAI) has been assessed as having **higher risk of producing harmful content and lower jailbreak resistance**.
+
+**Recommended posture:**
+
+1. **Power Platform Admin Center** → **Copilot** → **Settings** → expand **External models** → set to **Off**
+2. Also enforce at the Microsoft 365 admin center level:
+   - **M365 Admin Center** → **Copilot** → **Settings** → **AI providers for other large language models** → restrict to no groups or specific approved groups only
+3. This two-layer control is required — the PPAC setting only takes effect after the M365 Admin Center allows the provider
+
+> **For MSP clients:** Default should be **Off** for all providers unless the client has explicitly reviewed the third-party terms and accepted the risk in writing. This is a data sovereignty and compliance issue, not just a feature preference.
+
+---
+
+### Copilot Studio Settings
+
+| Setting | Location | Security Recommendation | Rationale |
+|---|---|---|---|
+| **Computer use** | Environment-level | **Off** unless explicitly required | Allows agents to control a Windows computer via AI vision. Massive attack surface — agents can interact with arbitrary websites and desktop apps. High data exfiltration risk. Disable at the tenant level unless a specific, governed use case requires it. |
+| **Entra agent identity for Copilot Studio** | Tenant-level | **Leave On** (but govern via Entra Agent ID) | This enables modern agent identity using Entra Agent ID objects. Keeping this On is the right posture — it means agents get proper identity objects that can be governed in Entra (Conditional Access, ID Protection). Disabling it forces agents back to legacy identity models. Govern the agents, don't disable the feature. |
+| **Code generation and execution in Copilot Studio** | Tenant/Env-level | **Off** for production; **Off** for most clients | Allows agents to generate and execute code dynamically. This is a significant risk — dynamically executed code is difficult to audit and could be used to exfiltrate data or perform unauthorized actions. Only enable with extensive testing in isolated environments. |
+| **Connected agents (Preview)** | Preview — Tenant-level | **Off** | Allows a Copilot Studio agent to invoke another agent. Preview feature. Multi-agent orchestration introduces complex trust chains that are difficult to govern. Disable until GA and until your agent governance model is mature. |
+| **Hosted browser in Copilot Studio (Preview)** | Preview — Tenant-level | **Off** | Enables the Computer Use feature to run on a Microsoft-hosted browser powered by Windows 365 for Agents. The portal explicitly warns that **data flows to Windows 365 which operates outside the Azure compliance boundary**. This is a significant compliance red flag. Disable at the tenant level immediately. |
+| **Knowledge sources for agents** | Tenant/Env-level | **Restrict** | Controls which types of knowledge sources agents can reference (SharePoint, Dataverse, public web, etc.). Disable **public web** as a knowledge source for agents that access sensitive data. Restrict to approved internal sources only. |
+| **Skills in agents** | Tenant/Env-level | **Off** unless governed | Allows agents to use other agents as skills. Same multi-agent trust chain risk as Connected agents. |
+| **Client application access control** | Environment-level | **Configure** — see below | Described as "Help prevent data exfiltration." See details below. |
+
+### Client Application Access Control
+
+This setting (visible at the bottom of Image 1) restricts which client applications can connect to Dataverse in the environment. This prevents data exfiltration via unauthorized clients (e.g., a user connecting Excel directly to a Dataverse environment and bulk-exporting records).
+
+**Steps to configure:**
+
+1. **Power Platform Admin Center** → **Environments** → select environment → **Settings** → **Product** → **Privacy and Security**
+2. Under **Client application access control**, configure an allow-list of permitted client application IDs
+3. Block access from unrecognized client apps
+
+> **Note:** This requires Managed Environments.
+
+### Disable Hosted Browser at Tenant Level (Priority Action)
+
+```
+Power Platform Admin Center → Manage → Tenant settings → 
+Hosted browser in computer use → Off → Save
+```
+
+This is a one-step action that prevents any agent in your tenant from using the Microsoft-hosted browser (Windows 365 for Agents), which routes data outside the Azure compliance boundary. This should be **disabled immediately** for any regulated client.
+
+---
+
+## 17. Step 16 — Advanced Connector Policies (Security Hub)
+
+**Location in portal:** Power Platform Admin Center → **Security** (left nav) → **Data and privacy**
+
+This section covers the settings visible in Image 2. The Security Hub's Data and Privacy page now surfaces several controls that previously required navigating to different areas.
+
+---
+
+### Advanced Connector Policies (Preview)
+
+**What it is:** The **next generation** of Power Platform DLP, replacing the Business/Non-Business/Blocked classification model. ACP uses a **strict allowlist** — everything is blocked unless explicitly permitted.
+
+**Key differences vs. classic DLP:**
+
+| Feature | Classic DLP | Advanced Connector Policies (ACP) |
+|---|---|---|
+| Default posture | New connectors go to default group (you set) | **Block-by-default** — new connectors are automatically blocked |
+| Connector types | All connectors including virtual | **Certified connectors only** (custom + HTTP planned later) |
+| Action-level control | Limited | Full — can allow/block individual triggers and actions |
+| Non-blockable connectors | Cannot block M365 standard connectors | **Can block any connector** (including Teams, SharePoint, etc.) on Managed Environments |
+| MCP servers | Not supported | Supported — can block entire MCP servers |
+| Design-time enforcement | Runtime only | Rolling out — catches violations while makers are authoring |
+| Scope | Tenant or environment | Per-environment or environment group |
+
+**Current status (May 2026):** Preview. **Not recommended for sole governance** yet — ACP does not yet support custom connectors or HTTP connectors. Use **alongside** classic DLP policies until GA.
+
+**Recommended approach:**
+
+- **ACP-only mode** (using "Advanced connector policies only" toggle in Image 2) — switches the environment to evaluate ACP instead of classic DLP. Do **not** enable this until custom connector support is GA, as it would leave custom connectors ungoverned.
+- For pilot environments or high-security Managed Environments: configure ACP as an **additional layer** on top of classic DLP.
+
+**Steps to configure ACP on a single environment:**
+
+1. **Security** → **Data and privacy** → **Advanced connector policies (preview)**
+2. Select the target environment
+3. The policy loads with non-blockable connectors pre-approved
+4. Use **Add connectors** to explicitly allow certified connectors needed for that environment
+5. Remove/block any connectors not required
+6. For MCP servers: block entire MCP servers that are not approved
+7. Save — the policy status shows **Applied** or **Not applied**
+
+> **MSP guidance:** Deploy ACP on the default environment and any production Managed Environments as an additional governance layer. Do not enable ACP-only mode until custom connector support arrives.
+
+---
+
+### Data Policy (Classic DLP)
+
+The **Data policy** tile in the Security Hub is a shortcut to the existing DLP policy management (covered in Step 4). No change to classic DLP behavior — this is a navigation convenience.
+
+---
+
+### Azure Virtual Network Policies
+
+Allows Power Platform connectors and Dataverse plug-ins to call resources inside your Azure VNet **without exposing them over the public internet**. Requires a dedicated Azure subnet delegated to Power Platform.
+
+**When to use:** Organizations with on-premises resources, Azure-hosted databases, or internal APIs that agents/flows need to access without public internet exposure.
+
+**Prerequisites:** Azure subscription with VNet, Managed Environments.
+
+**Steps:**
+1. **Security** → **Data and privacy** → **Azure Virtual Network policies**
+2. Connect to an existing Azure subnet that has been delegated to Power Platform
+3. Configure which environments use the VNet policy
+
+---
+
+### Knowledge Sources for Agents (Security Hub)
+
+Controls which types of knowledge sources are available to makers when building agents. Restrict this to prevent agents from being built that reference unsanctioned external data sources.
+
+**Recommended:** Disable **public web** as a knowledge source at the tenant level unless specifically required. Only enable **SharePoint** and **Dataverse** as default allowed sources, and require approval for others.
+
+---
+
+### Skills in Copilot Studio (Preview)
+
+Same as the Copilot Studio setting covered in Step 15. Keep **Off** until multi-agent trust governance is mature in your environment.
+
+---
+
+### Customer-Managed Encryption Key
+
+**What it is:** Replaces Microsoft-managed encryption keys with keys your organization controls in Azure Key Vault. This means Microsoft cannot decrypt your Power Platform data without your key.
+
+**When required:** Organizations with strict data sovereignty requirements (government, financial services, healthcare with contractual requirements).
+
+**Tradeoffs:**
+- If your key is revoked or lost, **data is permanently inaccessible**
+- Some features are incompatible with CMK (e.g., Copilot canvas app control)
+- Adds operational complexity and key rotation burden
+
+**Recommendation:** Only configure for environments with a documented regulatory requirement. Ensure key backup and rotation procedures are in place before enabling.
+
+---
+
+## 18. Step 17 — Compliance & Auditing (Security Hub)
+
+**Location in portal:** Power Platform Admin Center → **Security** → **Compliance**
+
+This section covers Image 3 — the Auditing flyout panel and the Customer Lockbox tile visible in the Compliance section.
+
+---
+
+### Auditing Configuration (Image 3 Analysis)
+
+The screenshot shows the **Auditing flyout** for the environment named `Conditional Access Tech (default)`. Current observed state:
+
+| Setting | Observed State | Recommended State | Gap? |
+|---|---|---|---|
+| Turn on auditing | ✅ On | On | ✓ Correct |
+| Log User sign-ins | ✅ Enabled | Enabled | ✓ Correct |
+| Log Activity | ✅ Enabled | Enabled | ✓ Correct |
+| Auditing covers: Common entities across Dynamics 365 | ✅ Enabled | Enabled | ✓ Correct |
+| Security (org settings, roles, users, teams, BUs, column security, masking rules) | ✅ Included | Included | ✓ Correct |
+| **Event log retention** | **Forever** | **Review against policy** | ⚠️ See note |
+
+**On "Forever" retention:** Setting retention to "Forever" means logs are **never automatically deleted**. This is operationally acceptable and avoids inadvertent log loss, but be aware:
+- Storage grows continuously — large environments with high activity can accumulate significant storage costs
+- This setting only affects logs stored **in Dataverse** (not Purview Audit, which has its own retention)
+- Changing the retention period does **not retroactively apply** to existing records — only new records created after the change inherit the new retention period
+- For regulated industries, "Forever" is often appropriate; for others, align to your legal hold / retention policy (e.g., 3 years, 7 years)
+
+**Recommended audit configuration steps (centralized via Security Hub):**
+
+1. **Power Platform Admin Center** → **Security** → **Compliance** → **Auditing**
+2. Select each environment
+3. Select **Set up auditing**
+4. Enable **Turn on auditing**
+5. Enable both **User sign-ins** and **Activity**
+6. Enable **Common entities across Dynamics 365** (covers Security entities — roles, users, teams, BUs)
+7. Set **Event log retention** to match your organization's data retention policy
+8. Save
+
+> **Important:** This path via **Security → Compliance → Auditing** sets the retention policy in a way that **can apply to existing logs**, unlike the environment-level settings path. Microsoft recommends using this Security Hub path for retention policy changes.
+
+**Environments to audit:** Enable on all production and sandbox environments. For developer environments, at minimum enable sign-in logging.
+
+---
+
+### Read Logs (Purview Integration)
+
+The **Read logs** setting (available in environment-level audit settings, not shown in the screenshot but configurable in the same flyout) sends Dataverse audit logs to **Microsoft Purview Audit**. This is required for centralized, cross-tenant audit log analysis and long-term retention.
+
+**Enable Read logs:**
+
+1. Environment audit settings → enable **Read logs**
+2. Verify in **Microsoft Purview** → **Audit** that Power Platform activity types appear
+3. Activity types to confirm: `CRMEntityChangeRecord`, `CRMEntityChangeDetail`, `PowerAppsApp.*`, `Flow.*`
+
+> **Note:** Read logs / activity logging only flows to Purview for **production environments**. Sandbox and developer environments do not forward to Purview.
+
+---
+
+### Customer Lockbox
+
+The **Customer Lockbox** tile is visible in the Compliance section (Image 3). This is a Managed Environments feature.
+
+**What it does:** On the rare occasion Microsoft support engineers need to access your Dataverse data to resolve a support issue, a **lockbox request** is sent to your Power Platform admins. Admins must **explicitly approve** before any access occurs. All access is time-limited and fully audited.
+
+**Recommendation:** Enable for all production Managed Environments, especially those containing sensitive or regulated data.
+
+**Steps:**
+
+1. **Security** → **Compliance** → **Customer Lockbox**
+2. Toggle **Enable lockbox policy** → On
+3. Lockbox is enforced for all environments that are Managed Environments in the tenant
+
+**Key facts:**
+- Requires Managed Environments
+- Does **not** apply to environments encrypted with Customer Managed Keys (CMK) — CMK is the higher tier
+- Does **not** cover Azure OpenAI-powered features
+- Lockbox requests have a default approval window — unanswered requests **expire and access is denied** automatically
+- All approval/denial events are audited in Microsoft Purview
+
+---
+
+## 19. Ongoing Governance Checklist
 
 ### Monthly
 
@@ -688,7 +939,7 @@ The Dataverse **System Administrator** security role is the equivalent of a loca
 
 ---
 
-## 17. Licensing Reference
+## 20. Licensing Reference
 
 | Feature | Required License |
 |---|---|
@@ -698,7 +949,11 @@ The Dataverse **System Administrator** security role is the equivalent of a loca
 | Managed Environments | Power Apps Premium / Power Automate Premium / Dynamics 365 |
 | IP Firewall | Managed Environments (premium required) |
 | IP Cookie Binding | Managed Environments (premium required) |
+| Advanced Connector Policies (ACP) | Managed Environments (for full non-blockable connector control); available in preview on non-Managed Environments for certified connectors |
 | Customer Lockbox | Managed Environments (premium required) |
+| ACP-only mode | Preview; Managed Environments recommended |
+| External Models (Anthropic/Mistral/xAI) | Copilot Studio license + M365 Admin Center approval per provider |
+| Computer Use / Hosted Browser | Copilot Studio license; Hosted Browser requires Windows 365 for Agents |
 | Per-App Conditional Access | Managed Environments (preview) |
 | VNet Integration | Managed Environments + Azure VNet |
 | Customer Managed Keys | Managed Environments |
@@ -710,7 +965,7 @@ The Dataverse **System Administrator** security role is the equivalent of a loca
 
 ---
 
-## 18. Reference Links
+## 21. Reference Links
 
 | Resource | URL |
 |---|---|
@@ -727,7 +982,12 @@ The Dataverse **System Administrator** security role is the equivalent of a loca
 | Purview + Copilot Studio | https://learn.microsoft.com/purview/ai-copilot-studio |
 | Power Platform Well-Architected Security | https://learn.microsoft.com/power-platform/well-architected/security/establish-baseline |
 | CIS Dynamics 365 / Power Platform Benchmark | https://www.cisecurity.org/benchmark/microsoft_365_dyn |
-| Microsoft Cloud Security Benchmark | https://learn.microsoft.com/security/benchmark/azure/introduction |
+| Advanced Connector Policies (ACP) | https://learn.microsoft.com/power-platform/admin/advanced-connector-policies |
+| External Models / Allow LLMs | https://learn.microsoft.com/power-platform/admin/allow-llm-generative-responses |
+| Administer Computer Use | https://learn.microsoft.com/microsoft-copilot-studio/administer-computer-use |
+| Manage Dataverse Auditing | https://learn.microsoft.com/power-platform/admin/manage-dataverse-auditing |
+| Customer Lockbox | https://learn.microsoft.com/power-platform/admin/about-lockbox |
+| Copilot Studio Security & Governance | https://learn.microsoft.com/microsoft-copilot-studio/security-and-governance |
 | Power Platform Zero Trust Adoption | https://learn.microsoft.com/security/zero-trust/adopt/zero-trust-adoption-overview |
 
 ---

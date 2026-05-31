@@ -64,8 +64,8 @@ ENTRA_README    = Path("entra.news/readme.md")
 html = ENTRA_NEWS_HTML.read_text(encoding="utf-8")
 
 # Pull current feature/issue counts from the stats row
-feat_match   = re.search(r'<span class="stat-number">(\d+)</span>\s*<span class="stat-label">Features', html)
-issues_match = re.search(r'<span class="stat-number">(\d+)</span>\s*<span class="stat-label">Issues', html)
+feat_match   = re.search(r'<span class="stat-val"><span class="teal">(\d+)</span></span>\s*<span class="stat-label">Features', html)
+issues_match = re.search(r'<span class="stat-val"><span class="teal">(\d+)</span></span>\s*<span class="stat-label">Issues', html)
 
 current_features = int(feat_match.group(1))  if feat_match  else 0
 current_issues   = int(issues_match.group(1)) if issues_match else 0
@@ -87,12 +87,12 @@ html = re.sub(
 
 # Update stats row numbers
 html = re.sub(
-    r'(<span class="stat-number">)\d+(</span>\s*<span class="stat-label">Features)',
+    r'(<span class="stat-val"><span class="teal">)\d+(</span></span>\s*<span class="stat-label">Features)',
     rf'\g<1>{new_features}\2',
     html
 )
 html = re.sub(
-    r'(<span class="stat-number">)\d+(</span>\s*<span class="stat-label">Issues)',
+    r'(<span class="stat-val"><span class="teal">)\d+(</span></span>\s*<span class="stat-label">Issues)',
     rf'\g<1>{new_issues}\2',
     html
 )
