@@ -13,13 +13,13 @@ Last Updated: May 25, 2026
 | | |
 |---|---|
 | Total Articles | 35 (all published) |
-| Entra News Features | 1 (across 1 issues) |
+| Entra News Features | 20 (across 18 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
 | Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 20 of 35 published (57%) |
+| Unique Articles Featured | 17 of 35 published (49%) |
 | Publication Period | September 2025 — May 2026 |
 | Primary Focus | Conditional Access, Identity Security, Secure Cloud Foundation, MSP Operations |
 
@@ -261,7 +261,7 @@ Last Updated: May 25, 2026
 | 🚀 Most Popular Posts | 3 (🥇 #1, 🥈 #2, 🥉 #3) |
 | 📒 Tenant Configuration | 2 |
 | 🥷 Security | 2 |
-| 🫆 Authentication | 4 |
+| 🫆 Authentication | 5 |
 | 🤖 DevOps & PowerShell | 1 |
 
 ### Publishing Cadence
@@ -276,8 +276,8 @@ Last Updated: May 25, 2026
 | February 2026 | 4 | 3 |
 | March 2026 | 4 | 4 |
 | April 2026 | 4 | 3 |
-| May 2026 | 1 | 4 |
-| **Total** | **35** | **19** |
+| May 2026 | 1 | 5 |
+| **Total** | **35** | **20** |
 
 ---
 
