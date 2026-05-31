@@ -13,13 +13,13 @@ Last Updated: May 25, 2026
 | | |
 |---|---|
 | Total Articles | 35 (all published) |
-| Entra News Features | 19 (across 17 issues) |
+| Entra News Features | 1 (across 1 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
 | Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 16 of 35 published (46%) |
+| Unique Articles Featured | 20 of 35 published (57%) |
 | Publication Period | September 2025 — May 2026 |
 | Primary Focus | Conditional Access, Identity Security, Secure Cloud Foundation, MSP Operations |
 
@@ -121,6 +121,15 @@ Last Updated: May 25, 2026
 
 [Entra News](https://entra.news/) is the premier weekly Microsoft Entra community newsletter curated by Merill Fernando (Microsoft Identity PM). It is the most widely-read digest in the Microsoft Identity community. Being featured represents recognition by the editorial team as a valuable community contribution.
 
+---
+
+
+### Feature #20 — Issue #151 (May 31, 2026)
+- **Article:** Authentication Methods
+- **Link:** [https://conditionalaccess.tech/articles/identity/authentication-methods.html](https://conditionalaccess.tech/articles/identity/authentication-methods.html)
+- **Section:** 🫆 Authentication
+
+- **Context:** Featured alongside Entra Change Tracker • Eric Woodruff As well as multiple Microsoft announcements around MC1325414 - Microsoft Entra ID SSPR will require registered authentication methods starting September 7, 2026
 ---
 
 ### Feature #19 — Issue #150 (May 24, 2026)
@@ -252,7 +261,7 @@ Last Updated: May 25, 2026
 | 🚀 Most Popular Posts | 3 (🥇 #1, 🥈 #2, 🥉 #3) |
 | 📒 Tenant Configuration | 2 |
 | 🥷 Security | 2 |
-| 🫆 Authentication | 3 |
+| 🫆 Authentication | 4 |
 | 🤖 DevOps & PowerShell | 1 |
 
 ### Publishing Cadence
@@ -267,7 +276,7 @@ Last Updated: May 25, 2026
 | February 2026 | 4 | 3 |
 | March 2026 | 4 | 4 |
 | April 2026 | 4 | 3 |
-| May 2026 | 1 | 3 |
+| May 2026 | 1 | 4 |
 | **Total** | **35** | **19** |
 
 ---
@@ -324,4 +333,4 @@ May 2026  ██████ CA Foundations: Bottom of the Stack 🥉 (#147) →
 - LinkedIn: [Jon Hope](https://www.linkedin.com/in/jhope188)
 - GitHub: [Jhope188](https://github.com/Jhope188)
 
-*Document generated: May 25, 2026*
+*Document generated: May 31, 2026*
