@@ -379,6 +379,8 @@ Enabling this integration ensures that **all SharePoint/OneDrive-initiated exter
 
 > Without this enabled, you can have guests with access to SharePoint content who are completely invisible to Entra ID — they won't appear in access reviews, won't be subject to Conditional Access, and can't be managed through the guest lifecycle policies you've configured.
 
+> 🔍 **Audit legacy SPO external users:** To identify external users who exist under the legacy SharePoint-only model (outside of Entra ID), use the following script reference: [Get All External Users in SharePoint Online – PowerShell](https://o365reports.com/get-all-external-users-in-sharepoint-online-powershell/). This is useful for detecting residual legacy-model guests before or after enabling B2B integration.
+
 > **Relationship to other settings:** The `ExistingExternalUserSharingOnly` recommendation in settings #2, #3, and #9 states sharing is limited to *"guests already in your Entra ID directory"* — but without B2B integration, older SharePoint-only guests may exist outside of Entra ID entirely. Enabling B2B integration closes that gap going forward.
 
 **Check current value (PowerShell — Windows):**
