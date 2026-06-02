@@ -44,7 +44,7 @@
       "termsOfUse": [],
       "builtInControls": [
         "mfa",
-        "passwordChange"
+        "riskremediation"
       ],
       "authenticationStrength": null,
       "authenticationStrength@odata.context": "https://graph.microsoft.com/v1.0/$metadata#identity/conditionalAccess/policies('b05adb67-c3a7-4010-bcf1-f1af0c1a46d9')/grantControls/authenticationStrength/$entity"
