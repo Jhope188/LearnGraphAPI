@@ -2,7 +2,7 @@ name: Scheduled Article Release
 
 on:
   schedule:
-    - cron: '0 12 * * 1'  # Runs every Monday at 12:00 UTC (7am EST / 8am EDT)
+    - cron: '0 12 * * 0'  # Runs every Sunday at 12:00 UTC (7am EST / 8am EDT)
   workflow_dispatch:        # Lets you trigger it manually from the GitHub Actions tab for testing
 
 jobs:
