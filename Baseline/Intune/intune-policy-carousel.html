@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intune Policy Types — LinkedIn Carousel</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Aptos', 'Calibri', 'Segoe UI', Arial, sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 48px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    color: #FFF8F3;
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-bottom: 6px;
+    opacity: 0.6;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-btn {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover, .nav-btn.active { background: #FE5B38; border-color: #FE5B38; color: white; }
+
+  /* Carousel wrapper */
+  .carousel-container {
+    position: relative;
+    width: 540px;
+    max-width: 100%;
+  }
+
+  .slides-viewport {
+    width: 540px;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .slides-track {
+    display: flex;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Each slide is 540×540 */
+  .slide {
+    min-width: 540px;
+    width: 540px;
+    height: 540px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* ── DARK slide ── */
+  .slide-dark {
+    background: #091F2E;
+    color: #FFF8F3;
+  }
+
+  /* ── LIGHT slide ── */
+  .slide-light {
+    background: #FFF8F3;
+    color: #091F2E;
+  }
+
+  /* Geometric accent shapes */
+  .geo {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.07;
+    background: #FE5B38;
+  }
+  .geo-1 { width: 300px; height: 300px; bottom: -80px; right: -80px; }
+  .geo-2 { width: 180px; height: 180px; top: -50px; right: 40px; background: #702573; opacity: 0.1; }
+  .geo-3 { width: 120px; height: 120px; top: 20px; left: -40px; background: #FEE298; opacity: 0.08; }
+
+  /* Corner badge */
+  .corner-badge {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.45;
+  }
+  .slide-dark .corner-badge { color: #FFF8F3; }
+  .slide-light .corner-badge { color: #091F2E; }
+
+  /* Slide number */
+  .slide-num {
+    position: absolute;
+    bottom: 16px;
+    right: 18px;
+    font-size: 0.65rem;
+    opacity: 0.35;
+  }
+  .slide-dark .slide-num { color: #FFF8F3; }
+  .slide-light .slide-num { color: #091F2E; }
+
+  /* Orange left bar accent */
+  .left-bar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 5px;
+    background: #FE5B38;
+  }
+
+  /* Content area */
+  .slide-content {
+    position: relative;
+    z-index: 2;
+    padding: 40px 42px 36px 48px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  /* ── SLIDE 1 — Cover ── */
+  .cover-eyebrow {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #FE5B38;
+    margin-bottom: 14px;
+  }
+  .cover-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #FFF8F3;
+    margin-bottom: 10px;
+  }
+  .cover-title span { color: #FE5B38; }
+  .cover-subtitle {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin-bottom: 28px;
+    line-height: 1.5;
+    max-width: 360px;
+  }
+  .cover-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+  .cover-tag {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #FFF8F3;
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+  }
+  .cover-byline {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cover-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700; color: white;
+    flex-shrink: 0;
+  }
+  .cover-byline-text { font-size: 0.72rem; color: #94a3b8; }
+  .cover-byline-text strong { color: #FFF8F3; display: block; font-size: 0.78rem; }
+
+  /* ── SLIDE 2+ content cards ── */
+  .slide-eyebrow {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #FE5B38;
+    margin-bottom: 8px;
+  }
+  .slide-dark .slide-eyebrow { color: #FE5B38; }
+  .slide-light .slide-eyebrow { color: #FE5B38; }
+
+  .slide-title {
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .slide-dark .slide-title { color: #FFF8F3; }
+  .slide-light .slide-title { color: #091F2E; }
+  .slide-title .hl { color: #FE5B38; }
+
+  .slide-lead {
+    font-size: 0.8rem;
+    line-height: 1.55;
+    margin-bottom: 18px;
+    max-width: 420px;
+  }
+  .slide-dark .slide-lead { color: #94a3b8; }
+  .slide-light .slide-lead { color: #475569; }
+
+  /* Definition card */
+  .def-grid { display: flex; flex-direction: column; gap: 9px; }
+  .def-card {
+    border-radius: 8px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .def-card-dark {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .def-card-light {
+    background: rgba(9,31,46,0.05);
+    border: 1px solid rgba(9,31,46,0.08);
+  }
+  .def-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .def-text { font-size: 0.76rem; line-height: 1.45; }
+  .slide-dark .def-text { color: #e2e8f0; }
+  .slide-light .def-text { color: #1e293b; }
+  .def-text strong { display: block; font-size: 0.78rem; margin-bottom: 1px; }
+  .slide-dark .def-text strong { color: #FFF8F3; }
+  .slide-light .def-text strong { color: #091F2E; }
+
+  /* Status pill */
+  .pill {
+    display: inline-block;
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-left: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .pill-green { background: #064e3b; color: #6ee7b7; }
+  .pill-orange { background: #451a03; color: #fbbf24; }
+  .pill-red { background: #4c0519; color: #fca5a5; }
+  .pill-purple { background: #2e1065; color: #c4b5fd; }
+
+  /* Comparison table */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+  .comp-table th {
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 2px solid #FE5B38;
+  }
+  .slide-dark .comp-table th { color: #94a3b8; }
+  .slide-light .comp-table th { color: #475569; }
+  .comp-table td { padding: 7px 10px; vertical-align: top; }
+  .comp-table tr:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .slide-light .comp-table tr:not(:last-child) td { border-bottom: 1px solid rgba(9,31,46,0.07); }
+  .slide-dark .comp-table td { color: #cbd5e1; }
+  .slide-light .comp-table td { color: #334155; }
+  .comp-table td:first-child { font-weight: 700; }
+  .slide-dark .comp-table td:first-child { color: #FFF8F3; }
+  .slide-light .comp-table td:first-child { color: #091F2E; }
+
+  /* Timeline items */
+  .tl-list { display: flex; flex-direction: column; gap: 12px; }
+  .tl-item { display: flex; gap: 12px; align-items: flex-start; }
+  .tl-date {
+    font-size: 0.6rem; font-weight: 700;
+    background: rgba(254,91,56,0.15);
+    color: #FE5B38;
+    padding: 3px 8px;
+    border-radius: 4px;
+    min-width: 78px;
+    text-align: center;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .tl-body { font-size: 0.75rem; line-height: 1.45; }
+  .slide-dark .tl-body { color: #cbd5e1; }
+  .slide-light .tl-body { color: #334155; }
+  .tl-body strong { font-weight: 700; }
+  .slide-dark .tl-body strong { color: #FFF8F3; }
+  .slide-light .tl-body strong { color: #091F2E; }
+
+  /* CTA / closing */
+  .cta-box {
+    border: 1px solid rgba(254,91,56,0.3);
+    background: rgba(254,91,56,0.08);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-top: 14px;
+  }
+  .cta-box p { font-size: 0.78rem; line-height: 1.5; color: #FFF8F3; }
+  .cta-box p strong { color: #FE5B38; }
+
+  /* Screenshot callout */
+  .screenshot-mock {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.68rem;
+  }
+  .slide-dark .screenshot-mock { color: #94a3b8; }
+  .screenshot-mock .sc-header {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #FE5B38;
+    margin-bottom: 5px;
+  }
+  .sc-path {
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.62rem;
+    color: #fbbf24;
+    background: rgba(0,0,0,0.2);
+    padding: 3px 7px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  /* Decision list */
+  .decision-list { display: flex; flex-direction: column; gap: 9px; }
+  .decision-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 9px 12px;
+    border-radius: 8px;
+    background: rgba(9,31,46,0.06);
+    border: 1px solid rgba(9,31,46,0.09);
+  }
+  .decision-q-icon { font-size: 1rem; flex-shrink: 0; margin-top: -1px; }
+  .decision-body { font-size: 0.73rem; line-height: 1.4; color: #1e293b; }
+  .decision-body strong { color: #091F2E; }
+  .decision-body .ans { color: #FE5B38; font-weight: 700; }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .ctrl-btn {
+    background: #091F2E;
+    border: 1px solid #334155;
+    color: #FFF8F3;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .ctrl-btn:hover { background: #FE5B38; border-color: #FE5B38; }
+  .ctrl-btn:disabled { opacity: 0.3; cursor: default; }
+  .ctrl-btn:disabled:hover { background: #091F2E; border-color: #334155; }
+
+  .dots { display: flex; gap: 6px; }
+  .dot-i {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #334155;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .dot-i.active { background: #FE5B38; width: 20px; border-radius: 4px; }
+
+  .slide-counter { font-size: 0.72rem; color: #64748b; margin-left: auto; }
+</style>
+</head>
+<body>
+
+<h1>LinkedIn Carousel Preview</h1>
+
+<div class="nav-row" id="navRow"></div>
+
+<div class="carousel-container">
+  <div class="slides-viewport">
+    <div class="slides-track" id="track">
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 1 — Cover
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-dark">
+        <div class="left-bar"></div>
+        <div class="geo geo-1"></div>
+        <div class="geo geo-2"></div>
+        <div class="geo geo-3"></div>
+        <div class="slide-content">
+          <div class="cover-eyebrow">Microsoft Intune · Education Series</div>
+          <div class="cover-title">
+            Know Your<br>
+            <span>Policy</span><br>
+            Types
+          </div>
+          <div class="cover-subtitle">
+            CSP · OMA-URI · Settings Catalog · DDM — what they are, how they differ, and which one you should actually be using.
+          </div>
+          <div class="cover-tags">
+            <span class="cover-tag">Intune</span>
+            <span class="cover-tag">Microsoft Endpoint Manager</span>
+            <span class="cover-tag">M365 Security</span>
+            <span class="cover-tag">Device Management</span>
+          </div>
+          <div class="cover-byline">
+            <div class="cover-avatar">JH</div>
+            <div class="cover-byline-text">
+              <strong>Jon Hope</strong>
+              Microsoft MVP · M365 Solutions Architect
+            </div>
+          </div>
+        </div>
+        <div class="corner-badge">1 / 8</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 2 — The Foundation: What is a CSP?
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-dark">
+        <div class="left-bar"></div>
+        <div class="geo geo-1"></div>
+        <div class="slide-content">
+          <div class="slide-eyebrow">The Foundation</div>
+          <div class="slide-title">Every method<br>talks to a <span class="hl">CSP</span></div>
+          <div class="slide-lead">
+            A <strong style="color:#FFF8F3">Configuration Service Provider (CSP)</strong> is the Windows OS-level framework that receives and applies settings from any MDM. It's the engine — not an admin interface.
+          </div>
+          <div class="def-grid">
+            <div class="def-card def-card-dark">
+              <div class="def-dot" style="background:#3b82f6"></div>
+              <div class="def-text">
+                <strong>CSP = the engine</strong>
+                Sits on the Windows device. Intercepts MDM configs, compares to current state, applies changes via Registry or OS feature. Every other method — OMA-URI, Settings Catalog, Templates — ultimately calls a CSP path.
+              </div>
+            </div>
+            <div class="def-card def-card-dark">
+              <div class="def-dot" style="background:#FE5B38"></div>
+              <div class="def-text">
+                <strong>OMA-URI = manual CSP path</strong>
+                You write the path yourself: <span style="font-family:monospace;color:#fbbf24;font-size:0.7rem">./Device/Vendor/MSFT/Policy/Config/...</span><br>Maximum power, zero guardrails.
+              </div>
+            </div>
+            <div class="def-card def-card-dark">
+              <div class="def-dot" style="background:#22c55e"></div>
+              <div class="def-text">
+                <strong>Settings Catalog = searchable UI over CSPs</strong>
+                The same CSP paths, but Microsoft wraps them in a searchable interface. Better reporting, conflict detection, and cross-platform support.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="corner-badge">2 / 8</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 3 — OMA-URI: The Escape Hatch
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-light">
+        <div class="left-bar"></div>
+        <div class="slide-content">
+          <div class="slide-eyebrow">Custom Profile</div>
+          <div class="slide-title">OMA-URI:<br>The <span class="hl">Escape Hatch</span></div>
+          <div class="slide-lead">
+            When a setting doesn't exist in the Settings Catalog UI yet, you go manual. You write the exact CSP path, data type, and value yourself.
+          </div>
+          <div class="def-grid">
+            <div class="def-card def-card-light">
+              <div class="def-dot" style="background:#22c55e; margin-top:4px;"></div>
+              <div class="def-text">
+                <strong>When to use it</strong>
+                Only when the setting genuinely doesn't exist in Settings Catalog. Microsoft is actively restricting OMA-URI to settings absent from the catalog.
+              </div>
+            </div>
+            <div class="def-card def-card-light">
+              <div class="def-dot" style="background:#ef4444; margin-top:4px;"></div>
+              <div class="def-text">
+                <strong>Risks to know</strong>
+                No conflict detection. Basic pass/fail reporting only. Silent misconfigurations are easy — a typo in the path silently fails.
+              </div>
+            </div>
+            <div class="def-card def-card-light" style="background:rgba(254,91,56,0.06); border-color:rgba(254,91,56,0.2);">
+              <div class="def-dot" style="background:#FE5B38; margin-top:4px;"></div>
+              <div class="def-text">
+                <strong>Path format</strong>
+                <span style="font-family:monospace; font-size:0.68rem; color:#b45309;">./Device/Vendor/MSFT/Policy/Config/[Area]/[Setting]</span><br>
+                Always verify scope (Device vs User) in the Microsoft CSP reference before deploying.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-num">3 / 8</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 4 — Settings Catalog is the Standard
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-dark">
+        <div class="left-bar"></div>
+        <div class="geo geo-1"></div>
+        <div class="geo geo-2"></div>
+        <div class="slide-content">
+          <div class="slide-eyebrow">Settings Catalog</div>
+          <div class="slide-title">Microsoft's<br><span class="hl">Unified Standard</span></div>
+          <div class="slide-lead">
+            The Settings Catalog is now the default for all new Intune policies. 18,000+ settings across Windows, macOS, iOS, and Android — searchable by name, keyword, or CSP path. Last updated 5/27/2026.
+          </div>
+          <div class="def-grid">
+            <div class="def-card def-card-dark">
+              <div class="def-dot" style="background:#22c55e"></div>
+              <div class="def-text">
+                <strong>Why it replaced Templates</strong>
+                Administrative Templates are retired for new creation (Dec 2024). Settings Catalog contains every ADMX setting plus thousands more — with better conflict reporting and cross-platform parity.
+              </div>
+            </div>
+            <div class="def-card def-card-dark">
+              <div class="def-dot" style="background:#a78bfa"></div>
+              <div class="def-text">
+                <strong>DDM settings live here too</strong>
+                Apple Declarative Device Management settings surface inside the Settings Catalog under the DDM category — not a separate interface. Look for "Declarative Device Management (DDM)" in the left nav.
+              </div>
+            </div>
+          </div>
+          <div class="screenshot-mock" style="margin-top:10px;">
+            <div class="sc-header">📸 Real portal — Settings Catalog · macOS · DDM search</div>
+            <div style="font-size:0.67rem; color:#94a3b8;">111 DDM settings available · Declarative Device Management category visible in left nav · Last updated 5/27/2026</div>
+          </div>
+        </div>
+        <div class="corner-badge">4 / 8</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 5 — DDM: Apple's Modern Protocol
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-light">
+        <div class="left-bar"></div>
+        <div class="slide-content">
+          <div class="slide-eyebrow">Declarative Device Management</div>
+          <div class="slide-title">DDM: <span class="hl">Device-Driven</span><br>Management</div>
+          <div class="slide-lead">
+            Traditional MDM is server-driven — Intune sends commands, polls for status. DDM flips this: the device declares its desired state and self-enforces it, even when offline.
+          </div>
+          <div class="def-grid">
+            <div class="def-card def-card-light">
+              <div class="def-dot" style="background:#a78bfa; margin-top:4px;"></div>
+              <div class="def-text">
+                <strong>MDM (old model)</strong>
+                Server sends command → device executes → server polls for result. Race conditions, unreliable status, offline gaps.
+              </div>
+            </div>
+            <div class="def-card def-card-light" style="background:rgba(167,139,250,0.07); border-color:rgba(167,139,250,0.2);">
+              <div class="def-dot" style="background:#a78bfa; margin-top:4px;"></div>
+              <div class="def-text">
+                <strong>DDM (new model)</strong>
+                Intune declares "target OS = 15.5 by Friday" → device autonomously manages download, install, and progress reporting. Works offline.
+              </div>
+            </div>
+            <div class="def-card def-card-light" style="background:rgba(254,91,56,0.06); border-color:rgba(254,91,56,0.2);">
+              <div class="def-dot" style="background:#FE5B38; margin-top:4px;"></div>
+              <div class="def-text">
+                <strong>⚠️ This is urgent for Apple admins</strong>
+                Apple deprecated legacy MDM update commands at WWDC 2025. iOS/iPadOS/macOS 26 will <em>remove</em> them entirely. Migrate to DDM before OS 26 ships (autumn 2026).
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-num">5 / 8</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 6 — Deprecation Timeline
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-dark">
+        <div class="left-bar"></div>
+        <div class="geo geo-1"></div>
+        <div class="slide-content">
+          <div class="slide-eyebrow">What's Deprecated &amp; When</div>
+          <div class="slide-title">The <span class="hl">Migration</span><br>Timeline</div>
+          <div class="tl-list">
+            <div class="tl-item">
+              <div class="tl-date">Aug 2024</div>
+              <div class="tl-body"><strong>macOS Endpoint Protection &amp; System Extensions templates deprecated.</strong> Migrate to Settings Catalog (FileVault, Firewall, Gatekeeper payloads).</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Dec 2024</div>
+              <div class="tl-body"><strong>Administrative Templates retired for new creation.</strong> Cannot create new ADMX-based profiles. All settings exist in Settings Catalog. Existing policies still work.</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Jun 2025</div>
+              <div class="tl-body"><strong>Apple WWDC: MDM software update commands deprecated in OS 26.</strong> DDM is now required for Apple update management.</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-date">Autumn 2026</div>
+              <div class="tl-body"><strong>Apple OS 26 expected GA.</strong> Legacy MDM update commands fully removed. Devices on OS 26+ ignore MDM update policies if DDM is enforced. <strong style="color:#FE5B38;">Migrate now.</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="corner-badge">6 / 8</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 7 — Decision Guide
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-light">
+        <div class="left-bar"></div>
+        <div class="slide-content">
+          <div class="slide-eyebrow">Quick Decision Guide</div>
+          <div class="slide-title">Which Method<br>Should You <span class="hl">Use?</span></div>
+          <div class="decision-list">
+            <div class="decision-item">
+              <div class="decision-q-icon">🪟</div>
+              <div class="decision-body">
+                <strong>Creating a new Windows policy?</strong><br>
+                → <span class="ans">Settings Catalog first.</span> Search for the setting. Only use OMA-URI if it genuinely doesn't exist in the catalog.
+              </div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-q-icon">🍎</div>
+              <div class="decision-body">
+                <strong>Managing Apple software updates?</strong><br>
+                → <span class="ans">DDM via Settings Catalog.</span> Legacy MDM update commands are deprecated — OS 26 removes them entirely.
+              </div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-q-icon">📁</div>
+              <div class="decision-body">
+                <strong>Have existing Admin Template policies?</strong><br>
+                → <span class="ans">Keep them (they still work).</span> But rebuild any new equivalent policies in Settings Catalog.
+              </div>
+            </div>
+            <div class="decision-item">
+              <div class="decision-q-icon">⚙️</div>
+              <div class="decision-body">
+                <strong>Setting not in Settings Catalog?</strong><br>
+                → <span class="ans">Custom OMA-URI</span> using the exact path from Microsoft's CSP reference. Double-check Device vs User scope.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="slide-num">7 / 8</div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════
+           SLIDE 8 — Closing CTA
+      ═══════════════════════════════════════════════════ -->
+      <div class="slide slide-dark">
+        <div class="left-bar"></div>
+        <div class="geo geo-1"></div>
+        <div class="geo geo-2"></div>
+        <div class="geo geo-3"></div>
+        <div class="slide-content">
+          <div class="slide-eyebrow">Key Takeaway</div>
+          <div class="slide-title">The <span class="hl">Settings Catalog</span><br>is the answer.</div>
+          <div class="slide-lead" style="margin-bottom:12px;">
+            CSP is the engine. OMA-URI is the emergency exit. Admin Templates are retired. Settings Catalog is where Microsoft is investing — and DDM is the future for Apple.
+          </div>
+          <div class="cta-box">
+            <p><strong>If you manage Apple devices:</strong> audit your iOS/macOS update policies now. MDM software update commands won't survive OS 26. DDM migration deadline is autumn 2026.</p>
+          </div>
+          <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="font-size:0.68rem; color:#94a3b8; margin-bottom:4px;">Follow for more M365 security content</div>
+            <div style="font-size:0.72rem; color:#FFF8F3; font-weight:600;">Jon Hope · Microsoft MVP · M365 Solutions Architect</div>
+            <div style="font-size:0.65rem; color:#64748b; margin-top:3px;">linkedin.com/in/jhope188 · conditionalaccess.tech</div>
+          </div>
+        </div>
+        <div class="corner-badge">8 / 8</div>
+      </div>
+
+    </div><!-- /track -->
+  </div><!-- /viewport -->
+
+  <div class="controls">
+    <button class="ctrl-btn" id="prev" onclick="move(-1)">←</button>
+    <div class="dots" id="dots"></div>
+    <button class="ctrl-btn" id="next" onclick="move(1)">→</button>
+    <div class="slide-counter" id="counter">1 / 8</div>
+  </div>
+</div>
+
+<script>
+  const TOTAL = 8;
+  let current = 0;
+
+  const track = document.getElementById('track');
+  const dotsEl = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const navRow = document.getElementById('navRow');
+
+  // Build dots
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot-i' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  }
+
+  // Build nav buttons
+  const labels = ['Cover','CSP','OMA-URI','Settings Catalog','DDM','Timeline','Decision','CTA'];
+  labels.forEach((l, i) => {
+    const b = document.createElement('button');
+    b.className = 'nav-btn' + (i === 0 ? ' active' : '');
+    b.textContent = (i+1) + '. ' + l;
+    b.onclick = () => goTo(i);
+    navRow.appendChild(b);
+  });
+
+  function goTo(n) {
+    current = Math.max(0, Math.min(TOTAL - 1, n));
+    track.style.transform = `translateX(-${current * 540}px)`;
+    counter.textContent = `${current + 1} / ${TOTAL}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === TOTAL - 1;
+    document.querySelectorAll('.dot-i').forEach((d, i) => d.classList.toggle('active', i === current));
+    document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i === current));
+  }
+
+  function move(dir) { goTo(current + dir); }
+
+  // Keyboard nav
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') move(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') move(-1);
+  });
+
+  // Swipe support
+  let touchX = null;
+  track.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+  track.addEventListener('touchend', e => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) move(dx < 0 ? 1 : -1);
+    touchX = null;
+  });
+
+  goTo(0);
+</script>
+
+</body>
+</html>

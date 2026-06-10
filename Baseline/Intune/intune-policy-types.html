@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Intune Policy Types Reference</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f1117; color: #e2e8f0; padding: 24px; }
+  h1 { font-size: 1.4rem; font-weight: 700; color: #38bdf8; margin-bottom: 4px; }
+  .subtitle { font-size: 0.8rem; color: #94a3b8; margin-bottom: 24px; }
+
+  /* Layer diagram */
+  .layer-section { margin-bottom: 28px; }
+  .section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 10px; }
+
+  .layers { display: flex; flex-direction: column; gap: 6px; }
+  .layer { border-radius: 8px; padding: 10px 14px; position: relative; display: flex; align-items: center; gap: 10px; }
+  .layer-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; min-width: 110px; }
+  .layer-desc { font-size: 0.78rem; color: #cbd5e1; flex: 1; }
+  .badge { font-size: 0.6rem; font-weight: 700; padding: 2px 7px; border-radius: 9999px; white-space: nowrap; }
+  .badge-green { background: #064e3b; color: #6ee7b7; }
+  .badge-yellow { background: #451a03; color: #fbbf24; }
+  .badge-red { background: #4c0519; color: #fca5a5; }
+  .badge-blue { background: #0c2a4a; color: #93c5fd; }
+
+  .l-csp    { background: #1e3a5f; border-left: 4px solid #3b82f6; }
+  .l-omauri { background: #1e293b; border-left: 4px solid #f59e0b; }
+  .l-catalog { background: #0f2d1f; border-left: 4px solid #22c55e; }
+  .l-ddm    { background: #1e1040; border-left: 4px solid #a78bfa; }
+  .l-admx   { background: #2d1b00; border-left: 4px solid #f97316; }
+
+  /* Main comparison table */
+  .table-wrap { overflow-x: auto; margin-bottom: 28px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.76rem; min-width: 800px; }
+  thead tr { background: #1e293b; }
+  thead th { padding: 10px 12px; text-align: left; color: #94a3b8; font-weight: 600; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid #1e293b; }
+  tbody tr:hover { background: #1a2332; }
+  td { padding: 9px 12px; vertical-align: top; }
+  td:first-child { font-weight: 600; color: #f1f5f9; white-space: nowrap; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+  .dot-csp    { background: #3b82f6; }
+  .dot-omauri { background: #f59e0b; }
+  .dot-catalog { background: #22c55e; }
+  .dot-ddm    { background: #a78bfa; }
+  .dot-admx   { background: #f97316; }
+
+  .tag { display: inline-block; font-size: 0.6rem; font-weight: 700; padding: 1px 5px; border-radius: 4px; margin: 1px 1px 0 0; }
+  .tag-win   { background: #1d3557; color: #90cdf4; }
+  .tag-mac   { background: #1a2e22; color: #9ae6b4; }
+  .tag-ios   { background: #2d1654; color: #d6bcfa; }
+  .tag-android { background: #2d1a00; color: #fbd38d; }
+
+  /* Flow diagram */
+  .flow { display: flex; align-items: stretch; gap: 0; margin-bottom: 28px; flex-wrap: wrap; }
+  .flow-node { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px; font-size: 0.72rem; flex: 1; min-width: 130px; text-align: center; position: relative; }
+  .flow-node .fn-title { font-weight: 700; color: #38bdf8; margin-bottom: 4px; font-size: 0.7rem; }
+  .flow-node .fn-sub { color: #94a3b8; font-size: 0.65rem; }
+  .flow-arrow { display: flex; align-items: center; padding: 0 4px; color: #475569; font-size: 1.1rem; }
+
+  /* Deprecation timeline */
+  .timeline { margin-bottom: 20px; }
+  .tl-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+  .tl-date { font-size: 0.65rem; font-weight: 700; color: #f59e0b; min-width: 80px; white-space: nowrap; background: #1c1500; padding: 2px 6px; border-radius: 4px; text-align: center; margin-top: 1px; }
+  .tl-text { font-size: 0.75rem; color: #cbd5e1; }
+  .tl-text strong { color: #f1f5f9; }
+
+  /* Decision box */
+  .decision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .decision-card { background: #1e293b; border-radius: 8px; padding: 12px; }
+  .decision-q { font-size: 0.7rem; font-weight: 700; color: #94a3b8; margin-bottom: 6px; }
+  .decision-a { font-size: 0.75rem; color: #e2e8f0; }
+  .decision-a span { color: #38bdf8; font-weight: 600; }
+
+  .note { background: #0c1a2e; border: 1px solid #1e3a5f; border-radius: 6px; padding: 10px 14px; font-size: 0.72rem; color: #93c5fd; margin-top: 4px; }
+  .note strong { color: #bfdbfe; }
+</style>
+</head>
+<body>
+
+<h1>Intune Policy Types: CSP · OMA-URI · Settings Catalog · DDM</h1>
+<p class="subtitle">Architecture, relationships, deprecations, and recommended approach — June 2026</p>
+
+<!-- Architecture layer diagram -->
+<div class="layer-section">
+  <div class="section-title">How They Relate — From Protocol to UI</div>
+  <div class="layers">
+    <div class="layer l-csp">
+      <div class="layer-label"><span class="dot dot-csp"></span>CSP (Configuration Service Provider)</div>
+      <div class="layer-desc">The <strong>Windows OS framework</strong> that receives and applies settings from any MDM. Think of it as the engine — all other methods ultimately talk to CSPs under the hood. Not a UI; it's the protocol layer that maps to Registry keys and OS features.</div>
+      <span class="badge badge-blue">Foundation Layer</span>
+    </div>
+    <div class="layer l-omauri">
+      <div class="layer-label"><span class="dot dot-omauri"></span>OMA-URI (Custom Profile)</div>
+      <div class="layer-desc">A <strong>manual escape hatch</strong> — you write the CSP path yourself (e.g. <code style="font-size:0.7rem;color:#fbbf24">./Device/Vendor/MSFT/Policy/Config/...</code>) when no UI exists for it. Maximum power, maximum risk of misconfiguration. Requires knowing the exact CSP reference.</div>
+      <span class="badge badge-yellow">Use When Necessary</span>
+    </div>
+    <div class="layer l-catalog">
+      <div class="layer-label"><span class="dot dot-catalog"></span>Settings Catalog</div>
+      <div class="layer-desc">A <strong>searchable UI wrapper</strong> over CSPs (and Apple payloads). Microsoft's current standard and primary investment. Pulls settings directly from Windows CSP docs and Apple DDM/MDM payload keys. Replaces Templates and is the target for all migrations.</div>
+      <span class="badge badge-green">✓ Recommended (Primary)</span>
+    </div>
+    <div class="layer l-admx">
+      <div class="layer-label"><span class="dot dot-admx"></span>Administrative Templates (ADMX)</div>
+      <div class="layer-desc">Legacy Group Policy ADMX settings surfaced in Intune. <strong>Retired for new creation in December 2024 (2412)</strong>. Existing policies continue to work and can be edited, but you can no longer create new Administrative Template profiles. All settings now exist in the Settings Catalog.</div>
+      <span class="badge badge-red">⚠ Retired (Dec 2024)</span>
+    </div>
+    <div class="layer l-ddm">
+      <div class="layer-label"><span class="dot dot-ddm"></span>DDM (Declarative Device Mgmt)</div>
+      <div class="layer-desc">Apple's modern protocol where the <strong>device acts autonomously</strong> — it declares desired state and self-enforces, even offline. Surfaced in Intune via the Settings Catalog. For Windows, Microsoft's equivalent is "Declared Configuration" (MMP-C/WinDC). Apple MDM software update commands deprecated from OS 26 onward.</div>
+      <span class="badge badge-green">✓ Recommended (Apple)</span>
+    </div>
+  </div>
+</div>
+
+<!-- Comparison table -->
+<div class="layer-section">
+  <div class="section-title">Side-by-Side Comparison</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Attribute</th>
+          <th><span class="dot dot-csp"></span>CSP</th>
+          <th><span class="dot dot-omauri"></span>OMA-URI Custom</th>
+          <th><span class="dot dot-catalog"></span>Settings Catalog</th>
+          <th><span class="dot dot-ddm"></span>DDM / Declared Config</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>What it is</td>
+          <td>OS-level configuration framework on Windows</td>
+          <td>Manual CSP path entry in Intune UI</td>
+          <td>Searchable UI wrapper over CSPs &amp; Apple payloads</td>
+          <td>Device-autonomous declarative protocol (Apple / Windows WinDC)</td>
+        </tr>
+        <tr>
+          <td>Platform</td>
+          <td><span class="tag tag-win">Windows</span></td>
+          <td><span class="tag tag-win">Windows</span> <span class="tag tag-android">Android</span></td>
+          <td><span class="tag tag-win">Windows</span> <span class="tag tag-mac">macOS</span> <span class="tag tag-ios">iOS/iPadOS</span> <span class="tag tag-android">Android</span></td>
+          <td><span class="tag tag-mac">macOS</span> <span class="tag tag-ios">iOS/iPadOS</span> <span class="tag tag-win">Windows (WinDC)</span></td>
+        </tr>
+        <tr>
+          <td>Admin experience</td>
+          <td>Not a UI — underlying tech</td>
+          <td>Manual path + data type entry; no discoverability</td>
+          <td>Search by name, category, or keyword; full discoverability</td>
+          <td>Settings Catalog (DDM settings are surfaced there)</td>
+        </tr>
+        <tr>
+          <td>Reporting quality</td>
+          <td>N/A</td>
+          <td>Basic — setting-level pass/fail only</td>
+          <td>Enhanced per-setting reporting with conflict detection</td>
+          <td>Real-time proactive status reporting from device</td>
+        </tr>
+        <tr>
+          <td>Offline behavior</td>
+          <td>Applied locally once received</td>
+          <td>Queues until device online</td>
+          <td>Queues until device online</td>
+          <td>Device self-enforces desired state even offline</td>
+        </tr>
+        <tr>
+          <td>Conflict detection</td>
+          <td>N/A</td>
+          <td>Limited — silent conflicts possible</td>
+          <td>Built-in conflict visibility in admin center</td>
+          <td>Device-side resolution; avoids race conditions</td>
+        </tr>
+        <tr>
+          <td>When to use</td>
+          <td>Always — it's the foundation</td>
+          <td>Only when setting not in Settings Catalog</td>
+          <td>Default for all new policies</td>
+          <td>Apple software updates (required for OS 26+); EPM on Windows</td>
+        </tr>
+        <tr>
+          <td>Microsoft investment</td>
+          <td>Ongoing (OS-level)</td>
+          <td>Stable but not expanding</td>
+          <td>Primary — all new settings land here first</td>
+          <td>Active — expanding DDM coverage in each Intune release</td>
+        </tr>
+        <tr>
+          <td>Current status</td>
+          <td>✅ Active</td>
+          <td>⚠️ Available but use minimally</td>
+          <td>✅ Recommended default</td>
+          <td>✅ Required for Apple OS 26+</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Decision tree -->
+<div class="layer-section">
+  <div class="section-title">Decision Flow — Which Method Should I Use?</div>
+  <div class="decision-grid">
+    <div class="decision-card">
+      <div class="decision-q">📋 Creating a new Windows policy?</div>
+      <div class="decision-a">→ <span>Settings Catalog</span> first. Search for the setting. If not found, check the <a href="https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-configuration-service-provider" style="color:#60a5fa">CSP reference</a> and use OMA-URI as a last resort.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-q">🍎 Managing Apple software updates?</div>
+      <div class="decision-a">→ <span>DDM via Settings Catalog</span>. Legacy MDM update commands are deprecated in OS 26 (2025–2026). Migration deadline before OS 26 ships.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-q">📁 Have existing Administrative Template policies?</div>
+      <div class="decision-a">→ Keep existing — they still work and can be edited. But <span>rebuild any new policies in Settings Catalog</span>. Admin Templates are retired for new creation since Dec 2024.</div>
+    </div>
+    <div class="decision-card">
+      <div class="decision-q">⚙️ Need a setting that's not in the Settings Catalog UI?</div>
+      <div class="decision-a">→ <span>Custom OMA-URI</span> using the exact CSP path from Microsoft's CSP reference docs. Note: Microsoft is restricting OMA-URI to settings genuinely absent from Settings Catalog.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Deprecation timeline -->
+<div class="layer-section">
+  <div class="section-title">Deprecation &amp; Migration Timeline</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-date">Aug 2024 (2408)</div>
+      <div class="tl-text"><strong>macOS Endpoint Protection &amp; System Extensions templates deprecated.</strong> Replaced by Settings Catalog equivalents (FileVault, Firewall, Gatekeeper).</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Dec 2024 (2412)</div>
+      <div class="tl-text"><strong>Administrative Templates retired for new creation.</strong> Cannot create new Admin Template profiles. Existing policies remain functional. Settings Catalog is the replacement path.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Apr 2025</div>
+      <div class="tl-text"><strong>Custom profiles for Android Enterprise personally owned work profile retired.</strong> Settings move to Settings Catalog.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Jun 2025 (WWDC)</div>
+      <div class="tl-text"><strong>Apple announces MDM software update commands deprecated in OS 26.</strong> iOS 26, iPadOS 26, and macOS 26 will fully remove legacy MDM update commands. DDM required.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Aug 2025 (2508)</div>
+      <div class="tl-text"><strong>Intune adds near-real-time per-device DDM update reporting for Apple.</strong> New DDM-based software update report surfaces in admin center.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Late 2026</div>
+      <div class="tl-text"><strong>Apple OS 26 expected general availability.</strong> Devices on OS 26+ will ignore MDM update policies if DDM policies are enforced. Complete DDM migration required before this ships.</div>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>Key architectural point:</strong> CSP, OMA-URI, Settings Catalog, and Templates are all Windows MDM delivery mechanisms that ultimately talk to the same CSPs. They are not competing at the OS level — they are different admin surfaces with different discoverability, reporting, and support trajectories. Settings Catalog is Microsoft's unified long-term surface. DDM is Apple's parallel architectural shift and has a separate (but converging) Windows equivalent in Declared Configuration / MMP-C / WinDC used by Endpoint Privilege Management.
+</div>
+
+</body>
+</html>
