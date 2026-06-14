@@ -4,7 +4,9 @@ Author: Jon Hope | M365 Solutions Architect at Inforcer
 Medium: [medium.com/@jhope188](https://medium.com/@jhope188)  
 Blog: [conditionalaccess.tech](https://conditionalaccess.tech/)  
 Followers: 103  
-Last Updated: May 25, 2026
+Last Updated: June 14, 2026
+
+> Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #153 (published June 14, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
 
 ---
 
@@ -12,16 +14,17 @@ Last Updated: May 25, 2026
 
 | | |
 |---|---|
-| Total Articles | 35 (all published) |
-| Entra News Features | 20 (across 18 issues) |
+| Total Articles | 38 (all published) |
+| Entra News Features | 21 (across 19 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
 | Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 17 of 35 published (49%) |
-| Publication Period | September 2025 — May 2026 |
-| Primary Focus | Conditional Access, Identity Security, Secure Cloud Foundation, MSP Operations |
+| Unique Articles Featured | 18 of 38 published (47%) |
+| Publication Period | September 2025 — June 2026 |
+
+> Current public archive snapshot: Entra News #153 (June 14, 2026). The feature timeline above already includes the Jon Hope feature from issue #151 and the current public weekly issue is now #153.
 
 ---
 
@@ -52,10 +55,12 @@ Last Updated: May 25, 2026
 
 ## 📝 Complete Article Catalogue
 
-### 2026 (13 articles)
+### 2026 (19 articles)
 
 | # | Title | Published | Responses | Saves | Entra News |
 |---|-------|-----------|-----------|-------|------------|
+| 38 | Passkeys: Security Only Works If People Use It | Jun 14 | — | — | ✅ #153 |
+| 37 | Authentication Methods | May 31 | — | — | ✅ #151 |
 | 36 | Identity Is Everything | May 24 | — | — | ✅ #150 |
 | 35 | Conditional Access: The Safety Net | May 10 | — | — | ✅ #148 |
 | 34 | Conditional Access Foundations: The Bottom of the Stack (And Why It Matters Most) | Apr 22 | — | — | 🥉 #147 + ✅ #146 |
@@ -123,6 +128,14 @@ Last Updated: May 25, 2026
 
 ---
 
+
+### Feature #21 — Issue #153 (June 14, 2026)
+- **Article:** Passkeys: Security Only Works If People Use It
+- **Link:** [https://conditionalaccess.tech/articles/identity/passkeys.html](https://conditionalaccess.tech/articles/identity/passkeys.html)
+- **Section:** 🫆 Authentication
+- **Context:** Featured alongside SSPR Verification (AdminDroid), Per-Torben Sorensen (I.D.E.A #004 – MFA), and John Savill / Azure Brother passkey video content. Issue #153 covered CA enforcement changes during credential registration, SSPR requiring registered auth methods going forward, PIM custom extensions (Preview), and Azure AD B2C migration tools.
+
+---
 
 ### Feature #20 — Issue #151 (May 31, 2026)
 - **Article:** Authentication Methods
@@ -261,7 +274,7 @@ Last Updated: May 25, 2026
 | 🚀 Most Popular Posts | 3 (🥇 #1, 🥈 #2, 🥉 #3) |
 | 📒 Tenant Configuration | 2 |
 | 🥷 Security | 2 |
-| 🫆 Authentication | 5 |
+| 🫆 Authentication | 6 |
 | 🤖 DevOps & PowerShell | 1 |
 
 ### Publishing Cadence
@@ -276,14 +289,15 @@ Last Updated: May 25, 2026
 | February 2026 | 4 | 3 |
 | March 2026 | 4 | 4 |
 | April 2026 | 4 | 3 |
-| May 2026 | 1 | 5 |
-| **Total** | **35** | **20** |
+| May 2026 | 2 | 5 |
+| June 2026 | 1 | 1 |
+| **Total** | **38** | **21** |
 
 ---
 
 ## 🎯 Articles Not Featured on Entra News
 
-19 of 35 published articles were not picked up by the Entra News editorial team. The newsletter's scope is focused specifically on Microsoft Entra / Identity content, which explains most omissions:
+20 of 38 published articles were not picked up by the Entra News editorial team. The newsletter's scope is focused specifically on Microsoft Entra / Identity content, which explains most omissions:
 
 | Article | Published | Reason |
 |---------|-----------|--------|
@@ -321,7 +335,8 @@ Jan 2026  ████████ Onboard to Inforcer → Security That Scales 
 Feb 2026  ████████ Perimeter (#135) → Azure Isn't Infinite → MFA for All (#137) → Time-Bound (#138)
 Mar 2026  ████████ Finding the Gaps (#140 → 🥇#141) → BS in Business Standard (#141) → CA Analyzer + Backup & Recovery (#142 × 2)
 Apr 2026  ████████████ CA Analyzer 🥈 (#143) → Location, Location, Location (#144) → Copilot SCU → CA Foundations: Bottom of the Stack (#146)
-May 2026  ██████ CA Foundations: Bottom of the Stack 🥉 (#147) → The Safety Net (#148) → Identity Is Everything (#150)
+May 2026  ████████ CA Foundations: Bottom of the Stack 🥉 (#147) → The Safety Net (#148) → Identity Is Everything (#150) → Authentication Methods (#151)
+Jun 2026  ██ Passkeys: Security Only Works If People Use It (#153)
 ```
 
 ---
@@ -333,4 +348,4 @@ May 2026  ██████ CA Foundations: Bottom of the Stack 🥉 (#147) →
 - LinkedIn: [Jon Hope](https://www.linkedin.com/in/jhope188)
 - GitHub: [Jhope188](https://github.com/Jhope188)
 
-*Document generated: May 31, 2026*
+*Document generated: June 14, 2026*
