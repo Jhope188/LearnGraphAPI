@@ -8,7 +8,10 @@
     and recreates them in the target tenant. Includes anti-phishing, anti-spam (inbound &
     outbound), anti-malware, Safe Links, Safe Attachments, Connection Filter policies, and
     Mail Flow (Transport) Rules.
-    
+
+    For the dedicated IAC/DFO Common Attachment Types Filter baseline (AttachmentFilter-L2),
+    use the control-specific script in ../Exchange/scripts/IAC-DFO-MALWARE-AttachmentFilter-L2.ps1.
+
     The script is tenant-agnostic: it automatically detects the target tenant's domains
     and updates RecipientDomainIs rules accordingly.
 
