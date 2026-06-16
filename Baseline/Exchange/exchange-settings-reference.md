@@ -4,6 +4,46 @@
 
 ---
 
+## Admin Notifications
+
+| Setting | Value | Risk | Description |
+|---|---|---|---|
+| ExchangeNotificationEnabled | true | Review | Master switch for Exchange admin notifications. Enabled here but ExchangeNotificationRecipients is empty, meaning notifications are firing into a void. No admin will receive Exchange health, compliance, or capacity alerts until recipients are configured. |
+| ExchangeNotificationRecipients | [] | Review | The list of recipients for Exchange admin notifications. Empty array means no one receives notifications even though ExchangeNotificationEnabled is true. Should contain at least one admin mailbox or distribution group. |
+| SiteMailboxCreationURL | null | Neutral | Defines the URL used when creating a site mailbox linked to a SharePoint site. Null means default behavior applies. Site mailboxes are a legacy feature largely replaced by shared channels and SharePoint document libraries. |
+
+---
+
+## Archive & Retention
+
+| Setting | Value | Risk | Description |
+|---|---|---|---|
+| AutoArchivingThresholdPercentage | 96% | Review | The mailbox fullness percentage at which auto-archiving is triggered. At 96% the mailbox is nearly full before archiving kicks in, leaving very little headroom. Most orgs set this between 75–85% to give earlier relief and avoid users hitting send/receive quota limits. |
+| AutoEnableArchiveMailbox | false | Review | When true, archive mailboxes are automatically provisioned for all eligible users. False means archiving must be enabled manually per mailbox. For orgs with Exchange Online Plan 2 or a compliance add-on, enabling this is a best practice — it ensures no mailbox grows unchecked without an archive safety net. |
+
+---
+
+## Authentication & Session
+
+| Setting | Value | Risk | Description |
+|---|---|---|---|
+| ActivityBasedAuthenticationTimeoutEnabled | true | OK | Master switch for activity-based session timeout in OWA and ECP. Enabled is the correct state — without this, OWA sessions never time out regardless of inactivity, leaving unattended browser sessions permanently open. |
+| ActivityBasedAuthenticationTimeoutInterval | 01:00:00 | OK | The idle timeout duration for OWA and ECP sessions. 1 hour aligns with CIS M365 Foundations guidance. Previously configured at 6 hours — aligned to baseline. |
+| ActivityBasedAuthenticationTimeoutWithSingleSignOnEnabled | true | Review | When true, the activity timeout also applies to SSO sessions, meaning an idle OWA session will time out even if the user is active in other M365 apps. More secure but can cause unexpected re-auth prompts. Worth documenting for helpdesk. |
+| OAuth2ClientProfileEnabled | true | OK | Enables modern authentication (OAuth2) for Exchange Online clients. True is mandatory for MFA, Conditional Access, and all current Outlook clients. Disabling this falls back to basic authentication, which is deprecated and blocked by Microsoft. |
+| EnforceExoAppRbacPermissions | false | Review | Controls whether the new Exchange Online RBAC model is enforced for app permissions. False means legacy service principal permission grants are still honored. Enabling is the forward-looking posture, but requires auditing app registrations using legacy EXO permissions first to avoid breaking integrations. |
+| DefaultAuthenticationPolicy | null | Review | Sets the default authentication policy applied to all mailboxes without an explicit policy assignment. Null means no default policy is enforced — authentication protocol restrictions (blocking basic auth for POP, IMAP, SMTP) are not applied by default. Should reference a policy that disables legacy auth protocols. |
+
+---
+
+## Delayed Delicensing
+
+| Setting | Value | Risk | Description |
+|---|---|---|---|
+| (no configurable properties) | n/a | Neutral | This group has no configurable properties exposed in the policy JSON. Delayed Delicensing controls how long a user's mailbox and data are retained after their license is removed. The absence of properties means the tenant is using Microsoft's default behavior (mailbox converted to inactive after 30 days). No action required unless custom retention windows are needed. |
+
+---
+
 ## Calendar & Meetings
 
 | Setting | Value | Risk | Description |
