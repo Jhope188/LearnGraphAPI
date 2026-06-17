@@ -2,15 +2,31 @@
 # Author: Magical IT Department
 # Date: February 1, 2026
 
-# Ensure Microsoft.Graph module is installed
-if (-not (Get-Module -ListAvailable -Name Microsoft.Graph.Users)) {
-    Write-Host "Installing Microsoft.Graph.Users module..." -ForegroundColor Yellow
-    Install-Module Microsoft.Graph.Users -Scope CurrentUser -Force
+# Ensure Microsoft.Graph modules are installed
+$requiredModules = @(
+    "Microsoft.Graph.Authentication",
+    "Microsoft.Graph.Identity.DirectoryManagement",
+    "Microsoft.Graph.Users"
+)
+
+$targetVersion = "2.36.1"
+
+foreach ($module in $requiredModules) {
+    $available = Get-Module -ListAvailable -Name $module | Sort-Object Version -Descending
+    if (-not $available -or ($available | Where-Object { $_.Version -eq [version]$targetVersion }).Count -eq 0) {
+        Write-Host "Installing $module version $targetVersion..." -ForegroundColor Yellow
+        Install-Module $module -Scope CurrentUser -Force -RequiredVersion $targetVersion
+    }
+
+    Import-Module $module -RequiredVersion $targetVersion -Force -ErrorAction Stop
 }
+
+# Disconnect any existing Graph session first to avoid mixed-version module conflicts
+Disconnect-MgGraph -ErrorAction SilentlyContinue
 
 # Connect to Microsoft Graph
 Write-Host "Connecting to Microsoft Graph..." -ForegroundColor Cyan
-Connect-MgGraph -Scopes "User.ReadWrite.All"
+Connect-MgGraph -Scopes "User.ReadWrite.All","Domain.Read.All" -NoWelcome
 
 # Get the domain name
 $domain = (Get-MgDomain | Where-Object {$_.IsDefault -eq $true}).Id
@@ -186,7 +202,7 @@ foreach ($user in $users) {
             $failCount++
         } else {
             # Create the user
-            $newUser = New-MgUser -DisplayName $displayName `
+            New-MgUser -DisplayName $displayName `
                 -GivenName $user.GivenName `
                 -Surname $user.Surname `
                 -UserPrincipalName $userPrincipalName `
@@ -196,8 +212,8 @@ foreach ($user in $users) {
                 -OfficeLocation $user.Office `
                 -UsageLocation "US" `
                 -PasswordProfile $PasswordProfile `
-                -AccountEnabled $true
-            
+                -AccountEnabled $true | Out-Null
+
             Write-Host "✅ Created: $displayName" -ForegroundColor Green
             Write-Host "   UPN: $userPrincipalName" -ForegroundColor Gray
             Write-Host "   Job Title: $($user.JobTitle)" -ForegroundColor Gray

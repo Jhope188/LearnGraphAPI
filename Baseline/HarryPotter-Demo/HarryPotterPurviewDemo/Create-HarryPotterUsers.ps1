@@ -3,59 +3,119 @@
 # Date: February 1, 2026
 
 # Ensure Microsoft.Graph modules are installed
-$requiredModules = @("Microsoft.Graph.Users", "Microsoft.Graph.Users.Actions")
+$requiredModules = @(
+    "Microsoft.Graph.Authentication",
+    "Microsoft.Graph.Identity.DirectoryManagement",
+    "Microsoft.Graph.Users",
+    "Microsoft.Graph.Users.Actions",
+    "Microsoft.Graph.Groups"
+)
+
+$targetVersion = "2.36.1"
+
 foreach ($module in $requiredModules) {
-    if (-not (Get-Module -ListAvailable -Name $module)) {
-        Write-Host "Installing $module module..." -ForegroundColor Yellow
-        Install-Module $module -Scope CurrentUser -Force
+    $available = Get-Module -ListAvailable -Name $module | Sort-Object Version -Descending
+    if (-not $available -or ($available | Where-Object { $_.Version -eq [version]$targetVersion }).Count -eq 0) {
+        Write-Host "Installing $module version $targetVersion..." -ForegroundColor Yellow
+        Install-Module $module -Scope CurrentUser -Force -RequiredVersion $targetVersion
     }
+
+    # Import the same version to avoid mixed-version assembly conflicts
+    Import-Module $module -RequiredVersion $targetVersion -Force -ErrorAction Stop
 }
+
+# Disconnect any existing Graph session first to avoid mixed-version module conflicts
+Disconnect-MgGraph -ErrorAction SilentlyContinue
 
 # Connect to Microsoft Graph
 Write-Host "Connecting to Microsoft Graph..." -ForegroundColor Cyan
 Connect-MgGraph -Scopes "User.ReadWrite.All","Domain.Read.All","Group.ReadWrite.All" -NoWelcome
 
-# Function to generate avatar and set as profile photo
+# Function to generate a house-coloured avatar locally (Python PIL) and set as profile photo
 function Set-UserProfilePhoto {
     param(
         [string]$UserId,
         [string]$DisplayName,
         [string]$House
     )
-    
-    # House colors
+
+    # House colors (hex, no leading #)
     $houseColors = @{
-        "Gryffindor" = "740001"  # Scarlet red
-        "Slytherin"  = "1a472a"  # Dark green
-        "Ravenclaw"  = "0e1a40"  # Dark blue
-        "Hufflepuff" = "f0c75e"  # Yellow
+        "Gryffindor" = "740001"   # Scarlet red
+        "Slytherin"  = "1a472a"   # Dark green
+        "Ravenclaw"  = "0e1a40"   # Dark blue
+        "Hufflepuff" = "f0c75e"   # Yellow
     }
-    
+
     $color = $houseColors[$House]
-    
-    # Get initials for avatar
-    $initials = $DisplayName -replace '[^A-Z]', ''
-    if ($initials.Length -gt 2) { $initials = $initials.Substring(0,2) }
-    
-    # Generate avatar URL from UI Avatars service (free, no API key needed)
-    $avatarUrl = "https://ui-avatars.com/api/?name=$($DisplayName.Replace(' ','+'))&size=512&background=$color&color=fff&bold=true&format=png"
-    
+    if (-not $color) { $color = "555555" }
+
+    # Two-letter initials from display name
+    $initials = ($DisplayName -split '\s+' | ForEach-Object { $_[0] }) -join ''
+    if ($initials.Length -gt 2) { $initials = $initials.Substring(0, 2) }
+    $initials = $initials.ToUpper()
+
+    $tempFile = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "$UserId.png")
+    $pyScript = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "gen_avatar.py")
+
     try {
-        # Download avatar image
-        $tempFile = [System.IO.Path]::GetTempFileName() + ".png"
-        Invoke-WebRequest -Uri $avatarUrl -OutFile $tempFile -ErrorAction Stop
-        
-        # Upload as profile photo
-        Set-MgUserPhotoContent -UserId $UserId -InFile $tempFile -ErrorAction Stop
-        
-        # Clean up temp file
-        Remove-Item $tempFile -Force
-        
+        # Write Python image-generation script to a temp file
+        # Single-quoted here-string so PowerShell does not expand $ signs
+        $pyCode = @'
+from PIL import Image, ImageDraw, ImageFont
+import sys
+
+hex_color, initials, out = sys.argv[1], sys.argv[2], sys.argv[3]
+r = int(hex_color[0:2], 16)
+g = int(hex_color[2:4], 16)
+b = int(hex_color[4:6], 16)
+
+img  = Image.new("RGB", (512, 512), (r, g, b))
+draw = ImageDraw.Draw(img)
+
+brightness = (r * 299 + g * 587 + b * 114) / 1000
+text_color = (0, 0, 0) if brightness > 128 else (255, 255, 255)
+
+font = None
+for fp in ["/System/Library/Fonts/Helvetica.ttc",
+           "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+           "/Library/Fonts/Arial.ttf"]:
+    try:
+        font = ImageFont.truetype(fp, 200)
+        break
+    except Exception:
+        pass
+if font is None:
+    font = ImageFont.load_default()
+
+bbox = draw.textbbox((0, 0), initials, font=font)
+w = bbox[2] - bbox[0]
+h = bbox[3] - bbox[1]
+draw.text(((512 - w) // 2 - bbox[0], (512 - h) // 2 - bbox[1]),
+          initials, fill=text_color, font=font)
+img.save(out, "PNG")
+'@
+        $pyCode | Set-Content -Path $pyScript -Encoding utf8 -Force
+
+        # Generate the house-coloured avatar via Python
+        python3 $pyScript $color $initials $tempFile 2>&1 | Out-Null
+
+        if (-not (Test-Path $tempFile)) {
+            throw "Python image generation failed — output file not created."
+        }
+
+        # Upload as profile photo (ContentType required by the Graph SDK)
+        Set-MgUserPhotoContent -UserId $UserId -InFile $tempFile -ContentType "image/png" -ErrorAction Stop
+
         return $true
     }
     catch {
         Write-Host "   ⚠️  Could not set profile photo: $($_.Exception.Message)" -ForegroundColor Yellow
         return $false
+    }
+    finally {
+        if (Test-Path $tempFile) { Remove-Item $tempFile -Force -ErrorAction SilentlyContinue }
+        if (Test-Path $pyScript) { Remove-Item $pyScript -Force -ErrorAction SilentlyContinue }
     }
 }
 
@@ -261,7 +321,11 @@ foreach ($user in $users) {
         $existingUser = Get-MgUser -Filter "userPrincipalName eq '$userPrincipalName'" -ErrorAction SilentlyContinue
         
         if ($existingUser) {
-            Write-Host "⏭️  Skipping (already exists): $displayName ($userPrincipalName)" -ForegroundColor Gray
+            Write-Host "⏭️  Already exists: $displayName — updating photo..." -ForegroundColor Gray
+            $photoSet = Set-UserProfilePhoto -UserId $existingUser.Id -DisplayName $displayName -House $user.Office
+            if ($photoSet) {
+                Write-Host "   ✅ House photo set!" -ForegroundColor Green
+            }
             Write-Host ""
             $skipCount++
         } else {
@@ -312,12 +376,6 @@ foreach ($user in $users) {
 Write-Host "`n═══════════════════════════════════════" -ForegroundColor Magenta
 Write-Host "Creating Hogwarts House Dynamic Groups..." -ForegroundColor Magenta
 Write-Host "═══════════════════════════════════════`n" -ForegroundColor Magenta
-
-# Ensure we have the Groups module
-if (-not (Get-Module -ListAvailable -Name "Microsoft.Graph.Groups")) {
-    Write-Host "Installing Microsoft.Graph.Groups module..." -ForegroundColor Yellow
-    Install-Module "Microsoft.Graph.Groups" -Scope CurrentUser -Force
-}
 
 $dynamicGroups = @(
     @{
