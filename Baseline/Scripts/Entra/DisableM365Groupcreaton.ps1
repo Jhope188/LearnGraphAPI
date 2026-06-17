@@ -1,29 +1,37 @@
-# https://learn.microsoft.com/en-us/microsoft-365/solutions/manage-creation-of-groups
+# https://learn.microsoft.com/en-us/previous-versions/microsoft-365/solutions/manage-creation-of-groups
 # MT.1055: Microsoft 365 Group (and Team) creation should be restricted to approved users.
 #
-# Uses Microsoft Graph Beta cmdlets.
-# Run this inside an existing Maester/Graph-connected PowerShell session.
+# Restricts M365 Group creation to members of "M365 Group Creators" security group.
+# Uses Microsoft Graph Beta sub-modules (specific packages, not the monolithic Microsoft.Graph.Beta).
 
-$GroupName = "M365 Group Creators"
+$GroupName       = "M365 Group Creators"
+$TargetVersion   = "2.37.0"
+$RequiredModules = @(
+    "Microsoft.Graph.Authentication",
+    "Microsoft.Graph.Beta.Groups",
+    "Microsoft.Graph.Beta.Identity.DirectoryManagement"
+)
 
-try {
-    # Prefer the exact Beta module version that matches the installed dependency set.
-    Import-Module Microsoft.Graph.Authentication -RequiredVersion 2.34.0 -Force -ErrorAction Stop
-    Import-Module Microsoft.Graph.Beta -RequiredVersion 2.34.0 -Force -ErrorAction Stop
-} catch {
-    Write-Warning "Initial Beta import failed. Removing previously loaded Graph modules and retrying with the 2.34.0 dependency set..."
-    Get-Module Microsoft.Graph* | Remove-Module -Force -ErrorAction SilentlyContinue
-    Import-Module Microsoft.Graph.Authentication -RequiredVersion 2.34.0 -Force -ErrorAction Stop
-    Import-Module Microsoft.Graph.Beta -RequiredVersion 2.34.0 -Force -ErrorAction Stop
+# Remove any previously loaded Graph modules to avoid mixed-version assembly conflicts
+Get-Module Microsoft.Graph* | Remove-Module -Force -ErrorAction SilentlyContinue
+
+foreach ($mod in $RequiredModules) {
+    Import-Module $mod -RequiredVersion $TargetVersion -Force -ErrorAction Stop
+    Write-Host "  ✅ Loaded $mod $TargetVersion" -ForegroundColor DarkGray
 }
 
-if (-not (Get-Module Microsoft.Graph.Beta -ErrorAction SilentlyContinue)) {
-    throw "Microsoft.Graph.Beta is not available in this session after import. Please restart PowerShell and rerun this script."
+# Re-use an existing Graph session or prompt for sign-in
+$ctx = Get-MgContext -ErrorAction SilentlyContinue
+if (-not $ctx) {
+    Write-Host "No active Graph session — connecting..." -ForegroundColor Cyan
+    Connect-MgGraph -Scopes "Directory.ReadWrite.All","Group.ReadWrite.All" -NoWelcome
+    $ctx = Get-MgContext
 }
 
-if (-not (Get-MgContext -ErrorAction SilentlyContinue)) {
-    throw "Authentication needed. Run Connect-MgGraph first (for example: Connect-MgGraph -Scopes Directory.ReadWrite.All,Group.ReadWrite.All)."
+if (-not $ctx) {
+    throw "Failed to connect to Microsoft Graph. Run Connect-MgGraph manually and retry."
 }
+Write-Host "Connected as $($ctx.Account) | Tenant: $($ctx.TenantId)`n" -ForegroundColor Cyan
 
 # Step 1: Get or create the allowed-creators security group
 $group = Get-MgBetaGroup -Filter "displayName eq '$GroupName'" -All -ErrorAction SilentlyContinue |
@@ -62,14 +70,41 @@ if (-not $setting) {
     $setting = New-MgBetaDirectorySetting -BodyParameter $body
     Write-Host "  Created setting ID: $($setting.Id)"
 } else {
-    Write-Host "Group.Unified setting already exists (ID: $($setting.Id)) — updating..."
-    $setting = Update-MgBetaDirectorySetting -DirectorySettingId $setting.Id -BodyParameter $body
+    $settingId = $setting.Id
+    Write-Host "Group.Unified setting already exists (ID: $settingId) — updating..."
+    Update-MgBetaDirectorySetting -DirectorySettingId $settingId -BodyParameter $body
+    # Re-fetch after update (Update-MgBetaDirectorySetting returns void)
+    $setting = Get-MgBetaDirectorySetting -DirectorySettingId $settingId -ErrorAction Stop
 }
 
 # Step 3: Verify
 Write-Host "`n── Verification ──"
-(Get-MgBetaDirectorySetting -DirectorySettingId $setting.Id -ErrorAction Stop).Values |
+$setting.Values |
     Where-Object { $_.Name -in "EnableGroupCreation", "GroupCreationAllowedGroupId" } |
     Format-Table Name, Value -AutoSize
 
 Write-Host "Done. Add members to '$GroupName' (ID: $groupId) to grant group-creation rights."
+
+# ── Full settings dump (uncomment to inspect all Group.Unified values) ──────
+# Shows every key/value in the Group.Unified directory setting for the tenant.
+# Useful to verify the full policy state beyond just EnableGroupCreation.
+#
+#   (Get-MgBetaDirectorySetting -DirectorySettingId $setting.Id).Values | Format-Table Name, Value -AutoSize
+#
+# Example output:
+#   Name                              Value
+#   ----                              -----
+#   EnableGroupCreation               False
+#   GroupCreationAllowedGroupId       1ecf21dc-eb30-47ef-8ed1-ddc0765fbbd4
+#   EnableMSStandardBlockedWords      true
+#   AllowGuestsToBeGroupOwner         false
+#   AllowGuestsToAccessGroups         true
+#   GuestUsageGuidelinesUrl
+#   GroupCreationAllowedGroupId       (group object ID)
+#   AllowToAddGuests                  true
+#   UsageGuidelinesUrl
+#   ClassificationDescriptions
+#   DefaultClassification
+#   PrefixSuffixNamingRequirement
+#   CustomBlockedWordsList
+#   EnableMIPLabels                   false
