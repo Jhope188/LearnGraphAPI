@@ -12,3 +12,8 @@
 # Python
 __pycache__/
 *.py[cod]
+
+# Reports / output files — generated at runtime, not for source control
+*.csv
+*.xlsx
+*.log
