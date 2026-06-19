@@ -1,0 +1,54 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Publish New Article",
+      "type": "shell",
+      "command": "python3 scripts/publish.py",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true,
+        "echo": true,
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Publish Article (from config)",
+      "type": "shell",
+      "command": "python3 scripts/publish.py --config .publish-config.json",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "focus": true,
+        "echo": true,
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Preview feed.xml",
+      "type": "shell",
+      "command": "python3 -c \"import xml.etree.ElementTree as ET; root=ET.parse('feed.xml').getroot(); ch=root.find('channel'); [print(f'  [{i.find(\\\"pubDate\\\").text[:12]}] {i.find(\\\"title\\\").text}') for i in ch.findall('item')]\"",
+      "group": "none",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "focus": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
