@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>conditionalaccess.tech</title>
+    <link>https://conditionalaccess.tech</link>
+    <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
+    <language>en-gb</language>
+    <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
+    <lastBuildDate>Tue, 16 Jun 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Groups: The Connective Tissue of Microsoft 365</title>
+      <link>https://conditionalaccess.tech/articles/identity/groups-connective-tissue.html</link>
+      <description>Every MFA policy, every CA exclusion, every app assignment, every privileged role — it's all groups underneath. Get them wrong and everything else fails quietly.</description>
+      <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/identity/groups-connective-tissue.html</guid>
+      <category>Identity</category>
+    </item>
+
+    <item>
+      <title>Who Did You Let Into Your House?</title>
+      <link>https://conditionalaccess.tech/articles/identity/who-did-you-let-in.html</link>
+      <description>Guest accounts, external identities, and the access you forgot you gave.</description>
+      <pubDate>Tue, 09 Jun 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/identity/who-did-you-let-in.html</guid>
+      <category>Identity</category>
+    </item>
+
+    <item>
+      <title>Passkeys: Security Only Works If People Use It</title>
+      <link>https://conditionalaccess.tech/articles/identity/passkeys.html</link>
+      <description>The strongest authentication method doesn't matter if adoption fails. What makes passkeys stick.</description>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/identity/passkeys.html</guid>
+      <category>Identity</category>
+    </item>
+
+    <item>
+      <title>Authentication Methods: The Spectrum</title>
+      <link>https://conditionalaccess.tech/articles/identity/authentication-methods.html</link>
+      <description>From SMS OTP to phishing-resistant MFA — understanding the full range and when each matters.</description>
+      <pubDate>Fri, 15 May 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/identity/authentication-methods.html</guid>
+      <category>Identity</category>
+    </item>
+
+    <item>
+      <title>Identity Is Everything</title>
+      <link>https://conditionalaccess.tech/articles/identity/identity-is-everything.html</link>
+      <description>Defense in depth, Zero Trust, RBAC, and ITDR explained through everyday life. Why signal correlation matters.</description>
+      <pubDate>Fri, 01 May 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/identity/identity-is-everything.html</guid>
+      <category>Identity</category>
+    </item>
+
+    <item>
+      <title>CA Policy Analyzer Update</title>
+      <link>https://conditionalaccess.tech/articles/conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html</link>
+      <description>What changed in the latest CA Policy Analyzer update and how to use it to validate exclusions, gaps, and policy coverage faster.</description>
+      <pubDate>Thu, 07 May 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html</guid>
+      <category>Conditional Access</category>
+    </item>
+
+    <item>
+      <title>MFA for All… But Not the Same</title>
+      <link>https://conditionalaccess.tech/articles/conditional-access/mfa-for-all-but-not-the-same.html</link>
+      <description>One foundational policy. Four excluded service principals. And the production scars that explain every decision.</description>
+      <pubDate>Sun, 01 Feb 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/conditional-access/mfa-for-all-but-not-the-same.html</guid>
+      <category>Conditional Access</category>
+    </item>
+
+  </channel>
+</rss>
