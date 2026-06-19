@@ -4,7 +4,7 @@
     {
       "label": "Publish New Article",
       "type": "shell",
-      "command": "python3 scripts/publish.py",
+      "command": "python3 Scripts/publish.py",
       "group": "none",
       "presentation": {
         "reveal": "always",
@@ -21,7 +21,7 @@
     {
       "label": "Publish Article (from config)",
       "type": "shell",
-      "command": "python3 scripts/publish.py --config .publish-config.json",
+      "command": "python3 Scripts/publish.py --config .publish-config.json",
       "group": "none",
       "presentation": {
         "reveal": "always",
