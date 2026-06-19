@@ -18,7 +18,7 @@ index.html                ← Homepage (featured article resource-card, Entra Ne
 feed.xml                  ← RSS 2.0 feed (newest item first)
 entra-news.html           ← Entra.News features tracker
 entra.news/readme.md      ← Entra.News stats + article catalogue
-Scripts/publish.py        ← Master publish orchestrator
+.github/scripts/publish.py        ← Master publish orchestrator
 .publish-config.json      ← Ephemeral config written by Copilot before running publish.py
 ```
 
@@ -105,7 +105,7 @@ Set `entra_news` to `null` if not featured.
 Run the VS Code task **"Publish Article (from config)"** or execute:
 
 ```bash
-python3 Scripts/publish.py --config .publish-config.json
+python3 .github/scripts/publish.py --config .publish-config.json
 ```
 
 The script updates these files automatically:
@@ -185,7 +185,7 @@ Use `fmt_display()` logic: `%b %-d, %Y`
 
 - Manually edit `feed.xml` structure (use the script)
 - Change `id="latest-article-card"` — the script targets this selector
-- Touch `release_articles.py` — that script handles scheduled GitHub Action releases only; `Scripts/publish.py` is for on-demand publishing
+- Touch `release_articles.py` — that script handles scheduled GitHub Action releases only; `.github/scripts/publish.py` is for on-demand publishing
 - Add `.publish-config.json` to git commits
 
 ---
