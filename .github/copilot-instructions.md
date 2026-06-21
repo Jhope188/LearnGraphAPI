@@ -9,14 +9,19 @@ These instructions tell Copilot how to assist with the full article publish work
 
 ```
 articles/
-  index.html              ← Articles hub (latest-banner, tab counts, article cards)
+  index.html              ← Articles hub (legacy, kept for backwards links)
   identity/               ← Identity Series HTML files
   governance/             ← Governance Series HTML files
   conditional-access/     ← CA Series HTML files
   msp/                    ← MSP Series HTML files
-index.html                ← Homepage (featured article resource-card, Entra News badge)
+about.html                ← About page
+articles.html             ← Writing hub (root-level, replaces articles/index.html)
+index.html                ← Homepage (featured writing card, Entra News stats)
+appearances.html          ← Appearances page (podcasts, events, Entra.News link)
+entra-news.html           ← Entra.News features tracker (JS-rendered feature list)
+styles.css                ← Shared stylesheet for all root-level pages
+assets/                   ← Images: avatar, MVP badge, cert badges
 feed.xml                  ← RSS 2.0 feed (newest item first)
-entra-news.html           ← Entra.News features tracker
 entra.news/readme.md      ← Entra.News stats + article catalogue
 .github/scripts/publish.py        ← Master publish orchestrator
 .publish-config.json      ← Ephemeral config written by Copilot before running publish.py
@@ -111,11 +116,11 @@ python3 .github/scripts/publish.py --config .publish-config.json
 The script updates these files automatically:
 | File | What changes |
 |---|---|
-| `articles/index.html` | latest-banner updated, tab count +1, card activated/inserted |
-| `index.html` | Featured resource-card title, description, and URL |
+| `articles.html` | featured article updated, series count +1, card activated/inserted |
+| `index.html` | Featured writing card title, description, and URL |
 | `feed.xml` | New `<item>` prepended, `lastBuildDate` updated |
-| `entra-news.html` | New feature-row added, Features + Issues stat counts incremented |
-| `index.html` | Entra News badge updated (`21 features · 19 issues` → new counts) |
+| `entra-news.html` | JS features array entry added, Features + Issues stat counts incremented |
+| `index.html` | Entra News stats updated (22 features / 20 issues → new counts) |
 | `entra.news/readme.md` | At a Glance table, article catalogue row added, archive snapshot |
 
 ---
@@ -184,7 +189,7 @@ Use `fmt_display()` logic: `%b %-d, %Y`
 ## 🚫 Do not
 
 - Manually edit `feed.xml` structure (use the script)
-- Change `id="latest-article-card"` — the script targets this selector
+- Change `id="featured-article"` in `articles.html` — the script targets this selector
 - Touch `release_articles.py` — that script handles scheduled GitHub Action releases only; `.github/scripts/publish.py` is for on-demand publishing
 - Add `.publish-config.json` to git commits
 
@@ -194,6 +199,6 @@ Use `fmt_display()` logic: `%b %-d, %Y`
 
 | Always | Only if Entra News featured |
 |---|---|
-| `articles/index.html` | `entra-news.html` |
-| `index.html` (featured card) | `index.html` (badge count) |
+| `articles.html` | `entra-news.html` |
+| `index.html` (featured writing card) | `index.html` (Entra News stats) |
 | `feed.xml` | `entra.news/readme.md` |

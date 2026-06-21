@@ -3,7 +3,7 @@ release_articles.py
 --------------------
 Reads articles/identity/readme.md and articles/governance/readme.md,
 parses the publish schedule, and for any article whose date has been
-reached converts its coming-soon card in articles/index.html into a
+reached converts its coming-soon card in articles.html into a
 live clickable link.  Also prepends the new article to feed.xml.
 
 The readme table format expected:
@@ -19,7 +19,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 TODAY = date.today()
-INDEX_FILE = Path("articles/index.html")
+INDEX_FILE = Path("articles.html")
 FEED_FILE  = Path("feed.xml")
 BASE_URL   = "https://conditionalaccess.tech"
 
@@ -109,12 +109,11 @@ for series_name, (readme_path, url_prefix) in SERIES.items():
     for filename, pub_date in parse_schedule(readme_path):
         if TODAY < pub_date:
             continue
-        # Find the coming-soon div for this file
+        # Find the coming-soon div for this file (new layout: data-series + data-file attrs)
         pattern = re.compile(
-            r'<div class="article-card coming-soon"'
-            r'\s+data-series="' + re.escape(series_name) + r'"'
-            r'\s+data-file="' + re.escape(filename) + r'"'
-            r'>(.*?<div class="article-card-footer"[^>]*>.*?</div>\s*)</div>',
+            r'<div data-series="' + re.escape(series_name) + r'" data-file="' + re.escape(filename) + r'"[^>]*>\n'
+            r'((?:[ \t]+.*\n)*?)'
+            r'[ \t]+</div>',
             re.DOTALL
         )
         captured_inner = []
@@ -122,10 +121,21 @@ for series_name, (readme_path, url_prefix) in SERIES.items():
             inner = m.group(1)
             captured_inner.append(inner)
             changes.append(f"  ✅ {_sn}/{_fn} (scheduled {_pd})")
+            # Build a live card matching new layout style
+            title_m2 = re.search(r'<h3[^>]*>(.*?)</h3>', inner, re.DOTALL)
+            desc_m2  = re.search(r'<p[^>]*>(.*?)</p>',   inner, re.DOTALL)
+            date_m2  = re.search(r'>(\w+ \d{1,2}, \d{4})<', inner)
+            card_title = _strip_tags(title_m2.group(1)) if title_m2 else ''
+            card_desc  = _strip_tags(desc_m2.group(1))  if desc_m2  else ''
+            card_date  = date_m2.group(1)               if date_m2  else ''
             return (
-                f'<a href="{_up}{_fn}" class="article-card">'
-                + inner
-                + '</a>'
+                f'<a class="lift" href="articles/{_up}{_fn}" '
+                f'style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">\n'
+                f'          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Governance Series</div>\n'
+                f'          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">{card_title}</h3>\n'
+                f'          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">{card_desc}</p>\n'
+                f'          <div style="font-size:0.78rem;color:#4a6a80;">{card_date}</div>\n'
+                f'        </a>'
             )
         new_html = pattern.sub(activate, html, count=1)
         if new_html != html and captured_inner:
@@ -152,6 +162,6 @@ if html != original:
                 )
         readme_path.write_text(readme, encoding="utf-8")
 
-    print("✅ articles/index.html and feed.xml updated. GitHub Pages will redeploy shortly.")
+    print("✅ articles.html and feed.xml updated. GitHub Pages will redeploy shortly.")
 else:
     print(f"⏳ Nothing to release today ({TODAY}).")

@@ -26,8 +26,8 @@ Config JSON schema (used by Copilot agent):
 }
 
 Files updated:
-  articles/index.html    — latest-banner, tab count, card activation/insertion
-  index.html             — featured resource-card on homepage
+  articles.html          — featured article, series count, card activation/insertion
+  index.html             — featured writing card on homepage
   feed.xml               — new RSS <item> prepended
   entra-news.html        — feature-row + stat counts  (Entra News only)
   index.html             — entra-news-badge counts    (Entra News only)
@@ -42,7 +42,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 ROOT       = Path(__file__).resolve().parent.parent
-ARTICLES   = ROOT / "articles" / "index.html"
+ARTICLES   = ROOT / "articles.html"
 INDEX      = ROOT / "index.html"
 FEED       = ROOT / "feed.xml"
 ENTRA_HTML = ROOT / "entra-news.html"
@@ -154,123 +154,139 @@ def load_config(path: str) -> dict:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 2. Update articles/index.html
+# 2. Update articles.html
 # ─────────────────────────────────────────────────────────────────────────────
 
 def update_articles_index(cfg: dict):
-    series      = cfg["series"]
-    filename    = cfg["filename"]
-    title       = cfg["title"]
-    description = cfg["description"]
-    series_lbl  = cfg["series_label"]
+    series       = cfg["series"]
+    filename     = cfg["filename"]
+    title        = cfg["title"]
+    description  = cfg["description"]
+    series_lbl   = cfg["series_label"]
     display_date = cfg["display_date"]
-    tab_label   = TAB_LABELS.get(series, series.title())
+    tab_label    = TAB_LABELS.get(series, series.title())
+    article_path = f"articles/{series}/{filename}"
 
     html = ARTICLES.read_text(encoding="utf-8")
 
-    # ── 2a. Update latest-banner ──────────────────────────────────────────────
-    new_inner = (
-        f'\n    <span class="latest-card-arrow">↗</span>\n'
-        f'    <div class="latest-card-series">{series_lbl}</div>\n'
-        f'    <h2>{title}</h2>\n'
-        f'    <p>{description}</p>\n'
-        f'    <div class="latest-card-meta">\n'
-        f'      <span>{tab_label}</span>\n'
-        f'      <span>{display_date}</span>\n'
-        f'    </div>\n'
-        f'  '
+    # ── 2a. Update featured article (id="featured-article") ──────────────────
+    featured_inner = (
+        f'\n        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#00b8b0,transparent);"></div>\n'
+        f'        <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">\n'
+        f'          <span style="font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;background:rgba(0,184,176,0.12);color:#00b8b0;padding:4px 9px;border-radius:3px;">{series_lbl}</span>\n'
+        f'          <span style="font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;background:rgba(245,200,66,0.10);color:#f5c842;padding:4px 9px;border-radius:3px;">Latest</span>\n'
+        f'        </div>\n'
+        f'        <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:600;letter-spacing:-0.015em;line-height:1.15;margin:0 0 14px;color:#e8f0f8;max-width:18em;">{title}</h2>\n'
+        f'        <p style="font-size:1.02rem;line-height:1.7;color:#7a9bb5;margin:0 0 22px;max-width:42em;">{description}</p>\n'
+        f'        <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:#4a6a80;"><i class="ph ph-calendar-blank" style="font-size:15px;"></i> {display_date} · {tab_label}</div>\n'
+        f'      '
     )
 
-    def replace_latest_href(m):
-        open_a  = re.sub(r'href="[^"]*"', f'href="{series}/{filename}"', m.group(1))
-        return open_a + new_inner + m.group(3)
+    def replace_featured(m):
+        open_tag = re.sub(r'href="[^"]*"', f'href="{article_path}"', m.group(1))
+        return open_tag + featured_inner + m.group(3)
 
     html = re.sub(
-        r'(<a [^>]*?id="latest-article-card"[^>]*>)'
+        r'(<a[^>]+id="featured-article"[^>]*>)'
         r'(.*?)'
         r'(</a>)',
-        replace_latest_href,
+        replace_featured,
         html, count=1, flags=re.DOTALL
     )
 
-    # ── 2b. Increment tab count ───────────────────────────────────────────────
+    # ── 2b. Increment series count badge ─────────────────────────────────────
     def inc_count(m):
         return m.group(1) + str(int(m.group(2)) + 1) + m.group(3)
 
     html = re.sub(
-        r'(data-tab="' + re.escape(series) + r'"[^>]*>.*?'
-        r'<span class="tab-count">)(\d+)(</span>)',
+        r'(<span id="count-' + re.escape(series) + r'"[^>]*>)(\d+)([^<]*</span>)',
         inc_count,
-        html, count=1, flags=re.DOTALL
+        html, count=1
     )
 
     # ── 2c. Activate coming-soon OR insert new card ───────────────────────────
     if cfg["is_coming_soon"]:
         cs_pat = re.compile(
-            r'<div class="article-card coming-soon"'
-            r'\s+data-series="' + re.escape(series) + r'"'
-            r'\s+data-file="'   + re.escape(filename) + r'"'
-            r'>(.*?)</div>',
+            r'<div data-series="' + re.escape(series) + r'" data-file="' + re.escape(filename) + r'"[^>]*>\n'
+            r'((?:[ \t]+.*\n)*?)'
+            r'[ \t]+</div>',
             re.DOTALL
         )
-        html = cs_pat.sub(
-            lambda m: f'<a href="{series}/{filename}" class="article-card">{m.group(1)}</a>',
-            html, count=1
+        new_card = (
+            f'<a class="lift" href="{article_path}" '
+            f'style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">\n'
+            f'          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">{series_lbl}</div>\n'
+            f'          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">{title}</h3>\n'
+            f'          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">{description}</p>\n'
+            f'          <div style="font-size:0.78rem;color:#4a6a80;">{display_date}</div>\n'
+            f'        </a>'
         )
+        html = cs_pat.sub(new_card, html, count=1)
     else:
         new_card = (
-            f'\n      <a href="{series}/{filename}" class="article-card">\n'
-            f'        <div class="article-type">{series_lbl}</div>\n'
-            f'        <h3>{title}</h3>\n'
-            f'        <p>{description}</p>\n'
-            f'        <div class="article-card-footer"><span>{display_date}</span></div>\n'
-            f'      </a>'
+            f'\n        <a class="lift" href="{article_path}" '
+            f'style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">\n'
+            f'          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">{series_lbl}</div>\n'
+            f'          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">{title}</h3>\n'
+            f'          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">{description}</p>\n'
+            f'          <div style="font-size:0.78rem;color:#4a6a80;">{display_date}</div>\n'
+            f'        </a>'
         )
         html = re.sub(
-            r'(id="panel-' + re.escape(series) + r'"[^>]*>.*?<div class="article-grid">)',
+            r'(<div id="grid-' + re.escape(series) + r'"[^>]*>)',
             lambda m: m.group(0) + new_card,
-            html, count=1, flags=re.DOTALL
+            html, count=1
         )
 
     ARTICLES.write_text(html, encoding="utf-8")
-    print("  ✅ articles/index.html — latest-banner, tab count, article card")
+    print("  ✅ articles.html — featured article, series count, article card")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 3. Update index.html featured resource-card
+# 3. Update index.html featured writing card
 # ─────────────────────────────────────────────────────────────────────────────
 
 def update_homepage(cfg: dict):
-    series      = cfg["series"]
-    filename    = cfg["filename"]
-    title       = cfg["title"]
-    description = cfg["description"]
-    tab_label   = TAB_LABELS.get(series, series.title())
-    article_url = f"{BASE_URL}/articles/{series}/{filename}"
+    series       = cfg["series"]
+    filename     = cfg["filename"]
+    title        = cfg["title"]
+    description  = cfg["description"]
+    display_date = cfg["display_date"]
+    series_lbl   = cfg["series_label"]
+    tab_label    = TAB_LABELS.get(series, series.title())
+    article_url  = f"{BASE_URL}/articles/{series}/{filename}"
 
     idx = INDEX.read_text(encoding="utf-8")
 
-    # Replace the first article resource-card in the writing section
+    # Build new inner content for the featured writing card (id="latest-article")
+    featured_inner = (
+        f'\n          <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#00b8b0,transparent);"></div>\n'
+        f'          <div>\n'
+        f'            <div style="display:flex;gap:8px;margin-bottom:18px;">\n'
+        f'              <span style="font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;background:rgba(0,184,176,0.12);color:#00b8b0;padding:4px 9px;border-radius:3px;">{series_lbl}</span>\n'
+        f'              <span style="font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;background:rgba(245,200,66,0.10);color:#f5c842;padding:4px 9px;border-radius:3px;">Latest</span>\n'
+        f'            </div>\n'
+        f'            <h3 style="font-size:1.75rem;font-weight:600;letter-spacing:-0.01em;line-height:1.2;margin:0 0 14px;color:#e8f0f8;">{title}</h3>\n'
+        f'            <p style="font-size:0.98rem;line-height:1.7;color:#7a9bb5;margin:0;max-width:34em;">{description}</p>\n'
+        f'          </div>\n'
+        f'          <div style="display:flex;align-items:center;gap:8px;margin-top:24px;font-size:0.84rem;color:#4a6a80;"><i class="ph ph-calendar-blank" style="font-size:15px;"></i> {display_date}</div>\n'
+        f'        '
+    )
+
+    def replace_latest(m):
+        open_tag = re.sub(r'href="[^"]*"', f'href="{article_url}"', m.group(1))
+        return open_tag + featured_inner + m.group(3)
+
     idx = re.sub(
-        r'<a href="https://conditionalaccess\.tech/articles/[^"]*" class="resource-card">'
-        r'\s*<span class="resource-type">[^<]*</span>'
-        r'\s*<h3>[^<]*</h3>'
-        r'\s*<p>[^<]*</p>'
-        r'\s*<span class="resource-arrow">[^<]*</span>'
-        r'\s*</a>',
-        (
-            f'<a href="{article_url}" class="resource-card">\n'
-            f'          <span class="resource-type">{tab_label}</span>\n'
-            f'          <h3>{title}</h3>\n'
-            f'          <p>{description}</p>\n'
-            f'          <span class="resource-arrow">&#x2197;</span>\n'
-            f'        </a>'
-        ),
+        r'(<a[^>]+id="latest-article"[^>]*>)'
+        r'(.*?)'
+        r'(</a>)',
+        replace_latest,
         idx, count=1, flags=re.DOTALL
     )
 
     INDEX.write_text(idx, encoding="utf-8")
-    print("  ✅ index.html — featured resource-card")
+    print("  ✅ index.html — featured writing card")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -328,43 +344,37 @@ def update_entra_news(cfg: dict):
     # ── 5a. entra-news.html ───────────────────────────────────────────────────
     en = ENTRA_HTML.read_text(encoding="utf-8")
 
-    # Parse current counts
-    feat_m  = re.search(
-        r'<span class="stat-val"><span class="teal">(\d+)</span></span>'
-        r'\s*<span class="stat-label">Features</span>', en)
-    issue_m = re.search(
-        r'<span class="stat-val"><span class="teal">(\d+)</span></span>'
-        r'\s*<span class="stat-label">Issues</span>', en)
-    old_feat  = int(feat_m.group(1))  if feat_m  else 21
-    old_issue = int(issue_m.group(1)) if issue_m else 19
-    new_feat  = old_feat  + 1
-    new_issue_count = old_issue + (1 if new_issue else 0)
+    # Parse current counts from id-tagged elements
+    feat_m  = re.search(r'id="entra-features-count">(\d+)<', en)
+    issue_m = re.search(r'id="entra-issues-count">(\d+)<', en)
+    old_feat       = int(feat_m.group(1))  if feat_m  else 22
+    old_issue_cnt  = int(issue_m.group(1)) if issue_m else 20
+    new_feat        = old_feat + 1
+    new_issue_count = old_issue_cnt + (1 if new_issue else 0)
 
-    # Prepend new feature-row to grid
-    new_row = (
-        f'\n          <a href="{issue_url}" target="_blank" class="feature-row">\n'
-        f'            <div>\n'
-        f'              <div class="feature-issue">#{issue_num}</div>\n'
-        f'              <div class="feature-issue-date">{issue_date}</div>\n'
-        f'            </div>\n'
-        f'            <div class="feature-title">{title}</div>\n'
-        f'            <span class="feature-section-badge {badge_class}">{badge_label}</span>\n'
-        f'          </a>\n'
+    # Prepend new entry to JS features array
+    js_entry = (
+        f'      {{n:"{issue_num}", date:"{issue_date}", title:"{title}", '
+        f'cat:"{badge_label}"}},\n      '
     )
-    en = en.replace('<div class="feature-grid">', f'<div class="feature-grid">{new_row}', 1)
+    en = re.sub(r'(var features = \[\n)', lambda m: m.group(1) + js_entry, en, count=1)
 
-    # Update stat-val: Features
+    # Update features count stat
     en = re.sub(
-        r'(<span class="stat-val"><span class="teal">)\d+(</span></span>\s*'
-        r'<span class="stat-label">Features</span>)',
+        r'(id="entra-features-count">)\d+(<)',
         lambda m: m.group(1) + str(new_feat) + m.group(2),
         en, count=1
     )
-    # Update stat-val: Issues
+    # Update issues count stat
     en = re.sub(
-        r'(<span class="stat-val"><span class="teal">)\d+(</span></span>\s*'
-        r'<span class="stat-label">Issues</span>)',
+        r'(id="entra-issues-count">)\d+(<)',
         lambda m: m.group(1) + str(new_issue_count) + m.group(2),
+        en, count=1
+    )
+    # Update "All N Features" heading
+    en = re.sub(
+        r'(id="all-features-heading">All )\d+( Features</h2>)',
+        lambda m: m.group(1) + str(new_feat) + m.group(2),
         en, count=1
     )
     # Update meta description
@@ -373,6 +383,7 @@ def update_entra_news(cfg: dict):
         f'{new_feat} features across {new_issue_count} issues',
         en, count=1
     )
+    # Update archive snapshot note
     en = re.sub(
         r'Archive snapshot refreshed through Entra\.News #\d+ \([^)]+\)\.',
         f'Archive snapshot refreshed through Entra.News #{issue_num} ({issue_date}).',
@@ -381,15 +392,20 @@ def update_entra_news(cfg: dict):
     ENTRA_HTML.write_text(en, encoding="utf-8")
     print(f"  ✅ entra-news.html — #{issue_num} row added, features {old_feat}→{new_feat}, issues {old_issue}→{new_issue_count}")
 
-    # ── 5b. index.html entra-news-badge ──────────────────────────────────────
+    # ── 5b. index.html entra-news stats ──────────────────────────────────────
     idx = INDEX.read_text(encoding="utf-8")
     idx = re.sub(
-        r'\d+ features &bull; \d+ issues',
-        f'{new_feat} features &bull; {new_issue_count} issues',
+        r'(id="idx-entra-features">)\d+(<)',
+        lambda m: m.group(1) + str(new_feat) + m.group(2),
+        idx, count=1
+    )
+    idx = re.sub(
+        r'(id="idx-entra-issues">)\d+(<)',
+        lambda m: m.group(1) + str(new_issue_count) + m.group(2),
         idx, count=1
     )
     INDEX.write_text(idx, encoding="utf-8")
-    print(f"  ✅ index.html — Entra News badge → {new_feat} features · {new_issue_count} issues")
+    print(f"  ✅ index.html — Entra News stats → {new_feat} features · {new_issue_count} issues")
 
     # ── 5c. entra.news/readme.md ──────────────────────────────────────────────
     md = ENTRA_MD.read_text(encoding="utf-8")
@@ -445,7 +461,7 @@ def git_push(cfg: dict):
     en_cfg   = cfg.get("entra_news")
 
     files = [
-        "articles/index.html",
+        "articles.html",
         "index.html",
         "feed.xml",
     ]
