@@ -15,7 +15,7 @@
 
   <!-- ============ NAV ============ -->
   <nav style="position:fixed;top:0;left:0;right:0;height:64px;z-index:200;display:flex;align-items:center;background:rgba(10,22,40,0.78);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,184,176,0.12);">
-    <div style="max-width:1100px;margin:0 auto;width:100%;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+    <div class="nav-inner" style="max-width:1100px;margin:0 auto;width:100%;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
       <a href="index.html" style="display:flex;align-items:center;gap:9px;">
         <i class="ph-duotone ph-shield-check" style="font-size:26px;color:#00b8b0;"></i>
         <span style="font-size:1.06rem;font-weight:600;letter-spacing:-0.01em;color:#e8f0f8;">conditionalaccess<span style="color:#00b8b0;">.tech</span></span>
@@ -30,8 +30,21 @@
         <a class="iconlink" href="https://www.linkedin.com/in/jhope188" target="_blank" rel="noopener" title="LinkedIn"><i class="ph-bold ph-linkedin-logo" style="font-size:16px;"></i></a>
         <a class="iconlink" href="https://github.com/Jhope188" target="_blank" rel="noopener" title="GitHub"><i class="ph-bold ph-github-logo" style="font-size:16px;"></i></a>
       </div>
+      <button class="nav-hamburger" id="nav-ham" aria-label="Open menu" onclick="var m=document.getElementById('mob-nav');m.classList.toggle('is-open');this.classList.toggle('is-open');"><span></span><span></span><span></span></button>
     </div>
   </nav>
+  <div class="mobile-menu" id="mob-nav">
+    <a class="navlink" href="index.html#focus">Focus</a>
+    <a class="navlink" href="index.html#resources">Resources</a>
+    <a class="navlink" href="articles.html">Writing</a>
+    <a class="navlink" href="appearances.html">Appearances</a>
+    <a class="navlink" href="about.html">About</a>
+    <div class="mobile-menu-divider"></div>
+    <div class="mobile-menu-icons">
+      <a class="iconlink" href="https://www.linkedin.com/in/jhope188" target="_blank" rel="noopener" title="LinkedIn"><i class="ph-bold ph-linkedin-logo" style="font-size:16px;"></i></a>
+      <a class="iconlink" href="https://github.com/Jhope188" target="_blank" rel="noopener" title="GitHub"><i class="ph-bold ph-github-logo" style="font-size:16px;"></i></a>
+    </div>
+  </div>
 
   <main style="padding-top:64px;">
 
@@ -104,7 +117,7 @@
       <h2 style="font-size:clamp(1.7rem,3.2vw,2.4rem);font-weight:600;letter-spacing:-0.015em;line-height:1.15;margin:0 0 40px;color:#e8f0f8;max-width:18em;">Tech, Fun &amp; Projects</h2>
 
       <!-- flagship -->
-      <div class="glow" style="background:#0d2137;border:1px solid rgba(0,184,176,0.18);border-radius:10px;padding:34px 36px;margin-bottom:20px;position:relative;overflow:hidden;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center;">
+      <div class="glow flagship-card" style="background:#0d2137;border:1px solid rgba(0,184,176,0.18);border-radius:10px;padding:34px 36px;margin-bottom:20px;position:relative;overflow:hidden;display:grid;grid-template-columns:1fr auto;gap:36px;align-items:center;">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#00b8b0,transparent);"></div>
         <div>
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
@@ -115,7 +128,7 @@
           <p style="font-size:0.98rem;line-height:1.7;color:#7a9bb5;margin:0 0 20px;max-width:38em;">Scan a tenant's Conditional Access posture in seconds. Surfaces coverage gaps, risky exclusions, and service principal blind spots before an attacker does.</p>
           <a class="btn-primary" href="https://jhope188.github.io/ca-policy-analyzer/" target="_blank" rel="noopener">Open the analyzer <i class="ph-bold ph-arrow-right" style="font-size:14px;"></i></a>
         </div>
-        <div style="display:flex;gap:14px;">
+        <div class="flagship-stats" style="display:flex;gap:14px;">
           <div style="text-align:center;"><div style="font-size:2rem;font-weight:600;color:#e8f0f8;font-family:'Cascadia Code',Consolas,monospace;">100%</div><div style="font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:#4a6a80;margin-top:4px;">coverage</div></div>
           <div style="width:1px;background:rgba(0,184,176,0.14);"></div>
           <div style="text-align:center;"><div style="font-size:2rem;font-weight:600;color:#f5c842;font-family:'Cascadia Code',Consolas,monospace;">12</div><div style="font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:#4a6a80;margin-top:4px;">gaps found</div></div>
