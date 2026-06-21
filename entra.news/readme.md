@@ -4,9 +4,9 @@ Author: Jon Hope | M365 Solutions Architect at Inforcer
 Medium: [medium.com/@jhope188](https://medium.com/@jhope188)  
 Blog: [conditionalaccess.tech](https://conditionalaccess.tech/)  
 Followers: 103  
-Last Updated: June 14, 2026
+Last Updated: June 21, 2026
 
-> Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #153 (published June 14, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
+> Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #154 (published June 21, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
 
 ---
 
@@ -14,17 +14,17 @@ Last Updated: June 14, 2026
 
 | | |
 |---|---|
-| Total Articles | 38 (all published) |
-| Entra News Features | 21 (across 19 issues) |
+| Total Articles | 40 (all published) |
+| Entra News Features | 22 (across 20 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
 | Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 18 of 38 published (47%) |
+| Unique Articles Featured | 19 of 40 published (47%) |
 | Publication Period | September 2025 — June 2026 |
 
-> Current public archive snapshot: Entra News #153 (June 14, 2026). The feature timeline above already includes the Jon Hope feature from issue #151 and the current public weekly issue is now #153.
+> Current public archive snapshot: Entra News #154 (June 21, 2026). The feature timeline above already includes the Jon Hope features from issues #153 and #154. The current public weekly issue is now #154.
 
 ---
 
@@ -55,10 +55,12 @@ Last Updated: June 14, 2026
 
 ## 📝 Complete Article Catalogue
 
-### 2026 (19 articles)
+### 2026 (21 articles)
 
 | # | Title | Published | Responses | Saves | Entra News |
 |---|-------|-----------|-----------|-------|------------|
+| 40 | Groups: The Connective Tissue | Jun 16 | — | — | — |
+| 39 | Who Did You Let Into Your House? | Jun 9 | — | — | ✅ #154 |
 | 38 | Passkeys: Security Only Works If People Use It | Jun 14 | — | — | ✅ #153 |
 | 37 | Authentication Methods | May 31 | — | — | ✅ #151 |
 | 36 | Identity Is Everything | May 24 | — | — | ✅ #150 |
@@ -152,6 +154,26 @@ Last Updated: June 14, 2026
 - **Context:** Featured alongside Gabe Corsini (SAML & OIDC testing for Microsoft Entra ID). Issue #150 covered Platform SSO during Automated Device Enrollment (ADE) for macOS going GA, and Microsoft Entra named a Leader in the Forrester Wave™: Workforce Identity Security Platforms (Q2 2026). First site-native article (conditionalaccess.tech) to be featured in Entra News.
 
 ---
+
+### Feature #22 — Issue #154 (Jun 21, 2026)
+- **Article:** Who Did You Let Into Your House?
+- **Section:** 🏙️ External ID - Guests & Multi-Tenant Organizations
+- **Context:** Featured in the opening paragraph of the issue intro — "Jonathan Hope asks the uncomfortable question of who exactly you've let in as a guest." Featured alongside Katie Knowles (Entra Agent ID cross-tenant compromise) and Sebastian Flaeng Markdanner (Choosing the Right Extension Type). Issue #154 also covered baseline scopes in Conditional Access, SSPR tightening in September, and Erica Zelick's Entra Chat on shadow admins / non-human identities.
+
+### Feature #21 — Issue #153 (Jun 14, 2026)
+- **Article:** Passkeys: Security Only Works If People Use It
+- **Section:** 🫆 Authentication
+- **Context:** Featured in the Authentication section alongside Jay Kerai (Entra Passkey Registration Campaign) and Tony Redmond (SSPR tightening). Issue #153 covered soft delete of devices and Agent ID updates.
+
+### Feature #20 — Issue #151 (May 31, 2026)
+- **Article:** Authentication Methods
+- **Section:** 🫆 Authentication
+- **Context:** Featured in the Authentication section. Issue #151 covered sensitivity labels for Microsoft Entra cloud security groups going public preview.
+
+### Feature #19 — Issue #150 (May 24, 2026)
+- **Article:** Identity Is Everything
+- **Section:** 🫆 Authentication
+- **Context:** Featured in the Authentication section. Issue #150 covered Platform SSO on macOS going GA and new GSA OpsGuide.
 
 ### Feature #18 — Issue #148 (May 10, 2026)
 - **Article:** Conditional Access: The Safety Net
@@ -276,6 +298,7 @@ Last Updated: June 14, 2026
 | 🥷 Security | 2 |
 | 🫆 Authentication | 6 |
 | 🤖 DevOps & PowerShell | 1 |
+| 🏙️ External ID | 1 |
 
 ### Publishing Cadence
 
@@ -290,8 +313,8 @@ Last Updated: June 14, 2026
 | March 2026 | 4 | 4 |
 | April 2026 | 4 | 3 |
 | May 2026 | 2 | 5 |
-| June 2026 | 1 | 1 |
-| **Total** | **38** | **21** |
+| June 2026 | 3 | 2 |
+| **Total** | **40** | **22** |
 
 ---
 
@@ -336,7 +359,7 @@ Feb 2026  ████████ Perimeter (#135) → Azure Isn't Infinite →
 Mar 2026  ████████ Finding the Gaps (#140 → 🥇#141) → BS in Business Standard (#141) → CA Analyzer + Backup & Recovery (#142 × 2)
 Apr 2026  ████████████ CA Analyzer 🥈 (#143) → Location, Location, Location (#144) → Copilot SCU → CA Foundations: Bottom of the Stack (#146)
 May 2026  ████████ CA Foundations: Bottom of the Stack 🥉 (#147) → The Safety Net (#148) → Identity Is Everything (#150) → Authentication Methods (#151)
-Jun 2026  ██ Passkeys: Security Only Works If People Use It (#153)
+Jun 2026  ██████ Passkeys: Security Only Works If People Use It (#153) → Who Did You Let Into Your House? (#154) → Groups: The Connective Tissue
 ```
 
 ---
@@ -348,4 +371,4 @@ Jun 2026  ██ Passkeys: Security Only Works If People Use It (#153)
 - LinkedIn: [Jon Hope](https://www.linkedin.com/in/jhope188)
 - GitHub: [Jhope188](https://github.com/Jhope188)
 
-*Document generated: June 14, 2026*
+*Document generated: June 21, 2026*
