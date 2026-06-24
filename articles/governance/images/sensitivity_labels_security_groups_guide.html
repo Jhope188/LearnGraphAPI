@@ -1,0 +1,480 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif}
+:root{
+  --navy:#0a1628;--surface:#0d2137;--surface-alt:#112840;
+  --teal:#00b8b0;--teal-dim:#1a7f7a;--teal-glow:rgba(26,127,122,0.20);
+  --text:#e8f0f8;--text-sec:#7a9bb5;--text-dim:#4a6a80;
+  --border:rgba(0,184,176,0.12);
+  --ok:#00b8b0;--warn:#f5c842;--danger:#e05533;
+  --mono:'Cascadia Code',Consolas,monospace;
+}
+.wrap{background:var(--navy);color:var(--text);padding:28px 24px;min-height:100vh;
+  background:radial-gradient(ellipse 55% 45% at 70% 25%,rgba(26,127,122,0.22) 0%,transparent 65%),
+             radial-gradient(ellipse 35% 55% at 15% 75%,rgba(0,184,176,0.08) 0%,transparent 60%),
+             #0a1628;}
+.eyebrow{font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:6px}
+h1{font-size:1.45rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.sub{font-size:0.88rem;color:var(--text-sec);margin-bottom:28px}
+
+/* Tab nav */
+.tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{background:none;border:none;color:var(--text-sec);font-size:0.82rem;font-weight:500;padding:8px 14px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s}
+.tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab:hover{color:var(--text)}
+.panel{display:none}.panel.active{display:block}
+
+/* Step cards */
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px 20px;position:relative;cursor:pointer;transition:border-color .2s}
+.step::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),transparent);border-radius:6px 6px 0 0;opacity:0;transition:opacity .2s}
+.step:hover{border-color:rgba(0,184,176,0.3)}
+.step:hover::before{opacity:1}
+.step-head{display:flex;align-items:center;gap:12px}
+.step-num{width:26px;height:26px;border-radius:50%;background:rgba(0,184,176,0.12);color:var(--teal);font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-title{font-size:0.95rem;font-weight:600;color:var(--text);flex:1}
+.step-badge{font-size:0.68rem;padding:2px 8px;border-radius:12px;font-weight:600;letter-spacing:0.05em}
+.badge-prereq{background:rgba(0,184,176,0.12);color:var(--teal)}
+.badge-warn{background:rgba(245,200,66,0.10);color:var(--warn)}
+.badge-danger{background:rgba(224,85,51,0.12);color:var(--danger)}
+.badge-new{background:rgba(0,184,176,0.18);color:var(--teal)}
+.step-body{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:none}
+.step-body.open{display:block}
+.step-body p{font-size:0.85rem;color:var(--text-sec);line-height:1.6;margin-bottom:10px}
+.step-body p:last-child{margin-bottom:0}
+
+/* Code blocks */
+.code-block{background:#060e1a;border:1px solid var(--border);border-radius:4px;padding:14px 16px;margin:10px 0;position:relative;overflow:hidden}
+.code-block code{font-family:var(--mono);font-size:0.78rem;color:#9fefeb;display:block;line-height:1.7;white-space:pre}
+.code-label{font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px}
+.copy-btn{position:absolute;top:10px;right:10px;background:rgba(0,184,176,0.1);border:1px solid var(--border);color:var(--teal);font-size:0.7rem;padding:3px 8px;border-radius:3px;cursor:pointer;font-family:var(--mono)}
+.copy-btn:hover{background:rgba(0,184,176,0.2)}
+
+/* Callout */
+.callout{border-left:3px solid var(--teal);background:var(--surface);border-radius:0 6px 6px 0;padding:12px 16px;margin:10px 0;font-size:0.83rem;color:var(--text-sec);line-height:1.6}
+.callout.warn{border-left-color:var(--warn)}
+.callout.danger{border-left-color:var(--danger)}
+.callout strong{color:var(--text)}
+
+/* Requirement check list */
+.req-list{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.req-item{display:flex;align-items:flex-start;gap:10px;font-size:0.83rem;color:var(--text-sec);line-height:1.5}
+.req-icon{font-size:0.8rem;margin-top:2px;flex-shrink:0}
+.req-ok{color:var(--ok)}.req-warn{color:var(--warn)}.req-block{color:var(--danger)}
+
+/* Gotcha cards */
+.gotchas{display:flex;flex-direction:column;gap:12px}
+.gotcha{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:18px 20px}
+.gotcha-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.gotcha-icon{font-size:1.1rem}
+.gotcha-title{font-size:0.92rem;font-weight:600}
+.gotcha-body{font-size:0.83rem;color:var(--text-sec);line-height:1.6}
+.gotcha-body strong{color:var(--text)}
+
+/* Role bypass table */
+.bypass-table{width:100%;border-collapse:collapse;font-size:0.8rem;margin-top:10px}
+.bypass-table th{text-align:left;padding:6px 10px;color:var(--text-dim);font-weight:600;font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.bypass-table td{padding:7px 10px;color:var(--text-sec);border-bottom:1px solid rgba(0,184,176,0.06)}
+.bypass-table tr:last-child td{border-bottom:none}
+.pass{color:var(--ok)}.fail{color:var(--danger)}.partial{color:var(--warn)}
+
+/* Animated checklist indicator */
+@keyframes pulse-teal{0%,100%{box-shadow:0 0 0 0 rgba(0,184,176,0.4)}50%{box-shadow:0 0 0 5px rgba(0,184,176,0)}}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);display:inline-block;margin-right:6px;animation:pulse-teal 2s infinite}
+
+/* Stepper animation for label config flow */
+.stepper{display:flex;flex-direction:column;gap:0}
+.s-step{display:flex;gap:14px;padding-bottom:18px}
+.s-step:last-child{padding-bottom:0}
+.s-line{display:flex;flex-direction:column;align-items:center;gap:0}
+.s-dot{width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:3px}
+.s-connector{width:1px;flex:1;background:var(--border);margin:4px 0}
+.s-step:last-child .s-connector{display:none}
+.s-content{flex:1}
+.s-label{font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.s-detail{font-size:0.8rem;color:var(--text-sec);line-height:1.55}
+.s-detail code{font-family:var(--mono);font-size:0.75rem;color:var(--teal);background:rgba(0,184,176,0.08);padding:1px 5px;border-radius:2px}
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Public preview · June 2026</div>
+  <h1>Sensitivity labels for Entra security groups</h1>
+  <p class="sub">Setup guide, configuration walkthrough, and gotchas — based on official MS Learn documentation</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('prereqs')">Prerequisites</button>
+    <button class="tab" onclick="showTab('config')">Label configuration</button>
+    <button class="tab" onclick="showTab('enable')">Enable in tenant</button>
+    <button class="tab" onclick="showTab('gotchas')">Gotchas</button>
+  </div>
+
+  <!-- PREREQUISITES -->
+  <div class="panel active" id="tab-prereqs">
+    <div class="steps">
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div class="step-title">Entra ID P1 license</div>
+          <span class="step-badge badge-prereq">Required</span>
+        </div>
+        <div class="step-body">
+          <p>At least one active <strong>Microsoft Entra ID P1</strong> license must exist in the tenant. This is satisfied by M365 E3, M365 E5, or Business Premium. E5 is not required for the base feature.</p>
+          <div class="req-list">
+            <div class="req-item"><span class="req-icon req-ok">✓</span><span>M365 E3 — includes Entra P1</span></div>
+            <div class="req-item"><span class="req-icon req-ok">✓</span><span>M365 E5 — includes Entra P1 and P2</span></div>
+            <div class="req-item"><span class="req-icon req-ok">✓</span><span>Business Premium — includes Entra P1</span></div>
+            <div class="req-item"><span class="req-icon req-block">✗</span><span>M365 Business Standard — Entra ID Free only, not supported</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div class="step-title">EnableMIPLabels set to True in Group.Security</div>
+          <span class="step-badge badge-prereq">Required</span>
+        </div>
+        <div class="step-body">
+          <p>Cloud security groups use the <strong>Group.Security</strong> directory settings template. This is a separate template from <code>Group.Unified</code> used for M365 groups. Even if M365 group labels are already working, you must create this setting separately.</p>
+          <div class="callout">
+            <strong>Already done for conditionalaccess.tech:</strong> Setting ID <code>48e62f10-5d35-42c6-b9a9-015511fa80d2</code> was created with EnableMIPLabels: True and AllowToAddGuests: True.
+          </div>
+          <div class="code-label">PowerShell — create if not exists</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>$params = @{
+    templateId = "d209f6fa-3839-4d70-b83f-60b1c64d0e8f"
+    values = @(
+        @{ name = "AllowToAddGuests"; value = "True" }
+        @{ name = "EnableMIPLabels";  value = "True" }
+    )
+}
+New-MgBetaDirectorySetting -BodyParameter $params</code>
+          </div>
+          <div class="code-label">PowerShell — verify</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>(Get-MgBetaDirectorySetting | Where-Object {
+    $_.DisplayName -eq "Group.Security"
+}).Values</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div class="step-title">Labels published in Purview with Groups & Sites scope</div>
+          <span class="step-badge badge-prereq">Required</span>
+        </div>
+        <div class="step-body">
+          <p>Sensitivity labels must be published in <strong>Microsoft Purview</strong> with the <strong>Groups & Sites</strong> scope enabled. The same labels used for M365 groups will apply to security groups — no separate label configuration is required.</p>
+          <p>In Purview: <strong>Information Protection → Labels → Edit → Scope → check Groups & sites</strong>. Then publish via a label policy scoped to the relevant users or groups.</p>
+          <div class="callout warn">
+            <strong>Important:</strong> The label policy must be scoped to include the user who will assign labels to groups. If the user isn't in scope of the policy, the label dropdown won't appear even if all other prereqs are met.
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div class="step-title">Labels synchronized to Entra ID</div>
+          <span class="step-badge badge-prereq">Required</span>
+        </div>
+        <div class="step-body">
+          <p>Run <code>Execute-AzureADLabelSync</code> from <strong>Security & Compliance PowerShell</strong> to synchronize labels to Entra ID. This cmdlet is not available in the Graph PowerShell SDK.</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>Connect-IPPSSession
+Execute-AzureADLabelSync</code>
+          </div>
+          <div class="callout warn">
+            <strong>Allow up to 24 hours</strong> after synchronization for labels to become available in the Entra admin center group dropdown. If the label was recently published, this is the most common reason for the dropdown appearing empty.
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">5</div>
+          <div class="step-title">Group type and membership requirements</div>
+          <span class="step-badge badge-warn">Constraints</span>
+        </div>
+        <div class="step-body">
+          <p>Labels are only supported on specific group types. Check before attempting to apply.</p>
+          <div class="req-list">
+            <div class="req-item"><span class="req-icon req-ok">✓</span><span>Cloud security groups — assigned membership type</span></div>
+            <div class="req-item"><span class="req-icon req-block">✗</span><span>Dynamic membership groups — not supported in this release</span></div>
+            <div class="req-item"><span class="req-icon req-block">✗</span><span>On-premises synced groups — not supported</span></div>
+            <div class="req-item"><span class="req-icon req-block">✗</span><span>Mail-enabled security groups — not supported</span></div>
+            <div class="req-item"><span class="req-icon req-block">✗</span><span>Groups with nested child groups — must remove children before labelling</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LABEL CONFIGURATION -->
+  <div class="panel" id="tab-config">
+    <div class="stepper">
+
+      <div class="s-step">
+        <div class="s-line"><div class="s-dot"></div><div class="s-connector"></div></div>
+        <div class="s-content">
+          <div class="s-label">1. Open the label in Purview</div>
+          <div class="s-detail">Microsoft Purview portal → Information Protection → Sensitivity Labels → select your label → Edit label. For a <code>Restricted</code> label this walkthrough covers the Groups & sites page specifically.</div>
+        </div>
+      </div>
+
+      <div class="s-step">
+        <div class="s-line"><div class="s-dot"></div><div class="s-connector"></div></div>
+        <div class="s-content">
+          <div class="s-label">2. Scope — check Groups & sites</div>
+          <div class="s-detail">On the Scope page, check <strong>Groups & sites</strong>. This enables the container-level settings pages. Files, Emails should also remain checked for full label coverage. Meetings is optional but recommended for Restricted labels for consistency across content types.</div>
+        </div>
+      </div>
+
+      <div class="s-step">
+        <div class="s-line"><div class="s-dot"></div><div class="s-connector"></div></div>
+        <div class="s-content">
+          <div class="s-label">3. Groups & sites — enable protection settings</div>
+          <div class="s-detail">On the Groups & sites page, check <strong>Privacy and external user access</strong>. This is the setting that controls guest enforcement on both M365 groups and Entra security groups. Without this checked, the label has no enforcement at the container level even if Groups & sites scope is enabled.</div>
+        </div>
+      </div>
+
+      <div class="s-step">
+        <div class="s-line"><div class="s-dot"></div><div class="s-connector"></div></div>
+        <div class="s-content">
+          <div class="s-label">4. Privacy and external user access settings</div>
+          <div class="s-detail">Set <strong>Privacy</strong> to <code>Private</code> for Restricted labels. Leave the <strong>External user access</strong> checkbox <strong>unchecked</strong> to block guests. The checkbox reads: "Let Microsoft 365 Group and Entra Security Groups owners add people outside your organization to the group as guests." Unchecked = no guests permitted on labeled groups.</div>
+        </div>
+      </div>
+
+      <div class="s-step">
+        <div class="s-line"><div class="s-dot"></div><div class="s-connector"></div></div>
+        <div class="s-content">
+          <div class="s-label">5. Private teams discoverability and shared channel controls</div>
+          <div class="s-detail">Uncheck <strong>Allow users to discover private teams with this label applied</strong>. For shared channels check: <code>Internal only</code>, <code>Same label only</code>, and <code>Private teams only</code>. All three stack additively for maximum restriction on a Restricted label.</div>
+        </div>
+      </div>
+
+      <div class="s-step">
+        <div class="s-line"><div class="s-dot"></div><div class="s-connector"></div></div>
+        <div class="s-content">
+          <div class="s-label">6. Save and publish</div>
+          <div class="s-detail">Save the label. If this is a new label, publish it via a label policy in Purview. Then run <code>Execute-AzureADLabelSync</code> to push the updated configuration to Entra ID. Allow up to 24 hours for changes to be available in the group Properties dropdown.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ENABLE IN TENANT -->
+  <div class="panel" id="tab-enable">
+    <div class="steps">
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">1</div>
+          <div class="step-title">Install required PowerShell modules</div>
+          <span class="step-badge badge-prereq">One-time</span>
+        </div>
+        <div class="step-body">
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>Install-Module Microsoft.Graph -Scope CurrentUser
+Install-Module Microsoft.Graph.Beta -Scope CurrentUser</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">2</div>
+          <div class="step-title">Connect with Directory.ReadWrite.All</div>
+          <span class="step-badge badge-prereq">Required scope</span>
+        </div>
+        <div class="step-body">
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>Connect-MgGraph -Scopes "Directory.ReadWrite.All"</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">3</div>
+          <div class="step-title">Check if Group.Security setting already exists</div>
+          <span class="step-badge badge-warn">Check first</span>
+        </div>
+        <div class="step-body">
+          <p>Run this before creating. If it already exists, use Update rather than New to avoid a <code>Request_BadRequest</code> error.</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>Get-MgBetaDirectorySetting | Where-Object {
+    $_.DisplayName -eq "Group.Security"
+} | Format-List</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">4</div>
+          <div class="step-title">Create Group.Security directory setting</div>
+          <span class="step-badge badge-new">New for security groups</span>
+        </div>
+        <div class="step-body">
+          <p>Use <code>New-MgBetaDirectorySetting</code> with the <code>Group.Security</code> templateId. This is different from the Group.Unified template used for M365 groups.</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>$params = @{
+    templateId = "d209f6fa-3839-4d70-b83f-60b1c64d0e8f"
+    values = @(
+        @{ name = "AllowToAddGuests"; value = "True" }
+        @{ name = "EnableMIPLabels";  value = "True" }
+    )
+}
+New-MgBetaDirectorySetting -BodyParameter $params</code>
+          </div>
+          <div class="callout">
+            <strong>Template IDs:</strong> Group.Unified = <code>62375ab9-6b52-47ed-826b-58e47e0e304b</code> | Group.Security = <code>d209f6fa-3839-4d70-b83f-60b1c64d0e8f</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggleStep(this)">
+        <div class="step-head">
+          <div class="step-num">5</div>
+          <div class="step-title">Sync labels to Entra ID</div>
+          <span class="step-badge badge-prereq">Required</span>
+        </div>
+        <div class="step-body">
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">copy</button>
+            <code>Connect-IPPSSession
+Execute-AzureADLabelSync</code>
+          </div>
+          <div class="callout warn">
+            <strong>Wait up to 24 hours</strong> before the label dropdown appears on security group Properties pages in the Entra admin center.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GOTCHAS -->
+  <div class="panel" id="tab-gotchas">
+    <div class="gotchas">
+
+      <div class="gotcha">
+        <div class="gotcha-head">
+          <span class="gotcha-icon">⚠️</span>
+          <span class="gotcha-title" style="color:var(--warn)">Labels are immutable — by design, not preview limitation</span>
+        </div>
+        <div class="gotcha-body">
+          <p>Once a sensitivity label is applied to a security group it <strong>cannot be changed or removed</strong>. This is an architectural decision, not a temporary preview constraint. The MS Learn page notes this <em>may change before GA</em> once Microsoft builds full membership re-validation logic — but do not assume it will.</p>
+          <p style="margin-top:8px">If you apply the wrong label: create a new group with the correct label and re-add members. There is no in-place remediation path.</p>
+          <div style="margin-top:10px;padding:10px 14px;background:rgba(245,200,66,0.06);border-radius:4px;font-size:0.8rem;color:var(--text-sec)">
+            <strong style="color:var(--warn)">Client advisory:</strong> Define your label taxonomy before applying labels to any production security group. The portal shows a Remove button for admins but this is the high-privilege bypass — the warning banner is accurate.
+          </div>
+        </div>
+      </div>
+
+      <div class="gotcha">
+        <div class="gotcha-head">
+          <span class="gotcha-icon">🚨</span>
+          <span class="gotcha-title" style="color:var(--danger)">High-privilege bypass — enforcement is not universal</span>
+        </div>
+        <div class="gotcha-body">
+          <p>During preview, the following roles and application permissions <strong>bypass label policy enforcement entirely</strong> when adding members. This is confirmed in the MS Learn Known Limitations section and was demonstrated live in this tenant.</p>
+          <table class="bypass-table">
+            <tr><th>Subject</th><th>Type</th><th>Enforcement</th></tr>
+            <tr><td>Regular member (no admin role)</td><td>Interactive user</td><td class="pass">✓ Enforced</td></tr>
+            <tr><td>Group owner (no admin role)</td><td>Interactive user</td><td class="pass">✓ Enforced</td></tr>
+            <tr><td>Groups Administrator</td><td>Directory role</td><td class="fail">✗ Bypassed</td></tr>
+            <tr><td>User Administrator</td><td>Directory role</td><td class="fail">✗ Bypassed</td></tr>
+            <tr><td>Global Administrator</td><td>Directory role</td><td class="fail">✗ Bypassed</td></tr>
+            <tr><td>Group.ReadWrite.All</td><td>App permission</td><td class="fail">✗ Bypassed</td></tr>
+            <tr><td>Directory.ReadWrite.All</td><td>App permission</td><td class="fail">✗ Bypassed</td></tr>
+            <tr><td>GroupMember.ReadWrite.All</td><td>App permission</td><td class="fail">✗ Bypassed</td></tr>
+          </table>
+          <p style="margin-top:10px">This means any automation, service principal, or privileged admin can bypass enforcement today. <strong>Demo to non-privileged users only</strong> to show the enforcement working correctly.</p>
+        </div>
+      </div>
+
+      <div class="gotcha">
+        <div class="gotcha-head">
+          <span class="gotcha-icon">⚠️</span>
+          <span class="gotcha-title" style="color:var(--warn)">Existing members are not evicted when a label is applied</span>
+        </div>
+        <div class="gotcha-body">
+          <p>If a group already contains guests and you apply a label with guest-blocking policy, those <strong>existing guests remain</strong>. The label validates new additions only — it does not retroactively enforce against current membership.</p>
+          <p style="margin-top:8px">The MS Learn doc notes: "if you change a label from allowing to blocking guest access, guests already in those groups remain until an owner or admin removes them."</p>
+          <p style="margin-top:8px"><strong>Remediation:</strong> Audit existing members before applying a label. Remove conflicting members first, then apply the label. The portal will fail the save if a membership conflict exists at label assignment time.</p>
+        </div>
+      </div>
+
+      <div class="gotcha">
+        <div class="gotcha-head">
+          <span class="gotcha-icon">ℹ️</span>
+          <span class="gotcha-title" style="color:var(--teal)">Group.Security and Group.Unified are separate — both needed</span>
+        </div>
+        <div class="gotcha-body">
+          <p>Enabling labels for M365 groups (<code>Group.Unified</code> template) does <strong>not</strong> enable them for security groups. The two templates are independent and both require <code>EnableMIPLabels: True</code>. This is the most common reason clients see labels working on M365 groups but not appearing on Security group Properties pages.</p>
+        </div>
+      </div>
+
+      <div class="gotcha">
+        <div class="gotcha-head">
+          <span class="gotcha-icon">ℹ️</span>
+          <span class="gotcha-title" style="color:var(--teal)">Nesting requires compatible labels on all child groups</span>
+        </div>
+        <div class="gotcha-body">
+          <p>You cannot apply a label to a security group that contains nested child groups. The sequence is: remove all nested groups → apply label to parent → label each child group with an equally or more restrictive label → add children back.</p>
+          <p style="margin-top:8px">You cannot nest an unlabeled group under a labeled parent, and you cannot nest a child with a less restrictive label than the parent.</p>
+        </div>
+      </div>
+
+      <div class="gotcha">
+        <div class="gotcha-head">
+          <span class="gotcha-icon">ℹ️</span>
+          <span class="gotcha-title" style="color:var(--teal)">Label policy changes do not update existing labeled groups automatically</span>
+        </div>
+        <div class="gotcha-body">
+          <p>If you change a published label's Groups & sites settings in Purview, those changes <strong>do not automatically apply to groups already labeled</strong>. Microsoft recommends against changing group settings on published labels that are already in use.</p>
+          <p style="margin-top:8px">If you must change settings, use the <a href="https://github.com/microsoftgraph/powershell-aad-samples/blob/master/ReassignSensitivityLabelToO365Groups.ps1" style="color:var(--teal)">PowerShell reassignment script</a> from the Microsoft Graph samples repo to manually push updates to affected groups.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('[onclick="showTab(\''+id+'\')"]').classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function toggleStep(el){
+  const body=el.querySelector('.step-body');
+  const isOpen=body.classList.contains('open');
+  el.closest('.steps').querySelectorAll('.step-body').forEach(b=>b.classList.remove('open'));
+  if(!isOpen)body.classList.add('open');
+}
+function copyCode(btn){
+  const code=btn.nextElementSibling.textContent;
+  navigator.clipboard.writeText(code).then(()=>{
+    btn.textContent='copied';
+    setTimeout(()=>btn.textContent='copy',1500);
+  });
+}
+</script>
