@@ -1,0 +1,83 @@
+/* conditionalaccess.tech — Jon Hope
+   Shared styles for index.html + about.html
+   Palette: navy #0a1628 / panel #0d2137 / teal #00b8b0 / muted #7a9bb5 */
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;scroll-behavior:smooth;}
+body{
+  background:radial-gradient(ellipse 55% 45% at 78% 8%, rgba(26,127,122,0.16) 0%, transparent 60%), #0a1628;
+  color:#e8f0f8;
+  font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+a{text-decoration:none;color:inherit;}
+::selection{background:rgba(0,184,176,0.30);color:#e8f0f8;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:#0a1628;}
+::-webkit-scrollbar-thumb{background:#1a7f7a;border-radius:5px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp 0.6s ease both;}
+.fade-up-2{animation:fadeUp 0.7s ease both;}
+
+/* ---- nav ---- */
+.navlink{
+  font-family:inherit;font-size:0.88rem;font-weight:500;color:#7a9bb5;
+  padding:8px 12px;border-radius:5px;
+  transition:color 0.15s ease, background 0.15s ease;
+}
+.navlink:hover{color:#e8f0f8;background:rgba(0,184,176,0.06);}
+.navlink.active{color:#00b8b0;font-weight:600;}
+.navlink.active:hover{color:#00b8b0;}
+
+.iconlink{
+  display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:6px;
+  color:#7a9bb5;border:1px solid rgba(0,184,176,0.14);
+  transition:color 0.15s ease, border-color 0.15s ease;
+}
+.iconlink:hover{color:#00b8b0;border-color:rgba(0,184,176,0.4);}
+
+/* ---- buttons ---- */
+.btn-primary{
+  display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:0.92rem;font-weight:600;
+  color:#0a1628;background:#00b8b0;padding:13px 22px;border-radius:6px;border:none;cursor:pointer;
+  transition:background 0.15s ease;
+}
+.btn-primary:hover{background:#1fd0c7;}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:8px;font-family:inherit;font-size:0.92rem;font-weight:600;
+  color:#e8f0f8;background:transparent;border:1px solid rgba(0,184,176,0.28);padding:13px 22px;border-radius:6px;cursor:pointer;
+  transition:border-color 0.15s ease, background 0.15s ease;
+}
+.btn-ghost:hover{border-color:rgba(0,184,176,0.6);background:rgba(0,184,176,0.06);}
+
+/* ---- cards ---- */
+.lift{transition:border-color 0.15s ease, transform 0.15s ease;}
+.lift:hover{border-color:rgba(0,184,176,0.32);transform:translateY(-3px);}
+.lift-strong{transition:border-color 0.15s ease, transform 0.15s ease;}
+.lift-strong:hover{border-color:rgba(0,184,176,0.4);transform:translateY(-3px);}
+.glow{transition:border-color 0.15s ease;}
+.glow:hover{border-color:rgba(0,184,176,0.4);}
+.rowlink{transition:border-color 0.15s ease, background 0.15s ease;}
+.rowlink:hover{border-color:rgba(0,184,176,0.32);background:#112840;}
+
+/* ---- text links ---- */
+.tlink{transition:color 0.15s ease;}
+.tlink:hover{color:#1fd0c7;}
+.tlink-soft{transition:color 0.15s ease;}
+.tlink-soft:hover{color:#00b8b0;}
+.backlink{transition:color 0.15s ease;}
+.backlink:hover{color:#00b8b0;}
+
+/* ---- responsive ---- */
+@media (max-width:880px){
+  .hero-grid,.about-grid,.mvp-grid,.writing-grid{grid-template-columns:1fr !important;}
+  .focus-grid,.tools-grid,.cert-grid{grid-template-columns:1fr 1fr !important;}
+  .appear-grid{grid-template-columns:1fr !important;}
+  .entra-stats{gap:22px !important;}
+}
+@media (max-width:560px){
+  .focus-grid,.tools-grid,.cert-grid{grid-template-columns:1fr !important;}
+  .nav-links .navlink{padding:8px 8px;}
+}

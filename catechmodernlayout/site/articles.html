@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Writing — Jon Hope | Identity, Governance &amp; Security</title>
+<meta name="description" content="Practical writing on Microsoft Entra ID, M365 Governance, and Conditional Access by Jon Hope — Microsoft MVP, Security: Identity & Access.">
+<link rel="alternate" type="application/rss+xml" title="conditionalaccess.tech" href="feed.xml">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/bold/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <nav style="position:fixed;top:0;left:0;right:0;height:64px;z-index:200;display:flex;align-items:center;background:rgba(10,22,40,0.78);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,184,176,0.12);">
+    <div style="max-width:1100px;margin:0 auto;width:100%;padding:0 32px;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:9px;">
+        <i class="ph-duotone ph-shield-check" style="font-size:26px;color:#00b8b0;"></i>
+        <span style="font-size:1.06rem;font-weight:600;letter-spacing:-0.01em;color:#e8f0f8;">conditionalaccess<span style="color:#00b8b0;">.tech</span></span>
+      </a>
+      <div class="nav-links" style="display:flex;align-items:center;gap:6px;">
+        <a class="navlink" href="index.html#focus">Focus</a>
+        <a class="navlink" href="index.html#resources">Resources</a>
+        <a class="navlink active" href="articles.html">Writing</a>
+        <a class="navlink" href="appearances.html">Appearances</a>
+        <a class="navlink" href="about.html">About</a>
+        <div style="width:1px;height:22px;background:rgba(0,184,176,0.18);margin:0 4px;"></div>
+        <a class="iconlink" href="feed.xml" title="RSS feed"><i class="ph-bold ph-rss-simple" style="font-size:16px;"></i></a>
+        <a class="iconlink" href="https://www.linkedin.com/in/jhope188" target="_blank" rel="noopener" title="LinkedIn"><i class="ph-bold ph-linkedin-logo" style="font-size:16px;"></i></a>
+        <a class="iconlink" href="https://github.com/Jhope188" target="_blank" rel="noopener" title="GitHub"><i class="ph-bold ph-github-logo" style="font-size:16px;"></i></a>
+      </div>
+    </div>
+  </nav>
+
+  <main style="padding-top:64px;">
+
+    <!-- HEADER -->
+    <section style="background:radial-gradient(ellipse 50% 70% at 75% 20%, rgba(26,127,122,0.18) 0%, transparent 62%);border-bottom:1px solid rgba(0,184,176,0.10);">
+      <div style="max-width:1100px;margin:0 auto;padding:72px 32px 56px;">
+        <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#00b8b0;margin-bottom:14px;">Jon Hope · Writing</div>
+        <h1 style="font-size:clamp(2.2rem,4.6vw,3.4rem);font-weight:600;letter-spacing:-0.025em;line-height:1.05;margin:0 0 18px;color:#e8f0f8;max-width:16em;">Identity, Governance &amp; Security Writing</h1>
+        <p style="font-size:1.08rem;line-height:1.7;color:#7a9bb5;margin:0 0 26px;max-width:36em;">Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access. No fluff, no vendor spin.</p>
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+          <a class="btn-ghost" href="feed.xml" style="padding:10px 18px;"><i class="ph-bold ph-rss-simple" style="font-size:16px;"></i> RSS feed</a>
+          <a class="tlink-soft" href="https://medium.com/@jhope188" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:7px;font-size:0.9rem;font-weight:600;color:#7a9bb5;"><i class="ph-bold ph-medium-logo" style="font-size:16px;"></i> Read on Medium</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURED -->
+    <section style="max-width:1100px;margin:0 auto;padding:56px 32px 24px;">
+      <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#00b8b0;margin-bottom:18px;">Latest article</div>
+      <a class="lift-strong" href="articles/identity/groups-connective-tissue.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.16);border-radius:12px;padding:40px 42px;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#00b8b0,transparent);"></div>
+        <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;">
+          <span style="font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;background:rgba(0,184,176,0.12);color:#00b8b0;padding:4px 9px;border-radius:3px;">Identity Series · PT05</span>
+          <span style="font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;background:rgba(245,200,66,0.10);color:#f5c842;padding:4px 9px;border-radius:3px;">Latest</span>
+        </div>
+        <h2 style="font-size:clamp(1.6rem,3.2vw,2.3rem);font-weight:600;letter-spacing:-0.015em;line-height:1.15;margin:0 0 14px;color:#e8f0f8;max-width:18em;">Groups: The Connective Tissue</h2>
+        <p style="font-size:1.02rem;line-height:1.7;color:#7a9bb5;margin:0 0 22px;max-width:42em;">Every MFA policy, every CA exclusion, every app assignment, every privileged role — it's all groups underneath. Get them wrong and everything else fails quietly.</p>
+        <div style="display:flex;align-items:center;gap:8px;font-size:0.84rem;color:#4a6a80;"><i class="ph ph-calendar-blank" style="font-size:15px;"></i> Jun 16, 2026 · Identity</div>
+      </a>
+    </section>
+
+    <!-- IDENTITY SERIES -->
+    <section style="max-width:1100px;margin:0 auto;padding:48px 32px 8px;">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px;">
+        <h2 style="font-size:1.5rem;font-weight:600;color:#e8f0f8;margin:0;">Identity</h2>
+        <span style="font-size:0.8rem;font-weight:600;color:#00b8b0;background:rgba(0,184,176,0.10);padding:3px 10px;border-radius:100px;">5 articles</span>
+      </div>
+      <p style="font-size:0.96rem;line-height:1.65;color:#7a9bb5;margin:0 0 28px;max-width:46em;">Microsoft Entra ID, authentication, identity architecture, and threat detection. The fundamentals that everything else builds on.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <a class="lift" href="articles/identity/identity-is-everything.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Identity Series · PT01</div>
+          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">Identity Is Everything</h3>
+          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">Defense in depth, Zero Trust, RBAC, and ITDR explained through everyday life. Why signal correlation matters.</p>
+          <div style="font-size:0.78rem;color:#4a6a80;">May 2026</div>
+        </a>
+        <a class="lift" href="articles/identity/authentication-methods.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Identity Series · PT02</div>
+          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">Authentication Methods: The Spectrum</h3>
+          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">From SMS OTP to phishing-resistant MFA — understanding the full range and when each matters.</p>
+          <div style="font-size:0.78rem;color:#4a6a80;">May 2026</div>
+        </a>
+        <a class="lift" href="articles/identity/passkeys.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Identity Series · PT03</div>
+          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">Passkeys: Security Only Works If People Use It</h3>
+          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">The strongest authentication method doesn't matter if adoption fails. What makes passkeys stick.</p>
+          <div style="font-size:0.78rem;color:#4a6a80;">Jun 1, 2026</div>
+        </a>
+        <a class="lift" href="articles/identity/who-did-you-let-in.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Identity Series · PT04</div>
+          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">Who Did You Let Into Your House?</h3>
+          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">Guest accounts, external identities, and the access you forgot you gave.</p>
+          <div style="font-size:0.78rem;color:#4a6a80;">Jun 9, 2026</div>
+        </a>
+        <a class="lift" href="articles/identity/groups-connective-tissue.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Identity Series · PT05</div>
+          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">Groups: The Connective Tissue</h3>
+          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">Every MFA policy, CA exclusion, app assignment, and privileged role is enforced through group membership. Get groups wrong and everything else fails quietly.</p>
+          <div style="font-size:0.78rem;color:#4a6a80;">Jun 16, 2026</div>
+        </a>
+      </div>
+    </section>
+
+    <!-- CONDITIONAL ACCESS SERIES -->
+    <section style="max-width:1100px;margin:0 auto;padding:48px 32px 8px;">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px;">
+        <h2 style="font-size:1.5rem;font-weight:600;color:#e8f0f8;margin:0;">Conditional Access</h2>
+        <span style="font-size:0.8rem;font-weight:600;color:#00b8b0;background:rgba(0,184,176,0.10);padding:3px 10px;border-radius:100px;">2 articles</span>
+      </div>
+      <p style="font-size:0.96rem;line-height:1.65;color:#7a9bb5;margin:0 0 28px;max-width:46em;">Conditional Access policy design, exclusions, service principal gaps, and the real-world decisions behind every rule.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <a class="lift" href="articles/conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Conditional Access Series</div>
+          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">CA Policy Analyzer Update</h3>
+          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">What changed in the latest CA Policy Analyzer update and how to use it to validate exclusions, gaps, and policy coverage faster.</p>
+          <div style="font-size:0.78rem;color:#4a6a80;">May 2026</div>
+        </a>
+        <a class="lift" href="articles/conditional-access/mfa-for-all-but-not-the-same.html" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:26px 28px;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#00b8b0;margin-bottom:10px;">Conditional Access Series</div>
+          <h3 style="font-size:1.18rem;font-weight:600;margin:0 0 8px;color:#e8f0f8;line-height:1.3;">MFA for All… But Not the Same</h3>
+          <p style="font-size:0.92rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">One foundational policy. Four excluded service principals. And the production scars that explain every decision.</p>
+          <div style="font-size:0.78rem;color:#4a6a80;">Feb 2026 · Entra News #137</div>
+        </a>
+      </div>
+      <div style="background:#0b1d31;border:1px dashed rgba(0,184,176,0.22);border-radius:10px;padding:24px 28px;margin-top:16px;">
+        <div style="font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;color:#4a6a80;margin-bottom:7px;">Coming soon</div>
+        <h3 style="font-size:1.08rem;font-weight:600;margin:0 0 6px;color:#cdd9e5;">More Conditional Access articles on the way</h3>
+        <p style="font-size:0.9rem;line-height:1.6;color:#7a9bb5;margin:0;">Deep dives on policy design, named locations, device compliance, and sign-in risk.</p>
+      </div>
+    </section>
+
+    <!-- GOVERNANCE SERIES -->
+    <section style="max-width:1100px;margin:0 auto;padding:48px 32px 8px;">
+      <div style="display:flex;align-items:baseline;gap:14px;margin-bottom:8px;">
+        <h2 style="font-size:1.5rem;font-weight:600;color:#e8f0f8;margin:0;">Governance</h2>
+        <span style="font-size:0.8rem;font-weight:600;color:#f5c842;background:rgba(245,200,66,0.10);padding:3px 10px;border-radius:100px;">5 upcoming</span>
+      </div>
+      <p style="font-size:0.96rem;line-height:1.65;color:#7a9bb5;margin:0 0 28px;max-width:46em;">M365 governance, group lifecycle, ownership models, and the cleanup work that never makes it onto roadmaps — until something breaks.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="background:#0b1d31;border:1px solid rgba(0,184,176,0.08);border-radius:10px;padding:24px 28px;opacity:0.92;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#4a6a80;margin-bottom:10px;">Governance Series · PT01</div>
+          <h3 style="font-size:1.12rem;font-weight:600;margin:0 0 8px;color:#cdd9e5;line-height:1.3;">Groups Are the Connective Tissue — and Nobody Owns the Scissors</h3>
+          <p style="font-size:0.9rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">A governance lens on groups: dynamic rules, naming policy, expiry, and why ungoverned groups become risk vectors.</p>
+          <div style="font-size:0.76rem;color:#4a6a80;"><i class="ph ph-clock" style="font-size:12px;vertical-align:-1px;"></i> Jun 30, 2026</div>
+        </div>
+        <div style="background:#0b1d31;border:1px solid rgba(0,184,176,0.08);border-radius:10px;padding:24px 28px;opacity:0.92;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#4a6a80;margin-bottom:10px;">Governance Series · PT02</div>
+          <h3 style="font-size:1.12rem;font-weight:600;margin:0 0 8px;color:#cdd9e5;line-height:1.3;">The Governance Gap</h3>
+          <p style="font-size:0.9rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">Settings are the starting point. What separates a configured tenant from a controlled one is operationalisation.</p>
+          <div style="font-size:0.76rem;color:#4a6a80;"><i class="ph ph-clock" style="font-size:12px;vertical-align:-1px;"></i> Jul 14, 2026</div>
+        </div>
+        <div style="background:#0b1d31;border:1px solid rgba(0,184,176,0.08);border-radius:10px;padding:24px 28px;opacity:0.92;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#4a6a80;margin-bottom:10px;">Governance Series · PT03</div>
+          <h3 style="font-size:1.12rem;font-weight:600;margin:0 0 8px;color:#cdd9e5;line-height:1.3;">The Cleanup Campaign That Never Ends</h3>
+          <p style="font-size:0.9rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">Lifecycle management isn't a one-time project — it's a countermeasure against the entropy of a living tenant.</p>
+          <div style="font-size:0.76rem;color:#4a6a80;"><i class="ph ph-clock" style="font-size:12px;vertical-align:-1px;"></i> Jul 28, 2026</div>
+        </div>
+        <div style="background:#0b1d31;border:1px solid rgba(0,184,176,0.08);border-radius:10px;padding:24px 28px;opacity:0.92;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#4a6a80;margin-bottom:10px;">Governance Series · PT04</div>
+          <h3 style="font-size:1.12rem;font-weight:600;margin:0 0 8px;color:#cdd9e5;line-height:1.3;">Clean the House Before the Guests Arrive</h3>
+          <p style="font-size:0.9rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">Before Copilot goes live, you need to know what it will find. A practical audit framework for governance readiness.</p>
+          <div style="font-size:0.76rem;color:#4a6a80;"><i class="ph ph-clock" style="font-size:12px;vertical-align:-1px;"></i> Aug 11, 2026</div>
+        </div>
+        <div style="background:#0b1d31;border:1px solid rgba(0,184,176,0.08);border-radius:10px;padding:24px 28px;opacity:0.92;">
+          <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;color:#4a6a80;margin-bottom:10px;">Governance Series · PT05</div>
+          <h3 style="font-size:1.12rem;font-weight:600;margin:0 0 8px;color:#cdd9e5;line-height:1.3;">The Ownership Operating Model</h3>
+          <p style="font-size:0.9rem;line-height:1.6;color:#7a9bb5;margin:0 0 14px;">Governance doesn't fail because of technology. It fails because nobody owns anything. Building an operating model that sticks.</p>
+          <div style="font-size:0.76rem;color:#4a6a80;"><i class="ph ph-clock" style="font-size:12px;vertical-align:-1px;"></i> Aug 25, 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="max-width:1100px;margin:48px auto 0;padding:0 32px;">
+      <div style="background:radial-gradient(ellipse 60% 90% at 30% 20%, rgba(26,127,122,0.24) 0%, transparent 70%), #0d2137;border:1px solid rgba(0,184,176,0.16);border-radius:14px;padding:48px;text-align:center;">
+        <h2 style="font-size:clamp(1.5rem,3vw,2.1rem);font-weight:600;letter-spacing:-0.015em;margin:0 0 12px;color:#e8f0f8;">Never miss a new article.</h2>
+        <p style="font-size:1rem;line-height:1.7;color:#7a9bb5;margin:0 auto 26px;max-width:30em;">Subscribe via RSS or follow the full archive of 38 published articles on Medium.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a class="btn-primary" href="feed.xml"><i class="ph-bold ph-rss-simple" style="font-size:16px;"></i> Subscribe via RSS</a>
+          <a class="btn-ghost" href="https://medium.com/@jhope188" target="_blank" rel="noopener"><i class="ph-bold ph-medium-logo" style="font-size:16px;"></i> Read on Medium</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="max-width:1100px;margin:72px auto 0;padding:56px 32px 48px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;border-top:1px solid rgba(0,184,176,0.10);">
+      <a href="index.html" style="display:flex;align-items:center;gap:9px;">
+        <i class="ph-duotone ph-shield-check" style="font-size:22px;color:#00b8b0;"></i>
+        <span style="font-size:0.98rem;font-weight:600;color:#e8f0f8;">conditionalaccess<span style="color:#00b8b0;">.tech</span></span>
+      </a>
+      <div style="font-size:0.82rem;color:#4a6a80;">© 2026 Jon Hope · Microsoft MVP · Security: Identity &amp; Access</div>
+    </footer>
+
+  </main>
+
+</body>
+</html>
