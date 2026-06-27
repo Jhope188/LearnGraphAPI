@@ -658,7 +658,7 @@ Used in `DUG` (Dynamic User Group) rules.
 
 | Group | Type | Current rule | Last reviewed |
 |---|---|---|---|
-| `SG-Entra-DUG-CA-TeamsRoomDevices` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "57ff2da0-773e-42df-b2af-ffb7a2317929" -and assignedPlan.capabilityStatus -eq "Enabled"))` | 2026-06-27 |
+| `SG-Entra-DUG-CA-TeamsRoomDevices` | DUG | `((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))` | 2026-06-27 |
 | `SG-Entra-DUG-License-P1InternalUsers` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "41781fb2-bc02-4b7c-bd55-b576c07bb09f" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")` | 2026-06-27 |
 | `SG-Entra-DUG-License-P2InternalUsers` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "eec0eb4f-6444-4f95-aba0-50c24d67f998" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")` | 2026-06-27 |
 | `SG-Entra-DUG-License-TeamsRooms` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "57ff2da0-773e-42df-b2af-ffb7a2317929" -and assignedPlan.capabilityStatus -eq "Enabled"))` | 2026-06-27 |
