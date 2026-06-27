@@ -126,7 +126,7 @@ Type codes describe how group membership is managed in Entra ID.
 | `SSPR` | Self-Service Password Reset | User-initiated password reset without helpdesk |
 | `WHfB` | Windows Hello for Business | Passwordless authentication using PIN or biometrics on Windows |
 | `EAM` | External Authentication Method | Third-party MFA provider integrated with Entra |
-| `EOP` | Exchange Online Protection | Anti-spam and anti-malware filtering for email |
+| `DFO` | Defender for Office | Anti-spam and anti-malware filtering for email |
 | `PIM` | Privileged Identity Management | Just-in-time activation of privileged Entra roles |
 | `NHI` | Non-Human Identity | Any identity that is not a human user — service accounts, managed identities, app registrations, AI agents |
 | `SPO` | SharePoint Online | Microsoft SharePoint cloud service |
@@ -197,7 +197,7 @@ SG-Entra-DUG-[Scope]-[Name]
 |-----------|------|---------|
 | `SG-Entra-DUG-Admins-AllAdminUsers` | DUG | Dynamic — all users holding any admin role |
 | `SG-Entra-DUG-Lifecycle-DisabledUsers` | DUG | Dynamic — disabled/offboarded user accounts |
-| `SG-Entra-DUG-EOP-AllInternalUsers` | DUG | Dynamic — all licensed internal users for EOP policy scope |
+| `SG-Entra-DUG-DFO-AllInternalUsers` | DUG | Dynamic — all licensed internal users for DFO policy scope |
 | `SG-Entra-DUG-Identity-GuestUsers` | DUG | Dynamic — all B2B guest users |
 | `SG-Entra-DUG-License-TeamsRooms` | DUG | Dynamic — Teams Rooms licence assigned accounts |
 
@@ -664,7 +664,7 @@ Used in `DUG` (Dynamic User Group) rules.
 | `SG-Entra-DUG-License-TeamsRooms` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "57ff2da0-773e-42df-b2af-ffb7a2317929" -and assignedPlan.capabilityStatus -eq "Enabled"))` | 2026-06-27 |
 | `SG-Entra-DUG-Admins-AllAdminUsers` | DUG | `(user.userPrincipalName -startsWith "adm-")` | 2026-06-27 |
 | `SG-Entra-DUG-Lifecycle-DisabledUsers` | DUG | `(user.accountEnabled -eq false)` | 2026-06-27 |
-| `SG-Entra-DUG-EOP-AllInternalUsers` | DUG | `(user.userType -eq "Member") -and (user.accountEnabled -eq true)` | 2026-06-27 |
+| `SG-Entra-DUG-DFO-AllInternalUsers` | DUG | `(user.userType -eq "Member") -and (user.accountEnabled -eq true)` | 2026-06-27 |
 | `SG-Entra-DUG-Identity-GuestUsers` | DUG | `(user.userType -eq "Guest")` | 2026-06-27 |
 
 > **Note — `SG-Entra-DUG-Admins-AllAdminUsers`:** Rule uses UPN prefix `adm-`. Update this to match your admin account naming convention, or replace with an extensionAttribute rule if admin accounts are tagged at provisioning.
