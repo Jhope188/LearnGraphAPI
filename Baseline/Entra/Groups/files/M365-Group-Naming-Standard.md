@@ -124,7 +124,7 @@ Type codes describe how group membership is managed in Entra ID.
 | `SSPR` | Self-Service Password Reset | User-initiated password reset without helpdesk |
 | `WHfB` | Windows Hello for Business | Passwordless authentication using PIN or biometrics on Windows |
 | `EAM` | External Authentication Method | Third-party MFA provider integrated with Entra |
-| `EOP` | Exchange Online Protection | Anti-spam and anti-malware filtering for email |
+| `DFO` | Defender for Office 365 | Anti-phishing, safe links, safe attachments, and threat protection for Exchange Online |
 | `PIM` | Privileged Identity Management | Just-in-time activation of privileged Entra roles |
 | `NHI` | Non-Human Identity | Any identity that is not a human user — service accounts, managed identities, app registrations, AI agents |
 | `SPO` | SharePoint Online | Microsoft SharePoint cloud service |
@@ -195,7 +195,7 @@ SG-Entra-DUG-[Scope]-[Name]
 |-----------|------|---------|
 | `SG-Entra-DUG-Admins-AllAdminUsers` | DUG | Dynamic — all users holding any admin role |
 | `SG-Entra-DUG-Lifecycle-DisabledUsers` | DUG | Dynamic — disabled/offboarded user accounts |
-| `SG-Entra-DUG-EOP-AllInternalUsers` | DUG | Dynamic — all licensed internal users for EOP policy scope |
+| `SG-Entra-DUG-DFO-AllInternalUsers` | DUG | Dynamic — all licensed internal users for Defender for Office 365 policy scope |
 | `SG-Entra-DUG-Identity-GuestUsers` | DUG | Dynamic — all B2B guest users |
 | `SG-Entra-DUG-License-TeamsRooms` | DUG | Dynamic — Teams Rooms licence assigned accounts |
 
@@ -596,7 +596,9 @@ Dynamic licence rules use Entra service plan GUIDs rather than product names. GU
 |---|---|---|
 | Entra ID P1 (`AAD_PREMIUM`) | `41781fb2-bc02-4b7c-bd55-b576c07bb09f` | M365 E3, M365 BP, EMS E3, standalone P1 |
 | Entra ID P2 (`AAD_PREMIUM_P2`) | `eec0eb4f-6444-4f95-aba0-50c24d67f998` | M365 E5, EMS E5, standalone P2 |
-| Microsoft Teams Rooms (`MEETING_ROOM`) | `57ff2da0-773e-42df-b2af-ffb7a2317929` | Teams Rooms Pro, Teams Rooms Basic |
+| Microsoft Teams Rooms Pro (`TEAMS_ROOMS_PRO`) | `8081ca9c-188c-4b49-a8e5-c23b5e9463a8` | Teams Rooms Pro standalone |
+| Microsoft Teams Rooms Basic (`TEAMS_ROOMS_BASIC`) | `ec17f317-f4bc-451e-b2da-0167e5c260f9` | Teams Rooms Basic standalone |
+| Microsoft Teams Rooms Standard — legacy (`MEETING_ROOM`) | `92c6b761-01de-457a-9dd9-793a975238f7` | Legacy Teams Rooms Standard SKU |
 | Exchange Online Plan 1 | `9aaf7827-d63c-4b61-89c3-182f06f82e5c` | M365 BP, M365 E3 |
 | Exchange Online Plan 2 | `efb87545-963c-4e0d-99df-69c6916d9eb0` | M365 E5 |
 | Microsoft Intune | `c1ec4a95-1f05-45b3-a911-aa3fa01094f5` | M365 E3/E5, M365 BP, standalone Intune |
@@ -656,13 +658,13 @@ Used in `DUG` (Dynamic User Group) rules.
 
 | Group | Type | Current rule | Last reviewed |
 |---|---|---|---|
-| `SG-Entra-DUG-CA-TeamsRoomDevices` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "57ff2da0-773e-42df-b2af-ffb7a2317929" -and assignedPlan.capabilityStatus -eq "Enabled"))` | 2026-06-27 |
+| `SG-Entra-DUG-CA-TeamsRoomDevices` | DUG | `((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))` | 2026-06-27 |
 | `SG-Entra-DUG-License-P1InternalUsers` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "41781fb2-bc02-4b7c-bd55-b576c07bb09f" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")` | 2026-06-27 |
 | `SG-Entra-DUG-License-P2InternalUsers` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "eec0eb4f-6444-4f95-aba0-50c24d67f998" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")` | 2026-06-27 |
-| `SG-Entra-DUG-License-TeamsRooms` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "57ff2da0-773e-42df-b2af-ffb7a2317929" -and assignedPlan.capabilityStatus -eq "Enabled"))` | 2026-06-27 |
+| `SG-Entra-DUG-License-TeamsRooms` | DUG | `((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))` | 2026-06-27 |
 | `SG-Entra-DUG-Admins-AllAdminUsers` | DUG | `(user.userPrincipalName -startsWith "adm-")` | 2026-06-27 |
 | `SG-Entra-DUG-Lifecycle-DisabledUsers` | DUG | `(user.accountEnabled -eq false)` | 2026-06-27 |
-| `SG-Entra-DUG-EOP-AllInternalUsers` | DUG | `(user.userType -eq "Member") -and (user.accountEnabled -eq true)` | 2026-06-27 |
+| `SG-Entra-DUG-DFO-AllInternalUsers` | DUG | `(user.userType -eq "Member") -and (user.accountEnabled -eq true)` | 2026-06-27 |
 | `SG-Entra-DUG-Identity-GuestUsers` | DUG | `(user.userType -eq "Guest")` | 2026-06-27 |
 
 > **Note — `SG-Entra-DUG-Admins-AllAdminUsers`:** Rule uses UPN prefix `adm-`. Update this to match your admin account naming convention, or replace with an extensionAttribute rule if admin accounts are tagged at provisioning.

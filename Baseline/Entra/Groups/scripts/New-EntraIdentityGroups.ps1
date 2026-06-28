@@ -172,13 +172,15 @@ $Groups = @(
 
     @{
         Name        = "SG-Entra-DUG-CA-TeamsRoomDevices"
-        Description = "Dynamic — Teams Room system accounts. Targets accounts with the Teams Rooms licence (MEETING_ROOM service plan). Excluded from user-facing CA policies."
+        Description = "Dynamic — Teams Room system accounts across all Teams Rooms SKUs. Excluded from user-facing CA policies."
         Type        = "Dynamic"
-        # Targets accounts with the Microsoft Teams Rooms Pro or Basic service plan.
-        # Service plan GUID: 57ff2da0-773e-42df-b2af-ffb7a2317929 (MEETING_ROOM)
-        # If your Teams Room accounts share a specific UPN prefix or department attribute,
-        # add: -and (user.userPrincipalName -startsWith "mtr-")   # CUSTOMISE if applicable
-        Rule        = '(user.assignedPlans -any (assignedPlan.servicePlanId -eq "57ff2da0-773e-42df-b2af-ffb7a2317929" -and assignedPlan.capabilityStatus -eq "Enabled"))'
+        # Targets accounts with any of the three Teams Rooms service plans:
+        #   8081ca9c-188c-4b49-a8e5-c23b5e9463a8  — Microsoft Teams Rooms Pro
+        #   ec17f317-f4bc-451e-b2da-0167e5c260f9  — Microsoft Teams Rooms Basic
+        #   92c6b761-01de-457a-9dd9-793a975238f7  — Microsoft Teams Rooms Standard (legacy)
+        # All three are included so the group remains accurate regardless of which SKU
+        # has been assigned. capabilityStatus eq Enabled excludes suspended licence seats.
+        Rule        = '((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))'
     }
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -206,10 +208,13 @@ $Groups = @(
     }
     @{
         Name        = "SG-Entra-DUG-License-TeamsRooms"
-        Description = "Dynamic — all accounts with a Teams Rooms licence assigned and active. Covers Microsoft Teams Rooms Pro and Teams Rooms Basic."
+        Description = "Dynamic — all accounts with any Teams Rooms licence assigned and active. Covers Teams Rooms Pro, Basic, and Standard (legacy)."
         Type        = "Dynamic"
-        # Service plan GUID: 57ff2da0-773e-42df-b2af-ffb7a2317929 (MEETING_ROOM)
-        Rule        = '(user.assignedPlans -any (assignedPlan.servicePlanId -eq "57ff2da0-773e-42df-b2af-ffb7a2317929" -and assignedPlan.capabilityStatus -eq "Enabled"))'
+        # Same three-plan rule as SG-Entra-DUG-CA-TeamsRoomDevices.
+        #   8081ca9c-188c-4b49-a8e5-c23b5e9463a8  — Microsoft Teams Rooms Pro
+        #   ec17f317-f4bc-451e-b2da-0167e5c260f9  — Microsoft Teams Rooms Basic
+        #   92c6b761-01de-457a-9dd9-793a975238f7  — Microsoft Teams Rooms Standard (legacy)
+        Rule        = '((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))'
     }
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -273,11 +278,11 @@ $Groups = @(
         Rule        = '(user.accountEnabled -eq false)'
     }
     @{
-        Name        = "SG-Entra-DUG-EOP-AllInternalUsers"
-        Description = "Dynamic — all enabled internal Member accounts. Used to scope Exchange Online Protection and Defender for Office 365 policies to all internal users."
+        Name        = "SG-Entra-DUG-DFO-AllInternalUsers"
+        Description = "Dynamic — all enabled internal Member accounts. Used to scope Defender for Office 365 policies to all internal users."
         Type        = "Dynamic"
         # Targets enabled internal users only — excludes guests and disabled accounts.
-        # Add a department or licence filter if you need to scope EOP policies more narrowly.
+        # Add a department or licence filter if you need to scope DFO policies more narrowly.
         Rule        = '(user.userType -eq "Member") -and (user.accountEnabled -eq true)'
     }
     @{
