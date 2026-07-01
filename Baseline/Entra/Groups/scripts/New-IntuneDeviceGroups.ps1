@@ -396,36 +396,28 @@ $Groups = @(
         Type        = "Assigned"
         Rule        = $null
     }
-    @{
-        Name        = "SG-Intune-DDG-W365-AllCloudPCs"
-        Description = "Dynamic — all Windows 365 Cloud PC devices enrolled in Intune."
-        Type        = "Dynamic"
-        # device.model is NOT a valid Entra dynamic membership rule property — it is only
-        # available as an Intune device filter. Dynamic rules must use supported properties.
-        #
-        # RECOMMENDED — set extensionAttribute1 = 'CloudPC' on Cloud PC device objects
-        # at provisioning time (via Graph API or Intune enrollment profile script), then use:
-        #   (device.extensionAttribute1 -eq "CloudPC") -and (device.managementType -eq "MDM")
-        #
-        # INTUNE DEVICE FILTER (for policy assignments — no group required):
-        #   (device.model -startsWith "Cloud PC")
-        #   This is the preferred targeting method for W365 in Intune.
-        #
-        # CUSTOMISE: Set extensionAttribute1 = "CloudPC" at provisioning, or
-        # adjust the attribute/value to match your environment.
-        Rule        = '(device.extensionAttribute1 -eq "CloudPC") -and (device.managementType -eq "MDM")'
-    }
-    @{
-        Name        = "SG-Intune-DDG-W365-FrontlineDevices"
-        Description = "Dynamic — Windows 365 Frontline Cloud PCs enrolled in Intune."
-        Type        = "Dynamic"
-        # Same note as above — device.model is not valid in dynamic group rules.
-        # Use extensionAttribute2 = 'CloudPCFrontline' set at provisioning, or
-        # scope these via Intune device filter: (device.model -startsWith "Cloud PC Frontline")
-        #
-        # CUSTOMISE: Adjust attribute and value to match your provisioning tagging.
-        Rule        = '(device.extensionAttribute1 -eq "CloudPC") -and (device.extensionAttribute2 -eq "Frontline") -and (device.managementType -eq "MDM")'
-    }
+    # ── W365 broad targeting — USE INTUNE DEVICE FILTERS, NOT DYNAMIC GROUPS ──
+    #
+    # Windows 365 Cloud PCs cannot be reliably identified via Entra dynamic group
+    # membership rules because the key distinguishing properties (device.model,
+    # device.operatingSystemSKU) are only available in Intune device filters,
+    # not in Entra dynamic rule syntax.
+    #
+    # For broad W365 policy targeting, create an Intune device filter instead:
+    #
+    #   All Cloud PCs:
+    #     (device.model -startsWith "Cloud PC")
+    #
+    #   Frontline Cloud PCs only:
+    #     (device.model -startsWith "Cloud PC Frontline")
+    #
+    # Apply the filter at policy assignment time in Intune admin centre:
+    #   Devices > Configuration / Compliance > [Policy] > Assignments > Edit filter
+    #
+    # Use the Assigned ring groups above (Pilot-Devices, Prod-Devices) to control
+    # rollout, and apply a W365 device filter on top at assignment time to restrict
+    # to Cloud PCs only.
+    #
     @{
         Name        = "SG-Intune-ADG-W365-Exclusion-Devices"
         Description = "Assigned — Windows 365 Cloud PCs excluded from standard Intune policies."
@@ -506,10 +498,12 @@ Write-Host "──────────────────────�
 
 $Results | Format-Table Name, Status -AutoSize
 
-Write-Host "Dynamic group notes:" -ForegroundColor Cyan
-Write-Host "  • Groups with 'CUSTOMISE' comments require rule edits before deployment" -ForegroundColor Yellow
-Write-Host "  • SG-Intune-DDG-WIN-Autopilot-GroupTag: replace YOUR_GROUP_TAG with your Autopilot group tag value" -ForegroundColor Yellow
-Write-Host "  • SG-Intune-DDG-AVD-AllHostDevices: use Intune device filter (device.operatingSystemSKU -eq 'ServerRdsh') for policy assignments; update the group rule to use enrollment profile name if available" -ForegroundColor Yellow
+Write-Host "Post-deployment notes:" -ForegroundColor Cyan
+Write-Host "  • SG-Intune-DDG-WIN-Autopilot-GroupTag: replace YOUR_GROUP_TAG in the rule with your Autopilot group tag value" -ForegroundColor Yellow
+Write-Host "  • SG-Intune-DDG-AVD-AllHostDevices: rule uses extensionAttribute2='AVD' — use Intune device filter (device.operatingSystemSKU -eq 'ServerRdsh') for policy assignments instead" -ForegroundColor Yellow
+Write-Host "  • W365 broad targeting: no dynamic groups created — use Intune device filters at policy assignment time:" -ForegroundColor Yellow
+Write-Host "      All Cloud PCs:  (device.model -startsWith ""Cloud PC"")" -ForegroundColor White
+Write-Host "      Frontline only: (device.model -startsWith ""Cloud PC Frontline"")" -ForegroundColor White
 Write-Host "  • Run in -WhatIf first, then verify dynamic group rules in Entra portal before full deployment" -ForegroundColor White
 
 Disconnect-MgGraph | Out-Null
