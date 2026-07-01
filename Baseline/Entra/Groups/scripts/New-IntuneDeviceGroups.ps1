@@ -400,23 +400,31 @@ $Groups = @(
         Name        = "SG-Intune-DDG-W365-AllCloudPCs"
         Description = "Dynamic — all Windows 365 Cloud PC devices enrolled in Intune."
         Type        = "Dynamic"
-        # Windows 365 Cloud PCs report device.model starting with 'Cloud PC' in Entra.
-        # This is the Microsoft-documented approach for targeting W365 devices dynamically.
-        # device.deviceOSType is "Windows" for Cloud PCs — same as physical Windows.
-        # The model prefix 'Cloud PC' differentiates them from physical Windows devices.
+        # device.model is NOT a valid Entra dynamic membership rule property — it is only
+        # available as an Intune device filter. Dynamic rules must use supported properties.
         #
-        # Alternative using extensionAttribute (if set at provisioning):
-        #   '(device.extensionAttribute1 -eq "CloudPC") -and (device.managementType -eq "MDM")'
-        Rule        = '(device.model -startsWith "Cloud PC") -and (device.managementType -eq "MDM")'
+        # RECOMMENDED — set extensionAttribute1 = 'CloudPC' on Cloud PC device objects
+        # at provisioning time (via Graph API or Intune enrollment profile script), then use:
+        #   (device.extensionAttribute1 -eq "CloudPC") -and (device.managementType -eq "MDM")
+        #
+        # INTUNE DEVICE FILTER (for policy assignments — no group required):
+        #   (device.model -startsWith "Cloud PC")
+        #   This is the preferred targeting method for W365 in Intune.
+        #
+        # CUSTOMISE: Set extensionAttribute1 = "CloudPC" at provisioning, or
+        # adjust the attribute/value to match your environment.
+        Rule        = '(device.extensionAttribute1 -eq "CloudPC") -and (device.managementType -eq "MDM")'
     }
     @{
         Name        = "SG-Intune-DDG-W365-FrontlineDevices"
-        Description = "Dynamic — Windows 365 Frontline Cloud PCs. Targets Frontline-specific SKU model string."
+        Description = "Dynamic — Windows 365 Frontline Cloud PCs enrolled in Intune."
         Type        = "Dynamic"
-        # Windows 365 Frontline Cloud PCs report a different model string.
-        # Adjust the startsWith value if your environment reports a different string.
-        # Verify with: Get-MgDevice -Filter "model startsWith 'Cloud PC'" | Select displayName, model
-        Rule        = '(device.model -startsWith "Cloud PC Frontline") -and (device.managementType -eq "MDM")'
+        # Same note as above — device.model is not valid in dynamic group rules.
+        # Use extensionAttribute2 = 'CloudPCFrontline' set at provisioning, or
+        # scope these via Intune device filter: (device.model -startsWith "Cloud PC Frontline")
+        #
+        # CUSTOMISE: Adjust attribute and value to match your provisioning tagging.
+        Rule        = '(device.extensionAttribute1 -eq "CloudPC") -and (device.extensionAttribute2 -eq "Frontline") -and (device.managementType -eq "MDM")'
     }
     @{
         Name        = "SG-Intune-ADG-W365-Exclusion-Devices"
