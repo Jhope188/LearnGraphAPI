@@ -68,7 +68,10 @@ param()
 
 Write-Host "`n=== Intune & Device Group Provisioning ===" -ForegroundColor Cyan
 
-Connect-MgGraph -Scopes "Group.ReadWrite.All", "User.Read" -NoWelcome
+$ExistingCtx = Get-MgContext
+if (-not $ExistingCtx -or $ExistingCtx.Scopes -notcontains "Group.ReadWrite.All") {
+    Connect-MgGraph -Scopes "Group.ReadWrite.All", "User.Read" -NoWelcome
+}
 
 $CurrentUser = Get-MgUser -UserId (Get-MgContext).Account
 $OwnerRef    = "https://graph.microsoft.com/v1.0/users/$($CurrentUser.Id)"
@@ -446,13 +449,12 @@ foreach ($g in $Groups) {
     if ($PSCmdlet.ShouldProcess($g.Name, "Create security group")) {
         try {
             $Params = @{
-                DisplayName         = $g.Name
-                Description         = $g.Description
-                SecurityEnabled     = $true
-                MailEnabled         = $false
-                MailNickname        = $g.Name -replace '[^a-zA-Z0-9]', ''
-                GroupTypes          = @()
-                "Owners@odata.bind" = @($OwnerRef)
+                DisplayName     = $g.Name
+                Description     = $g.Description
+                SecurityEnabled = $true
+                MailEnabled     = $false
+                MailNickname    = $g.Name -replace '[^a-zA-Z0-9]', ''
+                GroupTypes      = @()
             }
 
             if ($g.Type -eq "Dynamic") {
@@ -463,12 +465,14 @@ foreach ($g in $Groups) {
 
             $NewGroup = New-MgGroup -BodyParameter $Params
 
+            # Add owner separately — Owners@odata.bind is not reliably
+            # serialised inside BodyParameter in SDK v2.
+            New-MgGroupOwnerByRef -GroupId $NewGroup.Id -OdataId $OwnerRef -ErrorAction SilentlyContinue
+
             # ── Optional second owner ─────────────────────────────────────
             # Uncomment below if $SecondOwner was set above
             #
-            # New-MgGroupOwnerByRef -GroupId $NewGroup.Id -BodyParameter @{
-            #     "@odata.id" = "https://graph.microsoft.com/v1.0/users/$($SecondOwner.Id)"
-            # }
+            # New-MgGroupOwnerByRef -GroupId $NewGroup.Id -OdataId "https://graph.microsoft.com/v1.0/users/$($SecondOwner.Id)"
 
             Write-Host "  OK    $($g.Name)" -ForegroundColor Green
             $Created++
