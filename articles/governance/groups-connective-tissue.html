@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Groups Are the Connective Tissue — Inforcer Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem;
+    border-radius: 8px; text-decoration: none;
+    font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+    z-index: 50; backdrop-filter: blur(8px);
+    transition: background 0.2s; min-height: 44px;
+    display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem 8vw 4rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 65% 35%, rgba(0,194,179,0.11) 0%, transparent 70%),
+      radial-gradient(ellipse 45% 70% at 15% 75%, rgba(255,92,53,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* subtle graph-node decoration */
+  .hero-graph {
+    position: absolute; right: 6vw; top: 50%; transform: translateY(-50%);
+    width: 320px; height: 320px; opacity: 0.07; pointer-events: none;
+  }
+
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--teal); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 580px; font-size: 1.1rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 8vw;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); opacity: 0; animation: fadeUp 0.6s 1s forwards;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--teal); animation: pulse 2s infinite; }
+
+  /* ── BRIDGE BANNER ── */
+  .bridge-banner {
+    background: linear-gradient(135deg, rgba(0,194,179,0.06), rgba(0,194,179,0.02));
+    border-top: 1px solid rgba(0,194,179,0.15);
+    border-bottom: 1px solid rgba(0,194,179,0.15);
+    padding: 1.5rem 6vw;
+    display: flex; align-items: center; gap: 1.25rem;
+  }
+  .bridge-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .bridge-text { font-size: 0.9rem; color: var(--warm-gray); line-height: 1.6; }
+  .bridge-text strong { color: var(--off-white); }
+  .bridge-text a { color: var(--teal); text-decoration: none; }
+  .bridge-text a:hover { text-decoration: underline; }
+
+  /* ── CONTENT ── */
+  .content { max-width: 780px; margin: 0 auto; padding: 0 6vw 8rem; }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.5;
+    color: var(--off-white); border-left: 3px solid var(--teal);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4rem 0 1.5rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.25; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout.danger { border-color: rgba(255,92,53,0.2); }
+  .callout.danger::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .callout.warn { border-color: rgba(245,200,66,0.2); }
+  .callout.warn::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout p + p { margin-top: 0.75rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .callout.danger .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: #f5c842; }
+
+  /* ── GROUP OBJECT DIAGRAM ── */
+  .group-object {
+    margin: 3rem 0; border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(0,194,179,0.15);
+  }
+  .group-object-header {
+    background: rgba(0,194,179,0.07); padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem;
+    border-bottom: 1px solid rgba(0,194,179,0.1);
+  }
+  .group-object-icon { font-size: 1.4rem; }
+  .group-object-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+    letter-spacing: 0.05em; color: var(--teal);
+  }
+  .group-object-sub { font-size: 0.78rem; color: var(--warm-gray); margin-top: 1px; }
+  .group-spokes {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: rgba(0,194,179,0.08);
+  }
+  .spoke {
+    background: var(--card-bg); padding: 1.25rem 1.5rem;
+    display: flex; flex-direction: column; gap: 0.3rem;
+  }
+  .spoke-emoji { font-size: 1.1rem; }
+  .spoke-name {
+    font-size: 0.78rem; color: var(--off-white); font-weight: 500;
+  }
+  .spoke-desc { font-size: 0.78rem; color: var(--warm-gray); line-height: 1.5; }
+  .spoke-risk {
+    margin-top: 0.4rem; font-size: 0.68rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--accent); font-weight: 500;
+  }
+  .group-object-footer {
+    background: rgba(255,92,53,0.04); padding: 1rem 1.5rem;
+    border-top: 1px solid rgba(255,92,53,0.1);
+    font-size: 0.88rem; color: var(--warm-gray); line-height: 1.6;
+  }
+  .group-object-footer strong { color: var(--accent); }
+
+  /* ── TABLES ── */
+  .table-wrap { margin: 2.5rem 0; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.1); }
+  .table-label {
+    background: rgba(0,194,179,0.07); padding: 0.75rem 1.25rem;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+  }
+  table { width: 100%; border-collapse: collapse; background: var(--card-bg); font-size: 0.88rem; }
+  thead tr { background: rgba(0,194,179,0.05); }
+  th {
+    padding: 0.9rem 1rem; text-align: left; font-size: 0.68rem;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal-dim);
+    font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+    font-family: 'DM Sans', sans-serif;
+  }
+  td {
+    padding: 0.9rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a09890; vertical-align: top; line-height: 1.55;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,194,179,0.03); }
+  td strong { color: var(--off-white); }
+  .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px; white-space: nowrap;
+  }
+  .badge {
+    display: inline-block; font-size: 0.65rem; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 2px; font-weight: 500;
+  }
+  .badge-ok     { background: rgba(0,194,179,0.15); color: var(--teal); }
+  .badge-warn   { background: rgba(245,200,66,0.12); color: #f5c842; }
+  .badge-danger { background: rgba(255,92,53,0.15);  color: var(--accent); }
+
+  /* ── OWNERSHIP FAILURE MODES ── */
+  .failure-stack { margin: 3rem 0; display: flex; flex-direction: column; gap: 0; }
+  .failure-item {
+    padding: 1.1rem 1.5rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: start; gap: 1rem;
+  }
+  .failure-item:first-child { border-radius: 4px 4px 0 0; }
+  .failure-item:last-child  { border-radius: 0 0 4px 4px; }
+  .failure-item:not(:last-child) { border-bottom: none; }
+  .failure-icon { font-size: 1.3rem; margin-top: 2px; }
+  .failure-body {}
+  .failure-title { font-size: 0.93rem; font-weight: 500; color: var(--off-white); margin-bottom: 0.3rem; }
+  .failure-desc  { font-size: 0.88rem; color: var(--warm-gray); line-height: 1.6; }
+  .failure-badge { padding-top: 2px; }
+
+  /* ── DYNAMIC VS ASSIGNED ── */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(0,194,179,0.1);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .compare-card { background: var(--card-bg); padding: 1.5rem; position: relative; }
+  .compare-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .compare-card.g1::before { background: linear-gradient(90deg, var(--teal), transparent); }
+  .compare-card.g2::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .compare-type {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 500; margin-bottom: 0.4rem;
+  }
+  .compare-card.g1 .compare-type { color: var(--teal); }
+  .compare-card.g2 .compare-type { color: #f5c842; }
+  .compare-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
+    letter-spacing: 0.04em; color: var(--off-white); margin-bottom: 1rem;
+  }
+  .compare-list { list-style: none; padding: 0; margin: 0; }
+  .compare-list li {
+    font-size: 0.88rem; color: var(--warm-gray); padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; align-items: flex-start; gap: 0.6rem; line-height: 1.5;
+  }
+  .compare-list li:last-child { border-bottom: none; }
+  .compare-list li::before { font-size: 0.8rem; margin-top: 1px; flex-shrink: 0; }
+  .g1 .compare-list li::before { content: '→'; color: var(--teal-dim); }
+  .g2 .compare-list li::before { content: '→'; color: #b08a00; }
+  .compare-verdict {
+    margin-top: 1rem; padding: 0.6rem 0.75rem; border-radius: 2px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+  }
+  .g1 .compare-verdict { background: rgba(0,194,179,0.08); color: var(--teal); }
+  .g2 .compare-verdict { background: rgba(245,200,66,0.08); color: #f5c842; }
+
+  /* ── ACCESS REVIEW FLOW ── */
+  .review-flow {
+    margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0;
+    border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.12);
+  }
+  .review-step {
+    display: grid; grid-template-columns: 3rem 1fr;
+    gap: 0; border-bottom: 1px solid rgba(0,194,179,0.06);
+    background: var(--card-bg);
+  }
+  .review-step:last-child { border-bottom: none; }
+  .review-step-num {
+    background: rgba(0,194,179,0.06); display: flex;
+    align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem;
+    color: var(--teal); opacity: 0.6; border-right: 1px solid rgba(0,194,179,0.08);
+  }
+  .review-step-content { padding: 1rem 1.25rem; }
+  .review-step-title { font-size: 0.9rem; font-weight: 500; color: var(--off-white); margin-bottom: 0.25rem; }
+  .review-step-desc { font-size: 0.85rem; color: var(--warm-gray); line-height: 1.6; }
+  .review-step-code {
+    margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+    color: var(--teal); background: rgba(0,194,179,0.06);
+    padding: 0.4rem 0.6rem; border-radius: 2px; display: inline-block;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .check-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1rem 1.25rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); transition: background 0.2s;
+  }
+  .check-item:first-child { border-radius: 4px 4px 0 0; }
+  .check-item:last-child  { border-radius: 0 0 4px 4px; }
+  .check-item:not(:last-child) { border-bottom: none; }
+  .check-item:hover { background: rgba(0,194,179,0.04); }
+  .check-box {
+    width: 18px; height: 18px; border: 2px solid var(--teal-dim);
+    border-radius: 3px; flex-shrink: 0; margin-top: 3px; opacity: 0.5;
+  }
+  .check-text { font-size: 0.92rem; color: #a09890; line-height: 1.65; }
+  .check-text strong { display: block; color: var(--off-white); margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+  /* ── SERIES NAVS ── */
+  .series-nav {
+    margin-top: 5rem; padding: 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .series-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .series-nav-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1.25rem;
+  }
+  .series-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .series-post {
+    display: flex; gap: 1rem; align-items: center;
+    padding: 0.6rem 0.75rem; border-radius: 3px;
+    font-size: 0.9rem; color: var(--warm-gray);
+  }
+  .series-post.current { background: rgba(0,194,179,0.07); color: var(--off-white); font-weight: 500; }
+  .series-post.upcoming { color: rgba(176,169,159,0.45); }
+  .series-post-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    color: var(--teal-dim); min-width: 1.5rem; opacity: 0.6;
+  }
+  .series-post.current .series-post-num { opacity: 1; color: var(--teal); }
+  .series-group-label {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(0,194,179,0.4); font-weight: 500; padding: 0.4rem 0.75rem 0;
+  }
+
+  /* ── CTA ── */
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white);
+  }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+
+  @media (max-width: 640px) {
+    .compare-grid { grid-template-columns: 1fr; }
+    .group-spokes { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 6vw 3rem; }
+    .failure-item { grid-template-columns: 2rem 1fr; }
+    .failure-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<section class="hero">
+  <!-- decorative graph node SVG -->
+  <svg class="hero-graph" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="160" cy="160" r="30" stroke="#00c2b3" stroke-width="1.5"/>
+    <circle cx="80"  cy="80"  r="18" stroke="#00c2b3" stroke-width="1"/>
+    <circle cx="240" cy="80"  r="18" stroke="#00c2b3" stroke-width="1"/>
+    <circle cx="60"  cy="210" r="18" stroke="#00c2b3" stroke-width="1"/>
+    <circle cx="260" cy="210" r="18" stroke="#00c2b3" stroke-width="1"/>
+    <circle cx="160" cy="270" r="18" stroke="#00c2b3" stroke-width="1"/>
+    <line x1="160" y1="130" x2="90"  y2="96"  stroke="#00c2b3" stroke-width="0.75"/>
+    <line x1="160" y1="130" x2="228" y2="96"  stroke="#00c2b3" stroke-width="0.75"/>
+    <line x1="147" y1="185" x2="72"  y2="200" stroke="#00c2b3" stroke-width="0.75"/>
+    <line x1="173" y1="185" x2="248" y2="200" stroke="#00c2b3" stroke-width="0.75"/>
+    <line x1="160" y1="190" x2="160" y2="252" stroke="#00c2b3" stroke-width="0.75"/>
+    <circle cx="160" cy="160" r="8"  fill="#00c2b3" opacity="0.3"/>
+    <circle cx="80"  cy="80"  r="5"  fill="#00c2b3" opacity="0.2"/>
+    <circle cx="240" cy="80"  r="5"  fill="#00c2b3" opacity="0.2"/>
+    <circle cx="60"  cy="210" r="5"  fill="#00c2b3" opacity="0.2"/>
+    <circle cx="260" cy="210" r="5"  fill="#00c2b3" opacity="0.2"/>
+    <circle cx="160" cy="270" r="5"  fill="#00c2b3" opacity="0.2"/>
+  </svg>
+
+  <div class="hero-label">M365 Governance Series — Part 1 of 5</div>
+  <h1>Groups Are the<span>Connective Tissue</span></h1>
+  <p class="hero-sub">Every CA policy, every SharePoint site, every Teams workspace, every guest invitation eventually resolves to a group. Most tenants have hundreds of them with no verified owner. That's not a cleanup problem. That's a structural control failure.</p>
+  <div class="hero-meta">
+    <span>Entra ID Governance</span>
+    <span>June 23, 2026</span>
+    <span>12 min read</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<!-- Bridge Banner -->
+<div class="bridge-banner">
+  <span class="bridge-icon">🔗</span>
+  <div class="bridge-text">
+    <strong>Picking up from Identity Foundations Post 5.</strong> The last post in the identity series established that groups are the shield around identity, where CA policy scope lands, guest access persists, and authentication strength controls get their meaning. This series starts where that one ended: not with how groups protect identity, but with what happens to every resource grounded in those groups when nobody is responsible for them anymore.
+    <br><a href="#">&#8592; Read Identity Foundations Post 5: Groups as Connective Tissue</a>
+  </div>
+</div>
+
+<main class="content">
+
+  <div style="margin:2.5rem 0 2rem;padding:1rem 1.25rem;border-left:3px solid rgba(0,194,179,0.3);background:rgba(0,194,179,0.04);border-radius:0 4px 4px 0;">
+    <p style="margin:0;font-size:0.82rem;color:var(--warm-gray);line-height:1.7;">
+      <strong style="color:var(--off-white);font-weight:500;">A note on inspiration:</strong> This series grew out of field experience across dozens of M365 environments, but the governance framing was sharpened by an episode of the <a href="https://www.m365.fm/governance-illusion-microsoft-365/" target="_blank" style="color:var(--teal);text-decoration:none;">M365 FM podcast</a> hosted by <strong style="color:var(--off-white);font-weight:500;">Mirko Peters</strong> — "The Governance Illusion: Why Your Tenant Is Beyond Control." The concepts here are original and practitioner-driven, but Mirko's framing of governance as an operating discipline rather than a deployment project is worth an hour of your time in its own right.
+    </p>
+  </div>
+
+  <p>If you ask most M365 admins what controls access in their tenant, they'll point to Conditional Access policies. That's the right answer for the authentication layer. But CA policies tell you who can get through the door under what conditions. They don't tell you what the person can do once they're inside, and they don't tell you who else is already inside the room.</p>
+
+  <p>Groups answer those questions. Every permission boundary in M365 is ultimately grounded in group membership. SharePoint sites scope access through them. Teams workspaces are built on them. CA policy exclusions are managed through them. Guest identities persist inside them. Dynamic group rules silently re-scope them overnight.</p>
+
+  <div class="pull-quote">
+    "A group with no verified owner isn't just an administrative loose end. It's an open authorization surface that will persist, drift, and outlive the project that created it."
+  </div>
+
+  <p>And here's the thing that catches most organizations off guard: the M365 group object isn't just a membership list. It's a connected set of resources. When a group gets created, a stack of dependent workloads comes with it, each with its own permission model, its own lifecycle, and its own way of quietly accumulating exposure over time.</p>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">The M365 Group Is Not a Membership List</span>
+  </div>
+
+  <p>This is the mental model most governance conversations miss. When someone creates a Microsoft 365 group, they're not adding a row to a directory. They're creating a connected set of resources that spans the entire workload stack. Everything grounded in that group inherits its membership, its permissions, and its access state. Including its guests.</p>
+
+  <div class="group-object">
+    <div class="group-object-header">
+      <span class="group-object-icon">🔗</span>
+      <div>
+        <div class="group-object-title">Microsoft 365 Group Object</div>
+        <div class="group-object-sub">One creation event. Multiple dependent resources. One shared authorization surface.</div>
+      </div>
+    </div>
+    <div class="group-spokes">
+      <div class="spoke">
+        <span class="spoke-emoji">💬</span>
+        <div class="spoke-name">Teams Workspace</div>
+        <div class="spoke-desc">Channels, chats, meeting artifacts, apps, agents. The front door most people see.</div>
+        <div class="spoke-risk">Creation surface</div>
+      </div>
+      <div class="spoke">
+        <span class="spoke-emoji">📁</span>
+        <div class="spoke-name">SharePoint Site</div>
+        <div class="spoke-desc">Created automatically. Files live here. Sharing links, inheritance breaks, and guest access accumulate here silently.</div>
+        <div class="spoke-risk">Exposure surface</div>
+      </div>
+      <div class="spoke">
+        <span class="spoke-emoji">📧</span>
+        <div class="spoke-name">Exchange Mailbox</div>
+        <div class="spoke-desc">Group inbox and calendar. Receives mail as a distribution list. Often forgotten entirely.</div>
+        <div class="spoke-risk">Data residency</div>
+      </div>
+      <div class="spoke">
+        <span class="spoke-emoji">✅</span>
+        <div class="spoke-name">Planner Board</div>
+        <div class="spoke-desc">Task and project data. Persists long after the project ends. Membership controls who can read it.</div>
+        <div class="spoke-risk">Data lifecycle</div>
+      </div>
+      <div class="spoke">
+        <span class="spoke-emoji">📓</span>
+        <div class="spoke-name">OneNote Notebook</div>
+        <div class="spoke-desc">Meeting notes, project documentation, anything copy-pasted in over years of use.</div>
+        <div class="spoke-risk">Data lifecycle</div>
+      </div>
+      <div class="spoke">
+        <span class="spoke-emoji">🤖</span>
+        <div class="spoke-name">Copilot / Agents</div>
+        <div class="spoke-desc">AI surfaces now land here. Copilot queries across whatever the membership allows. This is new. Most governance models haven't caught up.</div>
+        <div class="spoke-risk">New AI surface</div>
+      </div>
+    </div>
+    <div class="group-object-footer">
+      <strong>The governance implication:</strong> When you lose ownership of a group, you don't lose ownership of a membership list. You lose accountability for everything grounded in that group: every file in the SharePoint site, every guest in the workspace, every task in the planner board, and every AI query that now runs across all of it.
+    </div>
+  </div>
+
+  <p>This is why the question "who owns this group?" is not a metadata question. It's an operational question with a direct line to your risk posture. Every enforcement action, every access review, every expiration decision requires a human to root it to. No owner means no one to attest. No one to attest means the system can only report the problem, never resolve it.</p>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">How Groups Break: The Four Ownership Failure Modes</span>
+  </div>
+
+  <p>Ownership isn't a binary. It doesn't just exist or not exist. It degrades through predictable patterns that every organization with real adoption will eventually encounter. Naming them makes them preventable.</p>
+
+  <div class="failure-stack">
+    <div class="failure-item">
+      <span class="failure-icon">🚪</span>
+      <div class="failure-body">
+        <div class="failure-title">The Departing Owner</div>
+        <div class="failure-desc">The most common failure. A group gets created by an employee who later leaves. M365 doesn't enforce minimum ownership. It doesn't block offboarding when active group ownership exists. The group continues. The SharePoint site continues. Any guests the owner invited continue. Nobody inherited the responsibility because nobody designed the handoff.</div>
+      </div>
+      <div class="failure-badge"><span class="badge badge-danger">Most Common</span></div>
+    </div>
+    <div class="failure-item">
+      <span class="failure-icon">👤</span>
+      <div class="failure-body">
+        <div class="failure-title">The Nominal Owner</div>
+        <div class="failure-desc">The group has two owners on paper, because someone once told you to always have two. But neither of them actually manages the group. They inherited it when someone left, or they were added as a backup and forgot. When an access review arrives, they approve everything because they don't know what's safe to remove. Ownership on paper is not ownership in practice.</div>
+      </div>
+      <div class="failure-badge"><span class="badge badge-warn">Silent Risk</span></div>
+    </div>
+    <div class="failure-item">
+      <span class="failure-icon">🔄</span>
+      <div class="failure-body">
+        <div class="failure-title">The Dynamic Rule That Drifted</div>
+        <div class="failure-desc">Dynamic membership groups are powerful and genuinely the right tool for large populations. But the rule that scopes them gets written once, by someone who understood the business context at the time, and then it runs forever. When departments reorganize, when job titles change, when contractor attributes get updated differently than employees, the rule quietly includes or excludes people it was never meant to touch. Nobody gets an alert. The membership just shifts.</div>
+      </div>
+      <div class="failure-badge"><span class="badge badge-warn">Structural</span></div>
+    </div>
+    <div class="failure-item">
+      <span class="failure-icon">♾️</span>
+      <div class="failure-body">
+        <div class="failure-title">The Ownerless Guest Container</div>
+        <div class="failure-desc">The intersection of the guest problem from the last post and the group problem from this one. A guest gets added to a group for a project. The project ends. The owner leaves. Nobody runs a cleanup. The guest account is now in a group with no verified owner, attached to a SharePoint site nobody is actively managing, with files that may or may not still be relevant. This is the configuration that keeps compliance teams awake.</div>
+      </div>
+      <div class="failure-badge"><span class="badge badge-danger">High Risk</span></div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">Dynamic vs. Assigned: The Right Tool for the Right Problem</span>
+  </div>
+
+  <p>The dynamic vs. assigned debate is often framed as a preference. It isn't. The choice between them has direct implications for what breaks when the underlying data changes, and for what CA policies targeting that group actually enforce.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card g1">
+      <div class="compare-type">Dynamic Membership</div>
+      <div class="compare-title">Rule-Based</div>
+      <ul class="compare-list">
+        <li>Membership managed automatically by attribute rules</li>
+        <li>Scales without manual intervention for large populations</li>
+        <li>Correct when identity attributes are accurate and stable</li>
+        <li>Right choice for department-wide or role-wide policies</li>
+        <li>Requires audit of the rule itself, not just the members</li>
+        <li>Rule drift happens when HR attributes change schema or convention</li>
+      </ul>
+      <div class="compare-verdict">Risk: The rule, not the roster. Audit: quarterly rule review against current attribute schema.</div>
+    </div>
+    <div class="compare-card g2">
+      <div class="compare-type">Assigned Membership</div>
+      <div class="compare-title">Manual</div>
+      <ul class="compare-list">
+        <li>Explicit control over who is in scope</li>
+        <li>Required for exception-based or project-scoped groups</li>
+        <li>Correct for CA policy exclusions (break-glass, service accounts)</li>
+        <li>Scales poorly without lifecycle enforcement</li>
+        <li>Stale members accumulate if access reviews don't run</li>
+        <li>Guest members especially prone to indefinite persistence</li>
+      </ul>
+      <div class="compare-verdict">Risk: The roster, not the rule. Audit: recurring access reviews with consequence on non-response.</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-label">Dynamic Groups and CA Exclusions — Be Deliberate</span>
+    <span class="callout-icon">⚠️</span>
+    <p><strong>Dynamic groups in CA exclusions aren't automatically wrong, but they need to be intentional and tightly controlled.</strong> There are legitimate use cases. A dynamic query scoped to Teams-certified devices is a common and reasonable way to handle device code flow exclusions without manually maintaining a membership list. The rule is specific, the scope is narrow, and the attribute driving it is controlled.</p>
+    <p>The risk is when exclusion groups use dynamic rules tied to attributes that users or attackers can influence. If someone can add the right attribute to an account, a department field, a job title, an extension attribute, they can dynamically qualify for an exclusion from an otherwise intentional control without anyone approving it. That's not a theoretical risk. It's a bypass vector that bypasses the entire point of the exclusion group model.</p>
+    <p>The rule of thumb: dynamic queries in CA exclusions are fine when the qualifying attribute is controlled by IT and not writable by the user or an attacker with partial access. Assigned groups are the safer default for anything where that condition isn't clearly met. And either way, exclusion groups need a quarterly review and documented justification for every member or rule in them.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">Entra Access Reviews: Enforcement, Not Reporting</span>
+  </div>
+
+  <p>Entra ID Governance access reviews get deployed in most organizations as a compliance checkbox. Run the review quarterly, export the results, close the ticket. That's not governance. It's a scheduled reporting event. The value of access reviews isn't the report they produce. It's the consequence that fires when the owner doesn't respond.</p>
+
+  <p>A review with no enforced outcome is a survey. A review where no response means removal is an access control. That's the difference, and most environments are running the first one while thinking they're running the second.</p>
+
+  <div class="review-flow">
+    <div class="review-step">
+      <div class="review-step-num">1</div>
+      <div class="review-step-content">
+        <div class="review-step-title">Scope the review correctly</div>
+        <div class="review-step-desc">Separate reviews for guests and internal members. Separate reviews for high-risk groups (CA exclusions, privileged roles, sensitive data sites) vs. general collaboration groups. Don't run one review across everything. Reviewer fatigue kills the process.</div>
+        <div class="review-step-code">guestOrExternalUserTypes: b2bCollaborationGuest, otherExternalUser</div>
+      </div>
+    </div>
+    <div class="review-step">
+      <div class="review-step-num">2</div>
+      <div class="review-step-content">
+        <div class="review-step-title">Assign the right reviewer — not just the owner</div>
+        <div class="review-step-desc">For guest reviews, the person who invited the guest (the sponsor) is better positioned than the group owner to confirm whether the relationship is still active. For internal members, managers are often more current than group owners. Use the right scope for each population.</div>
+      </div>
+    </div>
+    <div class="review-step">
+      <div class="review-step-num">3</div>
+      <div class="review-step-content">
+        <div class="review-step-title">Set the auto-apply outcome — this is the enforcement layer</div>
+        <div class="review-step-desc">No response within the review window should mean removal, not approval. "Approve on no response" defeats the entire purpose of the review. The review only has teeth if non-engagement has a consequence.</div>
+        <div class="review-step-code">onAccessReviewCompletion: removeAccess (not keepAccess)</div>
+      </div>
+    </div>
+    <div class="review-step">
+      <div class="review-step-num">4</div>
+      <div class="review-step-content">
+        <div class="review-step-title">Enforce reassignment when owners go missing</div>
+        <div class="review-step-desc">If a group has no valid owner at review time, escalate to a defined fallback, a manager, a department head, a security team queue. Don't leave the review open indefinitely. The review is how you detect ownerless groups and force a decision on them.</div>
+      </div>
+    </div>
+    <div class="review-step">
+      <div class="review-step-num">5</div>
+      <div class="review-step-content">
+        <div class="review-step-title">Pair reviews with expiration policies for guest accounts</div>
+        <div class="review-step-desc">Access reviews handle group membership. Expiration policies handle the guest account itself. Both are needed. A guest removed from a group but not disabled can still authenticate and potentially find other paths in. Lifecycle has to close both loops.</div>
+        <div class="review-step-code">guestUserExpirationPolicy: review every 90 days, auto-disable on no renewal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <span class="callout-label">When Reviews Stop Meaning Anything</span>
+    <span class="callout-icon">🚫</span>
+    <p><strong>Review fatigue produces the same outcome as no review.</strong> When owners are assigned too many groups to review, when the review interface provides no context about what the group actually controls, when approving is one click and investigating is thirty minutes of work, reviewers approve. Every time. The organization converts uncertainty into permanent access, quarter after quarter, until nobody can distinguish a deliberate decision from something that just never got questioned.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">What "Two Owners" Actually Means in Practice</span>
+  </div>
+
+  <p>Microsoft's recommendation to require a minimum of two owners per group is correct but routinely misunderstood. Two owners is a minimum threshold against the departing-owner failure mode. It is not a governance model. Two nominal owners who inherited the group when the original owner left, and who both approve everything in every review, don't provide meaningful oversight. They provide audit cover.</p>
+
+  <p>Ownership governance requires three things that "two owners" doesn't guarantee on its own:</p>
+
+  <div class="table-wrap">
+    <div class="table-label">Ownership Requirements That Survive Turnover</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Requirement</th>
+          <th>What It Means</th>
+          <th>How It Fails Without Enforcement</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Verified owners</strong></td>
+          <td>Owners are active employees who actually know the group's purpose and can make informed access decisions</td>
+          <td>Inherited owners approve everything in reviews because they don't have context. Departed owners leave stale ownership records that block automated enforcement.</td>
+        </tr>
+        <tr>
+          <td><strong>Enforced minimum</strong></td>
+          <td><span class="mono">minimumOwners: 2</span> enforced with automated detection and escalation when ownership drops below threshold</td>
+          <td>Without enforcement, groups naturally drift to single owner or no owner as people leave. Nobody gets an alert until a review fails.</td>
+        </tr>
+        <tr>
+          <td><strong>Documented purpose</strong></td>
+          <td>Each group has a description that tells a reviewer what it's for, who should be in it, and what it controls access to</td>
+          <td>Reviewers can't make informed decisions about membership they don't understand. Everything gets approved by default.</td>
+        </tr>
+        <tr>
+          <td><strong>Enforced reassignment</strong></td>
+          <td>When an owner leaves, a defined process reassigns ownership before the account is disabled, not after the next review cycle</td>
+          <td>Offboarding processes handle user accounts. They almost never handle group ownership dependencies. The gap is where ownerless groups come from.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">Practical Checklist</span>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Audit groups for ownership right now</strong>
+        Export all M365 groups and filter for zero or one owner. In most tenants this list is longer than expected. Ownerless groups aren't anomalies, they're the predictable output of offboarding processes that handle accounts but not group dependencies.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Enforce minimum owners with automated detection</strong>
+        Two owners is the floor. Build detection into your offboarding workflow so that when a user is disabled, any group they're a sole owner of surfaces for reassignment before the account closes, not in the next quarterly review.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Audit dynamic group rules against current attribute schema</strong>
+        Run a point-in-time review of every dynamic group used in CA policy scope or exclusion. Confirm the rule is still evaluating the intended population. Attribute convention drift is silent and rarely detected until a policy mismatch surfaces an incident.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Be deliberate about dynamic groups in CA exclusions</strong>
+        Dynamic queries in CA exclusions can be legitimate. Scoping an exclusion to Teams-certified devices via a device attribute is a real and reasonable pattern. The question is whether the qualifying attribute is controlled by IT or writable by someone else. If a user or attacker can self-assign the attribute that qualifies an account for the exclusion, that exclusion is a bypass vector. Assigned groups are the safer default. When dynamic rules are used, document the justification and review the rule quarterly.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Configure access reviews with removal as the no-response outcome</strong>
+        "Approve on no response" defeats the purpose of the review. Build the review so that non-engagement has a consequence: removal or escalation. Then design the review to be answerable: include context about what the group controls so reviewers can make informed decisions.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Know your group population by type and purpose</strong>
+        Microsoft 365 groups, security groups, mail-enabled security groups, and distribution lists have different capabilities and different governance requirements. Knowing you have 800 groups is far less useful than knowing what types they are, what they control, and which ones have a verified owner.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Close both loops on stale guests: group membership AND account lifecycle</strong>
+        Removing a guest from a group leaves their account active. Disabling the account without removing group membership leaves data access footprint. Access reviews handle membership. Expiration policies handle accounts. Both need to run and both need enforced outcomes.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>Groups are where identity governance stops being an identity problem and starts being a data governance problem. The CA policies from your last project define the conditions for access. The groups underneath them define the scope. And the ownership model for those groups determines whether any of it stays aligned with intent once the project is over.</p>
+
+  <p>The pattern that kills M365 governance isn't a bad configuration decision. It's the gap between where policies are written and where work actually happens. Settings live in admin centers. People create Teams from Planner, share files from OneDrive, add guests because the project needs it today. Groups accumulate without owners. Dynamic rules drift without audits. Guests persist without sponsors. The tenant keeps running, generating no errors, no alarms, quietly becoming a record of every access decision that was ever made minus the ones someone chose to clean up.</p>
+
+  <p>In the next post, we examine why this happens even in tenants that think they've done governance right: the difference between configuration and control, and what it looks like when the place where work happens grows faster than the place where settings are managed.</p>
+
+  <!-- Dual series nav -->
+  <div class="series-nav">
+    <div class="series-nav-label">Identity Foundations Series — Completed</div>
+    <div class="series-posts">
+      <div class="series-post">
+        <span class="series-post-num">01</span>
+        <span>Identity Is Everything: What ITDR and Your Front Door Have in Common</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">02</span>
+        <span>Authentication Methods: The Spectrum from Password to Passkey</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">03</span>
+        <span>Passkeys: Security Only Works If People Will Actually Use It</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">04</span>
+        <span>Who Did You Let Into Your House? Guest Identity in Microsoft Entra</span>
+      </div>
+      <div class="series-post">
+        <span class="series-post-num">05</span>
+        <span>Groups as Connective Tissue — The Handoff to Governance</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="series-nav" style="margin-top: 1.5rem;">
+    <div class="series-nav-label">M365 Governance Series — Now Starting</div>
+    <div class="series-posts">
+      <div class="series-post current">
+        <span class="series-post-num">01</span>
+        <span>Groups Are the Connective Tissue — and Nobody Owns the Scissors</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">02</span>
+        <span>The Governance Gap — Why Settings and Control Are Not the Same Thing</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">03</span>
+        <span>The Cleanup Campaign That Never Ends — Why Lifecycle Governance Wins</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">04</span>
+        <span>AI Readiness Is a Governance Audit You Haven't Done Yet</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">05</span>
+        <span>The Ownership Operating Model — Making Governance Continuous</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>
