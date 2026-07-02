@@ -62,7 +62,7 @@ SG-[Pillar]-[TypeCode]-[Scope]-[Env]-[Name]
 **Examples:**
 
 ```
-SG-Entra-AUG-CA-GlobalExclusions
+SG-Entra-AUG-CAP-GlobalExclusions
 SG-Entra-DUG-License-P1InternalUsers
 SG-Intune-ADG-WIN-Pilot-Devices
 SG-Intune-AUG-MAC-Prod-Users
@@ -120,6 +120,7 @@ Type codes describe how group membership is managed in Entra ID.
 | `ADG` | Assigned Device Group | Group type code |
 | `DDG` | Dynamic Device Group | Group type code |
 | `CA` | Conditional Access | Entra ID policy engine controlling access based on signals |
+| `CAP` | Conditional Access Policy | Used as the `Scope` segment in Entra group names for CA policy groups |
 | `MFA` | Multi-Factor Authentication | Second factor verification at sign-in |
 | `SSPR` | Self-Service Password Reset | User-initiated password reset without helpdesk |
 | `WHfB` | Windows Hello for Business | Passwordless authentication using PIN or biometrics on Windows |
@@ -143,27 +144,27 @@ Type codes describe how group membership is managed in Entra ID.
 CA groups scope who is included in, excluded from, or subject to specific CA policies. Every CA policy should reference named groups rather than using broad directory assignments.
 
 ```
-SG-Entra-[TypeCode]-CA-[Name]
+SG-Entra-[TypeCode]-CAP-[Name]
 ```
 
 | Group name | Type | Purpose |
 |-----------|------|---------|
-| `SG-Entra-AUG-CA-BreakglassAccounts` | AUG | Emergency accounts excluded from all CA policies. One group only — tightly controlled |
-| `SG-Entra-AUG-CA-EmergencyAccess` | AUG | Additional emergency access principals for CA exclusion |
-| `SG-Entra-AUG-CA-GlobalExclusions` | AUG | Users permanently excluded from standard CA policies (automation accounts etc.) |
-| `SG-Entra-AUG-CA-GuestExclusions` | AUG | Guests excluded from specific CA policies |
-| `SG-Entra-AUG-CA-ServiceAccounts` | AUG | Service accounts excluded from MFA/device compliance policies |
-| `SG-Entra-AUG-CA-AgentAdmins` | AUG | Admin identities managing Copilot/agent platforms — scoped CA policy |
-| `SG-Entra-AUG-CA-AgentUsers` | AUG | End users accessing AI agent applications |
-| `SG-Entra-AUG-CA-AzureDevOpsUsers` | AUG | DevOps users requiring specific CA policy (PAT, pipeline conditions) |
-| `SG-Entra-AUG-CA-TravelingUsers` | AUG | Users permitted to sign in from locations outside named locations |
-| `SG-Entra-AUG-CA-NamedLocations-TrustedUsers` | AUG | Users allowed to authenticate from specific trusted named locations |
-| `SG-Entra-AUG-CA-TokenProtection-Scoped` | AUG | Users enrolled in CA token binding / token protection policy |
-| `SG-Entra-AUG-CA-PhishingResistantMFA-Required` | AUG | Users required to use phishing-resistant MFA (passkey or WHfB) only |
-| `SG-Entra-AUG-CA-DeviceCompliance-Excluded` | AUG | Short-term exclusion from device compliance CA — requires documented approval |
-| `SG-Entra-ADG-CA-DeviceExclusions` | ADG | Specific devices excluded from device-based CA policies |
-| `SG-Entra-ADG-CA-MobileDeviceExclusions` | ADG | Mobile devices excluded from mobile-specific CA policies |
-| `SG-Entra-DUG-CA-TeamsRoomDevices` | DUG | Teams Room accounts (dynamic) — excluded from user-facing CA |
+| `SG-Entra-AUG-CAP-BreakglassAccounts` | AUG | Emergency accounts excluded from all CA policies. One group only — tightly controlled |
+| `SG-Entra-AUG-CAP-EmergencyAccess` | AUG | Additional emergency access principals for CA exclusion |
+| `SG-Entra-AUG-CAP-GlobalExclusions` | AUG | Users permanently excluded from standard CA policies (automation accounts etc.) |
+| `SG-Entra-AUG-CAP-GuestExclusions` | AUG | Guests excluded from specific CA policies |
+| `SG-Entra-AUG-CAP-ServiceAccounts` | AUG | Service accounts excluded from MFA/device compliance policies |
+| `SG-Entra-AUG-CAP-AgentAdmins` | AUG | Admin identities managing Copilot/agent platforms — scoped CA policy |
+| `SG-Entra-AUG-CAP-AgentUsers` | AUG | End users accessing AI agent applications |
+| `SG-Entra-AUG-CAP-AzureDevOpsUsers` | AUG | DevOps users requiring specific CA policy (PAT, pipeline conditions) |
+| `SG-Entra-AUG-CAP-TravelingUsers` | AUG | Users permitted to sign in from locations outside named locations |
+| `SG-Entra-AUG-CAP-NamedLocations-TrustedUsers` | AUG | Users allowed to authenticate from specific trusted named locations |
+| `SG-Entra-AUG-CAP-TokenProtection-Scoped` | AUG | Users enrolled in CA token binding / token protection policy |
+| `SG-Entra-AUG-CAP-PhishingResistantMFA-Required` | AUG | Users required to use phishing-resistant MFA (passkey or WHfB) only |
+| `SG-Entra-AUG-CAP-DeviceCompliance-Excluded` | AUG | Short-term exclusion from device compliance CA — requires documented approval |
+| `SG-Entra-ADG-CAP-DeviceExclusions` | ADG | Specific devices excluded from device-based CA policies |
+| `SG-Entra-ADG-CAP-MobileDeviceExclusions` | ADG | Mobile devices excluded from mobile-specific CA policies |
+| `SG-Entra-DUG-CAP-TeamsRoomDevices` | DUG | Teams Room accounts (dynamic) — excluded from user-facing CA |
 | `SG-Entra-DUG-License-P1InternalUsers` | DUG | Dynamic — all internal users with Entra P1 licence |
 | `SG-Entra-DUG-License-P2InternalUsers` | DUG | Dynamic — all internal users with Entra P2 licence |
 
@@ -658,7 +659,7 @@ Used in `DUG` (Dynamic User Group) rules.
 
 | Group | Type | Current rule | Last reviewed |
 |---|---|---|---|
-| `SG-Entra-DUG-CA-TeamsRoomDevices` | DUG | `((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))` | 2026-06-27 |
+| `SG-Entra-DUG-CAP-TeamsRoomDevices` | DUG | `((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))` | 2026-06-27 |
 | `SG-Entra-DUG-License-P1InternalUsers` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "41781fb2-bc02-4b7c-bd55-b576c07bb09f" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")` | 2026-06-27 |
 | `SG-Entra-DUG-License-P2InternalUsers` | DUG | `(user.assignedPlans -any (assignedPlan.servicePlanId -eq "eec0eb4f-6444-4f95-aba0-50c24d67f998" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")` | 2026-06-27 |
 | `SG-Entra-DUG-License-TeamsRooms` | DUG | `((user.assignedPlans -any (assignedPlan.servicePlanId -eq "8081ca9c-188c-4b49-a8e5-c23b5e9463a8" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "ec17f317-f4bc-451e-b2da-0167e5c260f9" -and assignedPlan.capabilityStatus -eq "Enabled")) -or (user.assignedPlans -any (assignedPlan.servicePlanId -eq "92c6b761-01de-457a-9dd9-793a975238f7" -and assignedPlan.capabilityStatus -eq "Enabled")))` | 2026-06-27 |

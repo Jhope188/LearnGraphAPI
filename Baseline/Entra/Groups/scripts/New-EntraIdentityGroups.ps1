@@ -71,110 +71,110 @@ Write-Host "Owner: $($CurrentUser.DisplayName) ($($CurrentUser.UserPrincipalName
 $Groups = @(
 
     # ══════════════════════════════════════════════════════════════════════════
-    # CONDITIONAL ACCESS GROUPS
-    # All assigned — membership is intentionally manual for CA exclusion groups.
-    # Never use dynamic rules for CA exclusion; manual curation is required.
+    # CONDITIONAL ACCESS POLICY (CAP) GROUPS
+    # All assigned — membership is intentionally manual for CAP exclusion groups.
+    # Never use dynamic rules for CAP exclusion; manual curation is required.
     # ══════════════════════════════════════════════════════════════════════════
 
     @{
-        Name        = "SG-Entra-AUG-CA-BreakglassAccounts"
+        Name        = "SG-Entra-AUG-CAP-BreakglassAccounts"
         Description = "Emergency break-glass accounts excluded from ALL Conditional Access policies. One group only — tightly controlled. Members: two cloud-only admin accounts, no MFA, monitored via alert."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-EmergencyAccess"
+        Name        = "SG-Entra-AUG-CAP-EmergencyAccess"
         Description = "Additional emergency access principals for CA exclusion during policy lockout or outage scenarios."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-GlobalExclusions"
+        Name        = "SG-Entra-AUG-CAP-GlobalExclusions"
         Description = "Users permanently excluded from standard CA policies — automation accounts, service principals, legacy integration accounts."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-GuestExclusions"
+        Name        = "SG-Entra-AUG-CAP-GuestExclusions"
         Description = "Guest users excluded from specific CA policies where guest-specific policies are applied instead."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-ServiceAccounts"
+        Name        = "SG-Entra-AUG-CAP-ServiceAccounts"
         Description = "Service accounts excluded from MFA and device compliance CA policies. Use alongside SG-NHI-AUG-ServiceAccounts-All."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-AgentAdmins"
+        Name        = "SG-Entra-AUG-CAP-AgentAdmins"
         Description = "Admin identities managing Copilot/AI agent platforms — scoped CA policy separate from standard admin policy."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-AgentUsers"
+        Name        = "SG-Entra-AUG-CAP-AgentUsers"
         Description = "End users accessing AI agent applications — targeted CA policy for agent app registration."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-AzureDevOpsUsers"
+        Name        = "SG-Entra-AUG-CAP-AzureDevOpsUsers"
         Description = "DevOps users requiring specific CA policy for PAT authentication and pipeline sign-in conditions."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-TravelingUsers"
+        Name        = "SG-Entra-AUG-CAP-TravelingUsers"
         Description = "Users permitted to authenticate from locations outside defined named locations."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-NamedLocations-TrustedUsers"
+        Name        = "SG-Entra-AUG-CAP-NamedLocations-TrustedUsers"
         Description = "Users allowed to authenticate from specific trusted named locations defined in Entra CA."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-TokenProtection-Scoped"
+        Name        = "SG-Entra-AUG-CAP-TokenProtection-Scoped"
         Description = "Users enrolled in Conditional Access token binding / token protection policy."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-PhishingResistantMFA-Required"
+        Name        = "SG-Entra-AUG-CAP-PhishingResistantMFA-Required"
         Description = "Users required to authenticate using phishing-resistant MFA only (FIDO2 passkey or Windows Hello for Business)."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CA-DeviceCompliance-Excluded"
+        Name        = "SG-Entra-AUG-CAP-DeviceCompliance-Excluded"
         Description = "Short-term exclusion from device compliance CA policy. Requires documented approval. Review membership weekly."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-ADG-CA-DeviceExclusions"
+        Name        = "SG-Entra-ADG-CAP-DeviceExclusions"
         Description = "Specific devices excluded from device-based Conditional Access policies."
         Type        = "Assigned"
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-ADG-CA-MobileDeviceExclusions"
+        Name        = "SG-Entra-ADG-CAP-MobileDeviceExclusions"
         Description = "Mobile devices excluded from mobile-specific Conditional Access policies."
         Type        = "Assigned"
         Rule        = $null
     }
 
     # ══════════════════════════════════════════════════════════════════════════
-    # CA — DYNAMIC GROUPS
+    # CAP — DYNAMIC GROUPS
     # These are safe to make dynamic as they target identity/licence attributes,
-    # not CA exclusion logic.
+    # not CAP exclusion logic.
     # ══════════════════════════════════════════════════════════════════════════
 
     @{
-        Name        = "SG-Entra-DUG-CA-TeamsRoomDevices"
+        Name        = "SG-Entra-DUG-CAP-TeamsRoomDevices"
         Description = "Dynamic — Teams Room system accounts across all Teams Rooms SKUs. Excluded from user-facing CA policies."
         Type        = "Dynamic"
         # Targets accounts with any of the three Teams Rooms service plans:
@@ -213,7 +213,7 @@ $Groups = @(
         Name        = "SG-Entra-DUG-License-TeamsRooms"
         Description = "Dynamic — all accounts with any Teams Rooms licence assigned and active. Covers Teams Rooms Pro, Basic, and Standard (legacy)."
         Type        = "Dynamic"
-        # Same three-plan rule as SG-Entra-DUG-CA-TeamsRoomDevices.
+        # Same three-plan rule as SG-Entra-DUG-CAP-TeamsRoomDevices.
         #   8081ca9c-188c-4b49-a8e5-c23b5e9463a8  — Microsoft Teams Rooms Pro
         #   ec17f317-f4bc-451e-b2da-0167e5c260f9  — Microsoft Teams Rooms Basic
         #   92c6b761-01de-457a-9dd9-793a975238f7  — Microsoft Teams Rooms Standard (legacy)
