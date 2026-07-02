@@ -150,7 +150,6 @@ SG-Entra-[TypeCode]-CAP-[Name]
 | Group name | Type | Purpose |
 |-----------|------|---------|
 | `SG-Entra-AUG-CAP-BreakglassAccounts` | AUG | Emergency accounts excluded from all CA policies. One group only — tightly controlled |
-| `SG-Entra-AUG-CAP-EmergencyAccess` | AUG | Additional emergency access principals for CA exclusion |
 | `SG-Entra-AUG-CAP-GlobalExclusions` | AUG | Users permanently excluded from standard CA policies (automation accounts etc.) |
 | `SG-Entra-AUG-CAP-GuestExclusions` | AUG | Guests excluded from specific CA policies |
 | `SG-Entra-AUG-CAP-ServiceAccounts` | AUG | Service accounts excluded from MFA/device compliance policies |

@@ -83,12 +83,6 @@ $Groups = @(
         Rule        = $null
     }
     @{
-        Name        = "SG-Entra-AUG-CAP-EmergencyAccess"
-        Description = "Additional emergency access principals for CA exclusion during policy lockout or outage scenarios."
-        Type        = "Assigned"
-        Rule        = $null
-    }
-    @{
         Name        = "SG-Entra-AUG-CAP-GlobalExclusions"
         Description = "Users permanently excluded from standard CA policies — automation accounts, service principals, legacy integration accounts."
         Type        = "Assigned"

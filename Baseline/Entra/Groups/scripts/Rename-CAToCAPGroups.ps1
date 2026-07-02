@@ -44,7 +44,6 @@ if (-not $ExistingCtx -or $ExistingCtx.Scopes -notcontains "Group.ReadWrite.All"
 # OldName → NewName
 $RenameMap = @(
     @{ Old = "SG-Entra-AUG-CA-BreakglassAccounts";          New = "SG-Entra-AUG-CAP-BreakglassAccounts" }
-    @{ Old = "SG-Entra-AUG-CA-EmergencyAccess";             New = "SG-Entra-AUG-CAP-EmergencyAccess" }
     @{ Old = "SG-Entra-AUG-CA-GlobalExclusions";            New = "SG-Entra-AUG-CAP-GlobalExclusions" }
     @{ Old = "SG-Entra-AUG-CA-GuestExclusions";             New = "SG-Entra-AUG-CAP-GuestExclusions" }
     @{ Old = "SG-Entra-AUG-CA-ServiceAccounts";             New = "SG-Entra-AUG-CAP-ServiceAccounts" }
