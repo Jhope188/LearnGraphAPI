@@ -225,6 +225,7 @@
 
   /* ── TABLES ── */
   .table-wrap { margin: 2.5rem 0; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.1); }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .table-label {
     background: rgba(0,194,179,0.07); padding: 0.75rem 1.25rem;
     font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
@@ -431,6 +432,10 @@
     .bridge-banner { padding: 1rem 20px; }
     .failure-item { grid-template-columns: 2rem 1fr; }
     .failure-badge { display: none; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 480px; }
+    th { padding: 0.7rem 0.75rem; font-size: 0.65rem; white-space: nowrap; }
+    td { padding: 0.7rem 0.75rem; font-size: 0.82rem; }
   }
 </style>
 </head>
@@ -721,6 +726,7 @@
 
   <div class="table-wrap">
     <div class="table-label">Ownership Requirements That Survive Turnover</div>
+    <div class="table-scroll">
     <table>
       <thead>
         <tr>
@@ -752,6 +758,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <hr class="divider">
