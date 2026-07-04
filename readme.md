@@ -22,56 +22,80 @@ Site: [conditionalaccess.tech](https://conditionalaccess.tech) · Hosted on GitH
 
 The main landing page for the site. Sections in order:
 
-- **Hero** — Name, MVP badge, role (M365 Solutions Architect · inforcer), bio, LinkedIn + Medium CTAs
+- **Hero** — Name, MVP badge, role (M365 Solutions Architect · Inforcer), bio, LinkedIn + Medium CTAs
 - **Focus** — Three pillars: Microsoft Entra ID, Conditional Access, M365 Governance
 - **Resources** — Tool cards: CA Policy Analyzer, Graph API Reference, CA Policy Templates, Entra Baselines
-- **Writing** — Featured latest article card (auto-updated by publish script), link to articles hub
+- **Writing** — Featured latest article card (`id="latest-article"`, auto-updated by publish script) + three recent row links
 - **Appearances** — YouTube playlist card + Podcasts & Events card (links to `appearances.html`)
 - **CTA Band** — LinkedIn connect + Medium read buttons
 - **Footer** — Copyright
 
 ---
 
-## 📚 Writing Hub — `articles.html`
+## �� Writing Hub — `articles.html`
 
-Root-level article index (replaces `articles/index.html`). Three series sections:
+Root-level article index (replaces `articles/index.html`). Three series sections with article count badges.
 
 ### 🔵 Identity Series — 5 articles live
 
 | PT | Title | Published |
 |---|---|---|
-| PT01 | [Identity Is Everything](identity/identity-is-everything.html) | May 2026 |
-| PT02 | [Authentication Methods: The Spectrum](identity/authentication-methods.html) | May 2026 |
-| PT03 | [Passkeys: Security Only Works If People Use It](identity/passkeys.html) | Jun 1, 2026 |
-| PT04 | [Who Did You Let Into Your House?](identity/who-did-you-let-in.html) | Jun 9, 2026 |
-| PT05 | [Groups: The Connective Tissue](identity/groups-connective-tissue.html) | Jun 16, 2026 |
+| PT01 | [Identity Is Everything](articles/identity/identity-is-everything.html) | May 18, 2026 |
+| PT02 | [Authentication Methods: The Spectrum](articles/identity/authentication-methods.html) | May 25, 2026 |
+| PT03 | [Passkeys: Security Only Works If People Use It](articles/identity/passkeys.html) | Jun 1, 2026 |
+| PT04 | [Who Did You Let Into Your House?](articles/identity/who-did-you-let-in.html) | Jun 9, 2026 |
+| PT05 | [Groups: The Connective Tissue of Microsoft 365](articles/identity/groups-connective-tissue.html) | Jun 16, 2026 |
+
+All five articles have: fixed site nav bar, full Open Graph + Twitter card meta, series nav (all links live and clickable), prev/next navigation, and "Browse All Articles" CTA.
+
+OG images live in `articles/identity/images/`:
+
+| Slug | File |
+|---|---|
+| identity-is-everything | `Identityinreality.png` |
+| authentication-methods | `identityauthmethods.png` |
+| passkeys | `identitypasskeys.png` |
+| who-did-you-let-in | `whodidyouletin.png` |
+| groups-connective-tissue | `Groupstheconnectivetissue.png` |
 
 Series focus: Microsoft Entra ID, authentication, identity architecture, and threat detection.
 
 ---
 
-### 🟡 Governance Series — 5 articles scheduled
+### 🟡 Governance Series — 1 live · 4 scheduled
 
-| PT | Title | Scheduled |
-|---|---|---|
-| PT01 | Groups Are the Connective Tissue — and Nobody Owns the Scissors | Jun 30, 2026 |
-| PT02 | The Governance Gap | Jul 14, 2026 |
-| PT03 | The Cleanup Campaign That Never Ends | Jul 28, 2026 |
-| PT04 | Clean the House Before the Guests Arrive | Aug 11, 2026 |
-| PT05 | The Ownership Operating Model | Aug 25, 2026 |
+| PT | Title | Status | Date |
+|---|---|---|---|
+| PT01 | [Groups Are the Connective Tissue](articles/governance/groups-connective-tissue.html) | ✅ Live | Jul 6, 2026 |
+| PT02 | The Governance Gap | 🔒 Scheduled | Jul 20, 2026 |
+| PT03 | The Cleanup Campaign That Never Ends | 🔒 Scheduled | Aug 3, 2026 |
+| PT04 | Clean the House Before the Guests Arrive | 🔒 Scheduled | Aug 17, 2026 |
+| PT05 | The Ownership Operating Model | 🔒 Scheduled | Aug 31, 2026 |
+
+Series publishes biweekly from Jul 6. Files live in `articles/governance/` when published.
+
+OG image for PT01: `articles/governance/images/pt01-groupstheconnectivetissue.png`
 
 Series focus: M365 governance, group lifecycle, ownership models, tenant cleanup, and Copilot readiness.
 
-Files live in `articles/governance/` when published.
-
 ---
 
-### 🟢 Conditional Access Series — 2 articles live
+### 🟢 Conditional Access Series — 3 articles live
 
 | Title | Published |
 |---|---|
-| [CA Policy Analyzer Update](conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html) | May 2026 |
-| [MFA for All… But Not the Same](conditional-access/mfa-for-all-but-not-the-same.html) | Feb 2026 |
+| [Baseline Scopes: Microsoft Closed the Side Door](articles/conditional-access/baseline-scopes-publish/baseline-scopes.html) | Jul 2026 |
+| [CA Policy Analyzer Update](articles/conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html) | May 2026 |
+| [MFA for All… But Not the Same](articles/conditional-access/mfa-for-all-but-not-the-same.html) | Feb 2026 |
+
+MFA for All ↔ CA Policy Analyzer cross-linked via prev/next navigation.
+
+OG images live in `articles/conditional-access/images/`:
+- `CATechBaselineScopes.png` — Baseline Scopes hero
+- `CAGapPyramidNew.png` — CA gap diagram
+- `LinkedInBaselineScopePost.png`
+- `PasskeyRPID.png`
+- `BaselineScope/` — portal screenshot subfolder
 
 Series focus: Policy design, exclusions, service principal gaps, named locations, and device compliance.
 
@@ -92,7 +116,7 @@ Tracks every time conditionalaccess.tech content has been featured in the [Entra
 
 Sections on the page:
 - **Stats row** — live counters (updated by publish script)
-- **JS feature list** — all 22 features rendered from a JS array (newest first); updated by publish script
+- **JS feature list** — all features rendered from a JS array (newest first); updated by publish script
 - **Podium appearances** — #1, #2, #3 Most Popular Post finishes
 - **Merill card** — context on the newsletter and its curation
 
@@ -132,13 +156,14 @@ Autodiscovery `<link>` tags are present in `index.html` and `articles.html`. An 
 
 | # | Title | Published |
 |---|---|---|
-| 1 | Groups: The Connective Tissue of Microsoft 365 | Jun 16, 2026 |
-| 2 | Who Did You Let Into Your House? | Jun 9, 2026 |
-| 3 | Passkeys: Security Only Works If People Use It | Jun 1, 2026 |
-| 4 | Authentication Methods: The Spectrum | May 15, 2026 |
-| 5 | Identity Is Everything | May 1, 2026 |
-| 6 | CA Policy Analyzer Update | May 7, 2026 |
-| 7 | MFA for All… But Not the Same | Feb 1, 2026 |
+| 1 | Groups Are the Connective Tissue (Governance PT01) | Jul 6, 2026 |
+| 2 | Groups: The Connective Tissue of Microsoft 365 (Identity PT05) | Jun 16, 2026 |
+| 3 | Who Did You Let Into Your House? | Jun 9, 2026 |
+| 4 | Passkeys: Security Only Works If People Use It | Jun 1, 2026 |
+| 5 | Authentication Methods: The Spectrum | May 25, 2026 |
+| 6 | Identity Is Everything | May 18, 2026 |
+| 7 | CA Policy Analyzer Update | May 7, 2026 |
+| 8 | MFA for All… But Not the Same | Feb 2026 |
 
 New items are prepended automatically by the publish script. The `<lastBuildDate>` is also updated on each run.
 
@@ -147,32 +172,54 @@ New items are prepended automatically by the publish script. The `<lastBuildDate
 ## 🗂️ Folder Structure
 
 ```
-index.html                    ← Homepage
-articles.html                 ← Writing hub (root-level)
-entra-news.html               ← Entra.News features tracker
-appearances.html              ← Appearances page
-about.html                    ← About page
-styles.css                    ← Shared stylesheet
-assets/                       ← Images: avatar, MVP badge, cert badges
-feed.xml                      ← RSS 2.0 feed
+index.html                          ← Homepage
+articles.html                       ← Writing hub (root-level)
+entra-news.html                     ← Entra.News features tracker
+appearances.html                    ← Appearances page
+about.html                          ← About page
+styles.css                          ← Shared stylesheet
+assets/                             ← Images: avatar, MVP badge, cert badges
+feed.xml                            ← RSS 2.0 feed
 articles/
-  index.html                  ← Legacy hub (kept for backwards links)
-  identity/                   ← Identity Series HTML files
+  index.html                        ← Legacy hub (kept for backwards links)
+  identity/
     identity-is-everything.html
     authentication-methods.html
     passkeys.html
     who-did-you-let-in.html
     groups-connective-tissue.html
     images/
-  governance/                 ← Governance Series HTML files (coming soon)
-    readme.md                 ← Governance publish schedule
-  conditional-access/         ← CA Series HTML files
+      Identityinreality.png         ← OG: identity-is-everything
+      identityauthmethods.png       ← OG: authentication-methods
+      identitypasskeys.png          ← OG: passkeys
+      whodidyouletin.png            ← OG: who-did-you-let-in
+      Groupstheconnectivetissue.png ← OG: groups-connective-tissue
+      groupsastheconnectivetissue.png
+  governance/
+    groups-connective-tissue.html   ← PT01 · live Jul 6, 2026
+    readme.md                       ← Governance publish schedule
+    images/
+      pt01-groupstheconnectivetissue.png  ← OG: governance PT01
+      Groups/                       ← Supporting HTML reference file
+  conditional-access/
     mfa-for-all-but-not-the-same.html
+    baseline-scopes-publish/
+      baseline-scopes.html          ← Baseline Scopes article
+      assets/
+        baseline-scopes-hero.png
+        baseline-scopes-portal.png
+        excluded-resources.png
     ca-policy-analyzer/
       ca-policy-analyzer-update.html
+      natp-ep11-thumb.png
     images/
-  msp/                        ← MSP Series (planned)
-    readme.md
+      CATechBaselineScopes.png
+      CAGapPyramidNew.png
+      LinkedInBaselineScopePost.png
+      PasskeyRPID.png
+      BaselineScope/                ← Portal screenshot subfolder
+  msp/
+    readme.md                       ← MSP Series (planned)
 ```
 
 ---
@@ -196,5 +243,30 @@ The script updates all six site files in one run:
 | `index.html` | Entra.News stats updated |
 | `entra.news/readme.md` | At a Glance table + article catalogue row added |
 
-Scheduled releases (coming-soon → live without Copilot) are handled separately by `.github/scripts/release_articles.py` via a GitHub Actions workflow.
+Scheduled releases (coming-soon → live without Copilot) are handled by `.github/scripts/release_articles.py` via the weekly cron workflow.
 
+---
+
+## 🚀 GitHub Actions Workflows
+
+| Workflow | File | Trigger |
+|---|---|---|
+| Deploy GitHub Pages | `.github/workflows/pages.yml` | Push to `main` / manual |
+| Scheduled Article Release | `.github/workflows/scheduled-release.yml` | Sundays 12:00 UTC / manual |
+| Entra News Feature Update | `.github/workflows/entra-news-update.yml` | Manual dispatch |
+
+The Pages workflow uses `actions/configure-pages@v5`, `actions/upload-pages-artifact@v3`, and `actions/deploy-pages@v4` (all current versions, Node.js 24 compatible).
+
+---
+
+## 📝 Article Template Standards
+
+All published articles include:
+
+- **Fixed site nav bar** — wordmark left, Writing / Appearances / About right (Appearances hidden below 640 px)
+- **Meta block** — `<meta name="description">`, canonical URL, RSS alternate link, full Open Graph tags (`og:type`, `og:title`, `og:description`, `og:url`, `og:image` 1200×630, `og:site_name`, `article:published_time`, `article:author`), Twitter `summary_large_image` card
+- **Title format** — `Article Title — conditionalaccess.tech`
+- **Series nav** — clickable for all live posts; current post highlighted and non-clickable
+- **Prev/Next navigation** — linked within series (PT01 has next only, PT05 has prev only)
+- **CTA** — "Browse All Articles" pointing at `articles.html`; RSS and Medium as secondary text links
+- **OG images** — stored in the series `images/` folder, referenced as absolute `https://conditionalaccess.tech/articles/{series}/images/{slug}.png`
