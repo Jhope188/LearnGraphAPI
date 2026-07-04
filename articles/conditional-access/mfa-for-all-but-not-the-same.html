@@ -5,7 +5,29 @@
   <link rel="apple-touch-icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAb0ElEQVR42u17aXicV5Xme++31r6ptFiStViWdzleEidOSGwIpIesLBJheQiQJjBNhmaGoemhAVkZ1qEXep4hNANPw0AzPe2iITQhgSQkNkmcxI7teJNtWXtJVapS7VXf99W33HvnhxMauiGA7fYTZri/qn7o0XPPec97zn3fU8Dvz+/P78//z4dcjn8yOjpKx8fHyfCL30+tXy/Gxsb4//PBHR4elsS">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Conditional Access: MFA for All… But Not the Same — Jon Hope</title>
+  <title>Conditional Access: MFA for All… But Not the Same — conditionalaccess.tech</title>
+<!-- SEO -->
+<meta name="description" content="One foundational policy. Four excluded service principals. And the production scars that explain every decision.">
+<link rel="canonical" href="https://conditionalaccess.tech/articles/conditional-access/mfa-for-all-but-not-the-same.html">
+<link rel="alternate" type="application/rss+xml" title="conditionalaccess.tech RSS" href="https://conditionalaccess.tech/feed.xml">
+
+<!-- Open Graph (LinkedIn / social share cards) -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Conditional Access: MFA for All… But Not the Same">
+<meta property="og:description" content="One foundational policy. Four excluded service principals. And the production scars that explain every decision.">
+<meta property="og:url" content="https://conditionalaccess.tech/articles/conditional-access/mfa-for-all-but-not-the-same.html">
+<meta property="og:image" content="https://conditionalaccess.tech/assets/og/mfa-for-all-but-not-the-same.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="conditionalaccess.tech">
+<meta property="article:published_time" content="2026-02-10">
+<meta property="article:author" content="Jon Hope">
+
+<!-- Twitter / X card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Conditional Access: MFA for All… But Not the Same">
+<meta name="twitter:description" content="One foundational policy. Four excluded service principals. And the production scars that explain every decision.">
+<meta name="twitter:image" content="https://conditionalaccess.tech/assets/og/mfa-for-all-but-not-the-same.png">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -20,27 +42,33 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    .back-btn {
-      position: fixed;
-      top: 1rem;
-      left: 1rem;
-      background: rgba(10,15,30,0.88);
-      border: 1px solid rgba(255,255,255,0.12);
-      color: #c8d8f0;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-family: 'DM Sans', sans-serif;
-      z-index: 50;
-      backdrop-filter: blur(8px);
-      transition: background 0.2s;
-      min-height: 44px;
-      display: flex;
-      align-items: center;
-    }
-    .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+  /* ── Site header ── */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 6vw;
+    background: rgba(10,15,30,0.88);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .wordmark {
+    font-weight: 500; font-size: 0.95rem; letter-spacing: 0.01em;
+    color: var(--off-white); text-decoration: none; white-space: nowrap;
+  }
+  .wordmark span { color: var(--teal); }
+  .site-nav { display: flex; gap: 1.75rem; align-items: center; }
+  .site-nav a {
+    font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--warm-gray); text-decoration: none; transition: color 0.2s;
+    padding: 0.5rem 0;
+  }
+  .site-nav a:hover { color: var(--off-white); }
+  .site-nav a.active { color: var(--teal); }
+  @media (max-width: 640px) {
+    .site-nav { gap: 1.1rem; }
+    .site-nav a.hide-mobile { display: none; }
+  }
 
     body {
       background: var(--navy);
@@ -421,10 +449,50 @@
       .app-table { font-size: 0.82rem; }
       .cta-block { padding: 2rem 1.5rem; }
     }
-  </style>
+  
+  /* ── Linked series nav + prev/next + CTA secondary ── */
+  a.series-post { text-decoration: none; transition: background 0.2s, color 0.2s; }
+  a.series-post:hover { background: rgba(0,194,179,0.06); color: var(--off-white); }
+  .series-post-arrow { margin-left: auto; color: var(--teal-dim); font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
+  a.series-post:hover .series-post-arrow { opacity: 1; }
+  .article-nav {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: rgba(0,194,179,0.1); border-radius: 4px;
+    overflow: hidden; margin-top: 1.5rem;
+  }
+  .article-nav.single { grid-template-columns: 1fr; }
+  .article-nav a {
+    background: var(--card-bg); padding: 1.4rem 1.5rem;
+    text-decoration: none; transition: background 0.2s; display: block;
+  }
+  .article-nav a:hover { background: rgba(0,194,179,0.05); }
+  .article-nav .nav-dir {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal-dim); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .article-nav .nav-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem;
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.15;
+  }
+  .article-nav a.next { text-align: right; }
+  @media (max-width: 640px) {
+    .article-nav { grid-template-columns: 1fr; }
+    .article-nav a.next { text-align: left; }
+  }
+  .cta-secondary { margin-top: 1.25rem; font-size: 0.85rem; color: var(--warm-gray); }
+  .cta-secondary a { color: var(--teal); text-decoration: none; }
+  .cta-secondary a:hover { text-decoration: underline; }
+</style>
 </head>
 <body>
-<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+<header class="site-header">
+  <a href="https://conditionalaccess.tech" class="wordmark">conditionalaccess<span>.tech</span></a>
+  <nav class="site-nav">
+    <a href="https://conditionalaccess.tech/articles.html" class="active">Writing</a>
+    <a href="https://conditionalaccess.tech/appearances.html" class="hide-mobile">Appearances</a>
+    <a href="https://conditionalaccess.tech/about.html">About</a>
+  </nav>
+</header>
 
 <!-- HERO -->
 <section class="hero">
@@ -731,10 +799,20 @@ New-MgServicePrincipal -AppId "00000012-0000-0000-c000-000000000000"</pre>
   <p>Every exclusion should be questioned. Every legacy workaround should be retested. Because in identity architecture, the right answer five years ago might not be the right answer today.</p>
 
   <!-- CTA -->
+  <nav class="article-nav single" aria-label="Article navigation">
+    <a href="https://conditionalaccess.tech/articles/conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html" class="next">
+      <div class="nav-dir">Next &middot; CA Policy Analyzer Update &#8594;</div>
+      <div class="nav-title">CA Policy Analyzer: Major Update</div>
+    </a>
+  </nav>
+
   <div class="cta-block">
-    <h2>Want More?</h2>
-    <p>Follow along for more writing on Conditional Access, M365 security, and the real-world thinking behind modern identity architecture.</p>
-    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+    <h2>Keep Reading</h2>
+    <p>More practical writing on Microsoft Entra ID, Conditional Access, and M365 governance. No fluff, no vendor spin.</p>
+    <a href="https://conditionalaccess.tech/articles.html" class="btn">Browse All Articles</a>
+    <div class="cta-secondary">
+      <a href="https://conditionalaccess.tech/feed.xml">Subscribe via RSS</a> &nbsp;&middot;&nbsp; <a href="https://medium.com/@jhope188" target="_blank" rel="noopener">Archive on Medium</a>
+    </div>
   </div>
 
 </main>
