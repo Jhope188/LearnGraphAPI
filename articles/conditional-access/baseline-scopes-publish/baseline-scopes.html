@@ -48,10 +48,6 @@
   }
   .site-nav a:hover { color: var(--off-white); }
   .site-nav a.active { color: var(--teal); }
-  @media (max-width: 640px) {
-    .site-nav { gap: 1.1rem; }
-    .site-nav a.hide-mobile { display: none; }
-  }
 
   body {
     background: var(--navy); color: var(--off-white);
@@ -401,6 +397,25 @@
 
   .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
 
+  .bottom-nav {
+    margin-top: 3rem; padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;
+  }
+  .bottom-nav-home {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    color: var(--teal); text-decoration: none;
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.9rem;
+    padding: 0.75rem 1.4rem; border: 1px solid rgba(0,194,179,0.25);
+    border-radius: 4px; transition: background 0.2s, border-color 0.2s;
+  }
+  .bottom-nav-home:hover { background: rgba(0,194,179,0.07); border-color: var(--teal); }
+  .bottom-nav-meta {
+    font-size: 0.8rem; color: var(--warm-gray); letter-spacing: 0.02em;
+  }
+  .bottom-nav-meta a { color: var(--teal-dim); text-decoration: none; border-bottom: 1px solid rgba(0,126,118,0.3); }
+  .bottom-nav-meta a:hover { color: var(--teal); }
+
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -411,9 +426,12 @@
   }
   @media (max-width: 640px) {
     .scope-grid { grid-template-columns: 1fr; }
-    .ba-grid { grid-template-columns: 1fr; }
     .hero { padding: 5rem 20px 3rem; }
-    .bar-label { width: 120px; font-size: 0.72rem; }
+    .site-nav { gap: 1.1rem; }
+    .site-nav a.hide-mobile { display: none; }
+    .bottom-nav { flex-direction: column; align-items: flex-start; }
+    .table-wrap { overflow-x: auto; }
+    .credit-block { padding: 1.25rem 1.25rem; }
   }
 </style>
 </head>
@@ -503,15 +521,16 @@
     <p>Each Conditional Access control is a slice of cheese. Each slice has holes. A single slice will let an attacker through one of its holes, but a second slice, positioned differently, catches them. The resource exclusion gap is a hole that lines up straight through the stack for anything requesting baseline scopes. The fix is not one perfect slice. It is additive policies: MFA <strong>and</strong> compliant device, not MFA <strong>or</strong> compliant device.</p>
   </div>
 
-  <p>Two researchers pushed this from a known quirk into a fixed vulnerability, and their contributions are distinct enough to credit separately.</p>
+  <p>This did not come from one researcher, and it did not come from nowhere. It was a joint effort that pushed a known quirk into a fixed vulnerability, building on earlier work that Microsoft had waved off.</p>
 
   <div class="credit-block">
     <div class="credit-label">The Research</div>
-    <p><strong>Fabian Bader</strong> mapped the structure of the gap. Working through every FOCI application and pre-consented resource combination, he documented which resources are always excluded from Conditional Access, and found that a specific scope combination on the Microsoft Authenticator app bypassed the compliant device control entirely. His blog is the clearest public catalogue of CA bypasses that exist by design rather than by misconfiguration.</p>
-    <p><strong>Dirk-jan Mollema</strong> proved the scopes were a lie. His newer research showed that for several Microsoft first-party apps, the scopes printed in the token are ignored by the Graph backend. An app holding a token that says <span class="mono">User.Read</span> could still enumerate users, groups, devices, service principals, and directory roles, and in some cases modify them. Critically, he also confirmed that Microsoft's documented mitigation, the "Protect directory information" custom-attribute approach, did not actually hold. Requesting only <span class="mono">openid</span> still returned a token, and the backend still ignored the scope.</p>
+    <p>This work is a joint effort by <strong>Fabian Bader</strong> and <strong>Dirk-jan Mollema</strong>, presented together at TROOPERS25 and catalogued on their shared <a class="inline" href="https://entrascopes.com" target="_blank" rel="noopener">entrascopes.com</a> project. It builds on earlier findings by the researcher known as Jmcgill (Syntax-Err0r) and on Eric Woodruff's UnOAuthorized research at Semperis, both of which surfaced pieces of this before Microsoft acted.</p>
+    <p><strong>Fabian</strong> mapped the enforcement surface. He documented the resources that are always carved out of Conditional Access, found a password-verification path that avoids a strong-auth error in the logs, and identified a specific Microsoft Authenticator scope combination that slipped past the compliant device control. He also found that Microsoft's documented "Protect directory information" mitigation did not hold, because requesting only <span class="mono">openid</span> still returned a usable token.</p>
+    <p><strong>Dirk-jan</strong> proved why the gap ran deeper than the documentation admitted. For several Microsoft first-party apps, the scopes printed in the token are ignored by the Graph backend. A token that reads <span class="mono">User.Read</span> could still enumerate users, groups, devices, service principals, and directory roles, and in some cases modify them. His root-cause write-ups are what moved MSRC from "by design" to shipping the fix.</p>
   </div>
 
-  <p>That last finding is what moved Microsoft. Earlier reports of this behavior had been triaged as "by design." Once it was clear the documented mitigation could still be bypassed and that first-party apps were reading and writing directory data the token should never have permitted, Microsoft acknowledged the issue and shipped a real fix.</p>
+  <p>That combination is what moved Microsoft. Earlier reports of the scope behavior had been triaged as "by design." Once it was clear the documented mitigation could still be bypassed and that first-party apps were reading and writing directory data the token should never have permitted, Microsoft acknowledged the issue and shipped a real fix.</p>
 
   <div class="callout danger">
     <span class="callout-label">Why This Actually Matters</span>
@@ -734,6 +753,11 @@ GET https://graph.microsoft.com/beta/auditLogs/signIns
     <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
     <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
   </div>
+
+  <nav class="bottom-nav">
+    <a href="https://conditionalaccess.tech" class="bottom-nav-home">&#8592; Back to conditionalaccess.tech</a>
+    <span class="bottom-nav-meta">Related reading: <a href="https://conditionalaccess.tech">Who Did You Let Into Your House? Guest Identity in Microsoft Entra</a></span>
+  </nav>
 
 </main>
 </body>
