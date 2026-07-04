@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baseline Scopes: Microsoft Closed the Side Door, conditionalaccess.tech</title>
+<meta name="description" content="For years, Conditional Access policies with a single resource exclusion silently stopped enforcing controls for low-privilege scopes. Research from Fabian Bader and Dirk-jan Mollema exposed how deep the gap ran. Baseline Scopes enforcement is the fix. Here is what it is, why it matters, and how to enable it.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Baseline Scopes: Microsoft Closed the Side Door">
+<meta property="og:description" content="A Conditional Access gap that sat open for years, the research that exposed it, and the new enforcement setting that closes it.">
+<meta property="og:site_name" content="conditionalaccess.tech">
+<meta property="og:image" content="https://conditionalaccess.tech/assets/og/baseline-scopes.png">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem;
+    border-radius: 8px; text-decoration: none;
+    font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+    z-index: 50; backdrop-filter: blur(8px);
+    transition: background 0.2s; min-height: 44px;
+    display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem 8vw 4rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(0,194,179,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 80% at 10% 80%, rgba(255,92,53,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--teal); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 600px; font-size: 1.1rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem; flex-wrap: wrap;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .hero-art {
+    margin-top: 3rem; max-width: 960px; width: 100%;
+    border-radius: 8px; overflow: hidden;
+    border: 1px solid rgba(0,194,179,0.15);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+    opacity: 0; animation: fadeUp 0.7s 0.8s forwards;
+  }
+  .hero-art img { display: block; width: 100%; height: auto; }
+
+  .content { max-width: 780px; margin: 0 auto; padding: 4rem 6vw 8rem; }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.5;
+    color: var(--off-white); border-left: 3px solid var(--teal);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+  .pull-quote cite {
+    display: block; margin-top: 0.75rem; font-style: normal;
+    font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+    letter-spacing: 0.05em; color: var(--teal-dim);
+  }
+
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4rem 0 1.5rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.25; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+  a.inline { color: var(--teal); text-decoration: none; border-bottom: 1px solid rgba(0,194,179,0.3); }
+  a.inline:hover { border-bottom-color: var(--teal); }
+
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout.danger { border-color: rgba(255,92,53,0.2); }
+  .callout.danger::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .callout.warn { border-color: rgba(245,200,66,0.2); }
+  .callout.warn::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .callout.danger .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: #f5c842; }
+
+  .figure { margin: 2.5rem 0; border-radius: 6px; overflow: hidden; border: 1px solid rgba(0,194,179,0.12); background: var(--card-bg); }
+  .figure img { display: block; width: 100%; height: auto; }
+  .figure figcaption {
+    padding: 0.85rem 1.25rem; font-size: 0.8rem; color: var(--warm-gray);
+    border-top: 1px solid rgba(255,255,255,0.05); line-height: 1.5;
+  }
+  .figure figcaption strong { color: var(--teal); font-weight: 500; }
+
+  .code-block {
+    margin: 2.5rem 0; border-radius: 6px; overflow: hidden;
+    border: 1px solid rgba(0,194,179,0.15); background: #0b1220;
+  }
+  .code-head {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.6rem 1rem; background: rgba(0,194,179,0.06);
+    border-bottom: 1px solid rgba(0,194,179,0.12);
+    font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500;
+  }
+  .code-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal-dim); }
+  .code-block pre {
+    margin: 0; padding: 1.1rem 1.25rem; overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    line-height: 1.7; color: #cfd8e3;
+  }
+  .code-block pre .c-key { color: var(--teal); }
+  .code-block pre .c-str { color: #f5c842; }
+  .code-block pre .c-cmt { color: #5f7285; }
+
+  .chart {
+    margin: 2.5rem 0; border-radius: 6px; overflow: hidden;
+    border: 1px solid rgba(0,194,179,0.12); background: var(--card-bg);
+  }
+  .chart-head {
+    padding: 0.85rem 1.25rem; border-bottom: 1px solid rgba(0,194,179,0.1);
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500;
+  }
+  .chart-body { padding: 1.5rem 1.5rem 1rem; }
+  .bar-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.85rem; }
+  .bar-label {
+    width: 210px; flex-shrink: 0; font-size: 0.82rem; color: #c8c3bc;
+    text-align: right; line-height: 1.3;
+  }
+  .bar-label.hot { color: var(--off-white); font-weight: 500; }
+  .bar-track { flex: 1; height: 26px; background: rgba(255,255,255,0.03); border-radius: 3px; position: relative; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; background: var(--teal-dim); display: flex; align-items: center; }
+  .bar-fill.hot { background: linear-gradient(90deg, var(--teal), var(--teal-dim)); }
+  .bar-fill.muted { background: rgba(122,155,181,0.25); }
+  .bar-count {
+    position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--off-white);
+  }
+  .chart-legend {
+    padding: 0.5rem 1.5rem 1.25rem; display: flex; gap: 1.5rem; flex-wrap: wrap;
+    font-size: 0.75rem; color: var(--warm-gray);
+  }
+  .chart-legend span { display: flex; align-items: center; gap: 0.45rem; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 2px; }
+  @media (max-width: 640px) {
+    .bar-label { width: 120px; font-size: 0.72rem; }
+  }
+
+  .table-wrap { margin: 2.5rem 0; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.1); }
+  .table-label {
+    background: rgba(0,194,179,0.07); padding: 0.75rem 1.25rem;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+  }
+  table { width: 100%; border-collapse: collapse; background: var(--card-bg); font-size: 0.88rem; }
+  thead tr { background: rgba(0,194,179,0.05); }
+  th {
+    padding: 0.9rem 1rem; text-align: left; font-size: 0.68rem;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal-dim);
+    font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+    font-family: 'DM Sans', sans-serif;
+  }
+  td {
+    padding: 0.9rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a09890; vertical-align: top; line-height: 1.55;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,194,179,0.03); }
+  td strong { color: var(--off-white); }
+  .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px; white-space: nowrap;
+  }
+  .badge {
+    display: inline-block; font-size: 0.65rem; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 2px; font-weight: 500;
+  }
+  .badge-ok     { background: rgba(0,194,179,0.15); color: var(--teal); }
+  .badge-warn   { background: rgba(245,200,66,0.12); color: #f5c842; }
+  .badge-danger { background: rgba(255,92,53,0.15);  color: var(--accent); }
+
+  .defense-stack { margin: 3rem 0; display: flex; flex-direction: column; gap: 0; }
+  .layer {
+    padding: 0.9rem 1.5rem; border: 1px solid rgba(0,194,179,0.1);
+    display: flex; align-items: center; gap: 1rem;
+    transition: background 0.2s; cursor: default;
+  }
+  .layer:hover { background: rgba(0,194,179,0.05); }
+  .layer:first-child { border-radius: 4px 4px 0 0; }
+  .layer:last-child  { border-radius: 0 0 4px 4px; }
+  .layer-icon { font-size: 1.2rem; min-width: 2rem; text-align: center; }
+  .layer-text { font-size: 0.9rem; color: #a0998f; }
+  .layer-text strong { color: var(--off-white); display: block; font-size: 0.95rem; }
+  .layer-bar { margin-left: auto; height: 3px; border-radius: 2px; background: var(--teal); opacity: 0.4; }
+
+  .scope-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: rgba(0,194,179,0.1);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .scope-card { background: var(--card-bg); padding: 1.5rem; position: relative; }
+  .scope-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .scope-name {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.9rem;
+  }
+  .scope-list { list-style: none; padding: 0; margin: 0; }
+  .scope-list li {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--warm-gray); padding: 0.35rem 0;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .scope-list li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--teal-dim); flex-shrink: 0; }
+
+  .steps { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; counter-reset: step; }
+  .step {
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    padding: 1.25rem 1.5rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg);
+  }
+  .step:first-child { border-radius: 4px 4px 0 0; }
+  .step:last-child  { border-radius: 0 0 4px 4px; }
+  .step:not(:last-child) { border-bottom: none; }
+  .step-num {
+    counter-increment: step; font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; color: var(--teal); min-width: 1.75rem; line-height: 1.3;
+  }
+  .step-num::before { content: counter(step); }
+  .step-text { font-size: 0.95rem; color: #a09890; line-height: 1.65; }
+  .step-text strong { display: block; color: var(--off-white); margin-bottom: 0.2rem; font-size: 1rem; }
+
+  .checklist { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .check-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1rem 1.25rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); transition: background 0.2s;
+  }
+  .check-item:first-child { border-radius: 4px 4px 0 0; }
+  .check-item:last-child  { border-radius: 0 0 4px 4px; }
+  .check-item:not(:last-child) { border-bottom: none; }
+  .check-item:hover { background: rgba(0,194,179,0.04); }
+  .check-box {
+    width: 18px; height: 18px; border: 2px solid var(--teal-dim);
+    border-radius: 3px; flex-shrink: 0; margin-top: 3px; opacity: 0.5;
+  }
+  .check-text { font-size: 0.92rem; color: #a09890; line-height: 1.65; }
+  .check-text strong { display: block; color: var(--off-white); margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+  .credit-block {
+    margin: 3rem 0; padding: 1.75rem 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+  }
+  .credit-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 1rem;
+  }
+  .credit-block p { font-size: 0.95rem; margin-bottom: 0.9rem; }
+  .credit-block p:last-child { margin-bottom: 0; }
+
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+    letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white);
+  }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .scope-grid { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 6vw 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<section class="hero">
+  <div class="hero-label">Conditional Access Deep Dive</div>
+  <h1>Who Did You<span>Let In, Again?</span></h1>
+  <p class="hero-sub">For years, a Conditional Access policy with a single resource exclusion quietly stopped enforcing your controls for a set of low-privilege scopes. Not because someone misconfigured it. Because Microsoft built the carve-out in on purpose. Baseline Scopes enforcement is the setting that closes it.</p>
+  <div class="hero-meta">
+    <span>Entra Conditional Access</span>
+    <span>July 2026</span>
+    <span>11 min read</span>
+  </div>
+  <figure class="hero-art">
+    <img src="assets/baseline-scopes-hero.png" alt="Baseline Scopes, Microsoft closed the side door. Three houses showing Conditional Access not enforced, enforcement being enabled, and Conditional Access fully enforced.">
+  </figure>
+</section>
+
+<main class="content">
+
+  <p>Think back to the guest identity piece. The whole point was that you make risk-based trust decisions at your front door every day, and that most tenants fail to make the same decisions about who they let into the directory. This is the same house, but a different problem. This time the front door was locked, MFA was required, device compliance was enforced, and there was still a side door propped open the whole time. You didn't prop it open. It came that way.</p>
+
+  <p>That side door is the resource exclusion enforcement gap, and the fix has a name most admins have never heard: <strong>Baseline Scopes</strong>. It is one of the most underestimated changes to land in Conditional Access in years, because it patches a gap that has been quietly present for as long as resource exclusions have existed.</p>
+
+  <div class="pull-quote">
+    "Just because one slice of cheese lets through an attacker, the next one might hold them back. That is why it is so important to build multiple additive policies and not one that contains an OR."
+    <cite>Fabian Bader, Cloudbrothers</cite>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">What Are Baseline Scopes</span>
+  </div>
+
+  <p>Start with the OAuth flow, because that is where the confusion lives. Every sign-in has two parts that matter here: the <strong>client</strong> (the app you are using, like Teams or Outlook) and the <strong>resource</strong> (the API that holds the data, like Microsoft Graph). Conditional Access policies are evaluated against the resource, not the client. Any client requesting a token for a covered resource triggers the policy.</p>
+
+  <p>Baseline scopes are a specific, named set of low-privilege permissions that Microsoft treats as the minimum an app needs just to complete sign-in and read basic profile information. Microsoft's current definition covers two groups.</p>
+
+  <div class="scope-grid">
+    <div class="scope-card">
+      <div class="scope-name">OIDC Scopes</div>
+      <ul class="scope-list">
+        <li>email</li>
+        <li>offline_access</li>
+        <li>openid</li>
+        <li>profile</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <div class="scope-name">Baseline Directory Scopes</div>
+      <ul class="scope-list">
+        <li>User.Read</li>
+        <li>User.Read.All</li>
+        <li>User.ReadBasic.All</li>
+        <li>People.Read</li>
+        <li>People.Read.All</li>
+        <li>GroupMember.Read.All</li>
+        <li>Member.Read.Hidden</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>On their own, these scopes look harmless. They read the signed-in user's profile and some directory information. That is exactly why they were carved out, and exactly why the carve-out turned into a problem.</p>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">Why This Is Critical to CA</span>
+  </div>
+
+  <p>Here is the mechanic that most people never understood. The moment you add a single resource exclusion to an <strong>All resources</strong> policy, the legacy behavior kicked in: any app requesting only baseline scopes was no longer covered by that policy. Not just the excluded app. Any app. The exclusion you added for one specific resource silently opened a gap for the entire baseline scope set.</p>
+
+  <p>It gets worse. Even if you built a second policy that explicitly covered the excluded resource with the same control, the baseline scopes were still issued without challenge. There was a real gap between one broad All resources policy and the two-policy split that looks identical on paper. Fabian Bader covered exactly this in his research, and framed it with the Swiss cheese model that has become the standard way to reason about these gaps.</p>
+
+  <div class="callout">
+    <span class="callout-label">The Swiss Cheese Model</span>
+    <span class="callout-icon">🧀</span>
+    <p>Each Conditional Access control is a slice of cheese. Each slice has holes. A single slice will let an attacker through one of its holes, but a second slice, positioned differently, catches them. The resource exclusion gap is a hole that lines up straight through the stack for anything requesting baseline scopes. The fix is not one perfect slice. It is additive policies: MFA <strong>and</strong> compliant device, not MFA <strong>or</strong> compliant device.</p>
+  </div>
+
+  <p>Two researchers pushed this from a known quirk into a fixed vulnerability, and their contributions are distinct enough to credit separately.</p>
+
+  <div class="credit-block">
+    <div class="credit-label">The Research</div>
+    <p><strong>Fabian Bader</strong> mapped the structure of the gap. Working through every FOCI application and pre-consented resource combination, he documented which resources are always excluded from Conditional Access, and found that a specific scope combination on the Microsoft Authenticator app bypassed the compliant device control entirely. His blog is the clearest public catalogue of CA bypasses that exist by design rather than by misconfiguration.</p>
+    <p><strong>Dirk-jan Mollema</strong> proved the scopes were a lie. His newer research showed that for several Microsoft first-party apps, the scopes printed in the token are ignored by the Graph backend. An app holding a token that says <span class="mono">User.Read</span> could still enumerate users, groups, devices, service principals, and directory roles, and in some cases modify them. Critically, he also confirmed that Microsoft's documented mitigation, the "Protect directory information" custom-attribute approach, did not actually hold. Requesting only <span class="mono">openid</span> still returned a token, and the backend still ignored the scope.</p>
+  </div>
+
+  <p>That last finding is what moved Microsoft. Earlier reports of this behavior had been triaged as "by design." Once it was clear the documented mitigation could still be bypassed and that first-party apps were reading and writing directory data the token should never have permitted, Microsoft acknowledged the issue and shipped a real fix.</p>
+
+  <div class="callout danger">
+    <span class="callout-label">Why This Actually Matters</span>
+    <span class="callout-icon">🚪</span>
+    <p>The attack does not need a compromised app or a stolen secret. A public client ID is enough, and Microsoft's own first-party client IDs are published on <a class="inline" href="https://entrascopes.com" target="_blank" rel="noopener">entrascopes.com</a>. With valid user credentials and any All resources policy that carries a resource exclusion, an attacker could skip the control you thought was enforced and read tenant directory data. Dirk-jan reports finding exactly this pattern in real-world tenants, not just in the lab.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">The Resources You Cannot Protect</span>
+  </div>
+
+  <p>Separate from the exclusion gap, Fabian's testing surfaced a related and equally uncomfortable fact. A handful of resources are hardcoded out of Conditional Access evaluation entirely. In the sign-in logs, the Conditional Access status for these always reports as <span class="mono">notApplied</span>, even when every resource in the tenant should be covered.</p>
+
+  <figure class="figure">
+    <img src="assets/excluded-resources.png" alt="Slide listing six resources completely excluded from any Conditional Access control, including Microsoft Intune Checkin, Windows Notification Service, and the Authenticator App.">
+    <figcaption><strong>Source: <a class="inline" href="https://troopers.de/troopers25/talks/tfsfqs/" target="_blank" rel="noopener">Fabian Bader &amp; Dirk-jan Mollema, TROOPERS25</a>.</strong> Six resources for which Conditional Access enforcement is not possible. MSRC confirmed this as working as expected. Note the last line: this is not the case when per-user MFA is enforced.</figcaption>
+  </figure>
+
+  <p>That final line is the part worth sitting with, and it corrects a common assumption. It is tempting to say the old per-user MFA model never had this problem because there were no exclusions to make. That is not quite the mechanic. Per-user MFA sat at a different enforcement layer, one these hardcoded carve-outs never applied to, so those same six resources <em>are</em> protected when per-user MFA is enforced. Fabian's own words on why the hardcoded Conditional Access exclusion needs to exist at all when per-user MFA covers it fine: it is "beyond my understanding." The irony is real. The legacy model most of us spent years migrating away from did not have this particular hole.</p>
+
+  <div class="callout warn">
+    <span class="callout-label">A Quiet Reconnaissance Path</span>
+    <span class="callout-icon">🔎</span>
+    <p>Because these resources do not enforce MFA, an attacker who already has a username and password can use them to validate the credential without generating a <span class="mono">50074</span> strong authentication error in the sign-in logs. It is a low-noise way to confirm credentials are live before doing anything louder. Worth knowing about when you are hunting.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">See It In Your Own Tenant</span>
+  </div>
+
+  <p>None of this has to stay theoretical. The gap leaves a fingerprint in your sign-in logs, and you can pull it read-only without changing a single setting. What you are looking for is sign-ins where the Conditional Access status reports <span class="mono">notApplied</span> against Microsoft Graph or Windows Azure Active Directory. Those are the two directory resources the baseline scope change exists to protect.</p>
+
+  <p>Run this against the beta sign-in logs endpoint in Graph Explorer, signed in with at least Reports Reader. It needs <span class="mono">AuditLog.Read.All</span>.</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="code-dot"></span> Microsoft Graph · Sign-in logs (beta)</div>
+    <pre><span class="c-cmt"># Every notApplied sign-in, newest first</span>
+GET https://graph.microsoft.com/beta/auditLogs/signIns
+  ?$filter=<span class="c-key">conditionalAccessStatus</span> eq <span class="c-str">'notApplied'</span>
+  &$top=<span class="c-str">100</span>
+  &$select=<span class="c-key">createdDateTime,appDisplayName,appId,</span>
+           <span class="c-key">resourceDisplayName,conditionalAccessStatus</span></pre>
+  </div>
+
+  <p>To go straight to the two resources that matter, add a resource filter and you have a clean signal:</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="code-dot"></span> KQL · Sentinel / Log Analytics</div>
+    <pre>SigninLogs
+| <span class="c-key">where</span> TimeGenerated &gt; ago(<span class="c-str">7d</span>)
+| <span class="c-key">where</span> ConditionalAccessStatus == <span class="c-str">"notApplied"</span>
+| <span class="c-key">where</span> ResourceDisplayName <span class="c-key">in</span> (<span class="c-str">"Microsoft Graph"</span>, <span class="c-str">"Windows Azure Active Directory"</span>)
+| <span class="c-key">summarize</span> Count = count() <span class="c-key">by</span> ResourceDisplayName, AppDisplayName
+| <span class="c-key">sort by</span> Count <span class="c-key">desc</span></pre>
+  </div>
+
+  <p>Here is what that looks like from a real, small tenant. One hundred consecutive <span class="mono">notApplied</span> sign-ins, grouped by the resource being requested. Over half of them, fifty-six percent, hit the two directory resources at the center of this whole change.</p>
+
+  <div class="chart">
+    <div class="chart-head">notApplied sign-ins by resource · sample of 100 consecutive events</div>
+    <div class="chart-body">
+      <div class="bar-row">
+        <div class="bar-label hot">Microsoft Graph</div>
+        <div class="bar-track"><div class="bar-fill hot" style="width:100%"><span class="bar-count">52</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Azure Resource Manager</div>
+        <div class="bar-track"><div class="bar-fill muted" style="width:28.8%"><span class="bar-count">15</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Azure Portal</div>
+        <div class="bar-track"><div class="bar-fill muted" style="width:23%"><span class="bar-count">12</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label hot">Windows Azure Active Directory</div>
+        <div class="bar-track"><div class="bar-fill hot" style="width:7.7%"><span class="bar-count">4</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Office365 Shell WCSS-Server</div>
+        <div class="bar-track"><div class="bar-fill muted" style="width:7.7%"><span class="bar-count">4</span></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Everything else (9 resources)</div>
+        <div class="bar-track"><div class="bar-fill muted" style="width:25%"><span class="bar-count">13</span></div></div>
+      </div>
+    </div>
+    <div class="chart-legend">
+      <span><span class="legend-swatch" style="background:var(--teal)"></span> Directory resources the baseline change protects</span>
+      <span><span class="legend-swatch" style="background:rgba(122,155,181,0.25)"></span> Other resources</span>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-label">Read This Honestly</span>
+    <span class="callout-icon">⚖️</span>
+    <p>A <span class="mono">notApplied</span> result is not automatically a bypass. It can also mean no policy targeted that flow, or the sign-in was covered elsewhere in the token chain. The Azure Resource Manager and Azure Portal rows above are mostly benign for that reason. What makes it the gap fingerprint is <span class="mono">notApplied</span> against Microsoft Graph or Windows Azure Active Directory, for apps requesting only baseline scopes, while an All resources policy with an exclusion is in place. Use this chart to find candidates, then confirm with the controlled test below.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">How to Enable Enforcement</span>
+  </div>
+
+  <p>Microsoft announced the enforcement change in January 2026 and, after adjusting the timeline, began the phased rollout on <strong>May 13, 2026</strong>. Affected tenants are notified through the Microsoft 365 Message Center. If your tenant has not been switched yet, you do not have to wait. You can opt in today, and if you run All resources policies with resource exclusions, you should.</p>
+
+  <p>The setting lives behind a direct link. It is not surfaced in the normal Conditional Access navigation, which is a large part of why almost nobody knows it exists.</p>
+
+  <div class="steps">
+    <div class="step">
+      <span class="step-num"></span>
+      <div class="step-text">
+        <strong>Sign in with the right role</strong>
+        You need at least Conditional Access Administrator to view and change the setting.
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num"></span>
+      <div class="step-text">
+        <strong>Open the hidden Baseline scope settings page</strong>
+        Navigate to <span class="mono">aka.ms/BaselineScopesSettingsUX</span>. The direct link is required. The page does not appear in the standard Conditional Access menu.
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num"></span>
+      <div class="step-text">
+        <strong>Choose Enable enforcement</strong>
+        Select the recommended option, which applies Conditional Access to baseline scopes using Windows Azure Active Directory as the target resource.
+      </div>
+    </div>
+    <div class="step">
+      <span class="step-num"></span>
+      <div class="step-text">
+        <strong>Save</strong>
+        The change takes effect immediately. Sign-ins that were previously not evaluated will now be subject to your All resources policies.
+      </div>
+    </div>
+  </div>
+
+  <figure class="figure">
+    <img src="assets/baseline-scopes-portal.png" alt="Microsoft Entra admin center showing the Conditional Access Baseline scope settings preview page, with Enable enforcement selected as the recommended option.">
+    <figcaption><strong>The Baseline scope settings page in the Entra admin center.</strong> Enable enforcement is the recommended choice. Disable enforcement retains the legacy behavior and is flagged as not recommended because it leaves the gap open.</figcaption>
+  </figure>
+
+  <div class="callout danger">
+    <span class="callout-label">Test First, This Can Break Sign-Ins</span>
+    <span class="callout-icon">⚠️</span>
+    <p>Enabling enforcement immediately applies your controls to flows that were previously exempt. That is the whole point, but it has real consequences. Device enrollment flows (Intune, Jamf, macOS platform login), AVD profile storage accounts, and any app you deliberately excluded so it would work from unmanaged devices can all be affected, because those flows lean on Microsoft Graph with baseline scopes and Graph is not the resource you excluded. Enable this in a test tenant or a controlled pilot before you flip it in production, and confirm your enrollment and break-glass paths still work.</p>
+  </div>
+
+  <p>There is no report-only mode for this setting, which is a legitimate criticism raised repeatedly by admins in the field. Your best pre-flight tool is the sign-in logs. Enable the setting in a non-production tenant, drive your known enrollment and login flows, and watch which ones start receiving challenges. Microsoft also documents a Graph query against <span class="mono">conditionalAccessAudiences</span> to surface which apps in your tenant request only baseline scopes, which is worth running over a multi-day window before you commit.</p>
+
+  <div class="callout">
+    <span class="callout-label">If You Genuinely Need the Old Behavior</span>
+    <span class="callout-icon">🔧</span>
+    <p>For the narrow cases where an app truly must stay exempt, unmanaged-device enrollment being the common one, Microsoft supports a Customize behavior option. You assign a custom tenant-owned application as the target resource for baseline scopes, then exclude that one custom app from the specific policies. This is the surgical exclusion the platform never gave you before. Use it deliberately and per app, not as a blanket switch back to legacy.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">Before You Enable</span>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Inventory your All resources policies with exclusions</strong>
+        This change only affects policies that target All resources and carry at least one resource exclusion. If you have none, you are not impacted. Find the ones you do have first.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Identify apps requesting only baseline scopes</strong>
+        Run the documented Graph query against conditionalAccessAudiences over several days. Enrollment agents, AVD storage, and custom line-of-business apps are the usual suspects.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Enable in a test tenant and drive your flows</strong>
+        No report-only mode exists. A pilot tenant plus sign-in log review is the substitute. Confirm Intune, Jamf, macOS login, and AVD profile paths survive.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Protect break-glass and enrollment before flipping production</strong>
+        Anything you previously excluded so it worked from unmanaged devices needs a plan: either the Customize behavior custom-app exclusion, or a redesign of the flow.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Build additive, not OR-based, policies</strong>
+        Baseline scopes closes one hole. The Swiss cheese principle still applies to everything else. MFA and compliant device, layered, is what holds when a single slice fails.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>Baseline Scopes is not a flashy feature. There is no new blade, no dashboard, no glossy launch. It is a single radio button behind a hidden URL that closes a gap which sat open for years while most of us assumed an All resources policy meant all resources. It did not. The word "all" had an asterisk, and the asterisk was the entire baseline scope set every time you added an exclusion.</p>
+
+  <p>The lesson underneath it is the one that keeps recurring in identity work. The controls you configure are only as good as the enforcement behind them, and the enforcement is full of corner cases that Microsoft builds for its own operational reasons. Fabian and Dirk-jan did the field a real service by making those corners visible. The least we can do is turn the setting on.</p>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>
