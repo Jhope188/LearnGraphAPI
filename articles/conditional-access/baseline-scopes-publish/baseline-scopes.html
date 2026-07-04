@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baseline Scopes: Microsoft Closed the Side Door, conditionalaccess.tech</title>
+<title>Baseline Scopes: Microsoft Closed the Side Door — conditionalaccess.tech</title>
 <meta name="description" content="For years, Conditional Access policies with a single resource exclusion silently stopped enforcing controls for low-privilege scopes. Research from Fabian Bader and Dirk-jan Mollema exposed how deep the gap ran. Baseline Scopes enforcement is the fix. Here is what it is, why it matters, and how to enable it.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Baseline Scopes: Microsoft Closed the Side Door">
 <meta property="og:description" content="A Conditional Access gap that sat open for years, the research that exposed it, and the new enforcement setting that closes it.">
 <meta property="og:site_name" content="conditionalaccess.tech">
-<meta property="og:image" content="https://conditionalaccess.tech/assets/og/baseline-scopes.png">
+<meta property="og:image" content="https://conditionalaccess.tech/articles/conditional-access/images/CATechBaselineScopes.png">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -25,18 +25,33 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .back-btn {
-    position: fixed; top: 1rem; left: 1rem;
+  /* ── Site header ── */
+  .site-header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 6vw;
     background: rgba(10,15,30,0.88);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: #c8d8f0; padding: 0.6rem 1.2rem;
-    border-radius: 8px; text-decoration: none;
-    font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
-    z-index: 50; backdrop-filter: blur(8px);
-    transition: background 0.2s; min-height: 44px;
-    display: flex; align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    font-family: 'DM Sans', sans-serif;
   }
-  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+  .wordmark {
+    font-weight: 500; font-size: 0.95rem; letter-spacing: 0.01em;
+    color: var(--off-white); text-decoration: none; white-space: nowrap;
+  }
+  .wordmark span { color: var(--teal); }
+  .site-nav { display: flex; gap: 1.75rem; align-items: center; }
+  .site-nav a {
+    font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--warm-gray); text-decoration: none; transition: color 0.2s;
+    padding: 0.5rem 0;
+  }
+  .site-nav a:hover { color: var(--off-white); }
+  .site-nav a.active { color: var(--teal); }
+  @media (max-width: 640px) {
+    .site-nav { gap: 1.1rem; }
+    .site-nav a.hide-mobile { display: none; }
+  }
 
   body {
     background: var(--navy); color: var(--off-white);
@@ -47,7 +62,7 @@
   .hero {
     position: relative; min-height: 100vh;
     display: flex; flex-direction: column;
-    justify-content: center; padding: 6rem 8vw 4rem; overflow: hidden;
+    justify-content: center; padding: 6rem max(40px, calc(50vw - 580px)) 4rem; overflow: hidden;
   }
   .hero::before {
     content: ''; position: absolute; inset: 0;
@@ -86,7 +101,9 @@
   }
   .hero-art img { display: block; width: 100%; height: auto; }
 
-  .content { max-width: 780px; margin: 0 auto; padding: 4rem 6vw 8rem; }
+  .content { max-width: 820px; width: 100%; margin: 0 auto; padding: 4rem 40px 8rem; }
+  @media (max-width: 900px) { .content { padding: 4rem 28px 6rem; } }
+  @media (max-width: 600px) { .content { padding: 3rem 18px 4rem; } }
 
   .pull-quote {
     font-family: 'DM Serif Display', serif; font-style: italic;
@@ -389,15 +406,27 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  @media (max-width: 900px) {
+    .hero { padding: 5rem 40px 3rem; }
+  }
   @media (max-width: 640px) {
     .scope-grid { grid-template-columns: 1fr; }
-    .hero { padding: 5rem 6vw 3rem; }
+    .ba-grid { grid-template-columns: 1fr; }
+    .hero { padding: 5rem 20px 3rem; }
+    .bar-label { width: 120px; font-size: 0.72rem; }
   }
 </style>
 </head>
 <body>
 
-<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+<header class="site-header">
+  <a href="https://conditionalaccess.tech" class="wordmark">conditionalaccess<span>.tech</span></a>
+  <nav class="site-nav">
+    <a href="https://conditionalaccess.tech/articles.html" class="active">Writing</a>
+    <a href="https://conditionalaccess.tech/appearances.html" class="hide-mobile">Appearances</a>
+    <a href="https://conditionalaccess.tech/about.html">About</a>
+  </nav>
+</header>
 
 <section class="hero">
   <div class="hero-label">Conditional Access Deep Dive</div>
