@@ -426,12 +426,13 @@
   }
   @media (max-width: 640px) {
     .scope-grid { grid-template-columns: 1fr; }
+    .ba-grid { grid-template-columns: 1fr; }
     .hero { padding: 5rem 20px 3rem; }
     .site-nav { gap: 1.1rem; }
     .site-nav a.hide-mobile { display: none; }
     .bottom-nav { flex-direction: column; align-items: flex-start; }
     .table-wrap { overflow-x: auto; }
-    .credit-block { padding: 1.25rem 1.25rem; }
+    .credit-block { padding: 1.25rem; }
   }
 </style>
 </head>
@@ -525,9 +526,9 @@
 
   <div class="credit-block">
     <div class="credit-label">The Research</div>
-    <p>This work is a joint effort by <strong>Fabian Bader</strong> and <strong>Dirk-jan Mollema</strong>, presented together at TROOPERS25 and catalogued on their shared <a class="inline" href="https://entrascopes.com" target="_blank" rel="noopener">entrascopes.com</a> project. It builds on earlier findings by the researcher known as Jmcgill (Syntax-Err0r) and on Eric Woodruff's UnOAuthorized research at Semperis, both of which surfaced pieces of this before Microsoft acted.</p>
+    <p>This work is a joint effort by <strong>Fabian Bader</strong> and <strong>Dirk-jan Mollema</strong>, presented together at TROOPERS25 and catalogued on their shared <a class="inline" href="https://entrascopes.com" target="_blank" rel="noopener">entrascopes.com</a> project.</p>
     <p><strong>Fabian</strong> mapped the enforcement surface. He documented the resources that are always carved out of Conditional Access, found a password-verification path that avoids a strong-auth error in the logs, and identified a specific Microsoft Authenticator scope combination that slipped past the compliant device control. He also found that Microsoft's documented "Protect directory information" mitigation did not hold, because requesting only <span class="mono">openid</span> still returned a usable token.</p>
-    <p><strong>Dirk-jan</strong> proved why the gap ran deeper than the documentation admitted. For several Microsoft first-party apps, the scopes printed in the token are ignored by the Graph backend. A token that reads <span class="mono">User.Read</span> could still enumerate users, groups, devices, service principals, and directory roles, and in some cases modify them. His root-cause write-ups are what moved MSRC from "by design" to shipping the fix.</p>
+    <p><strong>Dirk-jan</strong> proved why the gap ran deeper than the documentation admitted. For several Microsoft first-party apps, the scopes printed in the token are ignored by the Graph backend. A token that reads <span class="mono">User.Read</span> could still enumerate users, groups, devices, service principals, and directory roles, and in some cases modify them. He was not the first to notice the scope behavior. The researcher known as Jmcgill (Syntax-Err0r) had already documented it publicly and reported it to MSRC, where it was waved off as by design, and it echoes Eric Woodruff's earlier UnOAuthorized research at Semperis on Microsoft apps holding undocumented Graph permissions. What Dirk-jan added was the root-cause analysis, and his write-ups are what finally moved MSRC to ship a fix.</p>
   </div>
 
   <p>That combination is what moved Microsoft. Earlier reports of the scope behavior had been triaged as "by design." Once it was clear the documented mitigation could still be bypassed and that first-party apps were reading and writing directory data the token should never have permitted, Microsoft acknowledged the issue and shipped a real fix.</p>
@@ -558,77 +559,60 @@
     <p>Because these resources do not enforce MFA, an attacker who already has a username and password can use them to validate the credential without generating a <span class="mono">50074</span> strong authentication error in the sign-in logs. It is a low-noise way to confirm credentials are live before doing anything louder. Worth knowing about when you are hunting.</p>
   </div>
 
+  <p>You can confirm this in your own tenant, and this is the one place where the sign-in logs give a clean answer. Query the six resource IDs directly. One catch that trips people up: these sign-ins are almost all non-interactive, and the default sign-in logs endpoint returns interactive sign-ins only. You have to ask for the non-interactive event type or you will get nothing back and wrongly conclude there is no traffic.</p>
+
+  <div class="code-block">
+    <div class="code-head"><span class="code-dot"></span> Microsoft Graph · the six always-excluded resources (beta)</div>
+    <pre><span class="c-cmt"># Non-interactive is required, or these resources are invisible</span>
+GET https://graph.microsoft.com/beta/auditLogs/signIns
+  ?$filter=(<span class="c-key">resourceId</span> eq <span class="c-str">'26a4ae64-5862-427f-a9b0-044e62572a4f'</span> <span class="c-cmt">// Intune Checkin</span>
+        or <span class="c-key">resourceId</span> eq <span class="c-str">'04436913-cf0d-4d2a-9cc6-2ffe7f1d3d1c'</span> <span class="c-cmt">// WNS</span>
+        or <span class="c-key">resourceId</span> eq <span class="c-str">'0a5f63c0-b750-4f38-a71c-4fc0d58b89e2'</span> <span class="c-cmt">// MAM</span>
+        or <span class="c-key">resourceId</span> eq <span class="c-str">'1f5530b3-261a-47a9-b357-ded261e17918'</span> <span class="c-cmt">// MFA Connector</span>
+        or <span class="c-key">resourceId</span> eq <span class="c-str">'c2ada927-a9e2-4564-aae2-70775a2fa0af'</span> <span class="c-cmt">// OCaaS</span>
+        or <span class="c-key">resourceId</span> eq <span class="c-str">'ff9ebd75-fe62-434a-a6ce-b3f0a8592eaf'</span>) <span class="c-cmt">// Authenticator</span>
+     and <span class="c-key">signInEventTypes</span>/any(t: t eq <span class="c-str">'nonInteractiveUser'</span>)
+  &$select=<span class="c-key">createdDateTime,appDisplayName,resourceDisplayName,</span>
+           <span class="c-key">resourceId,conditionalAccessStatus</span></pre>
+  </div>
+
+  <p>Run it and every row comes back <span class="mono">notApplied</span>. Flip the filter to look for any status other than <span class="mono">notApplied</span> on those same six resources and you get an empty set. In a tenant I checked, that held across the entire retention window, interactive and non-interactive alike. There is no sign-in to these resources that Conditional Access ever evaluated. That is the finding, sitting in plain sight once you know where to look.</p>
+
+  <p>This is also the one part of the story the logs will show you cleanly. Try the same approach for the baseline-scope gap on Microsoft Graph and it falls apart, which is worth understanding before you go looking.</p>
+
   <div class="section-marker">
     <span class="section-num">04</span>
-    <span class="section-title">See It In Your Own Tenant</span>
+    <span class="section-title">Prove It For Yourself</span>
   </div>
 
-  <p>None of this has to stay theoretical. The gap leaves a fingerprint in your sign-in logs, and you can pull it read-only without changing a single setting. What you are looking for is sign-ins where the Conditional Access status reports <span class="mono">notApplied</span> against Microsoft Graph or Windows Azure Active Directory. Those are the two directory resources the baseline scope change exists to protect.</p>
+  <p>You might expect to prove the baseline-scope gap the same way, by counting <span class="mono">notApplied</span> against Microsoft Graph. It does not work.</p>
 
-  <p>Run this against the beta sign-in logs endpoint in Graph Explorer, signed in with at least Reports Reader. It needs <span class="mono">AuditLog.Read.All</span>.</p>
+  <p>Here is why. Graph is busy, and most <span class="mono">notApplied</span> sign-ins against it are non-interactive token refreshes: Teams, Office, and Defender quietly renewing tokens, where Conditional Access was already evaluated at the original interactive sign-in. That traffic is normal and it drowns out the signal. The sign-in log also never records the scopes that were requested, so you cannot tell a genuine baseline-scope request apart from an ordinary refresh just by reading the log. Counting <span class="mono">notApplied</span> on Graph measures noise, not the gap. This is exactly the trap that makes a quick log query look alarming when nothing is wrong, or look clean when the gap is wide open.</p>
+
+  <p>So skip the log-counting and run a controlled test instead. This is the version that survives scrutiny, so do it in a test tenant, not production. Create an All resources policy that requires MFA and exclude a single resource. Then sign in twice, once before enabling enforcement and once after, using a client that requests only a baseline scope. The clean way to do this is roadtx from the ROADtools suite, the same tooling Fabian and Dirk-jan used, pointed at a public first-party client ID and asking for nothing but <span class="mono">User.Read</span>. Do not reach for Azure CLI here: it defaults to an Azure Resource Manager token, and when you do force it to Graph it requests whatever scopes are consented on the CLI app, which is usually far more than a baseline scope.</p>
 
   <div class="code-block">
-    <div class="code-head"><span class="code-dot"></span> Microsoft Graph · Sign-in logs (beta)</div>
-    <pre><span class="c-cmt"># Every notApplied sign-in, newest first</span>
-GET https://graph.microsoft.com/beta/auditLogs/signIns
-  ?$filter=<span class="c-key">conditionalAccessStatus</span> eq <span class="c-str">'notApplied'</span>
-  &$top=<span class="c-str">100</span>
-  &$select=<span class="c-key">createdDateTime,appDisplayName,appId,</span>
-           <span class="c-key">resourceDisplayName,conditionalAccessStatus</span></pre>
+    <div class="code-head"><span class="code-dot"></span> roadtx · request a single baseline scope</div>
+    <pre><span class="c-cmt"># Public client, one baseline scope, nothing else</span>
+roadtx interactiveauth -c <span class="c-str">04b07795-8ddb-461a-bbee-02f9e1bf7b46</span> \
+  -s <span class="c-str">'https://graph.microsoft.com/User.Read'</span></pre>
   </div>
-
-  <p>To go straight to the two resources that matter, add a resource filter and you have a clean signal:</p>
-
-  <div class="code-block">
-    <div class="code-head"><span class="code-dot"></span> KQL · Sentinel / Log Analytics</div>
-    <pre>SigninLogs
-| <span class="c-key">where</span> TimeGenerated &gt; ago(<span class="c-str">7d</span>)
-| <span class="c-key">where</span> ConditionalAccessStatus == <span class="c-str">"notApplied"</span>
-| <span class="c-key">where</span> ResourceDisplayName <span class="c-key">in</span> (<span class="c-str">"Microsoft Graph"</span>, <span class="c-str">"Windows Azure Active Directory"</span>)
-| <span class="c-key">summarize</span> Count = count() <span class="c-key">by</span> ResourceDisplayName, AppDisplayName
-| <span class="c-key">sort by</span> Count <span class="c-key">desc</span></pre>
-  </div>
-
-  <p>Here is a snapshot from a real, small tenant. One hundred consecutive <span class="mono">notApplied</span> sign-ins, split into the two resources this change actually maps to versus everything else. Fifty-six of the hundred landed on Microsoft Graph or Windows Azure Active Directory, the two directory resources baseline scopes are evaluated against.</p>
-
-  <div class="snapshot">
-    <div class="snapshot-head">notApplied sign-ins · sample of 100 · one tenant, seven days</div>
-    <div class="snapshot-body">
-      <div class="bar-row">
-        <div class="bar-label hot">Graph + Azure AD Graph</div>
-        <div class="bar-track"><div class="bar-fill hot" style="width:100%"><span class="bar-count">56</span></div></div>
-      </div>
-      <div class="bar-row">
-        <div class="bar-label">Other resources</div>
-        <div class="bar-track"><div class="bar-fill muted" style="width:78.6%"><span class="bar-count">44</span></div></div>
-      </div>
-    </div>
-    <div class="snapshot-foot">The teal bar is where the baseline scope gap can live. The muted bar is unrelated: token refreshes, Teams and portal backend legs, broker flows. Those are normal, not the gap.</div>
-  </div>
-
-  <div class="callout warn">
-    <span class="callout-label">Do Not Overread This</span>
-    <span class="callout-icon">⚖️</span>
-    <p>A <span class="mono">notApplied</span> against Graph is a place to look, not proof of a bypass. The sign-in log does not show the requested scopes, so you cannot tell from this view alone whether a given row was an app asking for only baseline scopes or something that got a token for an unrelated reason. Command line tools and broker sign-ins show up here too, and they request far more than baseline. Treat the snapshot as a pointer, then prove it with the controlled test below. That test is the part that actually holds up.</p>
-  </div>
-
-  <p>This is the demonstration that survives scrutiny. Set it up in a test tenant, not production. Create an All resources policy that requires MFA and exclude a single resource. Then sign in twice, once before enabling enforcement and once after, using a client that requests only a baseline scope. Azure CLI is the cleanest, because it asks for <span class="mono">User.Read</span> and nothing more.</p>
 
   <div class="ba-grid">
     <div class="ba-col before">
       <div class="ba-tag">● Before enforcement</div>
       <ul class="ba-flow">
-        <li><span class="ba-step-dot">01</span> Sign in with Azure CLI, which requests only <span class="mono">User.Read</span></li>
+        <li><span class="ba-step-dot">01</span> Request a token for <span class="mono">User.Read</span> only, via a public client</li>
         <li><span class="ba-step-dot">02</span> All resources policy with an exclusion is in place, MFA required</li>
         <li><span class="ba-step-dot">03</span> The baseline scope is carved out, so the policy never fires</li>
       </ul>
-      <div class="ba-outcome">🚪 No MFA prompt · <span class="mono">notApplied</span> · access granted</div>
+      <div class="ba-outcome">🚪 No MFA prompt · <span class="mono">notApplied</span> · token issued</div>
     </div>
     <div class="ba-col after">
       <div class="ba-tag">● After enforcement</div>
       <ul class="ba-flow">
         <li><span class="ba-step-dot">01</span> Enable enforcement at the Baseline scopes settings page</li>
-        <li><span class="ba-step-dot">02</span> Sign in with Azure CLI again, same <span class="mono">User.Read</span> request</li>
+        <li><span class="ba-step-dot">02</span> Repeat the same <span class="mono">User.Read</span> request, unchanged</li>
         <li><span class="ba-step-dot">03</span> The scope now evaluates against Windows Azure Active Directory</li>
       </ul>
       <div class="ba-outcome">🔒 MFA challenge · policy enforced · gap closed</div>
