@@ -214,53 +214,6 @@
     .bar-label { width: 120px; font-size: 0.72rem; }
   }
 
-  .ba-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
-    background: rgba(0,194,179,0.1); border-radius: 6px; overflow: hidden; margin: 2.5rem 0;
-  }
-  .ba-col { background: var(--card-bg); padding: 1.5rem; position: relative; }
-  .ba-col::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
-  .ba-col.before::before { background: linear-gradient(90deg, var(--accent), transparent); }
-  .ba-col.after::before  { background: linear-gradient(90deg, var(--teal), transparent); }
-  .ba-tag {
-    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
-    font-weight: 500; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
-  }
-  .ba-col.before .ba-tag { color: var(--accent); }
-  .ba-col.after  .ba-tag { color: var(--teal); }
-  .ba-flow { list-style: none; padding: 0; margin: 0; }
-  .ba-flow li {
-    font-size: 0.85rem; color: var(--warm-gray); padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04); line-height: 1.5;
-    display: flex; gap: 0.6rem; align-items: flex-start;
-  }
-  .ba-flow li:last-child { border-bottom: none; }
-  .ba-step-dot { color: var(--teal-dim); font-size: 0.7rem; margin-top: 3px; flex-shrink: 0; }
-  .ba-flow li .mono { white-space: normal; }
-  .ba-outcome {
-    margin-top: 1rem; padding: 0.75rem 0.9rem; border-radius: 3px;
-    font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;
-  }
-  .ba-col.before .ba-outcome { background: rgba(255,92,53,0.1); color: var(--accent); }
-  .ba-col.after  .ba-outcome { background: rgba(0,194,179,0.1); color: var(--teal); }
-
-  .snapshot {
-    margin: 2.5rem 0; border-radius: 6px; overflow: hidden;
-    border: 1px solid rgba(0,194,179,0.12); background: var(--card-bg);
-  }
-  .snapshot-head {
-    padding: 0.85rem 1.25rem; border-bottom: 1px solid rgba(0,194,179,0.1);
-    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--teal); font-weight: 500;
-  }
-  .snapshot-body { padding: 1.5rem 1.5rem 1rem; }
-  .snapshot-foot {
-    padding: 0.75rem 1.5rem 1.1rem; font-size: 0.78rem; color: var(--warm-gray);
-    line-height: 1.55; border-top: 1px solid rgba(255,255,255,0.04);
-  }
-  @media (max-width: 640px) {
-    .ba-grid { grid-template-columns: 1fr; }
-  }
 
   .table-wrap { margin: 2.5rem 0; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.1); }
   .table-label {
@@ -426,7 +379,6 @@
   }
   @media (max-width: 640px) {
     .scope-grid { grid-template-columns: 1fr; }
-    .ba-grid { grid-template-columns: 1fr; }
     .hero { padding: 5rem 20px 3rem; }
     .site-nav { gap: 1.1rem; }
     .site-nav a.hide-mobile { display: none; }
@@ -450,7 +402,7 @@
 <section class="hero">
   <div class="hero-label">Conditional Access Deep Dive</div>
   <h1>Who Did You<span>Let In, Again?</span></h1>
-  <p class="hero-sub">For years, a Conditional Access policy with a single resource exclusion quietly stopped enforcing your controls for a set of low-privilege scopes. Not because someone misconfigured it. Because Microsoft built the carve-out in on purpose. Baseline Scopes enforcement is the setting that closes it.</p>
+
   <div class="hero-meta">
     <span>Entra Conditional Access</span>
     <span>July 2026</span>
@@ -463,7 +415,7 @@
 
 <main class="content">
 
-  <p>Think back to the guest identity piece. The whole point was that you make risk-based trust decisions at your front door every day, and that most tenants fail to make the same decisions about who they let into the directory. This is the same house, but a different problem. This time the front door was locked, MFA was required, device compliance was enforced, and there was still a side door propped open the whole time. You didn't prop it open. It came that way.</p>
+  <p>Most admins building an All resources Conditional Access policy assume all resources means exactly that. It did not. Add a single exclusion to the policy and a specific set of low-privilege scopes stopped being enforced entirely. Not for the app you excluded. For any app requesting those scopes, against any resource. The word "all" had an asterisk, and the asterisk has been there since resource exclusions were introduced.</p>
 
   <p>That side door is the resource exclusion enforcement gap, and the fix has a name most admins have never heard: <strong>Baseline Scopes</strong>. It is one of the most underestimated changes to land in Conditional Access in years, because it patches a gap that has been quietly present for as long as resource exclusions have existed.</p>
 
@@ -479,28 +431,34 @@
 
   <p>Start with the OAuth flow, because that is where the confusion lives. Every sign-in has two parts that matter here: the <strong>client</strong> (the app you are using, like Teams or Outlook) and the <strong>resource</strong> (the API that holds the data, like Microsoft Graph). Conditional Access policies are evaluated against the resource, not the client. Any client requesting a token for a covered resource triggers the policy.</p>
 
-  <p>Baseline scopes are a specific, named set of low-privilege permissions that Microsoft treats as the minimum an app needs just to complete sign-in and read basic profile information. Microsoft's current definition covers two groups.</p>
+  <p>Baseline scopes are a specific, named set of low-privilege permissions that Microsoft treats as the minimum an app needs just to complete sign-in and read basic profile information. The exact set differs by client type, which matters for how enforcement applies.</p>
 
   <div class="scope-grid">
     <div class="scope-card">
-      <div class="scope-name">OIDC Scopes</div>
+      <div class="scope-name">Public / Native clients and SPAs</div>
       <ul class="scope-list">
         <li>email</li>
         <li>offline_access</li>
         <li>openid</li>
         <li>profile</li>
+        <li>User.Read</li>
+        <li>People.Read <span style="font-size:0.7rem;color:var(--teal-dim)">(Graph only)</span></li>
       </ul>
     </div>
     <div class="scope-card">
-      <div class="scope-name">Baseline Directory Scopes</div>
+      <div class="scope-name">Confidential clients (excluded from All resources)</div>
       <ul class="scope-list">
+        <li>email</li>
+        <li>offline_access</li>
+        <li>openid</li>
+        <li>profile</li>
         <li>User.Read</li>
         <li>User.Read.All</li>
         <li>User.ReadBasic.All</li>
         <li>People.Read</li>
-        <li>People.Read.All</li>
-        <li>GroupMember.Read.All</li>
-        <li>Member.Read.Hidden</li>
+        <li>People.Read.All <span style="font-size:0.7rem;color:var(--teal-dim)">(Graph only)</span></li>
+        <li>GroupMember.Read.All <span style="font-size:0.7rem;color:var(--teal-dim)">(Graph only)</span></li>
+        <li>Member.Read.Hidden <span style="font-size:0.7rem;color:var(--teal-dim)">(Graph only)</span></li>
       </ul>
     </div>
   </div>
@@ -559,7 +517,7 @@
     <p>Because these resources do not enforce MFA, an attacker who already has a username and password can use them to validate the credential without generating a <span class="mono">50074</span> strong authentication error in the sign-in logs. It is a low-noise way to confirm credentials are live before doing anything louder. Worth knowing about when you are hunting.</p>
   </div>
 
-  <p>You can confirm this in your own tenant, and this is the one place where the sign-in logs give a clean answer. Query the six resource IDs directly. One catch that trips people up: these sign-ins are almost all non-interactive, and the default sign-in logs endpoint returns interactive sign-ins only. You have to ask for the non-interactive event type or you will get nothing back and wrongly conclude there is no traffic.</p>
+  <p>You can confirm this in your own tenant. Query the six resource IDs directly against the Graph sign-in logs. One practical note: use the <span class="mono">UnifiedSignInLogs</span> table in Sentinel if you have it, since it covers both interactive and non-interactive sign-ins in one place. The beta Graph endpoint only returns interactive by default and will miss most of this traffic.</p>
 
   <div class="code-block">
     <div class="code-head"><span class="code-dot"></span> Microsoft Graph · the six always-excluded resources (beta)</div>
@@ -585,48 +543,43 @@ GET https://graph.microsoft.com/beta/auditLogs/signIns
     <span class="section-title">Prove It For Yourself</span>
   </div>
 
-  <p>You might expect to prove the baseline-scope gap the same way, by counting <span class="mono">notApplied</span> against Microsoft Graph. It does not work.</p>
+  <p>A raw <span class="mono">notApplied</span> count against the sign-in logs is unlikely to surface the gap cleanly on its own. Here is why, and here is what Fabian published to actually find it.</p>
 
-  <p>Here is why. Graph is busy, and most <span class="mono">notApplied</span> sign-ins against it are non-interactive token refreshes: Teams, Office, and Defender quietly renewing tokens, where Conditional Access was already evaluated at the original interactive sign-in. That traffic is normal and it drowns out the signal. The sign-in log also never records the scopes that were requested, so you cannot tell a genuine baseline-scope request apart from an ordinary refresh just by reading the log. Counting <span class="mono">notApplied</span> on Graph measures noise, not the gap. This is exactly the trap that makes a quick log query look alarming when nothing is wrong, or look clean when the gap is wide open.</p>
+  <p>The enforcement change works by routing baseline-scope sign-ins through <strong>Windows Azure Active Directory</strong> (<span class="mono">00000002-0000-0000-c000-000000000000</span>) as the target resource for CA evaluation. Microsoft Graph (<span class="mono">00000003-0000-0000-c000-000000000000</span>) is the other resource where these sign-in events surface in the logs. That is why Fabian's query filters to those two GUIDs, not because the gap was limited to them, but because that is where the evidence appears. Counting <span class="mono">notApplied</span> across all Graph sign-ins picks up high volumes of token requests from apps requesting broader scopes, pipeline service accounts, and portal flows. You need to filter to those two resource GUIDs, confirm <span class="mono">Oauth Scope Info</span> is present in <span class="mono">authenticationProcessingDetails</span>, expand the requested scopes, and compare them against the known baseline scope list. Any request where nothing beyond baseline was asked for is a genuine gap candidate.</p>
 
-  <p>So skip the log-counting and run a controlled test instead. This is the version that survives scrutiny, so do it in a test tenant, not production. Create an All resources policy that requires MFA and exclude a single resource. Then sign in twice, once before enabling enforcement and once after, using a client that requests only a baseline scope. The clean way to do this is roadtx from the ROADtools suite, the same tooling Fabian and Dirk-jan used, pointed at a public first-party client ID and asking for nothing but <span class="mono">User.Read</span>. Do not reach for Azure CLI here: it defaults to an Azure Resource Manager token, and when you do force it to Graph it requests whatever scopes are consented on the CLI app, which is usually far more than a baseline scope.</p>
+  <p>Fabian always has us covered, and he provided a great KQL to help search and troubleshoot for impact. It uses <span class="mono">UnifiedSignInLogs</span>, which covers both interactive and non-interactive in one table, filters to the two resource GUIDs, and uses <span class="mono">set_difference</span> to isolate requests where only baseline scopes were present. <span class="mono">array_length(Difference) == 0</span> is the precise definition of the gap.</p>
 
   <div class="code-block">
-    <div class="code-head"><span class="code-dot"></span> roadtx · request a single baseline scope</div>
-    <pre><span class="c-cmt"># Public client, one baseline scope, nothing else</span>
-roadtx interactiveauth -c <span class="c-str">04b07795-8ddb-461a-bbee-02f9e1bf7b46</span> \
-  -s <span class="c-str">'https://graph.microsoft.com/User.Read'</span></pre>
+    <div class="code-head"><span class="code-dot"></span> KQL · Fabian Bader · <a class="inline" href="https://gist.github.com/f-bader/c3de570ace2c489092daa89af17f194e" target="_blank" rel="noopener">FindBaselineScopeBypass.kql</a></div>
+    <pre><span class="c-key">let</span> BaselineScopes = dynamic([
+    <span class="c-str">"email"</span>, <span class="c-str">"offline_access"</span>, <span class="c-str">"openid"</span>, <span class="c-str">"profile"</span>,
+    <span class="c-str">"User.Read"</span>, <span class="c-str">"User.Read.All"</span>, <span class="c-str">"User.ReadBasic.All"</span>,
+    <span class="c-str">"People.Read"</span>, <span class="c-str">"People.Read.All"</span>,
+    <span class="c-str">"GroupMember.Read.All"</span>, <span class="c-str">"Member.Read.Hidden"</span>
+]);
+UnifiedSignInLogs
+| <span class="c-key">where</span> TimeGenerated > ago(<span class="c-str">90d</span>)
+| <span class="c-key">where</span> ResultType == <span class="c-str">"0"</span>
+| <span class="c-key">where</span> ResourceIdentity <span class="c-key">in</span> (
+    <span class="c-str">"00000003-0000-0000-c000-000000000000"</span>, <span class="c-cmt">// Microsoft Graph</span>
+    <span class="c-str">"00000002-0000-0000-c000-000000000000"</span>)  <span class="c-cmt">// Windows Azure Active Directory</span>
+| <span class="c-key">where</span> ConditionalAccessStatus == <span class="c-str">"notApplied"</span>
+| <span class="c-key">where</span> AuthenticationProcessingDetails <span class="c-key">has</span> <span class="c-str">"Oauth Scope Info"</span>
+| <span class="c-key">mv-expand</span> todynamic(AuthenticationProcessingDetails)
+| <span class="c-key">where</span> AuthenticationProcessingDetails.key == <span class="c-str">"Oauth Scope Info"</span>
+| <span class="c-key">extend</span> RequestedOauthScopes = todynamic(tostring(AuthenticationProcessingDetails.value))
+| <span class="c-key">extend</span> Difference = set_difference(RequestedOauthScopes, BaselineScopes)
+| <span class="c-key">where</span> array_length(Difference) == <span class="c-str">0</span></pre>
   </div>
 
-  <div class="ba-grid">
-    <div class="ba-col before">
-      <div class="ba-tag">● Before enforcement</div>
-      <ul class="ba-flow">
-        <li><span class="ba-step-dot">01</span> Request a token for <span class="mono">User.Read</span> only, via a public client</li>
-        <li><span class="ba-step-dot">02</span> All resources policy with an exclusion is in place, MFA required</li>
-        <li><span class="ba-step-dot">03</span> The baseline scope is carved out, so the policy never fires</li>
-      </ul>
-      <div class="ba-outcome">🚪 No MFA prompt · <span class="mono">notApplied</span> · token issued</div>
-    </div>
-    <div class="ba-col after">
-      <div class="ba-tag">● After enforcement</div>
-      <ul class="ba-flow">
-        <li><span class="ba-step-dot">01</span> Enable enforcement at the Baseline scopes settings page</li>
-        <li><span class="ba-step-dot">02</span> Repeat the same <span class="mono">User.Read</span> request, unchanged</li>
-        <li><span class="ba-step-dot">03</span> The scope now evaluates against Windows Azure Active Directory</li>
-      </ul>
-      <div class="ba-outcome">🔒 MFA challenge · policy enforced · gap closed</div>
-    </div>
-  </div>
-
-  <p>Same client, same scope, same policy. The only thing that changed is the setting. If the prompt appears the second time and not the first, you have watched the gap close with your own eyes. That is a result you can put in front of any stakeholder without a caveat.</p>
+  <p>Grab the query and take a look in your own environment. Another reason why identity and Azure make a great team. More importantly, get the steps enabled below to protect baseline scopes in your tenant.</p>
 
   <div class="section-marker">
     <span class="section-num">05</span>
     <span class="section-title">How to Enable Enforcement</span>
   </div>
 
-  <p>Microsoft announced the enforcement change in January 2026 and, after adjusting the timeline, began the phased rollout on <strong>May 13, 2026</strong>. Affected tenants are notified through the Microsoft 365 Message Center. If your tenant has not been switched yet, you do not have to wait. You can opt in today, and if you run All resources policies with resource exclusions, you should.</p>
+  <p>Microsoft announced the enforcement change and began the phased rollout on <strong>June 15, 2026</strong>. Affected tenants are notified through the Microsoft 365 Message Center. If your tenant has not been switched yet, you do not have to wait. You can opt in today, and if you run All resources policies with resource exclusions, you should.</p>
 
   <p>The setting lives behind a direct link. It is not surfaced in the normal Conditional Access navigation, which is a large part of why almost nobody knows it exists.</p>
 
@@ -672,12 +625,12 @@ roadtx interactiveauth -c <span class="c-str">04b07795-8ddb-461a-bbee-02f9e1bf7b
     <p>Enabling enforcement immediately applies your controls to flows that were previously exempt. That is the whole point, but it has real consequences. Device enrollment flows (Intune, Jamf, macOS platform login), AVD profile storage accounts, and any app you deliberately excluded so it would work from unmanaged devices can all be affected, because those flows lean on Microsoft Graph with baseline scopes and Graph is not the resource you excluded. Enable this in a test tenant or a controlled pilot before you flip it in production, and confirm your enrollment and break-glass paths still work.</p>
   </div>
 
-  <p>There is no report-only mode for this setting, which is a legitimate criticism raised repeatedly by admins in the field. Your best pre-flight tool is the sign-in logs. Enable the setting in a non-production tenant, drive your known enrollment and login flows, and watch which ones start receiving challenges. Microsoft also documents a Graph query against <span class="mono">conditionalAccessAudiences</span> to surface which apps in your tenant request only baseline scopes, which is worth running over a multi-day window before you commit.</p>
+  <p>The recommended path is to enable enforcement and use Fabian's KQL query to see what was previously slipping through. Run it before you enable to understand the scope, enable the setting, then run it again to confirm the gap is closed. If specific apps need to stay exempt for operational reasons, the Customize behavior option lets you designate a custom target application and exclude it from specific policies surgically, rather than leaving legacy behavior on for everyone.</p>
 
   <div class="callout">
-    <span class="callout-label">If You Genuinely Need the Old Behavior</span>
+    <span class="callout-label">If You Have a Legitimate Exclusion Need</span>
     <span class="callout-icon">🔧</span>
-    <p>For the narrow cases where an app truly must stay exempt, unmanaged-device enrollment being the common one, Microsoft supports a Customize behavior option. You assign a custom tenant-owned application as the target resource for baseline scopes, then exclude that one custom app from the specific policies. This is the surgical exclusion the platform never gave you before. Use it deliberately and per app, not as a blanket switch back to legacy.</p>
+    <p>Microsoft documents four scenarios where retaining legacy behavior may be valid: an All resources policy with a require compliant device grant where some apps must stay accessible from unmanaged devices; a policy with require app protection policy where the client isn't Intune SDK integrated; a block policy with a specific app exclusion; or a public client that must be exempt from device compliance for documented security reasons. For any of these, the Customize behavior option in the Baseline scopes settings page lets you assign a custom tenant-owned application as the target resource and exclude that one app from specific policies. This is the surgical path. It is not a blanket switch back to legacy behavior, and Microsoft is clear that it should only be used when one of those scenarios genuinely applies.</p>
   </div>
 
   <div class="section-marker">
@@ -703,8 +656,8 @@ roadtx interactiveauth -c <span class="c-str">04b07795-8ddb-461a-bbee-02f9e1bf7b
     <div class="check-item">
       <div class="check-box"></div>
       <div class="check-text">
-        <strong>Enable in a test tenant and drive your flows</strong>
-        No report-only mode exists. A pilot tenant plus sign-in log review is the substitute. Confirm Intune, Jamf, macOS login, and AVD profile paths survive.
+        <strong>Run Fabian's KQL before and after enabling</strong>
+        Run the FindBaselineScopeBypass query to see which apps were requesting only baseline scopes with notApplied results. Enable enforcement, then run it again to confirm the gap is closed. Use the results to identify any apps that need the Customize behavior exemption.
       </div>
     </div>
     <div class="check-item">
