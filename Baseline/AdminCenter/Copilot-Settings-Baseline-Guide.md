@@ -1,8 +1,9 @@
 # Microsoft 365 Copilot Settings —  Baseline Configuration Guide
 
-**Document Version:** 1.1
-**Last Updated:** April 2026
-**Changelog:** v1.1 — Added EU/EFTA-specific setting: Flexible inferencing during peak load periods (effective April 17, 2026)
+**Document Version:** 1.2
+**Last Updated:** July 2026
+**Changelog:** v1.2 — Added 7 new settings visible in July 2026 admin center: Screen and camera sharing, Copilot Release preferences (GA), Dataverse data available, AI providers for other large language models (split from subprocessors), AI models in preview, AI experiences enabled by usage-based billing, Copilot connector email notification  
+v1.1 — Added EU/EFTA-specific setting: Flexible inferencing during peak load periods (effective April 17, 2026)
 **Source Reference:** Microsoft Learn — [Manage Microsoft 365 Copilot scenarios in the Microsoft 365 admin center](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-page)
 **Admin Role Required:** AI Administrator (to view and configure); Global Reader (view-only)
 **Navigation:** Microsoft 365 admin center → Copilot → Settings → View all
@@ -290,6 +291,45 @@ Organizations without a broad Copilot license deployment should avoid open-ended
 
 ---
 
+### 1.13 Screen and Camera Sharing
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → User access → Screen and camera sharing |
+| **Applies to** | Microsoft 365 Copilot, Microsoft 365 Copilot app |
+| **Default State** | Enabled |
+
+**What it does:** Allows users to share their screen content or camera feed as visual context with Microsoft 365 Copilot. The AI can analyze what is visible on screen or through the device camera to provide contextual assistance — for example, interpreting documents visible on screen, providing step-by-step guidance based on what is displayed, or answering questions about visible content.
+
+**Security/Compliance Relevance:** Medium-to-high. Screen and camera capture can inadvertently expose sensitive content: confidential documents on screen, PII visible in open windows, intellectual property, or regulated data. Unlike text prompts (which users consciously compose), visual input captures whatever happens to be visible at the time. Users may not realize that on-screen content is being processed by the AI. Audit log entries should be verified to confirm visual context interactions are captured in Purview.
+
+**Baseline Recommendation:** **Enable with user awareness training and acceptable use policy coverage**
+
+This is a meaningful productivity feature but requires users to understand that screen and camera content is transmitted to Microsoft AI services for processing. Before enabling broadly:
+1. Confirm visual context interactions are captured in Purview Unified Audit Log
+2. Ensure the organization's AI acceptable use policy explicitly covers visual input modalities
+3. Consider restricting to specific roles or groups if the organization handles classified, regulated, or highly confidential on-screen content
+
+---
+
+### 1.14 Copilot Release Preferences: General Availability
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → User access → Copilot Release preferences |
+| **Applies to** | Microsoft 365 Copilot |
+| **Default State** | General Availability (standard release) |
+
+**What it does:** Controls the release cadence at which your organization receives new Microsoft 365 Copilot features. Options typically include **General Availability** (standard, broad rollout after full validation) and **Targeted Release** / early access programs (features released ahead of GA to a subset of users). This setting determines whether your tenant is at the front of the release wave or on the standard schedule.
+
+**Security/Compliance Relevance:** Medium. Receiving new Copilot features ahead of GA means those capabilities may have less time in the Microsoft security review cycle before reaching your users. New agentic features, expanded data access capabilities, and new AI modalities arriving via early release may not yet be covered by your existing acceptable use policies, Purview configurations, or compliance assessments. GA release provides maximum time for security teams to review, test, and update governance controls before features reach production.
+
+**Baseline Recommendation:** **Set to General Availability (standard release) for production tenants; use Targeted Release only for a defined IT pilot group**
+
+Do not enroll the full production tenant in targeted/early release for Copilot. If you want early visibility into upcoming features, create a separate test group (typically 1–5% of users, IT staff only) enrolled in targeted release, while the remaining users stay on GA cadence. This allows security review of new capabilities before they reach the broader user population.
+
+---
+
 ## 2. Data Access
 
 Settings in this tab control how Copilot accesses and handles organizational information.
@@ -400,6 +440,86 @@ Configure the Agents page to:
 - Require admin approval for partner/ISV agents (via Integrated Apps in admin center)
 - Restrict Copilot Studio maker permissions to licensed, trained staff
 - Monitor agent usage via Purview DSPM for AI and the Copilot usage reports
+
+---
+
+### 2.7 Dataverse Data Available in Microsoft 365 Copilot
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → Data access → Dataverse data available in Microsoft 365 Copilot |
+| **Applies to** | Microsoft 365 Copilot |
+| **Default State** | Off by default |
+
+**What it does:** Controls whether Microsoft 365 Copilot can access business data stored in Microsoft Dataverse — the underlying data platform for Dynamics 365 and Power Apps. When enabled, Copilot can draw on Dataverse records (CRM data, business process data, financial records, operational data) to ground its responses, and Copilot capabilities can be extended into Dynamics 365 and Power Apps experiences.
+
+**Security/Compliance Relevance:** High. Dataverse frequently stores some of the most sensitive business data in an organization: customer records, financial transactions, HR information, sales pipeline data, and operational records. Connecting this data to Copilot significantly expands the data surface available for AI-assisted retrieval and processing. Access control in Dataverse relies on environment-level security roles and column-level security — organizations must confirm these controls are correctly scoped before enabling Copilot access.
+
+**Baseline Recommendation:** **Disabled by default; enable only after a Dataverse data governance review**
+
+Before enabling:
+1. Audit what data exists in Dataverse environments (Dynamics 365, Power Apps) and confirm sensitivity classification is complete
+2. Verify environment-level security roles are correctly scoped (principle of least privilege)
+3. Confirm sensitivity labels or equivalent access controls are applied to regulated Dataverse tables
+4. Engage the Power Platform / Dynamics 365 team — this is not a decision for the Microsoft 365 admin alone
+
+---
+
+### 2.8 AI Providers for Other Large Language Models
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → Data access → AI providers for other large language models |
+| **Applies to** | Copilot Studio, Microsoft 365 Copilot, Microsoft 365 |
+| **Default State** | Off by default |
+
+**What it does:** Manages connections to third-party AI model providers that operate **outside of Microsoft’s infrastructure** and are not classified as Microsoft subprocessors. This is distinct from section 2.5 (AI providers operating as Microsoft subprocessors): subprocessor models operate within the Microsoft contractual and data protection framework; this setting covers providers with no such Microsoft contractual backstop.
+
+**Security/Compliance Relevance:** Very high. Data sent to non-subprocessor third-party LLMs leaves the Microsoft trust boundary entirely. Microsoft’s Online Services Terms, data residency commitments, and EU Data Boundary guarantees do not apply to these providers. Organizations must independently assess each connected provider’s data handling practices, residency, retention, subprocessing chain, and compliance certifications.
+
+**Baseline Recommendation:** **Disabled; do not enable without a full legal, privacy, and security review of each specific provider**
+
+This represents a higher risk category than subprocessor-model providers. Any enabling decision must include: documented legal review of the provider’s data processing terms, DPA execution with the provider, confirmation of compliance with applicable data protection laws, and explicit sign-off from the DPO/legal team. Should not be enabled for any workflows involving regulated data (PII, financial, health).
+
+---
+
+### 2.9 AI Models in Preview
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → Data access → AI models in preview |
+| **Applies to** | Copilot Studio, Microsoft 365 Copilot, Microsoft 365 |
+| **Default State** | Off by default |
+
+**What it does:** Controls organizational access to external AI models that are currently in preview status. Preview models are not yet generally available and have not completed the full Microsoft security and compliance validation cycle. These are distinct from GA models and may have different data handling characteristics, capability boundaries, and audit behaviors.
+
+**Security/Compliance Relevance:** High. Preview models carry the same risks as other external AI providers, compounded by the fact that they have not completed full security review. Behavior, output quality, and data handling may change without notice during the preview period. Preview models may not be covered by existing compliance certifications or audit mechanisms.
+
+**Baseline Recommendation:** **Disabled for production tenants; enable only for defined innovation pilots with documented risk acceptance**
+
+If previewing AI models is a business requirement, restrict access to a small named group (IT/AI governance team) via a security group, document the risk acceptance, and time-limit the enablement. Never enable preview models tenant-wide or for workflows involving regulated data.
+
+---
+
+### 2.10 AI Experiences Enabled by Usage-Based Billing
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → Data access → AI experiences enabled by usage-based billing |
+| **Applies to** | Microsoft 365 Copilot |
+| **Default State** | Off by default |
+
+**What it does:** Controls access to advanced Copilot features and services that are billed on a consumption (pay-per-use) model rather than included in the per-seat Microsoft 365 Copilot license. This includes high-compute AI capabilities, certain agent execution features, and other consumptive services billed based on volume of use.
+
+**Security/Compliance Relevance:** Medium — dual risk. **Financial governance risk:** enabling consumption billing without controls can result in significant unexpected charges from heavy or automated use. **Usage governance risk:** consumption-billed features may represent higher-capability AI services that warrant additional governance scrutiny before broad deployment. Users accessing advanced features without appropriate training or oversight increases the risk of data misuse.
+
+**Baseline Recommendation:** **Disabled by default; require explicit budget approval and a defined billing policy before enabling**
+
+If enabling usage-based features:
+1. Configure spending alerts and budget thresholds in Azure Cost Management before activating
+2. Restrict access to specific security groups rather than enabling tenant-wide
+3. Assign a cost owner responsible for monitoring consumption
+4. Review what specific features are unlocked and confirm they are covered by existing acceptable use and governance policies
 
 ---
 
@@ -530,6 +650,24 @@ This is a low-friction, high-value governance control. It reduces liability risk
 
 ---
 
+### 4.4 Copilot Connector Email Notification
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → Other settings → Copilot connector email notification |
+| **Applies to** | Microsoft 365 Copilot |
+| **Default State** | Off by default |
+
+**What it does:** Allows Microsoft to send email notifications to administrators about issues, errors, or health events affecting Copilot connectors — the integrations between Copilot and external data sources or services. When enabled, admins receive proactive alerts when a connector encounters a problem rather than discovering the issue reactively when users report failures.
+
+**Security/Compliance Relevance:** Low — primarily an operational control. Timely notification of connector failures is relevant to security operations: a broken connector that was providing data for a Copilot agent or grounding response may silently degrade the quality or completeness of AI outputs. In environments where Copilot agents are in production use, connector health directly affects service reliability.
+
+**Baseline Recommendation:** **Enable; configure notifications to a shared admin mailbox or distribution group rather than an individual account**
+
+This is a straightforward operational notification with no meaningful security downside. The only risk is notification fatigue if connectors are unstable — monitor alert volume after enabling and address noisy connectors. Route notifications to a team mailbox (e.g., `m365-copilot-ops@domain.com`) rather than a named individual to avoid single points of failure for operational awareness.
+
+---
+
 ## 5. Summary Baseline Table
 
 | # | Setting | Category | Baseline | Security Recommendation | Priority | EU/EFTA Only |
@@ -557,6 +695,13 @@ This is a low-friction, high-value governance control. It reduces liability risk
 | 21 | Copilot custom dictionary | Other Settings | Configure for terminology-heavy orgs | ✅ Low risk — improves output accuracy; no security concerns | Low | No |
 | 22 | Copilot diagnostic logs | Other Settings | Use only for active support incidents | ⚠️ Enable only when needed — diagnostic data may contain sensitive content; disable after use | Medium | No |
 | 23 | Copilot AI disclaimer | Other Settings | **Enable (Bold) + custom policy URL** | 🔴 Enable — legal and compliance requirement; users must see AI-generated content notice | High | No |
+| 24 | Screen and camera sharing | User Access | Enable with acceptable use policy and user awareness | ⚠️ Enable with controls — visual input can capture sensitive on-screen content; confirm Purview audit coverage | Medium | No |
+| 25 | Copilot Release preferences: General Availability | User Access | **General Availability (standard)** | ⚠️ Stay on GA — targeted/early release reduces security review window for new capabilities | Medium | No |
+| 26 | Dataverse data available in Microsoft 365 Copilot | Data Access | **Disabled** until Dataverse governance review | 🔴 Disable — Dataverse holds high-sensitivity business data; access control audit required before enabling | High | No |
+| 27 | AI providers for other large language models | Data Access | **Disabled** | 🔴 Disable — non-subprocessor providers operate outside Microsoft trust boundary; full legal/DPA review required | Critical | No |
+| 28 | AI models in preview | Data Access | **Disabled** for production tenants | 🔴 Disable — preview models have incomplete security/compliance validation; pilot only with documented risk acceptance | High | No |
+| 29 | AI experiences enabled by usage-based billing | Data Access | **Disabled** until budget policy and billing controls are in place | ⚠️ Disable — financial and governance risk; require cost owner and spending alerts before enabling | Medium | No |
+| 30 | Copilot connector email notification | Other Settings | **Enable** (route to team mailbox) | ✅ Enable — operational notification with no security downside; prevents silent connector failures | Low | No |
 
 ---
 
