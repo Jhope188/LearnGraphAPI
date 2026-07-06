@@ -6,7 +6,25 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 16 Jun 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 06 Jul 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Groups Are the Connective Tissue — and Nobody Owns the Scissors</title>
+      <link>https://conditionalaccess.tech/articles/governance/groups-connective-tissue.html</link>
+      <description>Every CA policy, every SharePoint site, every Teams workspace, every guest invitation eventually resolves to a group. Most tenants have hundreds of them with no verified owner. That's not a cleanup problem. That's a structural control failure.</description>
+      <pubDate>Sun, 06 Jul 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/governance/groups-connective-tissue.html</guid>
+      <category>Governance</category>
+    </item>
+
+    <item>
+      <title>Baseline Scopes: Microsoft Closed the Side Door</title>
+      <link>https://conditionalaccess.tech/articles/conditional-access/baseline-scopes-publish/baseline-scopes.html</link>
+      <description>A Conditional Access gap that sat open for years, the research that exposed it, and the new enforcement setting that closes it.</description>
+      <pubDate>Thu, 02 Jul 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/conditional-access/baseline-scopes-publish/baseline-scopes.html</guid>
+      <category>Conditional Access</category>
+    </item>
 
     <item>
       <title>Groups: The Connective Tissue of Microsoft 365</title>
