@@ -4,7 +4,7 @@ Author: Jon Hope | M365 Solutions Architect at Inforcer
 Medium: [medium.com/@jhope188](https://medium.com/@jhope188)  
 Blog: [conditionalaccess.tech](https://conditionalaccess.tech/)  
 Followers: 103  
-Last Updated: June 21, 2026
+Last Updated: July 6, 2026
 
 > Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #154 (published June 21, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
 
@@ -14,7 +14,7 @@ Last Updated: June 21, 2026
 
 | | |
 |---|---|
-| Total Articles | 40 (all published) |
+| Total Articles | 42 (all published) |
 | Entra News Features | 22 (across 20 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
@@ -22,7 +22,7 @@ Last Updated: June 21, 2026
 | Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
 | Unique Articles Featured | 19 of 40 published (47%) |
-| Publication Period | September 2025 — June 2026 |
+| Publication Period | September 2025 — July 2026 |
 
 > Current public archive snapshot: Entra News #154 (June 21, 2026). The feature timeline above already includes the Jon Hope features from issues #153 and #154. The current public weekly issue is now #154.
 
@@ -59,6 +59,8 @@ Last Updated: June 21, 2026
 
 | # | Title | Published | Responses | Saves | Entra News |
 |---|-------|-----------|-----------|-------|------------|
+| 42 | Groups Are the Connective Tissue — and Nobody Owns the Scissors | Jul 6 | — | — | — |
+| 41 | Baseline Scopes: Microsoft Closed the Side Door | Jul 2 | — | — | — |
 | 40 | Groups: The Connective Tissue | Jun 16 | — | — | — |
 | 39 | Who Did You Let Into Your House? | Jun 9 | — | — | ✅ #154 |
 | 38 | Passkeys: Security Only Works If People Use It | Jun 14 | — | — | ✅ #153 |
