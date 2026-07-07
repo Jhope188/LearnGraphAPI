@@ -196,13 +196,43 @@ foreach ($g in $Groups) {
     $Existing = Get-MgGroup -Filter "displayName eq '$($g.Name)'" -ErrorAction SilentlyContinue
 
     if ($Existing) {
-        Write-Host "  SKIP  $($g.Name)" -ForegroundColor DarkYellow
+        Write-Host "  SKIP  $($g.Name) — group already exists, checking role assignment..." -ForegroundColor DarkYellow
         $Skipped++
+
+        # Check whether the role is already assigned to this group
+        $RoleDefId       = $RoleCache[$g.EntraRole]
+        $ExistingRoleAssigned = $false
+        $ExistingStatus  = "Skipped — already exists"
+
+        if ($RoleDefId) {
+            $ExistingAssignment = Get-MgRoleManagementDirectoryRoleAssignment `
+                -Filter "principalId eq '$($Existing.Id)' and roleDefinitionId eq '$RoleDefId'" `
+                -ErrorAction SilentlyContinue
+
+            if ($ExistingAssignment) {
+                Write-Host "  ROLE  $($g.EntraRole) already assigned" -ForegroundColor DarkCyan
+                $ExistingStatus = "Skipped — already exists + role already assigned"
+            } else {
+                try {
+                    New-MgRoleManagementDirectoryRoleAssignment `
+                        -PrincipalId      $Existing.Id `
+                        -RoleDefinitionId $RoleDefId `
+                        -DirectoryScopeId "/" | Out-Null
+                    $ExistingRoleAssigned = $true
+                    Write-Host "  ROLE  $($g.EntraRole) assigned to existing group" -ForegroundColor Cyan
+                    $ExistingStatus = "Skipped — already exists + role now assigned"
+                } catch {
+                    Write-Warning "  Role assignment failed for existing group $($g.Name): $($_.Exception.Message)"
+                    $ExistingStatus = "Skipped — already exists (role assignment failed)"
+                }
+            }
+        }
+
         $Results.Add([PSCustomObject]@{
             Name      = $g.Name
             Role      = $g.EntraRole
             Privilege = $g.Privilege
-            Status    = "Skipped — already exists"
+            Status    = $ExistingStatus
             Id        = $Existing.Id
         })
         continue
