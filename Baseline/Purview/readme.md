@@ -22,6 +22,7 @@
 10. [Auto-Labeling](#10-auto-labeling)
 11. [Adaptive Protection](#11-adaptive-protection)
 12. [Day-2 Operations](#12-day-2-operations)
+13. [Purview Information Protection Super User](#13-purview-information-protection-super-user)
 
 ---
 
@@ -98,6 +99,7 @@ If you need to ensure the checkbox appears checked in the portal, open the label
 | `Enable-SensitivityLabelsPrerequisites.ps1` | Enables MIP labels in Entra ID, SharePoint, and runs AzureADLabelSync. **Run first.** |
 | `SensitivityLabel.ps1` | Creates all 9 labels (does NOT publish). **Run second.** |
 | `Publish-SensitivityLabelPolicies.ps1` | Publishes labels via 3 tiered policies. **Run third.** |
+| `New-AIPSuperUserGroup.ps1` | Creates `DG-Purview-AUG-Admin-AIPSuperUsers` (mail-enabled security group) and configures the AIP Super User feature. Run once post-deployment. |
 | `IAC-Sensitivity-Labels-Documentation.md` | This document |
 
 ---
