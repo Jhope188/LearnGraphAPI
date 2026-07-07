@@ -202,3 +202,51 @@ Use `fmt_display()` logic: `%b %-d, %Y`
 | `articles.html` | `entra-news.html` |
 | `index.html` (featured writing card) | `index.html` (Entra News stats) |
 | `feed.xml` | `entra.news/readme.md` |
+
+---
+
+## 📄 Article HTML template standards
+
+Every article HTML file **must** include the following. Apply these when creating a new article or updating an existing one.
+
+### Head block (required on every article)
+- `<meta name="description" content="…">` — one sentence, matches the publish description
+- `<link rel="canonical" href="https://conditionalaccess.tech/articles/[series]/[slug].html">`
+- `<link rel="alternate" type="application/rss+xml" title="conditionalaccess.tech" href="/feed.xml">`
+- Full Open Graph tags: `og:type` (article), `og:title`, `og:description`, `og:url`, `og:image`, `og:site_name`, `article:published_time`, `article:author`
+- Twitter card: `twitter:card` (summary_large_image), `twitter:title`, `twitter:description`, `twitter:image`
+- OG image path: `/assets/og/[slug].png` at 1200×630. File must exist before deploying — missing images won't break the page but LinkedIn/Twitter cards will render without artwork.
+- Title tag format: `[Article Title] — conditionalaccess.tech`
+
+### Site nav (replaces old floating Back/Home button)
+- Slim fixed nav bar: wordmark left, **Writing / Appearances / About** links right
+- Mark the active section (Writing for all articles)
+- Appearances link hidden below 640 px via CSS
+
+### Series nav (Identity series)
+- All published posts are clickable links with hover state and "Read" affordance
+- Current post is highlighted and non-clickable
+- When a new Identity post publishes, add it to every other Identity article's series nav
+- Governance series nav: leave non-clickable until Governance PT01 is live
+
+### Prev / Next navigation
+- Add below the series nav
+- Part 1: next only. Final part: previous only. All others: both.
+- CA articles cross-link: MFA for All ↔ CA Policy Analyzer Update
+
+### CTA block
+- Standard: **"Keep Reading / Browse All Articles"** → `articles.html`
+- Secondary text links: RSS feed + Medium
+- Exception: CA Policy Analyzer article keeps **"Launch the Analyzer"** as its primary CTA
+
+---
+
+## ✅ Pre-deploy checklist
+
+Run through this before every article deploy or template update:
+
+1. **OG images** — confirm `/assets/og/[slug].png` exists for every article being deployed. Create a 1200×630 image (or point all tags at one shared fallback) if missing.
+2. **`article:published_time`** — verify the ISO date matches the actual publish date for each article. Check `articles.html` card dates if unsure.
+3. **Series nav links** — if this is a new Identity or CA post, update the series nav in all sibling articles to include it.
+4. **Prev/Next** — update the previous article's "next" link to point at the new article.
+5. **After deploy** — run each new or updated URL through the [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) to purge LinkedIn's share cache. Old previews persist until the cache is cleared.
