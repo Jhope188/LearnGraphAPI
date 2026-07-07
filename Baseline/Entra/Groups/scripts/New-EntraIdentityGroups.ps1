@@ -215,6 +215,57 @@ $Groups = @(
     }
 
     # ══════════════════════════════════════════════════════════════════════════
+    # LICENCE GROUPS — ASSIGNED (GROUP-BASED LICENSING)
+    #
+    # These groups have a Microsoft 365 or Entra licence assigned DIRECTLY to
+    # the group in Entra. Adding a user to the group licenses them automatically;
+    # removing them reclaims the licence.
+    #
+    # This is the OPPOSITE direction from the DUG-License-* groups above, which
+    # detect users who already have a licence. Do not confuse the two:
+    #   AUG-License-[SKU]          = assigns licence → user (group-based licensing)
+    #   DUG-License-[SKU]Users     = detects already-licensed users (read-only scoping)
+    #
+    # After creating these groups, assign the licence product in:
+    #   Entra admin centre > Billing > Licences > [Product] > Licensed groups > Assign
+    #
+    # Only create groups for licence SKUs active in your tenant.
+    # Monitor the group's Licensing blade for assignment errors (e.g. no available seats).
+    # Requires Entra ID P1 for group-based licensing to work.
+    # ══════════════════════════════════════════════════════════════════════════
+
+    @{
+        Name        = "SG-Entra-AUG-License-M365BP"
+        Description = "Group-based licensing — Microsoft 365 Business Premium. Add users to this group to assign an M365 Business Premium licence. Monitor the Licensing blade for assignment errors."
+        Type        = "Assigned"
+        Rule        = $null
+    }
+    @{
+        Name        = "SG-Entra-AUG-License-M365E3"
+        Description = "Group-based licensing — Microsoft 365 E3. Add users to this group to assign an M365 E3 licence. Monitor the Licensing blade for assignment errors."
+        Type        = "Assigned"
+        Rule        = $null
+    }
+    @{
+        Name        = "SG-Entra-AUG-License-M365E5"
+        Description = "Group-based licensing — Microsoft 365 E5. Add users to this group to assign an M365 E5 licence. Monitor the Licensing blade for assignment errors."
+        Type        = "Assigned"
+        Rule        = $null
+    }
+    @{
+        Name        = "SG-Entra-AUG-License-IntuneP1"
+        Description = "Group-based licensing — Microsoft Intune Plan 1 (standalone). Add users to this group to assign a standalone Intune licence."
+        Type        = "Assigned"
+        Rule        = $null
+    }
+    @{
+        Name        = "SG-Entra-AUG-License-EntraP2"
+        Description = "Group-based licensing — Entra ID P2 (standalone). Add users to this group to assign a standalone Entra ID P2 licence for PIM, Identity Protection, and Access Reviews."
+        Type        = "Assigned"
+        Rule        = $null
+    }
+
+    # ══════════════════════════════════════════════════════════════════════════
     # AUTHENTICATION METHOD GROUPS — ASSIGNED
     # These scope the Authentication Methods policy in Entra.
     # Navigate to: Entra portal > Protection > Authentication methods > [Method]
@@ -409,6 +460,16 @@ Write-Host "  Failed  : $Failed"  -ForegroundColor Red
 Write-Host "─────────────────────────────────────────`n" -ForegroundColor Cyan
 
 $Results | Format-Table Name, Status -AutoSize
+
+Write-Host "Next steps:" -ForegroundColor Cyan
+Write-Host "  1. Assign licence products to SG-Entra-AUG-License-* groups:" -ForegroundColor White
+Write-Host "     Entra admin centre > Billing > Licences > [Product] > Licensed groups > Assign" -ForegroundColor White
+Write-Host "     Only assign the SKUs that are active in this tenant." -ForegroundColor Yellow
+Write-Host "  2. Monitor the Licensing blade on each group for assignment errors" -ForegroundColor White
+Write-Host "     (errors appear when no seats are available or a service plan conflicts)" -ForegroundColor White
+Write-Host "  3. Customise SG-Entra-DUG-Admins-AllAdminUsers rule — replace 'adm-' with" -ForegroundColor White
+Write-Host "     your admin account UPN prefix convention" -ForegroundColor White
+Write-Host "  4. Configure dynamic group rules requiring Entra P1 before adding members" -ForegroundColor White
 
 Disconnect-MgGraph | Out-Null
 

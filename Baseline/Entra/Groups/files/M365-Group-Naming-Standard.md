@@ -225,7 +225,36 @@ Replace `[AppName]` with the application's short identifier (e.g. `Salesforce`, 
 
 ---
 
-## 6. Intune & device groups
+### 5.6 Group-based licensing
+
+Group-based licensing groups are **assigned** (`AUG`) groups that have a Microsoft 365 or Entra licence assigned directly to the group in Entra. When a user is added to the group they automatically receive the licence; when they are removed the licence is reclaimed.
+
+This is distinct from the `DUG-License-*` groups in section 5.3, which are **read-only dynamic groups** used to detect users who already hold a licence for policy scoping. Do not confuse the two:
+
+| Group type | Direction | Use |
+|---|---|---|
+| `SG-Entra-AUG-License-[SKU]` | Assigns licence → user | Group-based licensing — add user to group to license them |
+| `SG-Entra-DUG-License-[SKU]InternalUsers` | Detects licensed users | CA/feature scoping — read-only, do not use to assign licences |
+
+> **Entra P1 requirement:** Group-based licensing requires Entra ID P1 on the tenant. If a licence cannot be assigned (e.g. no available seats), the user is flagged with a licensing error in the group's **Licensing** blade — monitor this regularly.
+
+```
+SG-Entra-AUG-License-[SKU]
+```
+
+| Group name | Purpose |
+|---|---|
+| `SG-Entra-AUG-License-M365BP` | Assigns Microsoft 365 Business Premium licence to members |
+| `SG-Entra-AUG-License-M365E3` | Assigns Microsoft 365 E3 licence to members |
+| `SG-Entra-AUG-License-M365E5` | Assigns Microsoft 365 E5 licence to members |
+| `SG-Entra-AUG-License-IntuneP1` | Assigns standalone Intune Plan 1 licence to members |
+| `SG-Entra-AUG-License-EntraP2` | Assigns standalone Entra ID P2 licence to members |
+
+Create only the groups that correspond to licences active in your tenant. Replace `[SKU]` with the short name of the licence bundle (no spaces, PascalCase).
+
+> **One group per SKU.** Do not assign the same licence product to multiple groups — if a user is in both, Entra will only assign the licence once, but it creates unnecessary confusion in the licensing audit trail.
+
+---
 
 Device groups follow the platform segment pattern. Every platform should have a pilot ring, production ring, and an exclusion group.
 
