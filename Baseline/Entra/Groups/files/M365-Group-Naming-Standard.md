@@ -398,6 +398,7 @@ IRM scoping is critical — exclude legal, HR leadership, and executive roles fr
 | Group name | Purpose |
 |-----------|---------|
 | `DG-Purview-AUG-Admin-DataAdmins` | Purview data administrators — policy creation and management |
+| `DG-Purview-AUG-Admin-AIPSuperUsers` | Purview Information Protection Super Users — decrypt MIP/RMS-protected content for recovery, legal review, and migration |
 
 ---
 
