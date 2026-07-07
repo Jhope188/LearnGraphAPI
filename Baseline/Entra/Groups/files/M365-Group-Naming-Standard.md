@@ -20,6 +20,7 @@
 10. [Security & admin role groups](#10-security--admin-role-groups)
 11. [Naming rules & constraints](#11-naming-rules--constraints)
 12. [Dynamic membership rules reference](#12-dynamic-membership-rules-reference)
+13. [GDAP groups — partner access](#13-gdap-groups--partner-access)
 
 ---
 
@@ -127,6 +128,7 @@ Type codes describe how group membership is managed in Entra ID.
 | `EAM` | External Authentication Method | Third-party MFA provider integrated with Entra |
 | `DFO` | Defender for Office 365 | Anti-phishing, safe links, safe attachments, and threat protection for Exchange Online |
 | `PIM` | Privileged Identity Management | Just-in-time activation of privileged Entra roles |
+| `GDAP` | Granular Delegated Admin Privileges | Microsoft Partner Center feature that grants partner/MSP technicians scoped, time-bound access to customer tenants via specific Entra roles |
 | `NHI` | Non-Human Identity | Any identity that is not a human user — service accounts, managed identities, app registrations, AI agents |
 | `SPO` | SharePoint Online | Microsoft SharePoint cloud service |
 | `DLP` | Data Loss Prevention | Purview policy that detects and restricts sensitive data movement |
@@ -799,6 +801,66 @@ Device filters are applied at **policy assignment time** in Intune rather than a
 | **Autopilot group tag added** | Clone and update `SG-Intune-DDG-WIN-Autopilot-GroupTag` rule with new tag value |
 | **OS major version release** | Review Hotpatch and version-specific filter expressions in section 12.7 |
 | **Rule modified in portal** | Copy updated rule text back to the relevant table in this document and update Last reviewed date |
+
+---
+
+## 13. GDAP groups — partner access
+
+GDAP (Granular Delegated Admin Privileges) groups grant partner/MSP technicians scoped, time-bound access to a customer tenant via specific Entra roles. Each security group maps to exactly one Entra role. When a GDAP relationship is established in Partner Center, the group is assigned the role in the customer tenant and partner technicians are added to the group in the **partner's own tenant** — not in the customer tenant.
+
+GDAP groups follow the standard `SG-Admin-AUG-` pattern with `GDAP` as the scope segment:
+
+```
+SG-Admin-AUG-GDAP-[RoleName]
+```
+
+> **Naming note:** `GDAP` is the scope segment that identifies this group as a partner delegated access group. The role name is written in PascalCase with no hyphens within the name segment. This keeps GDAP groups consistent with all other `SG-Admin-AUG-*` role groups in the tenant.
+
+> **Role-assignable requirement:** All GDAP groups **must** be created with `IsAssignableToRole = true`. This is set at creation time and cannot be changed afterwards. Role-assignable groups require **Entra ID P2** and count against the tenant limit of 500 role-assignable groups.
+
+> **Security note:** Partner technicians never have standing access. Access is scoped to the roles listed below and is activated only for the duration of an active GDAP relationship. Audit all active GDAP relationships quarterly in Partner Center and review the assigned roles against the principle of least privilege.
+
+---
+
+### 13.1 GDAP security groups
+
+| Group name | Entra role assigned | Privilege | Notes |
+|---|---|---|---|
+| `SG-Admin-AUG-GDAP-ApplicationAdministrator` | Application Administrator | 🔴 High | Full control over app registrations and enterprise applications — broad credential and permission scope |
+| `SG-Admin-AUG-GDAP-DirectoryWriters` | Directory Writers | 🟡 Medium | Can write to most directory objects; does not grant role assignment but can modify group and user attributes |
+| `SG-Admin-AUG-GDAP-ExchangeAdministrator` | Exchange Administrator | 🟡 Medium | Full control of Exchange Online mailboxes, connectors, and transport rules |
+| `SG-Admin-AUG-GDAP-GroupsAdministrator` | Groups Administrator | 🟢 Low | Can create and manage all types of groups; no access to group content or mailboxes |
+| `SG-Admin-AUG-GDAP-HelpdeskAdministrator` | Helpdesk Administrator | 🟢 Low | Reset passwords and manage service requests for non-admin users only |
+| `SG-Admin-AUG-GDAP-IntuneAdministrator` | Intune Administrator | 🟡 Medium | Full control of Intune — device configuration, compliance policies, app deployment |
+| `SG-Admin-AUG-GDAP-PrivilegedRoleAdministrator` | Privileged Role Administrator | 🚨 Critical | Can assign any Entra role including Global Administrator — treat as equivalent to Global Admin; restrict to named individuals only |
+| `SG-Admin-AUG-GDAP-SecurityAdministrator` | Security Administrator | 🔴 High | Full read/write access across Defender, Sentinel, Purview, and identity protection |
+| `SG-Admin-AUG-GDAP-SharePointAdministrator` | SharePoint Administrator | 🟡 Medium | Full control of SharePoint Online sites, settings, and OneDrive for Business |
+| `SG-Admin-AUG-GDAP-TeamsAdministrator` | Teams Administrator | 🟡 Medium | Full control of Teams policies, settings, and meeting configuration |
+| `SG-Admin-AUG-GDAP-UserAdministrator` | User Administrator | 🟡 Medium | Create and manage users and groups; reset passwords for non-admin users; manage licences |
+
+---
+
+### 13.2 Privilege level reference
+
+| Level | Indicator | Meaning |
+|---|---|---|
+| Critical | 🚨 | Role can assign other privileged roles — equivalent to Global Admin in practice. Maximum scrutiny, named approval required |
+| High | 🔴 | Broad data or credential access. Limit membership; review quarterly |
+| Medium | 🟡 | Significant service control. Assign only to technicians with active responsibility for that workload |
+| Low | 🟢 | Limited blast radius. Appropriate for general helpdesk or junior technicians |
+
+---
+
+### 13.3 Governance requirements
+
+| Requirement | Detail |
+|---|---|
+| **One group per role** | Never assign multiple roles to a single GDAP group — one group, one role, one audit trail |
+| **No standing membership** | Partner technicians must be added to GDAP groups only for the duration of an active engagement; remove promptly when the engagement ends |
+| **Privileged-Role-Administrator** | Membership must be individually approved and documented — treat as Critical at all times |
+| **Quarterly review** | Audit active GDAP relationships and group membership in Partner Center each quarter |
+| **CA policy** | GDAP partner sign-ins traverse Entra CA in the customer tenant — confirm CA policies do not inadvertently block partner access (use a named location or dedicated exclusion group if required) |
+| **Audit logging** | Partner actions under GDAP are recorded in the customer tenant's Entra audit log — confirm Purview or Sentinel is ingesting these logs |
 
 ---
 
