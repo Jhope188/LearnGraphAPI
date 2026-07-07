@@ -166,6 +166,24 @@ $Groups = @(
 
 #endregion
 
+#region ── Pre-fetch Entra role definitions ───────────────────────────────────
+
+Write-Host "`nPre-fetching Entra role definitions..." -ForegroundColor Cyan
+
+$RoleCache = @{}
+$Groups | Select-Object -ExpandProperty EntraRole -Unique | ForEach-Object {
+    $RoleDef = Get-MgRoleManagementDirectoryRoleDefinition `
+        -Filter "displayName eq '$_'" -ErrorAction SilentlyContinue
+    if ($RoleDef) {
+        $RoleCache[$_] = $RoleDef.Id
+        Write-Host "  FOUND  $_" -ForegroundColor DarkGreen
+    } else {
+        Write-Warning "  Role definition not found: $_"
+    }
+}
+
+#endregion
+
 #region ── Create groups ──────────────────────────────────────────────────────
 
 $Results = [System.Collections.Generic.List[PSObject]]::new()
@@ -218,6 +236,24 @@ foreach ($g in $Groups) {
             #     "@odata.id" = "https://graph.microsoft.com/v1.0/users/$($SecondOwner.Id)"
             # }
 
+            # ── Assign Entra role to group ────────────────────────────────
+            $RoleAssigned = $false
+            $RoleDefId    = $RoleCache[$g.EntraRole]
+            if ($RoleDefId) {
+                try {
+                    New-MgRoleManagementDirectoryRoleAssignment `
+                        -PrincipalId      $NewGroup.Id `
+                        -RoleDefinitionId $RoleDefId `
+                        -DirectoryScopeId "/" | Out-Null
+                    $RoleAssigned = $true
+                    Write-Host "  ROLE  $($g.EntraRole)" -ForegroundColor Cyan
+                } catch {
+                    Write-Warning "  Role assignment failed for $($g.Name): $($_.Exception.Message)"
+                }
+            } else {
+                Write-Warning "  Role definition not found for '$($g.EntraRole)' — role not assigned"
+            }
+
             $PrivColour = switch ($g.Privilege) {
                 "Critical" { "Magenta" }
                 "High"     { "Red" }
@@ -234,7 +270,7 @@ foreach ($g in $Groups) {
                 Name      = $g.Name
                 Role      = $g.EntraRole
                 Privilege = $g.Privilege
-                Status    = "Created"
+                Status    = if ($RoleAssigned) { "Created + Role Assigned" } else { "Created (role not assigned)" }
                 Id        = $NewGroup.Id
             })
         }
@@ -265,13 +301,14 @@ Write-Host "──────────────────────�
 $Results | Format-Table Name, Role, Privilege, Status -AutoSize
 
 Write-Host "Next steps:" -ForegroundColor Cyan
-Write-Host "  1. In Partner Center, create or update the GDAP relationship for this customer" -ForegroundColor White
-Write-Host "  2. Map each SG-Admin-AUG-GDAP-* group to its Entra role in the relationship" -ForegroundColor White
-Write-Host "  3. Add partner technicians to the appropriate groups in the PARTNER tenant" -ForegroundColor White
-Write-Host "  4. Do NOT add members in this customer tenant — groups are empty here" -ForegroundColor Yellow
-Write-Host "  5. Restrict SG-Admin-AUG-GDAP-PrivilegedRoleAdministrator to named individuals" -ForegroundColor Magenta
+Write-Host "  1. Entra roles have been assigned to each group by this script" -ForegroundColor White
+Write-Host "  2. In Partner Center, create or update the GDAP relationship for this customer" -ForegroundColor White
+Write-Host "  3. Map each SG-Admin-AUG-GDAP-* group to its Entra role in the relationship" -ForegroundColor White
+Write-Host "  4. Add partner technicians to the appropriate groups in the PARTNER tenant" -ForegroundColor White
+Write-Host "  5. Do NOT add members in this customer tenant — groups are empty here" -ForegroundColor Yellow
+Write-Host "  6. Restrict SG-Admin-AUG-GDAP-PrivilegedRoleAdministrator to named individuals" -ForegroundColor Magenta
 Write-Host "     with individual approval — this role can elevate to Global Admin" -ForegroundColor Magenta
-Write-Host "  6. Audit GDAP relationships and group membership quarterly in Partner Center" -ForegroundColor White
+Write-Host "  7. Audit GDAP relationships and group membership quarterly in Partner Center" -ForegroundColor White
 
 Disconnect-MgGraph | Out-Null
 
