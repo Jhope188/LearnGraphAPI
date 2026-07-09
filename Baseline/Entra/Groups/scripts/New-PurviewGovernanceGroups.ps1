@@ -66,6 +66,11 @@ $Groups = @(
         Description = "Purview data administrators with policy creation and management permissions."
         Type        = "Assigned"
     }
+    @{
+        Name        = "DG-Purview-AUG-Admin-AIPSuperUsers"
+        Description = "Purview Information Protection Super Users who can decrypt MIP/RMS-protected content for recovery, legal review, and migration."
+        Type        = "Assigned"
+    }
 
     # ── DLP ─────────────────────────────────────────────────────────────────
     @{
