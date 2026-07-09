@@ -459,7 +459,7 @@ $hcGeneral = Ensure-Label `
     -Tooltip       "Internal operational content. Not PHI. Staff schedules, policies, training materials." `
     -Comment       "Apply to internal healthcare operational content that does not contain patient information. Do NOT apply to any content containing patient names, identifiers, or clinical data." `
     -ParentImmutableId $healthcare.ImmutableId `
-    -ContentType   @("File", "Email", "Site", "UnifiedGroup", "TeamsMeeting") `
+    -ContentType   @("File", "Email", "Site", "UnifiedGroup", "Teamwork") `
     -HeaderText    "Healthcare - Internal Use Only" `
     -FooterText    "Healthcare - Internal Use Only"
 
@@ -562,7 +562,7 @@ Write-Host "    Purview-Medical-Research@$TenantDomain" -ForegroundColor Gray
 Write-Host ""
 Write-Host "  Labels Created:" -ForegroundColor White
 Write-Host "    Healthcare (container)     Groups & Sites scope" -ForegroundColor White
-Write-Host "    Healthcare - General       No encryption, Meetings scope ON" -ForegroundColor White
+Write-Host "    Healthcare - General       No encryption, Teamwork scope ON" -ForegroundColor White
 Write-Host "    Healthcare - Confidential  Org-wide encryption, PHI watermark" -ForegroundColor White
 Write-Host "    Healthcare - Privileged    Named group (Purview-Medical-Privileged)" -ForegroundColor White
 Write-Host "    Healthcare - Research      Named group (Purview-Medical-Research)" -ForegroundColor White

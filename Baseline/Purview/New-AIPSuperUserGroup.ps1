@@ -106,8 +106,14 @@ Write-Host ""
 
 $RequiredScopes = @("Group.ReadWrite.All", "User.Read")
 
-$ExistingCtx = Get-MgContext
-$MissingScopes = $RequiredScopes | Where-Object { $ExistingCtx.Scopes -notcontains $_ }
+$ExistingCtx = Get-MgContext -ErrorAction SilentlyContinue
+$ExistingScopes = @()
+
+if ($ExistingCtx -and $ExistingCtx.PSObject.Properties.Name -contains 'Scopes') {
+    $ExistingScopes = @($ExistingCtx.Scopes)
+}
+
+$MissingScopes = $RequiredScopes | Where-Object { $ExistingScopes -notcontains $_ }
 
 if (-not $ExistingCtx -or $MissingScopes) {
     Connect-MgGraph -Scopes $RequiredScopes -NoWelcome
@@ -195,57 +201,91 @@ elseif ($PSCmdlet.ShouldProcess($GroupName, "Create mail-enabled security group"
 Write-Host ""
 Write-Host "[2/3] Configuring AIP Super User feature..." -ForegroundColor Yellow
 
-# Check for AIPService module
-if (-not (Get-Module -ListAvailable -Name AIPService)) {
-    Write-Host "  AIPService module not found. Installing..." -ForegroundColor Yellow
+# ── Platform check ────────────────────────────────────────────────────────────
+# AIPService module requires Windows PowerShell on Windows.
+# On macOS/Linux we skip the module steps and print manual instructions instead.
+
+if (-not $IsWindows) {
+    Write-Host ""
+    Write-Host "  ⚠️  Platform: macOS / Linux detected." -ForegroundColor Yellow
+    Write-Host "  The AIPService module requires Windows PowerShell 5.1 on Windows." -ForegroundColor Yellow
+    Write-Host "  The Entra group was created successfully above." -ForegroundColor Green
+    Write-Host ""
+    Write-Host "  Complete the AIP Super User configuration from a Windows machine:" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "    Install-Module -Name AIPService -Scope CurrentUser -Force" -ForegroundColor DarkGray
+    Write-Host "    Import-Module AIPService" -ForegroundColor DarkGray
+    Write-Host "    Connect-AipService" -ForegroundColor DarkGray
+    Write-Host "    Enable-AipServiceSuperUserFeature" -ForegroundColor DarkGray
+    Write-Host "    Add-AipServiceSuperUserGroup -GroupEmailAddress '$GroupEmail'" -ForegroundColor DarkGray
+    Write-Host "    Get-AipServiceSuperUserGroup   # verify assignment" -ForegroundColor DarkGray
+    Write-Host "    Disable-AipServiceSuperUserFeature" -ForegroundColor DarkGray
+    Write-Host ""
+    Write-Host "  Alternatively, configure via the Purview portal:" -ForegroundColor Cyan
+    Write-Host "    https://purview.microsoft.com → Settings → Information Protection → Super User" -ForegroundColor DarkGray
+    Write-Host ""
+}
+else {
+    # ── Windows path — use the AIPService module ──────────────────────────────
+    if (-not (Get-Module -ListAvailable -Name AIPService)) {
+        Write-Host "  AIPService module not found. Installing..." -ForegroundColor Yellow
+        try {
+            Install-Module -Name AIPService -Scope CurrentUser -Force -ErrorAction Stop
+        }
+        catch {
+            Write-Warning "Could not install AIPService module automatically."
+            Write-Warning "Run manually: Install-Module -Name AIPService -Scope CurrentUser -Force"
+            Write-Warning "Then re-run this script, or complete AIP configuration manually:"
+            Write-Warning "  Connect-AipService"
+            Write-Warning "  Enable-AipServiceSuperUserFeature"
+            Write-Warning "  Add-AipServiceSuperUserGroup -GroupEmailAddress '$GroupEmail'"
+            Write-Warning "  Disable-AipServiceSuperUserFeature"
+            exit 1
+        }
+    }
+
     try {
-        Install-Module -Name AIPService -Scope CurrentUser -Force -ErrorAction Stop
+        Import-Module AIPService -ErrorAction Stop
     }
     catch {
-        Write-Warning "Could not install AIPService module automatically."
-        Write-Warning "Run manually: Install-Module -Name AIPService -Scope CurrentUser -Force"
-        Write-Warning ""
-        Write-Warning "Then complete the AIP configuration manually:"
-        Write-Warning "  Connect-AipService"
-        Write-Warning "  Enable-AipServiceSuperUserFeature"
-        Write-Warning "  Add-AipServiceSuperUserGroup -GroupEmailAddress '$GroupEmail'"
-        Write-Warning "  Disable-AipServiceSuperUserFeature"
+        Write-Host "  FAIL  Unable to import AIPService." -ForegroundColor Red
+        Write-Host "        $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "  This is often an architecture mismatch. Try:" -ForegroundColor Yellow
+        Write-Host "    Install-Module -Name AIPService -Scope CurrentUser -Force" -ForegroundColor Yellow
         exit 1
     }
-}
 
-Import-Module AIPService -ErrorAction Stop
+    if ($PSCmdlet.ShouldProcess("AIP Super User Feature", "Connect to AIP Service, enable feature, assign group, then disable")) {
 
-if ($PSCmdlet.ShouldProcess("AIP Super User Feature", "Connect to AIP Service, enable feature, assign group, then disable")) {
+        Write-Host "  Connecting to AIP Service (browser sign-in may appear)..." -ForegroundColor White
+        Connect-AipService -ErrorAction Stop
 
-    Write-Host "  Connecting to AIP Service (browser sign-in may appear)..." -ForegroundColor White
-    Connect-AipService -ErrorAction Stop
+        # Step 1: Enable the feature (disabled by default in all tenants)
+        Enable-AipServiceSuperUserFeature
+        $FeatureState = Get-AipServiceSuperUserFeature
+        Write-Host "  Feature state  : $FeatureState" -ForegroundColor Green
 
-    # Step 1: Enable the feature (disabled by default in all tenants)
-    Enable-AipServiceSuperUserFeature
-    $FeatureState = Get-AipServiceSuperUserFeature
-    Write-Host "  Feature state  : $FeatureState" -ForegroundColor Green
+        # Step 2: Assign the Super User group
+        Add-AipServiceSuperUserGroup -GroupEmailAddress $GroupEmail
+        $AssignedGroup = Get-AipServiceSuperUserGroup
+        Write-Host "  Assigned group : $AssignedGroup" -ForegroundColor Green
 
-    # Step 2: Assign the Super User group
-    Add-AipServiceSuperUserGroup -GroupEmailAddress $GroupEmail
-    $AssignedGroup = Get-AipServiceSuperUserGroup
-    Write-Host "  Assigned group : $AssignedGroup" -ForegroundColor Green
+        # Check for legacy individual Super Users
+        $IndividualUsers = Get-AipServiceSuperUser
+        if ($IndividualUsers) {
+            Write-Host "  ⚠️  Individual Super Users also present (legacy): $($IndividualUsers -join ', ')" -ForegroundColor Yellow
+            Write-Host "     Consider removing with: Remove-AipServiceSuperUser -EmailAddress '<upn>'" -ForegroundColor Yellow
+        }
 
-    # Check for any individual Super Users still set (legacy — should be none)
-    $IndividualUsers = Get-AipServiceSuperUser
-    if ($IndividualUsers) {
-        Write-Host "  ⚠️  Individual Super Users also present (legacy): $($IndividualUsers -join ', ')" -ForegroundColor Yellow
-        Write-Host "     Consider removing with: Remove-AipServiceSuperUser -EmailAddress '<upn>'" -ForegroundColor Yellow
+        # Step 3: Disable — enable on demand only
+        Disable-AipServiceSuperUserFeature
+        $FeatureState = Get-AipServiceSuperUserFeature
+        Write-Host "  Feature state  : $FeatureState (disabled until needed)" -ForegroundColor Yellow
+
+        Write-Host ""
+        Write-Host "[3/3] Disconnecting from AIP Service..." -ForegroundColor Yellow
+        Disconnect-AipService | Out-Null
     }
-
-    # Step 3: Disable — feature should be enabled on demand only
-    Disable-AipServiceSuperUserFeature
-    $FeatureState = Get-AipServiceSuperUserFeature
-    Write-Host "  Feature state  : $FeatureState (disabled until needed)" -ForegroundColor Yellow
-
-    Write-Host ""
-    Write-Host "[3/3] Disconnecting from AIP Service..." -ForegroundColor Yellow
-    Disconnect-AipService | Out-Null
 }
 
 #endregion
