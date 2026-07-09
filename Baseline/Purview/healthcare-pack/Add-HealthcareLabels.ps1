@@ -12,13 +12,31 @@
     Phase 2 — Label creation (Security & Compliance):
         Creates Healthcare parent label group + 4 sub-labels:
             Healthcare - General       No encryption. Internal operational content. Not PHI.
+                                       Offline access: Always (not encrypted — N/A)
             Healthcare - Confidential  Org-wide encryption. Standard PHI.
+                                       Offline access: 7 days — weekly reauthentication for PHI
             Healthcare - Privileged    Named group encryption (Purview-Medical-Privileged).
                                        HIPAA Special Categories: psychotherapy notes, HIV/AIDS,
                                        substance abuse (42 CFR Part 2), genetic info (GINA),
                                        mental health records.
+                                       Offline access: Never — must be online to open at all times
             Healthcare - Research      Named group encryption (Purview-Medical-Research).
                                        IRB-governed research. De-identified / limited datasets.
+                                       Offline access: 7 days — aligned to IRB protocol review cadence
+
+    OFFLINE ACCESS (Azure RMS Use License Validity):
+        This is NOT a HIPAA requirement — it is an Azure RMS feature.
+        HIPAA is technology-neutral and does not prescribe reauthentication intervals.
+        The values below reflect a defensible HIPAA posture based on PHI sensitivity tier:
+            Never  (-1) : User must have internet connection every time they open the document.
+                          RMS calls aadrm.com on every open. If account is disabled or removed
+                          from the encryption group, access is revoked immediately.
+            7 days (7)  : User can open offline for up to 7 days before reauthentication.
+                          When license expires, encryption group membership is re-evaluated.
+                          If user was removed from group during that window, access is denied.
+        Changing these values on existing labels takes effect after the current use license
+        expires — not immediately. For immediate revocation, use the Super User group to
+        re-encrypt the document, or revoke via AipService PowerShell.
 
     LABEL POLICY:
         Labels are NOT published by this script.
@@ -77,6 +95,7 @@
 .NOTES
     Author:   IAC
     Date:     2026-06-25
+    Updated:  2026-06-26 — Added EncryptionOfflineAccessDays per label + Phase 2B update logic
     Requires: ExchangeOnlineManagement v3+
     Roles:    Exchange: Distribution Groups | Purview: Information Protection Admin
 
@@ -350,7 +369,12 @@ function Ensure-Label {
         [string]$WatermarkText,
         [bool]$EncryptionEnabled = $false,
         [string]$EncryptionProtectionType,
-        [string]$EncryptionRightsDefinitions
+        [string]$EncryptionRightsDefinitions,
+        # Offline access (RMS use license validity):
+        #   -1 = Never  (must be online every open — use for Privileged)
+        #    7 = 7 days  (weekly reauth — use for Confidential and Research)
+        #   $null = omit parameter (label uses tenant default of 30 days)
+        [nullable[int]]$OfflineAccessDays = $null
     )
 
     $existing = $script:LabelCache | Where-Object { $_.DisplayName -eq $DisplayName } | Select-Object -First 1
@@ -399,6 +423,14 @@ function Ensure-Label {
         $params["EncryptionEnabled"]            = $true
         $params["EncryptionProtectionType"]     = $EncryptionProtectionType
         $params["EncryptionRightsDefinitions"]  = $EncryptionRightsDefinitions
+
+        # Offline access — only valid on Template-encrypted labels (not user-defined)
+        # -1 maps to "Never" in the Purview portal
+        # Positive integer maps to "Only for this many days"
+        # Omitting this parameter leaves the tenant default (30 days) in place
+        if ($null -ne $OfflineAccessDays) {
+            $params["EncryptionOfflineAccessDays"] = $OfflineAccessDays
+        }
     }
 
     if ($IsParentLabel) { $params["IsLabelGroup"] = $true }
@@ -487,7 +519,8 @@ $hcConfidential = Ensure-Label `
     -WatermarkText              "PHI - CONFIDENTIAL" `
     -EncryptionEnabled          $true `
     -EncryptionProtectionType   "Template" `
-    -EncryptionRightsDefinitions $orgWideRights
+    -EncryptionRightsDefinitions $orgWideRights `
+    -OfflineAccessDays          7
 
 # ----------------------------------------------------------------------------
 # HEALTHCARE - PRIVILEGED
@@ -516,7 +549,8 @@ $hcPrivileged = Ensure-Label `
     -WatermarkText              "PRIVILEGED - RESTRICTED PHI" `
     -EncryptionEnabled          $true `
     -EncryptionProtectionType   "Template" `
-    -EncryptionRightsDefinitions $privilegedRights
+    -EncryptionRightsDefinitions $privilegedRights `
+    -OfflineAccessDays          -1
 
 # Note: No Site/UnifiedGroup scope — privileged PHI should not label entire
 # SharePoint sites or Teams channels. File and Email only.
@@ -546,7 +580,85 @@ $hcResearch = Ensure-Label `
     -WatermarkText              "RESEARCH - RESTRICTED" `
     -EncryptionEnabled          $true `
     -EncryptionProtectionType   "Template" `
-    -EncryptionRightsDefinitions $researchRights
+    -EncryptionRightsDefinitions $researchRights `
+    -OfflineAccessDays          7
+
+# ============================================================================
+# PHASE 2B — UPDATE OFFLINE ACCESS ON EXISTING LABELS
+# ============================================================================
+# Ensure-Label skips labels that already exist (idempotent creation).
+# This phase explicitly applies EncryptionOfflineAccessDays via Set-Label
+# on all healthcare labels regardless of whether they were just created or
+# already existed — so re-running this script always enforces correct values.
+#
+# IMPORTANT: Changes to offline access take effect after the user's current
+# use license expires (up to 30 days for previously cached licenses).
+# For immediate enforcement on Privileged content, re-encrypt via Super User.
+# ============================================================================
+Write-Host ""
+Write-Host "--- Phase 2B: Enforce Offline Access Settings ---" -ForegroundColor Magenta
+Write-Host ""
+Write-Step "Applying EncryptionOfflineAccessDays to all Healthcare labels..." "White"
+Write-Step "Note: Changes apply to new use licenses only — existing cached licenses" "Gray"
+Write-Step "      are honoured until they expire (up to current tenant default)." "Gray"
+Write-Host ""
+
+$offlineUpdates = @(
+    @{
+        LabelName    = Get-LabelName "Healthcare-Confidential"
+        DisplayName  = "Healthcare - Confidential"
+        OfflineDays  = 7
+        Rationale    = "Standard PHI — 7-day offline window, weekly reauthentication"
+    },
+    @{
+        LabelName    = Get-LabelName "Healthcare-Privileged"
+        DisplayName  = "Healthcare - Privileged"
+        OfflineDays  = -1
+        Rationale    = "Special Category PHI — Never offline, must reauthenticate every open"
+    },
+    @{
+        LabelName    = Get-LabelName "Healthcare-Research"
+        DisplayName  = "Healthcare - Research"
+        OfflineDays  = 7
+        Rationale    = "IRB-governed data — 7-day offline window, aligned to protocol review"
+    }
+)
+
+foreach ($update in $offlineUpdates) {
+    $portalValue = if ($update.OfflineDays -eq -1) { "Never" } else { "$($update.OfflineDays) days" }
+    Write-Step "$($update.DisplayName) → Offline access: $portalValue" "White"
+    Write-Step "  $($update.Rationale)" "Gray"
+
+    if ($DryRun) {
+        Write-Step "  [DRY RUN] Would set EncryptionOfflineAccessDays = $($update.OfflineDays)" "Yellow"
+        continue
+    }
+
+    try {
+        Set-Label -Identity $update.LabelName `
+                  -EncryptionOfflineAccessDays $update.OfflineDays `
+                  -ErrorAction Stop
+        Write-OK "Set offline access: $portalValue on $($update.DisplayName)"
+    } catch {
+        Write-Warn "Failed to update offline access on $($update.DisplayName): $_"
+        Write-Warn "You can set this manually in Purview portal:"
+        Write-Warn "  Information Protection → $($update.DisplayName) → Edit → Encryption → Allow offline access → $portalValue"
+    }
+    Start-Sleep -Seconds 1
+}
+
+Write-Host ""
+Write-Step "Verifying offline access settings..." "White"
+Get-Label -IncludeDetailedLabelActions |
+    Where-Object { $_.DisplayName -like "Healthcare*" -and $_.DisplayName -ne "Healthcare" } |
+    ForEach-Object {
+        $actions  = $_.LabelActions | ConvertFrom-Json -ErrorAction SilentlyContinue
+        $offline  = ($actions.settings | Where-Object key -eq "EncryptionOfflineAccessDays").value
+        $display  = if ($null -eq $offline)     { "(tenant default 30d)" }
+                    elseif ($offline -eq "-1")   { "Never" }
+                    else                         { "$offline days" }
+        Write-Host ("  {0,-40} OfflineAccess: {1}" -f $_.DisplayName, $display) -ForegroundColor Gray
+    }
 
 # ============================================================================
 # SUMMARY
@@ -560,12 +672,19 @@ Write-Host "  Security Groups Created:" -ForegroundColor White
 Write-Host "    Purview-Medical-Privileged@$TenantDomain" -ForegroundColor Gray
 Write-Host "    Purview-Medical-Research@$TenantDomain" -ForegroundColor Gray
 Write-Host ""
-Write-Host "  Labels Created:" -ForegroundColor White
-Write-Host "    Healthcare (container)     Groups & Sites scope" -ForegroundColor White
-Write-Host "    Healthcare - General       No encryption, Teamwork scope ON" -ForegroundColor White
-Write-Host "    Healthcare - Confidential  Org-wide encryption, PHI watermark" -ForegroundColor White
-Write-Host "    Healthcare - Privileged    Named group (Purview-Medical-Privileged)" -ForegroundColor White
-Write-Host "    Healthcare - Research      Named group (Purview-Medical-Research)" -ForegroundColor White
+Write-Host "  Labels Created / Updated:" -ForegroundColor White
+Write-Host "    Healthcare (container)     Groups & Sites scope only" -ForegroundColor White
+Write-Host "    Healthcare - General       No encryption | Meetings ON | Offline: N/A" -ForegroundColor White
+Write-Host "    Healthcare - Confidential  Org-wide encryption | Offline: 7 days" -ForegroundColor White
+Write-Host "    Healthcare - Privileged    Purview-Medical-Privileged | Offline: Never" -ForegroundColor White
+Write-Host "    Healthcare - Research      Purview-Medical-Research   | Offline: 7 days" -ForegroundColor White
+Write-Host ""
+Write-Host "  Offline Access Note:" -ForegroundColor Yellow
+Write-Host "    These are Azure RMS use license settings — NOT a HIPAA requirement." -ForegroundColor Gray
+Write-Host "    Changes apply to new use licenses only. Existing cached licenses" -ForegroundColor Gray
+Write-Host "    are honoured until they expire. For immediate revocation on" -ForegroundColor Gray
+Write-Host "    Privileged content use the Super User group to re-encrypt." -ForegroundColor Gray
+Write-Host "    Verify: Set-AipServiceMaxUseLicenseValidityTime (tenant default)" -ForegroundColor Gray
 Write-Host ""
 Write-Host "  NEXT STEPS:" -ForegroundColor Yellow
 Write-Host ""

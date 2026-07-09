@@ -98,7 +98,7 @@ function Get-LabelName {
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host "  IAC Auto-Labeling Policy Creation" -ForegroundColor Cyan
-Write-Host "  Financial + Medical (Simulation Mode)" -ForegroundColor Cyan
+Write-Host "  Medical Only (Simulation Mode)" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 if ($DryRun) { Write-Host "  DRY RUN MODE - No changes will be made" -ForegroundColor Yellow }
 Write-Host ""
@@ -128,22 +128,22 @@ if (-not $TenantDomain) {
 # ============================================================================
 Write-Host "[..] Resolving label GUIDs..." -ForegroundColor Yellow
 
-$financialLabelName = Get-LabelName "Confidential-Financial"
-$medicalLabelName   = Get-LabelName "Confidential-Medical"
+# $financialLabelName = Get-LabelName "Confidential-Financial"   # Financial — commented out
+$medicalLabelName   = Get-LabelName "Healthcare-Confidential"   # Matches Add-HealthcareLabels.ps1
 
-$financialLabel = Get-Label -Identity $financialLabelName -ErrorAction SilentlyContinue
+# $financialLabel = Get-Label -Identity $financialLabelName -ErrorAction SilentlyContinue
 $medicalLabel   = Get-Label -Identity $medicalLabelName   -ErrorAction SilentlyContinue
 
-if (-not $financialLabel -and -not $DryRun) {
-    Write-Host "[ERROR] Label '$financialLabelName' not found. Run Add-FinancialMedicalLabels.ps1 first." -ForegroundColor Red
-    exit 1
-}
+# if (-not $financialLabel -and -not $DryRun) {
+#     Write-Host "[ERROR] Label '$financialLabelName' not found." -ForegroundColor Red
+#     exit 1
+# }
 if (-not $medicalLabel -and -not $DryRun) {
-    Write-Host "[ERROR] Label '$medicalLabelName' not found. Run Add-FinancialMedicalLabels.ps1 first." -ForegroundColor Red
+    Write-Host "[ERROR] Label '$medicalLabelName' not found. Run Add-HealthcareLabels.ps1 first." -ForegroundColor Red
     exit 1
 }
 
-Write-Host "[OK] Financial label: $($financialLabel.DisplayName) ($($financialLabel.ImmutableId))" -ForegroundColor Green
+# Write-Host "[OK] Financial label: $($financialLabel.DisplayName)" -ForegroundColor Green
 Write-Host "[OK] Medical label  : $($medicalLabel.DisplayName) ($($medicalLabel.ImmutableId))" -ForegroundColor Green
 
 # ============================================================================
@@ -153,19 +153,17 @@ Write-Host "[..] Resolving EDM SIT GUIDs..." -ForegroundColor Yellow
 
 $allSITs = Get-DlpSensitiveInformationType -ErrorAction SilentlyContinue
 
-$edmFinancialSIT = $allSITs | Where-Object { $_.Name -eq "EDM - Financial Customer Record" } | Select-Object -First 1
+# $edmFinancialSIT = $allSITs | Where-Object { $_.Name -eq "EDM - Financial Customer Record" } | Select-Object -First 1   # Financial — commented out
 $edmMedicalSIT   = $allSITs | Where-Object { $_.Name -eq "EDM - Patient Medical Record"    } | Select-Object -First 1
 $mrnCustomSIT    = $allSITs | Where-Object { $_.Name -eq "Medical Record Number (MRN)"     } | Select-Object -First 1
 
-$edmFinancialAvailable = $null -ne $edmFinancialSIT
+# $edmFinancialAvailable = $null -ne $edmFinancialSIT   # Financial — commented out
 $edmMedicalAvailable   = $null -ne $edmMedicalSIT
 $mrnSITAvailable       = $null -ne $mrnCustomSIT
 
-if (-not $edmFinancialAvailable) {
-    Write-Host "[WARN] EDM - Financial Customer Record SIT not found." -ForegroundColor Yellow
-    Write-Host "[WARN] Run Create-EDMSchemas.ps1 and upload data before EDM rules will work." -ForegroundColor Yellow
-    Write-Host "[WARN] Financial policy will be created with built-in SITs only for now." -ForegroundColor Yellow
-}
+# Financial EDM warning block commented out
+# if (-not $edmFinancialAvailable) { ... }
+
 if (-not $edmMedicalAvailable) {
     Write-Host "[WARN] EDM - Patient Medical Record SIT not found." -ForegroundColor Yellow
     Write-Host "[WARN] Run Create-EDMSchemas.ps1 and upload data before EDM rules will work." -ForegroundColor Yellow
@@ -187,8 +185,9 @@ function Test-AutoLabelPolicyExists {
 }
 
 # ============================================================================
-# POLICY 1 — CONFIDENTIAL FINANCIAL
+# POLICY 1 — CONFIDENTIAL FINANCIAL (commented out — run medical only)
 # ============================================================================
+<#
 Write-Host ""
 Write-Host "--- [1/2] Auto-Label - Confidential Financial ---" -ForegroundColor Magenta
 Write-Host ""
@@ -235,8 +234,7 @@ if (Test-AutoLabelPolicyExists -PolicyName $financialPolicyName) {
         New-AutoSensitivityLabelRule `
             -Name                             $financialRuleNameSIT `
             -Policy                           $financialPolicyName `
-            -ContentContainsSensitiveInformation $builtInFinancialSITs `
-            -Workload                         "SharePoint,OneDrive,Exchange"
+            -ContentContainsSensitiveInformation $builtInFinancialSITs
 
         Write-Host "  [OK] Rule A created: Built-in SITs" -ForegroundColor Green
 
@@ -285,8 +283,7 @@ if (Test-AutoLabelPolicyExists -PolicyName $financialPolicyName) {
             New-AutoSensitivityLabelRule `
                 -Name                             $financialRuleNameEDM `
                 -Policy                           $financialPolicyName `
-                -ContentContainsSensitiveInformation $edmFinancialCondition `
-                -Workload                         "SharePoint,OneDrive,Exchange"
+                -ContentContainsSensitiveInformation $edmFinancialCondition
 
             Write-Host "  [OK] Rule B created: EDM + Credit Card" -ForegroundColor Green
         } else {
@@ -298,6 +295,7 @@ if (Test-AutoLabelPolicyExists -PolicyName $financialPolicyName) {
         Write-Host "  [ERROR] Failed to create Financial auto-labeling policy: $_" -ForegroundColor Red
     }
 }
+#>  # End of commented-out Financial policy block
 
 # ============================================================================
 # POLICY 2 — CONFIDENTIAL MEDICAL
@@ -306,9 +304,9 @@ Write-Host ""
 Write-Host "--- [2/2] Auto-Label - Confidential Medical ---" -ForegroundColor Magenta
 Write-Host ""
 
-$medicalPolicyName   = "Auto-Label - Confidential Medical"
-$medicalRuleNameSIT  = "Medical - Built-in SITs"
-$medicalRuleNameEDM  = "Medical - EDM Patient Record"
+$medicalPolicyName   = "Auto-Label - Healthcare Confidential"
+$medicalRuleNameSIT  = "Healthcare - Built-in SITs"
+$medicalRuleNameEDM  = "Healthcare - EDM Patient Record"
 
 if (Test-AutoLabelPolicyExists -PolicyName $medicalPolicyName) {
     Write-Host "  [EXISTS] Policy '$medicalPolicyName' already present — skipping" -ForegroundColor Gray
@@ -350,8 +348,7 @@ if (Test-AutoLabelPolicyExists -PolicyName $medicalPolicyName) {
         New-AutoSensitivityLabelRule `
             -Name                             $medicalRuleNameSIT `
             -Policy                           $medicalPolicyName `
-            -ContentContainsSensitiveInformation $builtInMedicalSITs `
-            -Workload                         "SharePoint,OneDrive,Exchange"
+            -ContentContainsSensitiveInformation $builtInMedicalSITs
 
         Write-Host "  [OK] Rule A created: Built-in + MRN SITs" -ForegroundColor Green
 
@@ -398,8 +395,7 @@ if (Test-AutoLabelPolicyExists -PolicyName $medicalPolicyName) {
             New-AutoSensitivityLabelRule `
                 -Name                             $medicalRuleNameEDM `
                 -Policy                           $medicalPolicyName `
-                -ContentContainsSensitiveInformation $edmMedicalCondition `
-                -Workload                         "SharePoint,OneDrive,Exchange"
+                -ContentContainsSensitiveInformation $edmMedicalCondition
 
             Write-Host "  [OK] Rule B created: EDM + MRN" -ForegroundColor Green
         } elseif ($edmMedicalAvailable -and -not $mrnSITAvailable) {
