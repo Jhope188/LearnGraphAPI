@@ -68,6 +68,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 
 ### 1.1 Legacy Authentication Block — CIS 4.8 / HIPAA §164.312(d)
 
+> **HIPAA Requirement — §164.312(d) Person or Entity Authentication:** Implement procedures to verify that a person or entity seeking access to ePHI is the one claimed. Legacy authentication protocols (Basic Auth, SMTP AUTH, NTLM) cannot satisfy modern identity verification because they transmit credentials in cleartext or do not support MFA — making them incompatible with this standard. Blocking them is a prerequisite for meaningful person authentication.
+
 > ✅ **IMPLEMENTED** — `IAC - GLOBAL – BLOCK - Legacy Authentication` (ENABLED)
 
 - Policy targets `clientAppTypes: ["exchangeActiveSync","other"]` across All apps for All users. Grant: block.
@@ -79,6 +81,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 
 ### 1.2 MFA for All Users — CIS 6.3 / HIPAA §164.312(d)
 
+> **HIPAA Requirement — §164.312(d) Person or Entity Authentication:** Implement procedures to verify that the person or entity seeking access to ePHI is who they claim to be. Multi-factor authentication is the primary technical control for satisfying this standard — a single factor (password alone) is insufficient because it can be stolen without the user's knowledge. MFA for all users accessing any M365 workload that may contain ePHI is a baseline requirement.
+
 > ✅ **IMPLEMENTED** — `IAC - GLOBAL - GRANT - MFA - AllUsers` (ENABLED)
 
 - Scope: All users, All apps, all client app types. Grant: `mfa`.
@@ -88,6 +92,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 ---
 
 ### 1.3 Phishing-Resistant MFA — CIS 6.3 / HIPAA §164.308(a)(5)(ii)(C)
+
+> **HIPAA Requirement — §164.308(a)(5)(ii)(C) Log-in Monitoring:** Implement procedures for monitoring log-in attempts and reporting discrepancies. For workforce members with administrative access to ePHI systems, regulators and OCR guidance consistently expect organisations to apply stronger authentication controls than standard password + push MFA — particularly after high-profile phishing attacks that bypass conventional MFA. Phishing-resistant methods (FIDO2, passkeys, certificate-based auth) eliminate the real-time phishing interception vector entirely, reducing the risk of unauthorised access that log-in monitoring alone cannot prevent.
 
 > ⚠️ **PARTIAL** — Enforced for protected actions only; admin daily access is report-only
 
@@ -101,6 +107,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 
 ### 1.4 Compliant/Managed Device Requirement — CIS 1.1 / HIPAA §164.310(d)(2)(iii)
 
+> **HIPAA Requirement — §164.310(d)(2)(iii) Device and Media Controls — Accountability:** Maintain a record of the movements of hardware and electronic media and any person responsible for them. The broader §164.310(d) standard requires covered entities to implement policies governing hardware that stores ePHI. Allowing unmanaged, untracked devices to access ePHI workloads directly violates accountability controls — there is no record of the device, no enforcement of encryption, and no guarantee that security patches are current. Requiring device compliance before granting access enforces hardware accountability at the network gate.
+
 > ❌ **GAP** — `IAC - INTUNE - GRANT - RequireCompliantDevice` is REPORT-ONLY
 
 - Policy scope: All users, All apps. Grant: `compliantDevice OR domainJoinedDevice`.
@@ -113,6 +121,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 ---
 
 ### 1.5 Session Controls & Sign-In Frequency — CIS 4.3 / HIPAA §164.312(a)(2)(iii)
+
+> **HIPAA Requirement — §164.312(a)(2)(iii) Automatic Logoff (Required):** Implement electronic procedures that terminate an electronic session after a predetermined time of inactivity. This is a *required* implementation specification under the Technical Safeguards standard — not addressable. HIPAA does not prescribe a specific timeout value but HHS guidance and OCR enforcement actions indicate that sessions left open indefinitely on unattended workstations are a clear violation. The control applies to both web sessions (Conditional Access) and physical workstations (Intune screen lock) — both layers must be addressed.
 
 > ✅ **IMPLEMENTED** — Multiple enforced session frequency policies
 
@@ -130,6 +140,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 ---
 
 ### 1.6 Risk-Based Conditional Access — CIS 8.11 / HIPAA §164.308(a)(1)(ii)
+
+> **HIPAA Requirement — §164.308(a)(1)(ii) Security Management Process — Risk Analysis & Risk Management (Both Required):** Conduct an accurate and thorough assessment of the potential risks and vulnerabilities to the confidentiality, integrity, and availability of ePHI, and implement security measures sufficient to reduce those risks to a reasonable and appropriate level. Risk-based Conditional Access operationalises this standard in real time — Entra ID Protection continuously evaluates sign-in risk signals (impossible travel, anonymous IP, leaked credentials, atypical travel) and user risk signals (confirmed compromise, leaked passwords). Policies that automatically enforce step-up authentication or block access based on these risk scores constitute an automated, continuous risk management control that directly satisfies §164.308(a)(1)(ii)(B).
 
 > ✅ **IMPLEMENTED** — All five Entra ID P2 risk policies enabled
 
@@ -178,6 +190,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 
 **CIS 6.3 / HIPAA §164.308(a)(5)**
 
+> **HIPAA Requirement — §164.308(a)(5) Security Awareness and Training — Password Management (Addressable):** Implement procedures for creating, changing, and safeguarding passwords. More broadly, the Security Awareness and Training standard requires covered entities to train all workforce members on authentication security practices. In M365, this is operationalised not only through training programs but through the authentication methods policy itself — restricting available methods to those that cannot be phished, bypassed via SIM swap (SMS), or socially engineered (voice call) directly reduces the risk that a workforce member's credential becomes the attack vector for ePHI breach.
+
 | Method | State | Assessment |
 |---|---|---|
 | FIDO2 / Passkeys | Enabled — All Users | ✅ Phishing-resistant. Device-bound and synced passkey profiles. Attestation enforced at registration. Key restriction AAGUIDs configured. |
@@ -196,6 +210,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 ## Section 3 — Privileged Access Management
 
 **CIS 6.8 / HIPAA §164.308(a)(3)**
+
+> **HIPAA Requirement — §164.308(a)(3) Workforce Security — Authorization and Supervision (Addressable):** Implement procedures for the authorization and/or supervision of workforce members who work with ePHI or in locations where it might be accessed. §164.308(a)(3)(ii)(B) specifically requires that access to ePHI be granted only to the minimum necessary workforce members. Permanent privileged role assignments violate this principle on two levels: (1) the privilege is always active — even when not needed — expanding the window of opportunity for credential theft or insider misuse; and (2) there is no auditable approval workflow documenting *why* the access was granted for a specific purpose at a specific time. PIM-eligible roles address both concerns by requiring explicit activation with justification and enforcing time-bounded access.
 
 ### 3.1 Permanent Privileged Role Assignments
 
@@ -242,6 +258,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 
 **CIS 7.1 / HIPAA §164.310(d)**
 
+> **HIPAA Requirement — §164.310(d) Device and Media Controls (Required):** Implement policies and procedures that govern the receipt and removal of hardware and electronic media that contain ePHI into and out of a facility, and the movement of these items within the facility. In a cloud-first M365 environment, this standard extends to endpoint devices that access, store, or cache ePHI. Intune compliance policies define the *minimum security bar* a device must meet before Conditional Access allows it to reach ePHI workloads. A device that fails the compliance policy becomes non-compliant and — once `RequireCompliantDevice` is enforced — is blocked from M365 access. Key implementation specifications include §164.310(d)(2)(iii) Accountability (device tracked and managed) and §164.310(d)(2)(iv) Data Backup and Storage (device encryption).
+
 ### 4.1 Windows Compliance Policy — `IAC - Win - Baseline - Compliance - Policy`
 
 | Setting | Configured Value | Assessment |
@@ -282,6 +300,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 ## Section 5 — Device Configuration
 
 **CIS 3.9, 10.1 / HIPAA §164.310(d)**
+
+> **HIPAA Requirement — §164.312(a)(2)(iv) Encryption and Decryption (Addressable) & §164.310(d)(1) Device and Media Controls — Disposal (Required):** Implement a mechanism to encrypt and decrypt ePHI, and ensure ePHI is properly disposed of when devices are retired. Device configuration profiles go beyond compliance *policy* (which defines the bar) to actively *configure* the encryption, protection, and media controls on the endpoint. BitLocker, removable media blocks, anti-malware, and screen lock are all technical safeguards that protect ePHI at rest on the device — the layer beneath the cloud session. HIPAA does not mandate a specific encryption algorithm, but HHS guidance specifies that encryption must render data unusable to unauthorised persons; XTS-AES 256 clearly satisfies this standard.
 
 ### 5.1 BitLocker Encryption (Windows)
 
@@ -335,6 +355,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 
 ### 5.4 Screen Lock / Automatic Logoff — HIPAA §164.312(a)(2)(iii)
 
+> **HIPAA Requirement — §164.312(a)(2)(iii) Automatic Logoff (Required):** Implement electronic procedures that terminate an electronic session after a predetermined time of inactivity. This is a *Required* implementation specification — covered entities cannot choose to treat it as addressable. OCR enforcement letters and audit protocols explicitly list unattended workstations with no screen lock as a Technical Safeguard deficiency. An unattended, logged-in workstation in a clinical setting represents a direct path to ePHI for any person who walks by. Both cloud session timeout (Section 1.5) and physical device screen lock (this section) must be implemented — they address different attack surfaces and neither substitutes for the other.
+
 > ❌ **GAP** — No screen lock timeout for physical Windows or macOS endpoints
 
 - `IAC - Windows365 - SessionTimeout` (assigned): 30-minute inactivity timeout for **Windows 365 Cloud PCs ONLY**. Physical devices are not covered.
@@ -365,6 +387,8 @@ Purview DLP policies and sensitivity labels require portal-level verification th
 
 ### 6.1 DLP Policies — CIS 3.13 / HIPAA §164.312(e)(2)
 
+> **HIPAA Requirement — §164.312(e)(2) Transmission Security — Integrity Controls and Encryption (Addressable):** Implement security measures to guard against unauthorised access to ePHI that is being transmitted over an electronic communications network. The DLP standard is the primary M365 control for preventing ePHI from leaving the organisation via email, SharePoint sharing, Teams messages, and Copilot outputs. A DLP policy in **Test** or **Report-only** mode is fully visible to admins but does not block any action — it provides zero protection. Only a policy in **Enforce** mode actively blocks or encrypts ePHI in transit. Under a HIPAA audit, regulators look for whether transmission security controls are *actually preventing* unauthorised disclosure, not merely detecting it after the fact.
+
 Verify in **Purview portal > Data loss prevention > Policies:**
 
 | Expected Policy | What to Check | Required State |
@@ -385,6 +409,8 @@ Get-DlpCompliancePolicy | Where-Object { $_.Name -like 'HIPAA*' } | Select-Objec
 
 ### 6.2 Sensitivity Labels — CIS 3.3 / HIPAA §164.312(a)(1)
 
+> **HIPAA Requirement — §164.312(a)(1) Access Control (Required):** Implement technical policies and procedures for electronic information systems that maintain ePHI to allow access only to those persons or software programs that have been granted access rights as specified in §164.308(a)(4). Sensitivity labels with encryption satisfy this requirement at the *document level* — unlike SharePoint permissions that control folder access, label encryption travels with the file itself. A labelled, encrypted document carrying a Healthcare - Privileged label cannot be opened even if the file is shared, forwarded, downloaded, or exfiltrated, unless the recipient is a current member of the `Purview-Medical-Privileged` authorised group. This is the strongest available PHI access control in M365 because it persists beyond the organisation's network and permission boundary.
+
 Verify in **Purview portal > Information protection > Labels:**
 
 - **Healthcare - Confidential:** Encryption enabled, scoped to authenticated clinical staff, auto-labeling configured for PHI SITs (SSN + Medical Terms).
@@ -402,6 +428,8 @@ Get-Label | Where-Object { $_.DisplayName -like 'Healthcare*' } | Select-Object 
 ---
 
 ### 6.3 Audit Configuration — CIS 8.1–8.2 / HIPAA §164.312(b)
+
+> **HIPAA Requirement — §164.312(b) Audit Controls (Required):** Implement hardware, software, and/or procedural mechanisms that record and examine activity in information systems that contain or use ePHI. This is a *Required* standard with no addressable carve-out. The key word is "examine" — simply collecting logs is not sufficient. Covered entities must have a process for reviewing audit logs and must retain those records. HHS has clarified that the standard requires: (1) audit logs to be enabled across all systems that touch ePHI, (2) logs to be retained for a period consistent with §164.530(j) — which requires HIPAA documentation to be retained for six years — and (3) activity reviews to be performed regularly. The Microsoft default audit log retention of 90 days is the most common M365 HIPAA compliance failure cited in OCR audit findings.
 
 > ⚠️ **PARTIAL** — `displayConcealedNames=true` observed; full audit config requires PowerShell
 
