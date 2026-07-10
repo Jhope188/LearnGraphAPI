@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M365 Group Types — Complete Reference | conditionalaccess.tech</title>
+<style>
+  :root {
+    --color-base:          #0a1628;
+    --color-surface:       #0d2137;
+    --color-surface-alt:   #112840;
+    --color-border:        rgba(0,184,176,0.12);
+    --color-border-hover:  rgba(0,184,176,0.28);
+    --color-teal:          #00b8b0;
+    --color-teal-dim:      #1a7f7a;
+    --color-teal-glow:     rgba(26,127,122,0.20);
+    --color-ms-blue:       #0078d4;
+    --color-text-primary:  #e8f0f8;
+    --color-text-secondary:#7a9bb5;
+    --color-text-dim:      #4a6a80;
+    --color-ok:            #00b8b0;
+    --color-warn:          #f5c842;
+    --color-danger:        #e05533;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--color-base);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+  }
+
+  /* ── Header / Hero ── */
+  .site-header {
+    background:
+      radial-gradient(ellipse 55% 45% at 70% 25%, rgba(26,127,122,0.22) 0%, transparent 65%),
+      radial-gradient(ellipse 35% 55% at 15% 75%, rgba(0,184,176,0.08) 0%, transparent 60%),
+      #0a1628;
+    border-bottom: 1px solid var(--color-border);
+    padding: 36px 32px 32px;
+  }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .wordmark-shield {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .wordmark-text {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .wordmark-text span { color: var(--color-teal); }
+
+  .wordmark-sub {
+    font-size: 0.72rem;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-teal);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: var(--color-text-primary);
+    margin-bottom: 10px;
+  }
+
+  .hero-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    max-width: 760px;
+  }
+
+  .hero-desc a {
+    color: var(--color-teal);
+    text-decoration: none;
+  }
+
+  /* ── Main content wrapper ── */
+  .content-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 32px 64px;
+  }
+
+  /* ── Tab Nav ── */
+  .tab-nav {
+    display: flex;
+    gap: 2px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 3px;
+    margin-bottom: 32px;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 110px;
+    padding: 9px 14px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .tab-btn:hover { color: var(--color-text-primary); background: var(--color-surface-alt); }
+  .tab-btn.active { color: var(--color-base); background: var(--color-teal); font-weight: 600; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── Group Cards ── */
+  .group-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+  }
+
+  .group-card:hover { border-color: var(--color-border-hover); }
+
+  .group-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--color-teal), transparent);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    letter-spacing: -0.02em;
+  }
+
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    line-height: 1.3;
+  }
+
+  .card-aka {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    margin-top: 3px;
+  }
+
+  .card-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 18px;
+    line-height: 1.7;
+  }
+
+  /* ── Property Grid ── */
+  .prop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .prop {
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 11px 13px;
+  }
+
+  .prop-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-text-dim);
+    margin-bottom: 4px;
+  }
+
+  .prop-value {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+  }
+
+  .prop-value.yes  { color: var(--color-ok); }
+  .prop-value.no   { color: var(--color-danger); }
+  .prop-value.partial { color: var(--color-warn); }
+
+  .prop-value code, .mono {
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.78rem;
+    color: var(--color-teal);
+    background: rgba(0,184,176,0.08);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* ── Graph API block ── */
+  .graph-block {
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 13px 15px;
+    margin-top: 12px;
+  }
+
+  .graph-block-title {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-dim);
+    margin-bottom: 8px;
+  }
+
+  .graph-props {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .graph-chip {
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(0,184,176,0.08);
+    color: var(--color-teal);
+    border: 1px solid rgba(0,184,176,0.15);
+  }
+
+  /* ── Callouts ── */
+  .callout {
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+
+  .callout.warn {
+    border-color: rgba(245,200,66,0.18);
+    background: rgba(245,200,66,0.04);
+  }
+
+  .callout.danger {
+    border-color: rgba(224,85,51,0.18);
+    background: rgba(224,85,51,0.04);
+  }
+
+  .callout-title {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .callout.warn .callout-title { color: var(--color-warn); }
+  .callout.danger .callout-title { color: var(--color-danger); }
+  .callout:not(.warn):not(.danger) .callout-title { color: var(--color-teal); }
+
+  .callout p {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin-bottom: 6px;
+  }
+
+  .callout p:last-child { margin-bottom: 0; }
+
+  /* ── Portal section ── */
+  .portal-section { margin-bottom: 32px; }
+
+  .portal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .portal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .portal-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  .portal-desc {
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    margin-bottom: 12px;
+    line-height: 1.7;
+  }
+
+  .creates-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-weight: 600;
+    border: 1px solid transparent;
+  }
+
+  .badge-ok     { background: rgba(0,184,176,0.12); color: var(--color-teal);   border-color: rgba(0,184,176,0.2); }
+  .badge-no     { background: rgba(224,85,51,0.08); color: var(--color-danger); border-color: rgba(224,85,51,0.15); text-decoration: line-through; opacity: 0.65; }
+
+  /* ── Comparison Table ── */
+  .section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-note {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+
+  .table-wrap { overflow-x: auto; }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.82rem;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+  }
+
+  .comparison-table thead th {
+    background: var(--color-surface-alt);
+    padding: 11px 13px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.65rem;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+  }
+
+  .comparison-table tbody td {
+    padding: 9px 13px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+    color: var(--color-text-secondary);
+  }
+
+  .comparison-table tbody tr:last-child td { border-bottom: none; }
+  .comparison-table tbody tr:hover td { background: rgba(0,184,176,0.03); }
+  .comparison-table tbody td:first-child { color: var(--color-text-primary); font-weight: 500; white-space: nowrap; }
+
+  .tbl-yes     { color: var(--color-ok) !important; font-weight: 600; }
+  .tbl-no      { color: var(--color-text-dim) !important; }
+  .tbl-partial { color: var(--color-warn) !important; font-weight: 500; }
+
+  /* ── Nesting Rules ── */
+  .nesting-rule {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    transition: border-color 0.15s ease;
+  }
+
+  .nesting-rule:hover { border-color: var(--color-border-hover); }
+
+  .nesting-arrow {
+    font-family: 'Cascadia Code', monospace;
+    color: var(--color-text-dim);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .nesting-result {
+    margin-left: auto;
+    font-weight: 600;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .nesting-result.ok     { background: rgba(0,184,176,0.12);  color: var(--color-teal); }
+  .nesting-result.block  { background: rgba(224,85,51,0.12);  color: var(--color-danger); }
+  .nesting-result.warn   { background: rgba(245,200,66,0.10); color: var(--color-warn); }
+
+  /* ── Footer ── */
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    padding: 20px 32px;
+    font-size: 0.78rem;
+    color: var(--color-text-dim);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .site-footer a { color: var(--color-teal); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .site-header { padding: 24px 16px 20px; }
+    .content-wrap { padding: 20px 16px 48px; }
+    h1 { font-size: 1.35rem; }
+    .tab-btn { font-size: 0.75rem; padding: 8px 10px; min-width: 80px; }
+    .prop-grid { grid-template-columns: 1fr; }
+    .comparison-table { font-size: 0.75rem; }
+    .comparison-table thead th, .comparison-table tbody td { padding: 8px 9px; }
+    .group-card { padding: 18px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Site Header ── -->
+<header class="site-header">
+  <div class="wordmark">
+    <svg class="wordmark-shield" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 2L4 7v9c0 7.18 5.16 13.9 12 15.93C22.84 29.9 28 23.18 28 16V7L16 2z" fill="#0078d4" opacity="0.9"/>
+      <path d="M16 2L4 7v9c0 7.18 5.16 13.9 12 15.93C22.84 29.9 28 23.18 28 16V7L16 2z" fill="url(#sh)" opacity="0.4"/>
+      <path d="M11 16.5l3.5 3.5L22 12" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <defs>
+        <linearGradient id="sh" x1="16" y1="2" x2="16" y2="32" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#00b8b0"/>
+          <stop offset="1" stop-color="#0078d4" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div>
+      <div class="wordmark-text">conditionalaccess<span>.tech</span></div>
+      <div class="wordmark-sub">Microsoft MVP · Security: Identity &amp; Access</div>
+    </div>
+  </div>
+
+  <div class="hero-eyebrow">Reference Guide</div>
+  <h1>Microsoft 365 &amp; Entra ID Group Types</h1>
+  <p class="hero-desc">
+    Complete breakdown of every group type, what happens when you create them from different admin centers, and the Graph API properties that define them.
+    Sources: <a href="https://medium.com/@jhope188/sc-300-implementing-microsoft-identity-and-access-administration-78c69cd79751" target="_blank">SC-300 Study Guide</a> ·
+    <a href="https://kandibrian.com/articles/m365-groups-comparison.html" target="_blank">Kandi Brian — Every Group Type Compared</a> ·
+    <a href="https://learn.microsoft.com/en-us/microsoft-365/admin/create-groups/compare-groups" target="_blank">Microsoft Learn</a>
+  </p>
+</header>
+
+<div class="content-wrap">
+
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showTab('types', this)">All Group Types</button>
+  <button class="tab-btn" onclick="showTab('portals', this)">Portal Differences</button>
+  <button class="tab-btn" onclick="showTab('compare', this)">Side-by-Side</button>
+  <button class="tab-btn" onclick="showTab('nesting', this)">Nesting Rules</button>
+  <button class="tab-btn" onclick="showTab('gotchas', this)">Key Gotchas</button>
+</div>
+
+<!-- ============ TAB 1: ALL GROUP TYPES ============ -->
+<div id="tab-types" class="tab-content active">
+
+  <!-- Security Group -->
+  <div class="group-card">
+    <div class="card-header">
+      <div class="card-icon" style="background: rgba(0,184,176,0.1); color: var(--color-teal);">SG</div>
+      <div>
+        <div class="card-title">Security Group</div>
+        <div class="card-aka">groupTypes: [] · mailEnabled: false · securityEnabled: true</div>
+      </div>
+    </div>
+    <p class="card-desc">The workhorse of access control. Manages resource access, license assignment, Conditional Access scoping, Intune deployment, and Azure RBAC. No mailbox, no collaboration plumbing — purely about who can reach what.</p>
+    <div class="prop-grid">
+      <div class="prop"><div class="prop-label">Members</div><div class="prop-value">Users, Devices, Service Principals, Other Groups</div></div>
+      <div class="prop"><div class="prop-label">Email</div><div class="prop-value no">No</div></div>
+      <div class="prop"><div class="prop-label">Nesting</div><div class="prop-value yes">Yes — into other Security Groups</div></div>
+      <div class="prop"><div class="prop-label">Dynamic Membership</div><div class="prop-value yes">Yes (users or devices, not both)</div></div>
+      <div class="prop"><div class="prop-label">Role-Assignable</div><div class="prop-value yes">Yes (set at creation, immutable)</div></div>
+      <div class="prop"><div class="prop-label">License Required</div><div class="prop-value partial">Entra ID P1 for dynamic membership</div></div>
+      <div class="prop"><div class="prop-label">Managed In</div><div class="prop-value">Entra Admin Center, Azure Portal, Graph, PowerShell</div></div>
+      <div class="prop"><div class="prop-label">Soft-Delete / Restore</div><div class="prop-value partial">Yes — 30 days (preview, public cloud only)</div></div>
+    </div>
+    <div class="graph-block">
+      <div class="graph-block-title">Graph API Fingerprint</div>
+      <div class="graph-props">
+        <span class="graph-chip">groupTypes: []</span>
+        <span class="graph-chip">mailEnabled: false</span>
+        <span class="graph-chip">securityEnabled: true</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Microsoft 365 Group -->
+  <div class="group-card">
+    <div class="card-header">
+      <div class="card-icon" style="background: rgba(0,120,212,0.12); color: #4db3ff;">M365</div>
+      <div>
+        <div class="card-title">Microsoft 365 Group (Unified Group)</div>
+        <div class="card-aka">groupTypes: ["Unified"] · mailEnabled: true · securityEnabled: varies by portal</div>
+      </div>
+    </div>
+    <p class="card-desc">Collaboration-first membership service. Auto-provisions a shared mailbox, SharePoint site, OneNote, Planner, and calendar. Optionally backs a Teams team. The <code>securityEnabled</code> attribute varies by creation portal — this has real downstream licensing implications.</p>
+    <div class="prop-grid">
+      <div class="prop"><div class="prop-label">Members</div><div class="prop-value">Users only (no devices, no SPs)</div></div>
+      <div class="prop"><div class="prop-label">Email</div><div class="prop-value yes">Shared mailbox (50 GB)</div></div>
+      <div class="prop"><div class="prop-label">Nesting</div><div class="prop-value no">No — cannot be a member of other groups</div></div>
+      <div class="prop"><div class="prop-label">Dynamic</div><div class="prop-value yes">Users only (P1)</div></div>
+      <div class="prop"><div class="prop-label">Role-Assignable</div><div class="prop-value yes">Yes (immutable at creation)</div></div>
+      <div class="prop"><div class="prop-label">Provisions</div><div class="prop-value">Mailbox · SharePoint · Planner · OneNote · Calendar · Teams</div></div>
+      <div class="prop"><div class="prop-label">Managed In</div><div class="prop-value">Entra · M365 Admin · Teams · Outlook · Graph</div></div>
+      <div class="prop"><div class="prop-label">Soft-Delete / Restore</div><div class="prop-value yes">30 days (GA, incl. resources)</div></div>
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">SecurityEnabled: The Portal Trap (observed behaviour)</div>
+      <p>When created in the <strong>M365 Admin Center</strong>, <code>securityEnabled</code> is set to <strong>false</strong> — the group cannot be used for group-based licensing. When created in the <strong>Entra Admin Center</strong> or via <strong>Graph API</strong>, <code>securityEnabled</code> can be set to <strong>true</strong> — licensing works. Fix after the fact with <code>Update-MgGroup -SecurityEnabled:$True</code>. The UI does not expose this property.</p>
+      <p><strong>Source note:</strong> This portal-specific difference is widely observed but not explicitly documented on Microsoft Learn. Graph API docs default M365 Group examples to <code>securityEnabled: false</code>. Verify in your own tenant.</p>
+    </div>
+    <div class="graph-block">
+      <div class="graph-block-title">Graph API Fingerprint</div>
+      <div class="graph-props">
+        <span class="graph-chip">groupTypes: ["Unified"]</span>
+        <span class="graph-chip">mailEnabled: true</span>
+        <span class="graph-chip">securityEnabled: true/false</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Distribution Group -->
+  <div class="group-card">
+    <div class="card-header">
+      <div class="card-icon" style="background: rgba(0,120,212,0.1); color: #0078d4;">DG</div>
+      <div>
+        <div class="card-title">Distribution Group (Distribution List)</div>
+        <div class="card-aka">Exchange-native · mailEnabled: true · securityEnabled: false</div>
+      </div>
+    </div>
+    <p class="card-desc">Oldest group construct in Microsoft. Purely a mail routing mechanism — copies each message to all members' individual mailboxes. No shared mailbox, no file storage, no access control.</p>
+    <div class="prop-grid">
+      <div class="prop"><div class="prop-label">Members</div><div class="prop-value">Users, Mail Users, Contacts, other DGs</div></div>
+      <div class="prop"><div class="prop-label">Email</div><div class="prop-value yes">Yes — distribution only (no shared mailbox)</div></div>
+      <div class="prop"><div class="prop-label">Nesting</div><div class="prop-value yes">Yes — other DGs can be nested</div></div>
+      <div class="prop"><div class="prop-label">Dynamic Membership</div><div class="prop-value no">No (use Dynamic DG for that)</div></div>
+      <div class="prop"><div class="prop-label">Access Control</div><div class="prop-value no">No — cannot grant resource permissions</div></div>
+      <div class="prop"><div class="prop-label">Managed In</div><div class="prop-value">Exchange Admin Center, M365 Admin Center, PowerShell only</div></div>
+      <div class="prop"><div class="prop-label">Soft-Delete / Restore</div><div class="prop-value no">No</div></div>
+    </div>
+    <div class="graph-block">
+      <div class="graph-block-title">Graph API Fingerprint</div>
+      <div class="graph-props">
+        <span class="graph-chip">groupTypes: []</span>
+        <span class="graph-chip">mailEnabled: true</span>
+        <span class="graph-chip">securityEnabled: false</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Distribution Group -->
+  <div class="group-card">
+    <div class="card-header">
+      <div class="card-icon" style="background: rgba(0,120,212,0.1); color: #0078d4;">DDG</div>
+      <div>
+        <div class="card-title">Dynamic Distribution Group</div>
+        <div class="card-aka">Exchange-native · Recipient filter resolved at send time</div>
+      </div>
+    </div>
+    <p class="card-desc">Like a distribution group but membership is determined by Exchange recipient filters (department, office, etc.) evaluated <strong>at the moment each message is sent</strong>. Not stored continuously like Entra dynamic groups — the membership list is generated on demand.</p>
+    <div class="prop-grid">
+      <div class="prop"><div class="prop-label">Members</div><div class="prop-value">Resolved at send time via recipient filters</div></div>
+      <div class="prop"><div class="prop-label">Email</div><div class="prop-value yes">Yes — distribution only</div></div>
+      <div class="prop"><div class="prop-label">Dynamic</div><div class="prop-value partial">Exchange-native filters only (not Entra dynamic rules)</div></div>
+      <div class="prop"><div class="prop-label">Access Control</div><div class="prop-value no">No</div></div>
+      <div class="prop"><div class="prop-label">Managed In</div><div class="prop-value">Exchange Admin Center, PowerShell only</div></div>
+      <div class="prop"><div class="prop-label">Visible in Entra</div><div class="prop-value no">No — Exchange object only</div></div>
+    </div>
+    <div class="callout">
+      <div class="callout-title">Key Difference from Entra Dynamic Groups</div>
+      <p>Entra dynamic groups maintain a continuously evaluated, stored membership list. Dynamic Distribution Groups resolve the list fresh at every send. This means a DDG doesn't reflect real-time directory changes the same way — there is inherent latency between an attribute change and the next message send.</p>
+    </div>
+  </div>
+
+  <!-- Mail-Enabled Security Group -->
+  <div class="group-card">
+    <div class="card-header">
+      <div class="card-icon" style="background: rgba(245,200,66,0.1); color: var(--color-warn);">MESG</div>
+      <div>
+        <div class="card-title">Mail-Enabled Security Group</div>
+        <div class="card-aka">mailEnabled: true · securityEnabled: true · groupTypes: []</div>
+      </div>
+    </div>
+    <p class="card-desc">Hybrid group — receives email <strong>and</strong> grants resource access. No dynamic membership, no device members, must be mail-enabled at creation (cannot convert later). Created in EAC or PowerShell only.</p>
+    <div class="prop-grid">
+      <div class="prop"><div class="prop-label">Members</div><div class="prop-value">Users · other MESGs</div></div>
+      <div class="prop"><div class="prop-label">Email</div><div class="prop-value yes">Distribution</div></div>
+      <div class="prop"><div class="prop-label">Access Control</div><div class="prop-value yes">Yes</div></div>
+      <div class="prop"><div class="prop-label">Dynamic</div><div class="prop-value no">No</div></div>
+      <div class="prop"><div class="prop-label">Nesting</div><div class="prop-value partial">MESGs only — no other group types</div></div>
+      <div class="prop"><div class="prop-label">Managed In</div><div class="prop-value">EAC · M365 Admin · PowerShell</div></div>
+      <div class="prop"><div class="prop-label">Soft-Delete / Restore</div><div class="prop-value no">No</div></div>
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">Cannot be created in Entra Admin Center</div>
+      <p>The Entra portal does not expose the option to create mail-enabled security groups. You must use the Exchange Admin Center or PowerShell. You cannot convert an existing non-mail-enabled cloud security group into a mail-enabled one after creation.</p>
+    </div>
+    <div class="graph-block">
+      <div class="graph-block-title">Graph API Fingerprint</div>
+      <div class="graph-props">
+        <span class="graph-chip">groupTypes: []</span>
+        <span class="graph-chip">mailEnabled: true</span>
+        <span class="graph-chip">securityEnabled: true</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Role-Assignable Group -->
+  <div class="group-card">
+    <div class="card-header">
+      <div class="card-icon" style="background: rgba(0,184,176,0.1); color: var(--color-teal);">RAG</div>
+      <div>
+        <div class="card-title">Role-Assignable Group</div>
+        <div class="card-aka">isAssignableToRole: true · Cloud-only · Max 500 per tenant</div>
+      </div>
+    </div>
+    <p class="card-desc">Security Group or M365 Group configured at creation to support Entra directory role assignment. Only Global Admin, Privileged Role Admin, or group owner can manage membership. Immutable, no dynamic membership, no nesting, cloud-only.</p>
+    <div class="prop-grid">
+      <div class="prop"><div class="prop-label">Base Type</div><div class="prop-value">Security Group or M365 Group</div></div>
+      <div class="prop"><div class="prop-label">Dynamic Membership</div><div class="prop-value no">No — explicitly excluded (privilege escalation risk)</div></div>
+      <div class="prop"><div class="prop-label">Nesting</div><div class="prop-value no">No — must be flat membership</div></div>
+      <div class="prop"><div class="prop-label">Tenant Limit</div><div class="prop-value">500 role-assignable groups max</div></div>
+      <div class="prop"><div class="prop-label">PIM Compatible</div><div class="prop-value yes">Yes — eligible + time-bounded activation</div></div>
+      <div class="prop"><div class="prop-label">Source</div><div class="prop-value">Cloud-only (cannot sync from on-premises AD)</div></div>
+    </div>
+    <div class="graph-block">
+      <div class="graph-block-title">Graph API Fingerprint</div>
+      <div class="graph-props">
+        <span class="graph-chip">isAssignableToRole: true</span>
+        <span class="graph-chip">securityEnabled: true</span>
+        <span class="graph-chip">Immutable after creation</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SharePoint Groups -->
+  <div class="group-card">
+    <div class="card-header">
+      <div class="card-icon" style="background: rgba(3,131,135,0.1); color: #038387;">SP</div>
+      <div>
+        <div class="card-title">SharePoint Group</div>
+        <div class="card-aka">Site-scoped · Not an Entra object</div>
+      </div>
+    </div>
+    <p class="card-desc">Site-scoped groups within SharePoint. Default three per site: Owners, Members, Visitors. Not Entra objects — no directory presence. Can contain Entra Security Groups and M365 Groups but cannot nest into each other.</p>
+    <div class="prop-grid">
+      <div class="prop"><div class="prop-label">Scope</div><div class="prop-value">Per-site only</div></div>
+      <div class="prop"><div class="prop-label">Directory Presence</div><div class="prop-value no">Not in Entra ID</div></div>
+      <div class="prop"><div class="prop-label">Managed In</div><div class="prop-value">SharePoint Site Settings → Site Permissions</div></div>
+      <div class="prop"><div class="prop-label">Can Contain</div><div class="prop-value">Users, Entra Security Groups, M365 Groups</div></div>
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">Hidden Governance Gap</div>
+      <p>When an Entra Security Group is added to a SharePoint Group, the site owner sees the group name but cannot see who is inside it. This creates a visibility gap — the person responsible for the site may not know who actually has access.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ TAB 2: PORTAL DIFFERENCES ============ -->
+<div id="tab-portals" class="tab-content">
+  <h2 class="section-title">What Happens When You Create Groups From Different Portals</h2>
+  <p class="section-note">The same "group" created from different admin centers can have different properties, different side effects, and different capabilities. This is the single biggest source of confusion in M365 group management.</p>
+
+  <div class="portal-section">
+    <div class="portal-header">
+      <div class="portal-dot" style="background: var(--color-teal);"></div>
+      <div class="portal-name">Entra Admin Center (entra.microsoft.com)</div>
+    </div>
+    <div class="creates-list">
+      <span class="badge badge-ok">Security Group</span>
+      <span class="badge badge-ok">M365 Group</span>
+      <span class="badge badge-no">Distribution Group</span>
+      <span class="badge badge-no">Mail-Enabled SG</span>
+      <span class="badge badge-no">Dynamic Distribution Group</span>
+    </div>
+    <div class="portal-desc">
+      The primary portal for identity and access management. When you create an <strong>M365 Group</strong> here, <code>securityEnabled</code> is set to <strong>true</strong>, which means the group can be used for group-based licensing, Conditional Access targeting, and application assignment. This is the recommended creation path for M365 Groups you plan to use for both collaboration and access control.
+    </div>
+    <div class="callout">
+      <div class="callout-title">What gets provisioned</div>
+      <p><strong>Security Group:</strong> Entra directory object only. No mailbox, no SharePoint site, no additional resources. Optionally set as role-assignable or dynamic at creation time.</p>
+      <p><strong>M365 Group:</strong> Entra directory object plus Exchange shared mailbox, SharePoint team site, Planner, OneNote, and Calendar. All provisioned automatically. <code>securityEnabled: true</code>.</p>
+    </div>
+    <div class="callout">
+      <div class="callout-title">Exclusive capabilities here</div>
+      <p>Dynamic membership rules (user or device attribute-based), role-assignable flag, PIM enrollment, sensitivity labels, expiration policies. These are Entra-native features not available from Exchange.</p>
+    </div>
+  </div>
+
+  <div class="portal-section">
+    <div class="portal-header">
+      <div class="portal-dot" style="background: #4db3ff;"></div>
+      <div class="portal-name">Microsoft 365 Admin Center (admin.microsoft.com)</div>
+    </div>
+    <div class="creates-list">
+      <span class="badge badge-ok">Security Group</span>
+      <span class="badge badge-ok">M365 Group</span>
+      <span class="badge badge-ok">Distribution Group</span>
+      <span class="badge badge-ok">Mail-Enabled SG</span>
+      <span class="badge badge-no">Dynamic Distribution Group</span>
+    </div>
+    <div class="portal-desc">
+      The broadest creation surface for non-Exchange-specific groups. However, M365 Groups created here behave differently from those created in Entra.
+    </div>
+    <div class="callout danger">
+      <div class="callout-title">The securityEnabled Trap (observed behaviour)</div>
+      <p>When you create an <strong>M365 Group</strong> in the M365 Admin Center, <code>securityEnabled</code> is set to <strong>false</strong>. This means the group cannot be used for group-based licensing until you manually update the property: <code>Update-MgGroup -GroupId $id -SecurityEnabled:$True</code>. The UI does not expose this property.</p>
+      <p><strong>Note:</strong> This portal-specific behaviour is widely reported by MVPs and community testing. Microsoft Learn does not explicitly document the per-portal difference.</p>
+    </div>
+    <div class="callout">
+      <div class="callout-title">What gets provisioned</div>
+      <p><strong>Security Group:</strong> Same as Entra — directory object only. Can also opt into mail-enabling here (creating an MESG) at creation time.</p>
+      <p><strong>M365 Group:</strong> Same resources as Entra (mailbox, SharePoint, etc.) but with <code>securityEnabled: false</code>.</p>
+      <p><strong>Distribution Group:</strong> Exchange recipient object. No Entra access control capability.</p>
+      <p><strong>Mail-Enabled Security Group:</strong> Must be mail-enabled at creation — cannot be added later.</p>
+    </div>
+  </div>
+
+  <div class="portal-section">
+    <div class="portal-header">
+      <div class="portal-dot" style="background: var(--color-ms-blue);"></div>
+      <div class="portal-name">Exchange Admin Center (admin.exchange.microsoft.com)</div>
+    </div>
+    <div class="creates-list">
+      <span class="badge badge-ok">Distribution Group</span>
+      <span class="badge badge-ok">Dynamic Distribution Group</span>
+      <span class="badge badge-ok">M365 Group</span>
+      <span class="badge badge-ok">Mail-Enabled SG</span>
+      <span class="badge badge-no">Security Group (non-mail)</span>
+    </div>
+    <div class="portal-desc">
+      The mail-centric portal. This is the <strong>only</strong> place you can create Dynamic Distribution Groups. Also the primary management interface for Distribution Groups and Mail-Enabled Security Groups.
+    </div>
+    <div class="callout">
+      <div class="callout-title">Exchange-specific management features</div>
+      <p>Delivery restrictions, message moderation, sender limitations, approval workflows, external mail reception toggles, MailTips — all Exchange-native features not available in the Entra portal.</p>
+    </div>
+    <div class="callout">
+      <div class="callout-title">Distribution Lists and MESGs are Exchange-managed only</div>
+      <p>Even though these objects appear in the Entra directory, they can only be managed from the Exchange Admin Center, M365 Admin Center, or PowerShell. The Entra admin center shows them as read-only.</p>
+    </div>
+  </div>
+
+  <div class="portal-section">
+    <div class="portal-header">
+      <div class="portal-dot" style="background: #6264a7;"></div>
+      <div class="portal-name">Microsoft Teams / Outlook</div>
+    </div>
+    <div class="creates-list">
+      <span class="badge badge-ok">M365 Group (implicitly)</span>
+    </div>
+    <div class="portal-desc">
+      When a user creates a new Team in Microsoft Teams, an M365 Group is automatically created in the background — including the SharePoint site, mailbox, and all connected resources. The group's <code>resourceProvisioningOptions</code> attribute gets set to <code>["Team"]</code>. Similarly, creating an Outlook group creates an M365 Group with a mailbox focus.
+    </div>
+    <div class="callout warn">
+      <div class="callout-title">Governance implication</div>
+      <p>Because M365 Groups can be created by <strong>any licensed user</strong> through Teams or Outlook (by default), this is the primary driver of group sprawl. Restrict creation via Entra group settings (<code>EnableGroupCreation: false</code>) and whitelist a security group of allowed creators.</p>
+    </div>
+  </div>
+
+  <div class="portal-section">
+    <div class="portal-header">
+      <div class="portal-dot" style="background: var(--color-teal);"></div>
+      <div class="portal-name">Graph API / PowerShell (New-MgGroup)</div>
+    </div>
+    <div class="creates-list">
+      <span class="badge badge-ok">All types</span>
+    </div>
+    <div class="portal-desc">
+      Maximum flexibility. Every property — <code>securityEnabled</code>, <code>mailEnabled</code>, <code>groupTypes</code>, <code>isAssignableToRole</code>, <code>membershipRule</code> — is explicitly set by you. No portal defaults to worry about. This is the only creation method where you have full control over the object's shape from the start.
+    </div>
+    <div class="callout">
+      <div class="callout-title">Graph property combinations define the type</div>
+      <p><code>groupTypes: ["Unified"]</code> + <code>mailEnabled: true</code> = M365 Group</p>
+      <p><code>groupTypes: []</code> + <code>securityEnabled: true</code> + <code>mailEnabled: false</code> = Security Group</p>
+      <p><code>groupTypes: []</code> + <code>mailEnabled: true</code> + <code>securityEnabled: false</code> = Distribution Group</p>
+      <p><code>groupTypes: []</code> + <code>mailEnabled: true</code> + <code>securityEnabled: true</code> = Mail-Enabled Security Group</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TAB 3: SIDE-BY-SIDE ============ -->
+<div id="tab-compare" class="tab-content">
+  <h2 class="section-title">Side-by-Side Comparison</h2>
+  <div class="table-wrap">
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Property</th>
+        <th>Security Group</th>
+        <th>M365 Group</th>
+        <th>Distribution Group</th>
+        <th>Dynamic DG</th>
+        <th>Mail-Enabled SG</th>
+        <th>Role-Assignable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Primary Purpose</td><td>Access control</td><td>Collaboration</td><td>Email routing</td><td>Dynamic email distribution</td><td>Access + Email</td><td>Privileged roles</td></tr>
+      <tr><td>Has Email</td><td class="tbl-no">No</td><td class="tbl-yes">Yes (shared mailbox)</td><td class="tbl-yes">Yes (distribution)</td><td class="tbl-yes">Yes (distribution)</td><td class="tbl-yes">Yes (distribution)</td><td class="tbl-partial">Depends on base type</td></tr>
+      <tr><td>User Members</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓ (via filter)</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td></tr>
+      <tr><td>Device Members</td><td class="tbl-yes">✓</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td></tr>
+      <tr><td>Service Principals</td><td class="tbl-yes">✓</td><td class="tbl-no">✗ (owners only)</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td></tr>
+      <tr><td>Nested Groups</td><td class="tbl-yes">✓ (other SGs)</td><td class="tbl-no">✗</td><td class="tbl-yes">✓ (other DGs)</td><td class="tbl-no">✗</td><td class="tbl-partial">MESGs only</td><td class="tbl-no">✗ (must be flat)</td></tr>
+      <tr><td>Dynamic Membership</td><td class="tbl-yes">✓ (users or devices)</td><td class="tbl-yes">✓ (users only)</td><td class="tbl-no">✗</td><td class="tbl-partial">Exchange filters</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td></tr>
+      <tr><td>License Assignment</td><td class="tbl-yes">✓</td><td class="tbl-partial">Only if securityEnabled=true</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td></tr>
+      <tr><td>Conditional Access</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-no">✗</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td></tr>
+      <tr><td>PIM Eligible</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-yes">✓ (recommended)</td></tr>
+      <tr><td>Restorable</td><td class="tbl-partial">30 days (preview)</td><td class="tbl-yes">30 days (GA)</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-yes">30 days</td></tr>
+      <tr><td>Create in Entra</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-no">✗</td><td class="tbl-yes">✓</td></tr>
+      <tr><td>Create in Exchange</td><td class="tbl-no">✗</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-yes">✓</td><td class="tbl-no">✗</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- ============ TAB 4: NESTING RULES ============ -->
+<div id="tab-nesting" class="tab-content">
+  <h2 class="section-title">Group Nesting Rules</h2>
+  <p class="section-note">Nesting is one of the trickiest areas. What you can nest, what happens when you do, and what silently fails. Note that nesting support and membership inheritance vary by workload.</p>
+
+  <div class="nesting-rule"><span>Security Group</span><span class="nesting-arrow">→ into →</span><span>Security Group</span><span class="nesting-result ok">Allowed</span></div>
+  <div class="nesting-rule"><span>Security Group</span><span class="nesting-arrow">→ into →</span><span>M365 Group</span><span class="nesting-result block">Blocked</span></div>
+  <div class="nesting-rule"><span>M365 Group</span><span class="nesting-arrow">→ into →</span><span>Other Entra Groups</span><span class="nesting-result block">Blocked</span></div>
+  <div class="nesting-rule"><span>Distribution Group</span><span class="nesting-arrow">→ into →</span><span>Distribution Group</span><span class="nesting-result ok">Allowed</span></div>
+  <div class="nesting-rule"><span>Mail-Enabled SG</span><span class="nesting-arrow">→ into →</span><span>Mail-Enabled SG</span><span class="nesting-result ok">Allowed</span></div>
+  <div class="nesting-rule"><span>Security Group</span><span class="nesting-arrow">→ into →</span><span>Mail-Enabled SG</span><span class="nesting-result block">Blocked</span></div>
+  <div class="nesting-rule"><span>Distribution Group</span><span class="nesting-arrow">→ into →</span><span>Mail-Enabled SG</span><span class="nesting-result block">Blocked</span></div>
+  <div class="nesting-rule"><span>Any nested group</span><span class="nesting-arrow">→</span><span>License assignment</span><span class="nesting-result block">Not supported — direct members only</span></div>
+  <div class="nesting-rule"><span>Nested SG members</span><span class="nesting-arrow">→</span><span>Conditional Access scope</span><span class="nesting-result ok">Evaluated (transitive inheritance)</span></div>
+  <div class="nesting-rule"><span>Nested SG members</span><span class="nesting-arrow">→</span><span>SharePoint permissions</span><span class="nesting-result ok">Inherited (transitive works in SPO)</span></div>
+  <div class="nesting-rule"><span>Nested SG members</span><span class="nesting-arrow">→</span><span>Teams channel access</span><span class="nesting-result warn">Inconsistent — verify per scenario</span></div>
+  <div class="nesting-rule"><span>Nested SG members</span><span class="nesting-arrow">→</span><span>M365 Group shared mailbox</span><span class="nesting-result block">Not inherited</span></div>
+  <div class="nesting-rule"><span>Any group</span><span class="nesting-arrow">→ into →</span><span>Role-Assignable Group</span><span class="nesting-result block">Blocked (must be flat)</span></div>
+
+  <div class="callout warn" style="margin-top: 20px;">
+    <div class="callout-title">Token Group Membership Limit — SharePoint</div>
+    <p>A user can be a direct or transitive member of up to <strong>2,048 security groups</strong> before authentication tokens become oversized. Exceeding this produces unpredictable authentication and search results in SharePoint Online — a silent failure mode in large enterprises with deep nesting. This is an Entra/token constraint, not a SharePoint group limit.</p>
+  </div>
+</div>
+
+<!-- ============ TAB 5: KEY GOTCHAS ============ -->
+<div id="tab-gotchas" class="tab-content">
+  <h2 class="section-title">Key Gotchas &amp; Things That Catch People</h2>
+
+  <div class="callout danger" style="margin-bottom: 14px;">
+    <div class="callout-title">1. M365 Group securityEnabled varies by portal (observed behaviour, not formally documented)</div>
+    <p>Created in M365 Admin Center → <code>securityEnabled: false</code> → cannot use for licensing.<br>
+    Created in Entra Admin Center → <code>securityEnabled: true</code> → licensing works.<br>
+    Created via Graph/PowerShell → you set it explicitly.<br>
+    Fix: <code>Update-MgGroup -GroupId $id -SecurityEnabled:$True</code></p>
+    <p><strong>Source note:</strong> Microsoft Learn's Graph API examples default M365 Groups to <code>securityEnabled: false</code>, and the licensing docs confirm the requirement. The portal-specific difference is widely observed (MVP blogs, community testing) but not explicitly stated in a Microsoft Learn article. Verify in your own tenant.</p>
+  </div>
+
+  <div class="callout danger" style="margin-bottom: 14px;">
+    <div class="callout-title">2. Role-assignable is immutable</div>
+    <p>The <code>isAssignableToRole</code> flag must be set at group creation. You cannot make an existing group role-assignable, and you cannot remove the flag once set. Plan ahead — the 500-group tenant limit makes this even more important to get right the first time.</p>
+  </div>
+
+  <div class="callout danger" style="margin-bottom: 14px;">
+    <div class="callout-title">3. Mail-enabling is a one-way, creation-time decision</div>
+    <p>You cannot convert an existing cloud-only security group into a mail-enabled security group after creation. The mail-enable option is only available at creation time in the Exchange Admin Center. On-premises mail-enabled SGs synced via Entra Connect are supported but must be managed on-premises.</p>
+  </div>
+
+  <div class="callout danger" style="margin-bottom: 14px;">
+    <div class="callout-title">4. Licenses cannot be assigned through nested groups</div>
+    <p>Even though nesting is supported for Security Groups, group-based licensing does not traverse nested memberships. Only direct members of the licensed group receive the assignment. This is one of the few M365 services where transitive group membership is explicitly not supported.</p>
+  </div>
+
+  <div class="callout warn" style="margin-bottom: 14px;">
+    <div class="callout-title">5. Dynamic groups ≠ Dynamic Distribution Groups</div>
+    <p>Entra dynamic groups maintain a continuously stored membership list updated in near-real-time. Exchange Dynamic Distribution Groups resolve membership at send time via recipient filters. They are completely separate systems with different rule syntaxes, different evaluation timing, and different management surfaces.</p>
+  </div>
+
+  <div class="callout warn" style="margin-bottom: 14px;">
+    <div class="callout-title">6. Distribution Groups and MESGs are read-only in Entra</div>
+    <p>They appear in the Entra directory but can only be managed from the Exchange Admin Center, M365 Admin Center, or PowerShell. The Entra portal will not let you edit membership.</p>
+  </div>
+
+  <div class="callout warn" style="margin-bottom: 14px;">
+    <div class="callout-title">7. Teams creation = M365 Group sprawl</div>
+    <p>Every Team created by end users automatically creates an M365 Group with all connected resources. Without restricting group creation via <code>EnableGroupCreation: false</code> in Entra group settings, every licensed user is a group creator by default.</p>
+  </div>
+
+  <div class="callout danger" style="margin-bottom: 14px;">
+    <div class="callout-title">8. Dynamic group privilege escalation risk</div>
+    <p>If a dynamic security group is assigned an Entra directory role, any admin who can modify the dynamic membership rule could add themselves to the rule and indirectly elevate their own privileges. Microsoft explicitly calls this out as an attack path — it is why role-assignable groups block dynamic membership entirely. The attack vector is the rule itself, not general group membership modification.</p>
+  </div>
+
+  <div class="callout warn" style="margin-bottom: 14px;">
+    <div class="callout-title">9. Only M365 Groups have GA restore — Security Group restore is still in preview</div>
+    <p>Distribution Groups and Mail-Enabled Security Groups cannot be soft-deleted and restored. If you delete one, it is gone. M365 Groups get a 30-day soft-delete window (GA). Cloud security group restore is available but <strong>still in preview</strong> as of mid-2026, and only in public clouds. EDU tenants and some classic web part scenarios are excluded.</p>
+  </div>
+
+  <div class="callout warn" style="margin-bottom: 14px;">
+    <div class="callout-title">10. SharePoint Groups are invisible to Entra</div>
+    <p>SharePoint site permission groups (Owners/Members/Visitors) are not Entra objects. When an Entra Security Group is added to a SharePoint Group, the site owner sees the group name but cannot see its members — a governance blind spot that Inforcer's configuration visibility helps surface.</p>
+  </div>
+
+  <div class="callout warn" style="margin-bottom: 14px;">
+    <div class="callout-title">11. Nested group access varies by M365 workload</div>
+    <p>Transitive security group membership is evaluated in SharePoint Online (nested SG members do inherit permissions) and in Conditional Access scope. It is not evaluated for group-based licensing (direct members only) or for M365 Group shared mailbox access. Teams channel behaviour is inconsistent and should be verified per scenario. Do not assume transitive inheritance is uniform across M365 services.</p>
+  </div>
+
+</div>
+
+</div><!-- /content-wrap -->
+
+<footer class="site-footer">
+  <a href="https://conditionalaccess.tech" target="_blank">conditionalaccess.tech</a> · Jon Hope, Microsoft MVP · Sources: Microsoft Learn · SC-300 Study Guide · Kandi Brian
+</footer>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
