@@ -98,6 +98,21 @@ a{text-decoration:none;color:inherit;}
 .mobile-menu-divider{height:1px;background:rgba(0,184,176,0.10);margin:6px 0;}
 .mobile-menu-icons{display:flex;gap:10px;padding:8px 10px 0;}
 
+/* ---- site counter ---- */
+.counter-wrap{display:flex;justify-content:center;margin-top:20px;}
+.counter-card{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:12px 16px;border-radius:999px;
+  background:rgba(13,33,55,0.85);border:1px solid rgba(0,184,176,0.22);
+  box-shadow:0 10px 24px -16px rgba(0,0,0,0.55);
+}
+.counter-icon{
+  display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:50%;background:rgba(0,184,176,0.14);color:#00b8b0;
+}
+.counter-label{font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:#4a6a80;font-weight:600;line-height:1.1;}
+.counter-value{font-size:1.05rem;font-weight:700;color:#e8f0f8;font-family:'Cascadia Code',Consolas,monospace;line-height:1.1;margin-top:2px;}
+
 /* ---- responsive ---- */
 @media(max-width:880px){
   .hero-grid,.about-grid,.mvp-grid,.writing-grid{grid-template-columns:1fr !important;}

@@ -10,6 +10,23 @@
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
 <link rel="stylesheet" href="styles.css">
+<link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+<link rel="alternate" type="application/rss+xml" title="conditionalaccess.tech" href="/feed.xml">
+<!-- Matomo -->
+<script>
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="https://conditionalaccesstech.matomo.cloud/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.async=true; g.src='https://cdn.matomo.cloud/conditionalaccesstech.matomo.cloud/matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End Matomo Code -->
 </head>
 <body>
 
@@ -252,6 +269,15 @@
           <a class="btn-primary" href="https://www.linkedin.com/in/jhope188" target="_blank" rel="noopener"><i class="ph-bold ph-linkedin-logo" style="font-size:16px;"></i> Connect on LinkedIn</a>
           <a class="btn-ghost" href="https://medium.com/@jhope188" target="_blank" rel="noopener"><i class="ph-bold ph-medium-logo" style="font-size:16px;"></i> Read on Medium</a>
         </div>
+        <div class="counter-wrap">
+          <div class="counter-card" aria-live="polite">
+            <div class="counter-icon"><i class="ph-bold ph-shield-check"></i></div>
+            <div>
+              <div class="counter-label">Users Protected</div>
+              <div class="counter-value" id="site-visit-counter">--</div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -266,5 +292,22 @@
 
   </main>
 
+  <script>
+    (function () {
+      const el = document.getElementById('site-visit-counter');
+      if (!el) return;
+
+      fetch('https://api.countapi.xyz/hit/conditionalaccess-tech/conditionalaccess-tech-home')
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (data && typeof data.value !== 'undefined') {
+            el.textContent = Number(data.value).toLocaleString();
+          }
+        })
+        .catch(function () {
+          el.textContent = '0';
+        });
+    })();
+  </script>
 </body>
 </html>
