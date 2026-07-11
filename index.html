@@ -307,9 +307,24 @@
         return;
       }
 
-      const url = `${matomoBaseUrl}/index.php?module=API&method=VisitsSummary.getVisits&idSite=${siteId}&period=month&date=today&format=json&token_auth=${encodeURIComponent(tokenAuth)}`;
+      const body = new URLSearchParams({
+        module: 'API',
+        method: 'VisitsSummary.getVisits',
+        idSite: siteId,
+        period: 'month',
+        date: 'today',
+        format: 'json',
+        token_auth: tokenAuth
+      });
 
-      fetch(url, { headers: { Accept: 'application/json' } })
+      fetch(`${matomoBaseUrl}/index.php`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: body.toString()
+      })
         .then(function (response) {
           if (!response.ok) throw new Error('matomo-request-failed');
           return response.json();
