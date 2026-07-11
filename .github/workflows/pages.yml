@@ -29,10 +29,16 @@ jobs:
           MATOMO_TOKEN: ${{ secrets.MATOMO_TOKEN }}
         run: |
           python3 - <<'PY'
+          import os
           from pathlib import Path
+
+          token = os.getenv('MATOMO_TOKEN', '').strip()
+          if not token:
+            raise SystemExit('MATOMO_TOKEN secret is missing or empty')
+
           path = Path('index.html')
           text = path.read_text()
-          text = text.replace('__MATOMO_TOKEN__', MATOMO_TOKEN)
+          text = text.replace('__MATOMO_TOKEN__', token)
           path.write_text(text)
           PY
 
