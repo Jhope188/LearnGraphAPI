@@ -300,8 +300,9 @@
       const matomoBaseUrl = 'https://conditionalaccesstech.matomo.cloud';
       const siteId = '1';
       const tokenAuth = '__MATOMO_TOKEN__';
+      const placeholderToken = '__MATOMO' + '_TOKEN__';
 
-      if (!tokenAuth || tokenAuth === '__MATOMO_TOKEN__') {
+      if (!tokenAuth || tokenAuth === placeholderToken) {
         el.textContent = '—';
         return;
       }
