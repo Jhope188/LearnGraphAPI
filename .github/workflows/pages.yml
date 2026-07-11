@@ -24,6 +24,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Inject Matomo token
+        env:
+          MATOMO_TOKEN: ${{ secrets.MATOMO_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('index.html')
+          text = path.read_text()
+          text = text.replace('__MATOMO_TOKEN__', MATOMO_TOKEN)
+          path.write_text(text)
+          PY
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

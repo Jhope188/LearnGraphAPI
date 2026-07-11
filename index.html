@@ -297,15 +297,32 @@
       const el = document.getElementById('site-visit-counter');
       if (!el) return;
 
-      fetch('https://api.countapi.xyz/hit/conditionalaccess-tech/conditionalaccess-tech-home')
-        .then(function (response) { return response.json(); })
+      const matomoBaseUrl = 'https://conditionalaccesstech.matomo.cloud';
+      const siteId = '1';
+      const tokenAuth = '__MATOMO_TOKEN__';
+
+      if (!tokenAuth || tokenAuth === '__MATOMO_TOKEN__') {
+        el.textContent = '—';
+        return;
+      }
+
+      const url = `${matomoBaseUrl}/index.php?module=API&method=VisitsSummary.getVisits&idSite=${siteId}&period=month&date=today&format=json&token_auth=${encodeURIComponent(tokenAuth)}`;
+
+      fetch(url, { headers: { Accept: 'application/json' } })
+        .then(function (response) {
+          if (!response.ok) throw new Error('matomo-request-failed');
+          return response.json();
+        })
         .then(function (data) {
-          if (data && typeof data.value !== 'undefined') {
-            el.textContent = Number(data.value).toLocaleString();
+          const value = typeof data === 'number' ? data : data?.value;
+          if (typeof value !== 'undefined' && value !== null) {
+            el.textContent = Number(value).toLocaleString();
+          } else {
+            el.textContent = '—';
           }
         })
         .catch(function () {
-          el.textContent = '0';
+          el.textContent = '—';
         });
     })();
   </script>
