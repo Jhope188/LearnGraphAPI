@@ -307,7 +307,7 @@
         return;
       }
 
-      const body = new URLSearchParams({
+      const params = new URLSearchParams({
         module: 'API',
         method: 'VisitsSummary.getVisits',
         idSite: siteId,
@@ -317,10 +317,7 @@
         token_auth: tokenAuth
       });
 
-      const corsProxy = 'https://api.allorigins.win/raw?url=';
-      const encodedUrl = encodeURIComponent(`${matomoBaseUrl}/index.php?${body.toString()}`);
-
-      fetch(`${corsProxy}${encodedUrl}`)
+      fetch(`${matomoBaseUrl}/index.php?${params.toString()}`)
         .then(function (response) {
           if (!response.ok) throw new Error('matomo-request-failed');
           return response.json();
