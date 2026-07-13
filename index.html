@@ -297,31 +297,8 @@
       const el = document.getElementById('site-visit-counter');
       if (!el) return;
 
-      const matomoBaseUrl = 'https://conditionalaccesstech.matomo.cloud';
-      const siteId = '1';
-      const tokenAuth = '__MATOMO_TOKEN__';
-      const placeholderToken = '__MATOMO' + '_TOKEN__';
-
-      if (!tokenAuth || tokenAuth === placeholderToken) {
-        el.textContent = '—';
-        return;
-      }
-
-      const params = new URLSearchParams({
-        module: 'API',
-        method: 'VisitsSummary.getVisits',
-        idSite: siteId,
-        period: 'month',
-        date: 'today',
-        format: 'json',
-        token_auth: tokenAuth
-      });
-
-      fetch(`${matomoBaseUrl}/index.php?${params.toString()}`)
-        .then(function (response) {
-          if (!response.ok) throw new Error('matomo-request-failed');
-          return response.json();
-        })
+      fetch('https://conditionalaccesstech.vercel.app/api/visits')
+        .then(function (r) { return r.json(); })
         .then(function (data) {
           const value = typeof data === 'number' ? data : data?.value;
           if (typeof value !== 'undefined' && value !== null) {
