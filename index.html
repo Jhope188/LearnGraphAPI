@@ -317,14 +317,10 @@
         token_auth: tokenAuth
       });
 
-      fetch(`${matomoBaseUrl}/index.php`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-        },
-        body: body.toString()
-      })
+      const corsProxy = 'https://api.allorigins.win/raw?url=';
+      const encodedUrl = encodeURIComponent(`${matomoBaseUrl}/index.php?${body.toString()}`);
+
+      fetch(`${corsProxy}${encodedUrl}`)
         .then(function (response) {
           if (!response.ok) throw new Error('matomo-request-failed');
           return response.json();
