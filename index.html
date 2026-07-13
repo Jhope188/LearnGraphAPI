@@ -297,7 +297,7 @@
       const el = document.getElementById('site-visit-counter');
       if (!el) return;
 
-      fetch('https://conditionalaccesstech.vercel.app/api/visits')
+      fetch('/assets/matomo-visits.json', { cache: 'no-store' })
         .then(function (r) { return r.json(); })
         .then(function (data) {
           const value = typeof data === 'number' ? data : data?.value;

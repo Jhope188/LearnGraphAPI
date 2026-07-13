@@ -24,6 +24,48 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Fetch Matomo monthly visits
+        env:
+          MATOMO_TOKEN: ${{ secrets.MATOMO_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.parse
+          import urllib.request
+          from pathlib import Path
+
+          token = os.getenv('MATOMO_TOKEN', '').strip()
+          out = Path('assets/matomo-visits.json')
+          out.parent.mkdir(parents=True, exist_ok=True)
+
+          if not token:
+            out.write_text(json.dumps({'value': None, 'error': 'MATOMO_TOKEN missing'}))
+            raise SystemExit('MATOMO_TOKEN secret is missing or empty')
+
+          data = urllib.parse.urlencode({
+              'module': 'API',
+              'method': 'VisitsSummary.getVisits',
+              'idSite': '1',
+              'period': 'month',
+              'date': 'today',
+              'format': 'json',
+              'token_auth': token,
+          }).encode('utf-8')
+
+          req = urllib.request.Request(
+              'https://conditionalaccesstech.matomo.cloud/index.php',
+              data=data,
+              headers={'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'},
+              method='POST',
+          )
+
+          with urllib.request.urlopen(req, timeout=30) as response:
+              payload = json.loads(response.read().decode('utf-8'))
+
+          out.write_text(json.dumps(payload))
+          PY
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
