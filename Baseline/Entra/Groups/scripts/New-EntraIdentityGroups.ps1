@@ -81,6 +81,10 @@ $Groups = @(
         Description = "Emergency break-glass accounts excluded from ALL Conditional Access policies. One group only — tightly controlled. Members: two cloud-only admin accounts, no MFA, monitored via alert."
         Type        = "Assigned"
         Rule        = $null
+        # Note: HiddenMembership is NOT supported on security groups (Graph API 400 error).
+        # It is only valid for Microsoft 365 (Unified) groups. To restrict visibility of
+        # break-glass members, use Entra PIM, restrict non-owner group reads via Entra
+        # portal settings, or scope access with an administrative unit.
     }
     @{
         Name        = "SG-Entra-AUG-CAP-GlobalExclusions"
@@ -422,6 +426,10 @@ foreach ($g in $Groups) {
                 $Params.GroupTypes                    = @("DynamicMembership")
                 $Params.MembershipRule                = $g.Rule
                 $Params.MembershipRuleProcessingState = "On"
+            }
+
+            if ($g.Visibility) {
+                $Params.Visibility = $g.Visibility
             }
 
             $NewGroup = New-MgGroup -BodyParameter $Params
