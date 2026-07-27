@@ -1,6 +1,6 @@
 # M365 Group Naming Standard
 
-![Groups are the Connective Tissue](./Groups/GroupNamingStandardization.png)
+![Groups are the Connective Tissue](./Groups/images/GroupNamingStandardization.png)
 
 > **Version:** 1.0  
 > **Scope:** Microsoft Entra ID, Intune, SharePoint Online, Microsoft Purview, AI & Agent Identities  
