@@ -788,6 +788,36 @@
 
   <hr class="divider" />
 
+  <!-- When to use each -->
+  <section class="section-block">
+    <p class="section-eyebrow">Bottom Line</p>
+    <h2 class="section-heading">When to Use Each</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;">
+
+      <div class="def-card">
+        <p class="def-card-label">Administrative Units</p>
+        <p class="def-card-title" style="font-size:1rem;">Use when you need to control what admins can see and manage</p>
+        <p>AUs are ideal for controlling administrative access by department, region, or business unit. The helpdesk team for the US division manages US objects. The network team manages network devices. Nobody manages outside their lane. It is delegation by design, not trust by default.</p>
+        <p>The guardrail here is scope. Admins still have their role, they just cannot apply it outside the boundary you define.</p>
+      </div>
+
+      <div class="def-card">
+        <p class="def-card-label">Restricted Management Administrative Units</p>
+        <p class="def-card-title" style="font-size:1rem;">Use when certain objects must not be touched by anyone without explicit approval</p>
+        <p>RMAUs are ideal when you need to protect specific groups, users, or devices from modification by any admin who has not been explicitly granted access at the RMAU scope. This includes junior tiers, contractors, and yes, Global Admins acting at tenant scope.</p>
+        <p>The guardrail here is protection. CA exclusion groups, break glass accounts, privileged role groups. These are the crown jewels. RMAU ensures that even well-intentioned admins cannot inadvertently modify what should never be touched without deliberate, auditable action.</p>
+      </div>
+
+    </div>
+
+    <div class="pull-quote">
+      <p>AUs control who manages what. RMAUs control who can touch the things that matter most. Both are guardrails. Neither replaces good judgment.</p>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
   <!-- Closing -->
   <section class="section-block prose">
     <p>See the image at the beginning of the article. Now you have mastered, well, are using RMAUs and AUs.</p>

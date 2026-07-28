@@ -97,6 +97,12 @@ Write-Host "Done. Add members to '$GroupName' (ID: $groupId) to grant group-crea
 #
 #   (Get-MgBetaDirectorySetting -DirectorySettingId $setting.Id).Values | Format-Table Name, Value -AutoSize
 #
+# Standalone verification (works in a fresh session, no script variables required):
+#   $s = Get-MgBetaDirectorySetting -All | Where-Object DisplayName -eq "Group.Unified" | Select-Object -First 1
+#   $s.Values | Format-Table Name, Value -AutoSize
+#
+# Quick check (expected: EnableGroupCreation=False and GroupCreationAllowedGroupId=<your group id>):
+#   $s.Values | Where-Object Name -in "EnableGroupCreation","GroupCreationAllowedGroupId" | Format-Table Name, Value -AutoSize
 # Example output:
 #   Name                              Value
 #   ----                              -----
