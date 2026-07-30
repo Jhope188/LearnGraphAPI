@@ -100,6 +100,29 @@ Write-Host "Done. Add members to '$GroupName' (ID: $groupId) to grant group-crea
 # Standalone verification (works in a fresh session, no script variables required):
 #   $s = Get-MgBetaDirectorySetting -All | Where-Object DisplayName -eq "Group.Unified" | Select-Object -First 1
 #   $s.Values | Format-Table Name, Value -AutoSize
+
+
+# 1) Load modules
+#Import-Module Microsoft.Graph.Authentication -ErrorAction Stop
+#Import-Module Microsoft.Graph.Beta.Identity.DirectoryManagement -ErrorAction Stop
+
+# 2) Connect (new session = must reconnect)
+#Connect-MgGraph -Scopes "Directory.Read.All","Group.Read.All" -NoWelcome
+
+# 3) Confirm context
+#Get-MgContext | Format-List Account,TenantId,Scopes
+
+# 4) Get Group.Unified setting
+#$s = Get-MgBetaDirectorySetting -All | Where-Object DisplayName -eq "Group.Unified" | Select-Object -First 1
+
+# 5) If nothing returns here, the setting does not exist yet
+#$s | Format-List Id,DisplayName
+
+# 6) Full values dump
+#$s.Values | Format-Table Name, Value -AutoSize
+
+# 7) Quick check
+#$s.Values | Where-Object Name -in "EnableGroupCreation","GroupCreationAllowedGroupId" | Format-Table Name, Value -AutoSize
 #
 # Quick check (expected: EnableGroupCreation=False and GroupCreationAllowedGroupId=<your group id>):
 #   $s.Values | Where-Object Name -in "EnableGroupCreation","GroupCreationAllowedGroupId" | Format-Table Name, Value -AutoSize
