@@ -5,7 +5,7 @@
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;scroll-behavior:smooth;}
 body{
-  background:radial-gradient(ellipse 55% 45% at 78% 8%, rgba(26,127,122,0.16) 0%, transparent 60%), #0a1628;
+  background:#0a1628;
   color:#e8f0f8;
   font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing:antialiased;
