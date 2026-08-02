@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 27 Jul 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 02 Aug 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Mastering Groups: The Deep Dive</title>
+      <link>https://conditionalaccess.tech/articles/entra/mastering-groups-deep-dive.html</link>
+      <description>The complete reference to Microsoft 365 group types, creation controls, lifecycle governance, and the directory settings that underpin every workload in your tenant.</description>
+      <pubDate>Sat, 02 Aug 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/entra/mastering-groups-deep-dive.html</guid>
+      <category>Entra</category>
+    </item>
 
     <item>
       <title>AUs vs RMAUs: What's That?</title>
