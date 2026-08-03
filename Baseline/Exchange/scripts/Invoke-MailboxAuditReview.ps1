@@ -14,7 +14,43 @@
          retention configure Purview Audit Log Retention Policies
 
     Based on: https://learn.microsoft.com/en-us/purview/audit-mailboxes
-    CIS M365 Foundations Benchmark — Mailbox Audit Actions control
+    CIS M365 Foundations Benchmark — Mailbox Audit Actions control (CIS 6.1.2 L1)
+
+    WHY THESE NON-DEFAULT ACTIONS MUST BE REMEDIATED
+    -------------------------------------------------
+    Microsoft deliberately excluded FolderBind and MailboxLogin from defaults
+    because they generate high log volume. The trade-off is justified:
+
+    FolderBind (Admin + Delegate)
+        The single most important forensic event for a BEC investigation. When an
+        attacker compromises an account, their first action is browsing folders
+        (inbox, sent items, finance folders). Without FolderBind logs you cannot
+        determine what they accessed or read. You know the account was compromised
+        but not the blast radius.
+
+    Copy (Admin)
+        Directly maps to data exfiltration. If an admin copies items out of a
+        mailbox, that is auditable only with this action enabled.
+
+    Move (Admin + Delegate + Owner)
+        Attackers often move items to obscure folders or deleted items to hide
+        activity or enable rules-based exfiltration. Without Move logs this is
+        invisible.
+
+    MailboxLogin (Owner)
+        Tracks direct mailbox sign-ins. Critical for detecting anomalous access
+        patterns, especially for high-value mailboxes.
+
+    Bottom line: without these actions, if an account is compromised you know
+    something happened but cannot reconstruct what was accessed or taken.
+    CIS 6.1.2 (L1) requires these for exactly this reason: incident response
+    depends on them.
+
+    VOLUME CAVEAT
+        Enabling FolderBind on all mailboxes significantly increases audit log
+        volume and storage consumption. For E3 tenants with 90-day audit retention
+        this accelerates log rollover. If you have Purview Audit (Premium) / E5
+        this is less of a concern. Assess impact before rolling out org-wide.
 
 .NOTES
     - Requires Exchange Online PowerShell module (ExchangeOnlineManagement)
@@ -119,8 +155,20 @@ Write-Status "Started: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -Color Gray
 try {
     $null = Get-OrganizationConfig -ErrorAction Stop
 } catch {
-    Write-Status "`n[ERROR] Not connected to Exchange Online. Run Connect-ExchangeOnline first." -Color Red
-    exit 1
+    Write-Status "`n[!] Not connected to Exchange Online." -Color Yellow
+    $connect = Read-Host "    Connect now? (Y/N)"
+    if ($connect -match '^[Yy]') {
+        Connect-ExchangeOnline -ShowBanner:$false
+        try {
+            $null = Get-OrganizationConfig -ErrorAction Stop
+        } catch {
+            Write-Status "[ERROR] Connection failed. Exiting." -Color Red
+            exit 1
+        }
+    } else {
+        Write-Status "[ERROR] Cannot proceed without an Exchange Online connection." -Color Red
+        exit 1
+    }
 }
 
 #endregion
