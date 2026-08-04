@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIS M365 v7.0.0 — Teams Controls</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-raised: #1c2333;
+    --border: #30363d;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --teal: #2dd4bf;
+    --teal-dim: rgba(45,212,191,0.12);
+    --teal-border: rgba(45,212,191,0.3);
+    --l1: #3fb950;
+    --l1-bg: rgba(63,185,80,0.1);
+    --l1-border: rgba(63,185,80,0.3);
+    --l2: #d29922;
+    --l2-bg: rgba(210,153,34,0.1);
+    --l2-border: rgba(210,153,34,0.3);
+    --pass: #3fb950;
+    --warn: #d29922;
+    --fail: #f85149;
+    --neutral: #8b949e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 32px 24px;
+  }
+
+  .page-header {
+    max-width: 960px;
+    margin: 0 auto 40px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .badge-version {
+    color: var(--teal);
+    border-color: var(--teal-border);
+    background: var(--teal-dim);
+  }
+
+  .badge-date {
+    color: var(--text-muted);
+    border-color: var(--border);
+    background: var(--surface);
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+
+  .summary-bar {
+    max-width: 960px;
+    margin: 0 auto 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .summary-card .number {
+    font-size: 28px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .summary-card .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+  }
+
+  .num-total { color: var(--teal); }
+  .num-l1 { color: var(--l1); }
+  .num-l2 { color: var(--l2); }
+
+  .section {
+    max-width: 960px;
+    margin: 0 auto 32px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--teal-dim);
+    border: 1px solid var(--teal-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .section-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  .cross-ref-note {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .cross-ref-note strong { color: var(--teal); }
+
+  .control-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .control-card:hover {
+    border-color: var(--teal-border);
+  }
+
+  .control-header {
+    display: grid;
+    grid-template-columns: 80px 52px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+  }
+
+  .control-id {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--teal);
+  }
+
+  .level-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid;
+  }
+
+  .level-l1 {
+    color: var(--l1);
+    background: var(--l1-bg);
+    border-color: var(--l1-border);
+  }
+
+  .level-l2 {
+    color: var(--l2);
+    background: var(--l2-bg);
+    border-color: var(--l2-border);
+  }
+
+  .control-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .expand-icon {
+    color: var(--text-muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+
+  .control-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 16px;
+    background: var(--surface-raised);
+  }
+
+  .control-body.open {
+    display: block;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .control-header { grid-template-columns: 70px 48px 1fr; }
+    .expand-icon { display: none; }
+  }
+
+  .detail-item label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .detail-item p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .detail-item.full {
+    grid-column: 1 / -1;
+  }
+
+  .portal-path {
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 11px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 10px;
+    color: var(--teal);
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  .powershell-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-top: 8px;
+    font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 11px;
+    color: #79c0ff;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .powershell-block .comment { color: var(--text-muted); }
+  .powershell-block .param { color: #f2cc60; }
+  .powershell-block .value { color: #7ee787; }
+
+  .impact-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-top: 6px;
+    border: 1px solid;
+  }
+
+  .impact-low { color: #7ee787; background: rgba(126,231,135,0.08); border-color: rgba(126,231,135,0.25); }
+  .impact-medium { color: var(--l2); background: var(--l2-bg); border-color: var(--l2-border); }
+  .impact-high { color: #f85149; background: rgba(248,81,73,0.1); border-color: rgba(248,81,73,0.3); }
+
+  .footnote {
+    max-width: 960px;
+    margin: 32px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .footnote span { display: flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="badge-row">
+    <span class="badge badge-version">CIS M365 Foundations v7.0.0</span>
+    <span class="badge badge-date">Released May 20, 2026</span>
+    <span class="badge badge-date">Section 8 + Cross-references</span>
+  </div>
+  <h1>Microsoft Teams — All CIS Controls</h1>
+  <p class="subtitle">Complete Teams security controls including cross-referenced controls from Defender, Purview, and Identity sections.</p>
+</div>
+
+<div class="summary-bar">
+  <div class="summary-card">
+    <span class="number num-total">18</span>
+    <span class="label">Total Controls</span>
+  </div>
+  <div class="summary-card">
+    <span class="number num-l1">11</span>
+    <span class="label">Level 1 (Required)</span>
+  </div>
+  <div class="summary-card">
+    <span class="number num-l2">7</span>
+    <span class="label">Level 2 (Enhanced)</span>
+  </div>
+  <div class="summary-card">
+    <span class="number" style="color:#79c0ff">18</span>
+    <span class="label">Automated Assessment</span>
+  </div>
+</div>
+
+<!-- Section 8.1 Teams Settings -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">⚙️</div>
+    <h2>8.1 — Teams Settings</h2>
+    <span class="section-subtitle">TAC → Teams → Teams settings</span>
+  </div>
+
+  <!-- 8.1.1 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.1.1</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">External file sharing in Teams enabled only for approved cloud storage</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Restrict which cloud storage services (Dropbox, Box, Google Drive, Citrix Files, Egnyte) can be attached to Teams channels. Only allow approved providers.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Unrestricted cloud storage integrations allow data exfiltration to unmanaged third-party services outside DLP policy coverage.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Teams → Teams settings → Files</span>
+        </div>
+        <div class="detail-item full">
+          <label>Operational Impact</label>
+          <p>Medium — users relying on Dropbox/Box/Google Drive integrations will lose them. Audit usage before disabling. <span class="impact-tag impact-medium">User Impact: Medium</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.1.2 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.1.2</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Users can't send emails to a channel email address</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Disable the ability for users to send emails directly to Teams channel email addresses.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Channel email addresses can be used to inject phishing content, malware, or spam directly into Teams channels, bypassing mail flow rules and Defender for Office 365 controls.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Teams → Teams settings → Email integration → "Users can send emails to a channel email address" → Off</span>
+        </div>
+        <div class="detail-item full">
+          <label>Note</label>
+          <p>The screenshot in the original question shows this is currently <strong style="color:#f85149">On</strong> — this should be disabled to meet CIS 8.1.2. <span class="impact-tag impact-low">User Impact: Low</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 8.2 Users / External Access -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">👥</div>
+    <h2>8.2 — Users / External Access</h2>
+    <span class="section-subtitle">TAC → Users → External access</span>
+  </div>
+
+  <!-- 8.2.1 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.2.1</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">External domains restricted in Teams admin center</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Configure a domain allowlist ("Allow only specific external domains") rather than allowing all external domains. Only trusted partner domains should be permitted.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Allowing all external domains enables any M365 tenant to initiate chat with your users — a common vector for IT support impersonation scams and phishing via Teams.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Current State (from screenshot)</label>
+          <p>⚠️ Currently set to <strong style="color:var(--l2)">"Allow all external domains"</strong> — does not meet L2. Acceptable for L1 baseline only.</p>
+        </div>
+        <div class="detail-item full">
+          <label>PowerShell</label>
+          <div class="powershell-block"><span class="comment"># Check current state</span>
+Get-CsTenantFederationConfiguration | Select AllowFederatedUsers, AllowedDomains
+
+<span class="comment"># Set allowlist (replace with actual domains)</span>
+Set-CsTenantFederationConfiguration <span class="param">-AllowedDomains</span> <span class="value">@('contoso.com','partner.com')</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.2.2 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.2.2</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Communication with unmanaged Teams users is disabled</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Disable the "People in my org can chat and have meetings with external users who have unmanaged Microsoft accounts" toggle.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Unmanaged/consumer Teams accounts (personal Microsoft accounts, Teams Free) are not subject to enterprise governance, MFA requirements, or DLP policies.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Current State (from screenshot)</label>
+          <p>✅ Currently <strong style="color:var(--l1)">Off</strong> — meets CIS 8.2.2 L1.</p>
+        </div>
+        <div class="detail-item full">
+          <label>PowerShell</label>
+          <div class="powershell-block">Set-CsTenantFederationConfiguration <span class="param">-AllowTeamsConsumer</span> <span class="value">$False</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.2.3 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.2.3</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">External Teams users cannot initiate conversations</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Ensure the sub-option "External users with Teams accounts not managed by an organization can contact users in my organization" is also disabled.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Even if 8.2.2 is met (org cannot reach out), if inbound initiation is allowed, external personal accounts can still contact your users unsolicited. This is a stop-gap when 8.2.2 alone isn't sufficient.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Note</label>
+          <p>CIS notes this recommendation is superseded if 8.2.2 is fully met. However, confirm both settings are Off to avoid any edge cases. <span class="impact-tag impact-low">User Impact: Low</span></p>
+        </div>
+        <div class="detail-item full">
+          <label>PowerShell</label>
+          <div class="powershell-block">Set-CsTenantFederationConfiguration <span class="param">-AllowTeamsConsumerInbound</span> <span class="value">$False</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.2.4 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.2.4</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Organization cannot communicate with trial Teams tenants</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Disable "People in my organization can communicate with accounts in trial Teams tenant."</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Trial tenants have no purchased licenses, minimal governance controls, and are commonly used by threat actors for reconnaissance and phishing campaigns.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Current State (from screenshot)</label>
+          <p>✅ Currently <strong style="color:var(--l1)">Off</strong> — meets CIS 8.2.4 L1.</p>
+        </div>
+        <div class="detail-item full">
+          <label>PowerShell</label>
+          <div class="powershell-block">Set-CsTenantFederationConfiguration <span class="param">-ExternalAccessWithTrialTenants</span> <span class="value">"Blocked"</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 8.5 Meetings -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">📅</div>
+    <h2>8.5 — Meetings</h2>
+    <span class="section-subtitle">TAC → Meetings → Meeting policies / Meeting settings</span>
+  </div>
+
+  <!-- 8.5.1 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.1</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">Anonymous users can't join a meeting</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Disable "Anonymous users can join a meeting" in Meeting settings.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Anonymous join allows completely unauthenticated participants. Disabling forces all participants to authenticate with a Microsoft identity before joining.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting settings → Participants → Anonymous users can join a meeting → Off</span>
+        </div>
+        <div class="detail-item full">
+          <label>Operational Impact</label>
+          <p>High for customer-facing orgs. External people without a Microsoft account cannot join at all — they must have a Teams or M365 identity. Consider carefully before enforcing. <span class="impact-tag impact-high">User Impact: High</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.2 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.2</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Anonymous users and dial-in callers can't start a meeting</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Ensure anonymous participants and dial-in PSTN callers cannot start a meeting before the organizer joins.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Without this control, anonymous users could join and effectively run a meeting without any authenticated organizer present — enabling eavesdropping or social engineering of other attendees.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting settings → Participants → Anonymous users can start a meeting → Off</span>
+          <span class="impact-tag impact-low">User Impact: Low</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.3 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.3</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Only people in my org can bypass the lobby</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Set "Who can bypass the lobby" to "People in my organization and guests" or more restrictive. External federated users should be held in the lobby.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>The lobby is a gatekeeping control. Bypassing it for all external users removes the organizer's ability to vet who has joined before the meeting begins.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting policies → [Policy] → Meeting join &amp; lobby → Who can bypass the lobby</span>
+          <span class="impact-tag impact-medium">User Impact: Medium</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.4 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.4</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Users dialing in can't bypass the lobby</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Ensure PSTN dial-in participants are held in the lobby rather than joining directly.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Dial-in PSTN callers have no identity verification beyond knowing the meeting number. Holding them in lobby ensures the organizer admits only expected callers.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting policies → [Policy] → Meeting join &amp; lobby → Dial-in users can bypass the lobby → Off</span>
+          <span class="impact-tag impact-low">User Impact: Low</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.5 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.5</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">Meeting chat does not allow anonymous users</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Prevent anonymous meeting participants from posting in meeting chat.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Anonymous users posting in chat could distribute malicious links, impersonate legitimate participants, or exfiltrate information shared in chat during the meeting.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting policies → [Policy] → Meeting engagement → Meeting chat → On for everyone but anonymous users</span>
+          <span class="impact-tag impact-low">User Impact: Low</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.6 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.6</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">Only organizers and co-organizers can present</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Restrict the presenter role so only organizers and co-organizers can share screens or present content by default.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Unrestricted presenter access allows external or anonymous users to share screens containing malicious content, disrupt meetings, or conduct visual phishing attacks.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting policies → [Policy] → Content sharing → Who can present → Organizers and co-organizers</span>
+          <span class="impact-tag impact-medium">User Impact: Medium</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.7 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.7</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">External participants can't give or request remote control</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Disable the ability for external participants to give or request remote control of a presenter's screen.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Remote control is a high-risk capability — an external participant with remote control can execute actions on the presenter's device, install software, or access files. A critical control for preventing IT support scams.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting policies → [Policy] → Content sharing → External participants can give or request control → Off</span>
+          <span class="impact-tag impact-low">User Impact: Low</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.8 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.8</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">External meeting chat is off</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Disable chat between internal and external users during meetings.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Meeting chat persists after the meeting ends and can be forwarded externally. Disabling it for external participants reduces the risk of data leakage via chat.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting policies → [Policy] → Meeting engagement → Meeting chat → Off for external users</span>
+          <span class="impact-tag impact-medium">User Impact: Medium</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8.5.9 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.5.9</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">Meeting recording is off by default</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Disable cloud recording by default. Recording should be explicitly enabled by policy for roles that require it.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Recordings capture sensitive conversations and are stored in OneDrive/SharePoint where they can be accessed, shared, or breached. Default-off reduces accidental recording of confidential discussions.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Meetings → Meeting policies → [Policy] → Recording &amp; transcription → Cloud recording → Off</span>
+          <span class="impact-tag impact-medium">User Impact: Medium</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 8.6 Messaging -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">💬</div>
+    <h2>8.6 — Messaging</h2>
+    <span class="section-subtitle">TAC → Messaging → Messaging policies</span>
+  </div>
+
+  <!-- 8.6.1 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">8.6.1</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Users can report security concerns in Teams</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Enable the "Report a security concern" feature in Teams so users can flag suspicious messages to the security team or Microsoft.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Teams is increasingly used for phishing and social engineering. Giving users a native reporting mechanism improves threat detection and trains users to identify malicious messages.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">TAC → Messaging → Messaging policies → [Policy] → Report a security concern → On</span>
+          <span class="impact-tag impact-low">User Impact: Low</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cross-Referenced Controls -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon">🔗</div>
+    <h2>Cross-Referenced Teams Controls</h2>
+    <span class="section-subtitle">Defender, Purview &amp; Identity sections</span>
+  </div>
+
+  <div class="cross-ref-note">
+    <strong>Note:</strong> These controls are defined in other CIS sections but directly apply to Teams security posture. They should be reviewed alongside Section 8.
+  </div>
+
+  <!-- 2.1.1 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">2.1.1</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">Safe Links enabled for Office Applications (includes Teams)</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Enable Safe Links policies to scan and rewrite URLs in Teams messages at click-time.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>URLs shared in Teams chats are a common malware delivery vector. Safe Links provides time-of-click protection even for links shared days before detonation.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">Defender portal → Email &amp; collaboration → Policies &amp; rules → Safe Links → [Policy] → Teams</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.1.5 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">2.1.5</span>
+      <span class="level-badge level-l2">L2</span>
+      <span class="control-title">Safe Attachments for SharePoint, OneDrive, and Teams</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Enable Safe Attachments for SharePoint/OneDrive/Teams to scan files shared in channels and chats.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Files shared in Teams are stored in SharePoint/OneDrive. Without this control, malicious files can be shared and downloaded before any scanning occurs.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">Defender portal → Email &amp; collaboration → Policies &amp; rules → Safe Attachments → Global settings → Turn on Defender for Office 365 for SharePoint, OneDrive, and Teams</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.4.4 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">2.4.4</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">Zero-hour auto purge (ZAP) for Microsoft Teams is on</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Enable ZAP for Teams so that messages containing malicious content are retroactively removed from Teams after post-delivery detection.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>ZAP for Teams extends the email ZAP capability to Teams messages — removing malware/phishing links after they've been delivered but before users click them.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">Defender portal → Email &amp; collaboration → Policies &amp; rules → Anti-malware → [Policy] → Zero-hour auto purge settings → Enable ZAP for Teams</span>
+          <span class="impact-tag impact-low">User Impact: Low</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.2.2 -->
+  <div class="control-card">
+    <div class="control-header" onclick="toggle(this)">
+      <span class="control-id">3.2.2</span>
+      <span class="level-badge level-l1">L1</span>
+      <span class="control-title">DLP policies are enabled for Microsoft Teams</span>
+      <span class="expand-icon">▼</span>
+    </div>
+    <div class="control-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Recommendation</label>
+          <p>Ensure DLP policies include Teams as a workload, covering both channel messages and private chat.</p>
+        </div>
+        <div class="detail-item">
+          <label>Rationale</label>
+          <p>Sensitive data (PII, financial data, credentials) is frequently shared in Teams. Without DLP coverage, Teams becomes a blind spot for data leakage.</p>
+        </div>
+        <div class="detail-item full">
+          <label>Portal Path</label>
+          <span class="portal-path">Purview portal → Data loss prevention → Policies → [Policy] → Locations → Teams chat and channel messages → On</span>
+          <span class="impact-tag impact-low">User Impact: Low</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footnote">
+  <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--l1-bg);border:1px solid var(--l1-border)"></span> L1 — Required for all organizations</span>
+  <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--l2-bg);border:1px solid var(--l2-border)"></span> L2 — Enhanced, may impact usability</span>
+  <span>Source: CIS Microsoft 365 Foundations Benchmark v7.0.0 — May 20, 2026</span>
+  <span>All 18 controls are Automated Assessment</span>
+</div>
+
+<script>
+  function toggle(header) {
+    const body = header.nextElementSibling;
+    const icon = header.querySelector('.expand-icon');
+    const isOpen = body.classList.toggle('open');
+    if (icon) icon.style.transform = isOpen ? 'rotate(180deg)' : '';
+  }
+</script>
+</body>
+</html>
