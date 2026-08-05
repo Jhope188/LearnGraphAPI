@@ -32,6 +32,7 @@ A common misconception is that a third-party SEG replaces Defender for Office. I
 - **Mailbox-intelligence impersonation detection** — depends on the recipient's sent/received graph inside M365 and cannot be replicated at the SEG.
 - **Teams and Office app URL protection** — Safe Links time-of-click; Proofpoint URL Defense does not rewrite Teams or Office app links.
 - **M365-side quarantine governance** — release-request workflows, admin review policies.
+- **Automated Investigation and Response (AIR)** — M365-native triage and remediation of alerts; Proofpoint has no visibility into M365-side investigation workflows.
 
 ### What breaks when Proofpoint is in front
 
@@ -80,7 +81,7 @@ The following table maps each policy in the IAC DFO baseline to a deploy/configu
 | **Anti-Phishing Policy** | ✅ Yes | Deploy as-is. Impersonation protection, mailbox intelligence, and spoof intelligence evaluate against the recipient's M365 mailbox context — Proofpoint cannot replicate this. Arguably more important with a SEG in front since connection-level signals to EOP are degraded. |
 | **Anti-Malware Policy** | ✅ Yes | Deploy as-is. Defender runs on all mail that reaches the mailbox including internal-to-internal traffic that never traverses Proofpoint. Common Attachment Types Filter (CIS 2.1.2, L1) remains essential regardless of SEG. |
 | **Safe Attachments Policy** | ⚠️ Yes — tune | Deploy, accept the overlap with Proofpoint TAP. Safe Attachments covers internal mail (no Proofpoint traversal). Pair with Safe Attachments for SharePoint/OneDrive/Teams (CIS 2.1.5) which Proofpoint does not cover. Keep action at **Block** unless the MSP has explicit latency concerns. |
-| **Safe Links Policy** | 🔧 Yes — reconfigure | Deploy but **disable URL rewriting for external email** to avoid double-wrapping with Proofpoint URL Defense. Keep rewriting enabled for Teams, Office 365 apps, and internal mail — Proofpoint does not touch these surfaces. Time-of-click protection stays on. |
+| **Safe Links Policy** | 🔧 Yes — reconfigure | Deploy but **enable "Do not rewrite URLs, do checks via SafeLinks API only"** for external email to avoid double-wrapping with Proofpoint URL Defense. Keep rewriting enabled for Teams, Office 365 apps, and internal mail — Proofpoint does not touch these surfaces. Time-of-click API protection stays on for email; full rewrite protection active for Teams and Office apps. |
 | **Inbound Spam Filter Policy** | ⚠️ Yes — with EFC | Deploy, but **Enhanced Filtering for Connectors** (skip listing) must be configured on the Proofpoint inbound connector. Without EFC, EOP sees Proofpoint's IP as the source — SPF, DMARC, and IP reputation evaluation are broken. Tune bulk/spam thresholds conservatively; Defender is the second layer. |
 | **Outbound Spam Filter Policy** | ✅ Yes | Deploy as-is. Protects against compromised-account abuse, auto-forwarding, and outbound volume limits (CIS 2.1.15, L1). These are M365-native concerns Proofpoint cannot enforce on mail originating from M365 mailboxes. |
 | **Alert External Emails (Transport Rule)** | ✅ Yes | Deploy as-is. Mail flow rule adds an external-sender banner; applies regardless of upstream routing and runs within Exchange Online after inbound connector processing. |
@@ -98,14 +99,14 @@ Safe Links and Proofpoint URL Defense both rewrite URLs in email. Running both i
 
 ### Recommended Safe Links configuration
 
-- **Email** — Disable URL rewriting (set "Do not rewrite URLs" or scope the policy so external email is excluded). Proofpoint URL Defense handles external mail.
+- **Email** — Enable **"Do not rewrite URLs, do checks via SafeLinks API only"**. This disables URL wrapping in email while preserving API-based time-of-click protection in supported Outlook clients (Windows, Mac, Outlook on the web). Proofpoint URL Defense handles the link wrapping for external mail.
 - **Teams** — Enable Safe Links for Teams. Proofpoint does not inspect Teams chat links.
 - **Office 365 apps** — Enable Safe Links for Office apps (Word, Excel, PowerPoint, OneNote). Proofpoint does not cover in-document links.
-- **Click protection settings** — Keep "Track user clicks" and "Apply real-time URL scanning for suspicious links" enabled — these do not require rewriting to function.
+- **Click protection settings** — Keep "Track user clicks" and "Apply real-time URL scanning for suspicious links" enabled — these function with both rewrite and API-only modes.
 - **Do not let users click through to the original URL** — Keep enabled for Office app scope.
 
 > **✅ CIS Alignment**
-> CIS M365 Foundations v6.0.0 control **2.1.1 (L2)** requires Safe Links for Office applications to be enabled. The Proofpoint-aware configuration still meets this control — Safe Links is enabled, only the email rewrite scope is adjusted.
+> CIS M365 Foundations v7.0.0 control **2.1.1 (L2)** requires Safe Links for Office applications to be enabled. The Proofpoint-aware configuration still meets this control — Safe Links is enabled, and Teams and Office app coverage (the primary value of 2.1.1) is fully active. The "Do not rewrite URLs, do checks via SafeLinks API only" setting for email preserves click-time protection via API while eliminating the double-wrap conflict.
 
 ---
 
@@ -138,11 +139,11 @@ Outbound spam policy applies to mail leaving M365 mailboxes before it reaches an
 
 ## CIS Benchmark Alignment Reference
 
-The table below maps each policy in the IAC DFO baseline to the relevant CIS Microsoft 365 Foundations v6.0.0 controls, with notes on how the Proofpoint-fronted configuration still satisfies them.
+The table below maps each policy in the IAC DFO baseline to the relevant CIS Microsoft 365 Foundations v7.0.0 controls, with notes on how the Proofpoint-fronted configuration still satisfies them.
 
 | Control ID | Level | Policy | Notes for Proofpoint-Fronted Environments |
 |---|---|---|---|
-| CIS 2.1.1 | L2 | Safe Links | Control is still met — Safe Links is enabled. Rewrite scope adjusted to avoid collision with Proofpoint URL Defense; Teams and Office app coverage is the primary value. |
+| CIS 2.1.1 | L2 | Safe Links | Control is still met — Safe Links is enabled. "Do not rewrite URLs, do checks via SafeLinks API only" is used for email to avoid collision with Proofpoint URL Defense; Teams and Office app full rewrite coverage is the primary value of this control and remains active. |
 | CIS 2.1.2 | **L1** | Anti-Malware | Common Attachment Types Filter — required regardless of SEG. Internal mail never touches Proofpoint. |
 | CIS 2.1.3 | **L1** | Anti-Malware | Internal-user malware notification — catches compromised M365 accounts Proofpoint cannot see on outbound internal paths. |
 | CIS 2.1.4 / 2.1.5 | L2 | Safe Attachments | 2.1.5 (SPO/OneDrive/Teams) is the non-negotiable piece — Proofpoint TAP does not scan collaboration workloads. |
@@ -151,9 +152,13 @@ The table below maps each policy in the IAC DFO baseline to the relevant CIS Mic
 | CIS 2.1.8 – 2.1.10 | **L1** | SPF / DKIM / DMARC | Auth records published for sending domains. Ensure DMARC alignment accounts for Proofpoint-relayed outbound mail (SPF include + DKIM signing by Proofpoint if configured). |
 | CIS 2.1.12 – 2.1.14 | **L1** | Connection / Spam Filter Hygiene | No IP allowlists, safe list off, no allowed-domain bypass. **Critical:** do not allowlist the Proofpoint egress IPs in Connection Filter — use Enhanced Filtering for Connectors (EFC) instead so original sender IP is evaluated. |
 | CIS 2.1.15 | **L1** | Outbound Spam | Outbound limits — applies to mail leaving M365 mailboxes before Proofpoint relay or direct send. |
+| CIS 2.4.1 | **L1** | Priority Account Protection | Priority account protection (enhanced signals for executives/admins) must be enabled in M365 — Proofpoint has no access to M365 priority account signals. |
+| CIS 2.4.2 | **L1** | Priority Account Strict Presets | Priority accounts must have Strict preset security policy applied in Defender. Proofpoint-fronted configuration does not affect this requirement. |
+| CIS 2.4.4 | **L1** | ZAP for Teams | Zero-hour auto purge for Teams must be enabled. Proofpoint has no visibility into Teams messages — this is an M365-only protection surface. |
+| CIS 2.4.5 | **L1** | AIR Remediation *(New in v7.0.0)* | Automated Investigation and Response must be enabled. AIR auto-triages M365-side alerts and remediates quarantined items — Proofpoint cannot replicate this. Particularly valuable in Proofpoint-fronted tenants where mail reaching the M365 quarantine has already bypassed SEG filtering. |
 
 > **IAC Deployment Note**
-> All **L1 controls** in CIS Section 2.1 must be enforced regardless of SEG presence. **L2 controls** (Safe Links, Safe Attachments, Anti-Phishing) are the IAC - DFO default for Defender P1 / P2 customers. **Licensing constraint:** Safe Attachments and Safe Links require Defender for Office P1 minimum.
+> All **L1 controls** in CIS Section 2 must be enforced regardless of SEG presence. **L2 controls** (Safe Links, Safe Attachments, Anti-Phishing) are the IAC - DFO default for Defender P1 / P2 customers. **Licensing constraint:** Safe Attachments and Safe Links require Defender for Office P1 minimum. AIR remediation (CIS 2.4.5) requires Defender for Office P2.
 
 ---
 
@@ -174,10 +179,14 @@ Use this checklist when delivering an IAC - DFO security assessment against a Pr
 - [ ] **Anti-Phishing Policy:** Mailbox intelligence enabled, impersonation protection configured with customer VIP list.
 - [ ] **Anti-Malware Policy:** Common Attachment Types Filter enabled with full IAC - DFO extension list.
 - [ ] **Safe Attachments:** Applied to email with Block action; Safe Attachments for SPO/OneDrive/Teams enabled.
-- [ ] **Safe Links:** Rewrite disabled for email, enabled for Teams and Office apps; time-of-click protection on.
+- [ ] **Safe Links:** "Do not rewrite URLs, do checks via SafeLinks API only" enabled for email; Safe Links fully enabled for Teams and Office apps; time-of-click protection on; user click tracking on.
 - [ ] **Inbound Spam Filter:** Quarantine as default action; no allowed domains; bulk threshold tuned to 6.
 - [ ] **Outbound Spam Filter:** Volume limits enforced; external auto-forwarding blocked.
 - [ ] **Quarantine policy** (LimitedAccess-RequestByUser) applied to end-user-visible quarantine categories.
+- [ ] **Priority account protection** (CIS 2.4.1) enabled and priority accounts defined.
+- [ ] **Strict preset applied to priority accounts** (CIS 2.4.2).
+- [ ] **ZAP for Teams** enabled (CIS 2.4.4).
+- [ ] **AIR remediation** enabled (CIS 2.4.5) — requires Defender for Office P2.
 
 ### Operational verifications
 
@@ -196,7 +205,7 @@ Proofpoint and Defender for Office cover different surfaces. Proofpoint is an em
 
 ### "Safe Links breaks our Proofpoint click-tracking."
 
-This is solved by disabling Safe Links URL rewriting for email while keeping Safe Links enabled for Teams and Office apps. The feature still satisfies CIS 2.1.1 and provides click-time protection in surfaces Proofpoint does not cover.
+This is solved by enabling "Do not rewrite URLs, do checks via SafeLinks API only" for email. This eliminates URL wrapping (and therefore the double-wrap conflict with Proofpoint URL Defense) while preserving API-based time-of-click protection in supported Outlook clients. Safe Links remains fully active for Teams and Office apps — the surfaces Proofpoint does not cover. The feature still satisfies CIS 2.1.1.
 
 ### "Why can't we just allowlist Proofpoint IPs and trust them?"
 
@@ -239,4 +248,4 @@ Common ICES products: **Abnormal Security, Avanan (Check Point), IRONSCALES, Mat
 *Document type:* Defender for Office configuration reference
 *Scope:* MSP customers with Proofpoint Essentials or Proofpoint Enterprise fronting M365
 *Baseline source:* IAC DFO policy set (Anti-Phishing, Anti-Malware, Safe Attachments, Safe Links, Inbound Spam, Outbound Spam, External Email Alert, LimitedAccess-RequestByUser)
-*Framework alignment:* CIS Microsoft 365 Foundations Benchmark v6.0.0, Section 2.1
+*Framework alignment:* CIS Microsoft 365 Foundations Benchmark v7.0.0, Section 2
