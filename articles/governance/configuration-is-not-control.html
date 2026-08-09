@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Governance Gap — Inforcer Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:     #0a0f1e;
+    --deep:     #0d1630;
+    --teal:     #00c2b3;
+    --teal-dim: #007e76;
+    --off-white:#f0ede8;
+    --warm-gray:#b0a99f;
+    --accent:   #ff5c35;
+    --card-bg:  #111827;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .back-btn {
+    position: fixed; top: 1rem; left: 1rem;
+    background: rgba(10,15,30,0.88); border: 1px solid rgba(255,255,255,0.12);
+    color: #c8d8f0; padding: 0.6rem 1.2rem; border-radius: 8px;
+    text-decoration: none; font-size: 0.88rem; font-family: 'DM Sans', sans-serif;
+    z-index: 50; backdrop-filter: blur(8px); transition: background 0.2s;
+    min-height: 44px; display: flex; align-items: center;
+  }
+  .back-btn:hover { background: rgba(10,15,30,0.98); color: #fff; }
+
+  body {
+    background: var(--navy); color: var(--off-white);
+    font-family: 'DM Sans', sans-serif; font-weight: 300;
+    line-height: 1.75; overflow-x: hidden;
+  }
+
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; padding: 6rem 8vw 4rem; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 75% 50% at 55% 45%, rgba(255,92,53,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 70% at 10% 70%, rgba(0,194,179,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'DM Sans', sans-serif; font-weight: 500;
+    font-size: 0.75rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 1.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    line-height: 0.95; letter-spacing: 0.02em; color: var(--off-white);
+    opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+  }
+  .hero h1 span { color: var(--accent); display: block; }
+  .hero-sub {
+    margin-top: 2rem; max-width: 580px; font-size: 1.1rem; color: var(--warm-gray);
+    opacity: 0; animation: fadeUp 0.7s 0.5s forwards;
+  }
+  .hero-meta {
+    margin-top: 2.5rem; display: flex; gap: 2rem;
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--teal-dim); opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 2.5rem; left: 8vw;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray); opacity: 0; animation: fadeUp 0.6s 1s forwards;
+  }
+  .scroll-line { width: 40px; height: 1px; background: var(--teal); animation: pulse 2s infinite; }
+
+  .bridge-banner {
+    background: linear-gradient(135deg, rgba(0,194,179,0.06), rgba(0,194,179,0.02));
+    border-top: 1px solid rgba(0,194,179,0.15); border-bottom: 1px solid rgba(0,194,179,0.15);
+    padding: 1.5rem 6vw; display: flex; align-items: center; gap: 1.25rem;
+  }
+  .bridge-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .bridge-text { font-size: 0.9rem; color: var(--warm-gray); line-height: 1.6; }
+  .bridge-text strong { color: var(--off-white); }
+  .bridge-text a { color: var(--teal); text-decoration: none; }
+  .bridge-text a:hover { text-decoration: underline; }
+
+  .content { max-width: 780px; margin: 0 auto; padding: 0 6vw 8rem; }
+
+  .pull-quote {
+    font-family: 'DM Serif Display', serif; font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem); line-height: 1.5;
+    color: var(--off-white); border-left: 3px solid var(--accent);
+    padding-left: 1.5rem; margin: 3.5rem 0;
+  }
+
+  .section-marker { display: flex; align-items: center; gap: 1rem; margin: 4rem 0 1.5rem; }
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.25; min-width: 2.5rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: 0.04em; color: var(--off-white); line-height: 1.05;
+  }
+
+  p { font-size: 1.05rem; color: #c8c3bc; margin-bottom: 1.4rem; }
+  strong { color: var(--off-white); font-weight: 500; }
+
+  .callout {
+    background: var(--card-bg); border: 1px solid rgba(0,194,179,0.15);
+    border-radius: 4px; padding: 1.5rem 1.75rem; margin: 2.5rem 0;
+    position: relative; overflow: hidden;
+  }
+  .callout::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .callout.danger { border-color: rgba(255,92,53,0.2); }
+  .callout.danger::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .callout.warn { border-color: rgba(245,200,66,0.2); }
+  .callout.warn::before { background: linear-gradient(90deg, #f5c842, transparent); }
+  .callout-icon { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .callout p { margin: 0; font-size: 0.95rem; }
+  .callout p + p { margin-top: 0.75rem; }
+  .callout-label {
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; margin-bottom: 0.5rem;
+  }
+  .callout.danger .callout-label { color: var(--accent); }
+  .callout.warn   .callout-label { color: #f5c842; }
+
+  /* THREE-LAYER MODEL */
+  .three-layer {
+    margin: 3rem 0; border-radius: 4px; overflow: hidden;
+    border: 1px solid rgba(0,194,179,0.12);
+  }
+  .layer-row {
+    display: grid; grid-template-columns: 140px 1fr;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: var(--card-bg);
+  }
+  .layer-row:last-child { border-bottom: none; }
+  .layer-label-col {
+    padding: 1.25rem 1rem; display: flex; flex-direction: column;
+    justify-content: center; border-right: 1px solid rgba(255,255,255,0.05);
+    background: rgba(0,194,179,0.04);
+  }
+  .layer-tag {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;
+    letter-spacing: 0.08em;
+  }
+  .layer-tag.intent  { color: var(--teal); }
+  .layer-tag.config  { color: #f5c842; }
+  .layer-tag.behavior{ color: var(--accent); }
+  .layer-subtitle { font-size: 0.7rem; color: var(--warm-gray); margin-top: 2px; line-height: 1.4; }
+  .layer-body { padding: 1.25rem 1.5rem; }
+  .layer-definition { font-size: 0.95rem; color: #c8c3bc; margin-bottom: 0.75rem; }
+  .layer-example {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+    padding: 0.5rem 0.75rem; border-radius: 2px;
+    background: rgba(255,255,255,0.04); color: var(--warm-gray);
+    line-height: 1.6;
+  }
+
+  /* REAL WORLD CASES */
+  .cases { margin: 3rem 0; display: flex; flex-direction: column; gap: 0; }
+  .case-item {
+    border: 1px solid rgba(0,194,179,0.08); background: var(--card-bg);
+    padding: 1.5rem; position: relative; overflow: hidden;
+  }
+  .case-item:first-child { border-radius: 4px 4px 0 0; }
+  .case-item:last-child  { border-radius: 0 0 4px 4px; }
+  .case-item:not(:last-child) { border-bottom: none; }
+  .case-item::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: var(--accent);
+  }
+  .case-item { padding-left: 1.75rem; }
+  .case-num {
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--accent); font-weight: 500; margin-bottom: 0.4rem;
+  }
+  .case-title { font-size: 1rem; font-weight: 500; color: var(--off-white); margin-bottom: 0.6rem; }
+  .case-body { font-size: 0.9rem; color: var(--warm-gray); line-height: 1.65; }
+  .case-lesson {
+    margin-top: 0.75rem; padding: 0.6rem 0.75rem; border-radius: 2px;
+    background: rgba(255,92,53,0.06); font-size: 0.82rem;
+    color: #d4a090; line-height: 1.5; border-left: 2px solid rgba(255,92,53,0.3);
+  }
+  .case-lesson strong { color: var(--accent); }
+
+  /* DRIFT SOURCES */
+  .drift-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: rgba(0,194,179,0.1);
+    border-radius: 4px; overflow: hidden; margin: 2.5rem 0;
+  }
+  .drift-card { background: var(--card-bg); padding: 1.25rem; }
+  .drift-emoji { font-size: 1.5rem; margin-bottom: 0.6rem; display: block; }
+  .drift-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.05em; color: var(--off-white); margin-bottom: 0.4rem; }
+  .drift-desc { font-size: 0.83rem; color: var(--warm-gray); line-height: 1.55; }
+
+  /* GOVERNANCE PRIMITIVES */
+  .primitive-stack { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .primitive {
+    display: flex; gap: 1.25rem; padding: 1.25rem 1.5rem;
+    border: 1px solid rgba(0,194,179,0.08); background: var(--card-bg);
+    align-items: flex-start;
+  }
+  .primitive:first-child { border-radius: 4px 4px 0 0; }
+  .primitive:last-child  { border-radius: 0 0 4px 4px; }
+  .primitive:not(:last-child) { border-bottom: none; }
+  .prim-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1;
+    color: var(--teal); opacity: 0.2; min-width: 2rem; margin-top: -4px;
+  }
+  .prim-content {}
+  .prim-title { font-size: 0.95rem; font-weight: 500; color: var(--off-white); margin-bottom: 0.3rem; }
+  .prim-desc  { font-size: 0.88rem; color: var(--warm-gray); line-height: 1.65; }
+  .prim-verbs {
+    margin-top: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+    color: var(--teal); background: rgba(0,194,179,0.06); padding: 0.4rem 0.6rem;
+    border-radius: 2px; display: inline-block;
+  }
+
+  .table-wrap { margin: 2.5rem 0; border-radius: 4px; overflow: hidden; border: 1px solid rgba(0,194,179,0.1); }
+  .table-label {
+    background: rgba(0,194,179,0.07); padding: 0.75rem 1.25rem;
+    font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+  }
+  table { width: 100%; border-collapse: collapse; background: var(--card-bg); font-size: 0.88rem; }
+  thead tr { background: rgba(0,194,179,0.05); }
+  th {
+    padding: 0.9rem 1rem; text-align: left; font-size: 0.68rem;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--teal-dim);
+    font-weight: 500; border-bottom: 1px solid rgba(0,194,179,0.1);
+    font-family: 'DM Sans', sans-serif;
+  }
+  td {
+    padding: 0.9rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: #a09890; vertical-align: top; line-height: 1.55;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(0,194,179,0.03); }
+  td strong { color: var(--off-white); }
+  .mono {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    color: var(--teal); background: rgba(0,194,179,0.08);
+    padding: 2px 6px; border-radius: 2px; white-space: nowrap;
+  }
+  .badge { display: inline-block; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 2px; font-weight: 500; }
+  .badge-ok     { background: rgba(0,194,179,0.15); color: var(--teal); }
+  .badge-warn   { background: rgba(245,200,66,0.12); color: #f5c842; }
+  .badge-danger { background: rgba(255,92,53,0.15);  color: var(--accent); }
+
+  .checklist { margin: 2.5rem 0; display: flex; flex-direction: column; gap: 0; }
+  .check-item {
+    display: flex; gap: 1rem; align-items: flex-start;
+    padding: 1rem 1.25rem; border: 1px solid rgba(0,194,179,0.08);
+    background: var(--card-bg); transition: background 0.2s;
+  }
+  .check-item:first-child { border-radius: 4px 4px 0 0; }
+  .check-item:last-child  { border-radius: 0 0 4px 4px; }
+  .check-item:not(:last-child) { border-bottom: none; }
+  .check-item:hover { background: rgba(0,194,179,0.04); }
+  .check-box { width: 18px; height: 18px; border: 2px solid var(--teal-dim); border-radius: 3px; flex-shrink: 0; margin-top: 3px; opacity: 0.5; }
+  .check-text { font-size: 0.92rem; color: #a09890; line-height: 1.65; }
+  .check-text strong { display: block; color: var(--off-white); margin-bottom: 0.2rem; font-size: 0.95rem; }
+
+  .series-nav {
+    margin-top: 5rem; padding: 2rem; background: var(--card-bg);
+    border: 1px solid rgba(0,194,179,0.12); border-radius: 4px;
+    position: relative; overflow: hidden;
+  }
+  .series-nav::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--teal), transparent);
+  }
+  .series-nav-label { font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--teal); font-weight: 500; margin-bottom: 1.25rem; }
+  .series-posts { display: flex; flex-direction: column; gap: 0.5rem; }
+  .series-post { display: flex; gap: 1rem; align-items: center; padding: 0.6rem 0.75rem; border-radius: 3px; font-size: 0.9rem; color: var(--warm-gray); }
+  .series-post.current { background: rgba(0,194,179,0.07); color: var(--off-white); font-weight: 500; }
+  .series-post.upcoming { color: rgba(176,169,159,0.45); }
+  .series-post-num { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--teal-dim); min-width: 1.5rem; opacity: 0.6; }
+  .series-post.current .series-post-num { opacity: 1; color: var(--teal); }
+
+  .cta-block {
+    margin-top: 5rem; padding: 3rem;
+    background: linear-gradient(135deg, rgba(0,194,179,0.08), rgba(0,194,179,0.02));
+    border: 1px solid rgba(0,194,179,0.2); border-radius: 4px; text-align: center;
+  }
+  .cta-block h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--off-white); }
+  .cta-block p { max-width: 480px; margin: 0 auto 1.75rem; font-size: 0.95rem; }
+  .btn {
+    display: inline-block; background: var(--teal); color: var(--navy);
+    font-family: 'DM Sans', sans-serif; font-weight: 500; font-size: 0.8rem;
+    letter-spacing: 0.15em; text-transform: uppercase; padding: 0.85rem 2rem;
+    border-radius: 2px; text-decoration: none; transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 3.5rem 0; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  @media (max-width: 640px) {
+    .drift-grid { grid-template-columns: 1fr; }
+    .three-layer .layer-row { grid-template-columns: 1fr; }
+    .layer-label-col { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .hero { padding: 5rem 6vw 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<section class="hero">
+  <div class="hero-label">M365 Governance Series — Part 2 of 5</div>
+  <h1>The Governance<span>Gap</span></h1>
+  <p class="hero-sub">You set the policies when the project was live and the team was paying attention. The problem is what happens after, when the platform keeps adding surfaces, exceptions accumulate quietly, and the settings you wrote are no longer covering the territory they were built for.</p>
+  <div class="hero-meta">
+    <span>M365 Governance</span>
+    <span>June 30, 2026</span>
+    <span>11 min read</span>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-line"></span>
+    Continue Reading
+  </div>
+</section>
+
+<div class="bridge-banner">
+  <span class="bridge-icon">🔗</span>
+  <div class="bridge-text">
+    <strong>Part 2 of the M365 Governance Series.</strong> Part 1 covered groups, the foundation everything else depends on,, and the first place ownership failures surface. This post takes a step back and asks why those failures happen even in organizations that think they've done governance right.
+    <br><a href="#">&#8592; Read Part 1: Groups Are the Connective Tissue</a>
+  </div>
+</div>
+
+<main class="content">
+
+  <p>At some point in almost every M365 security engagement, someone opens the admin center, points at a policy, and says: "This was supposed to prevent exactly that." And technically, they're right. The setting was there. It had been there for two years. It just didn't cover what everyone assumed it covered.</p>
+
+  <p>That's the version of the story you can debug. The harder version is when the policy did exactly what it was configured to do, and the outcome still wasn't what anyone intended. A guest retained access to project files long after the engagement closed. A Teams workspace nobody monitors just became a Copilot result for someone three departments away. A flow kept running to an external connector that outlived the business case for it by a year.</p>
+
+  <p>None of those are configuration failures. They're the gap between a setting you applied and the behavior you assumed would follow. That gap is where most M365 governance breaks down quietly, without an error, without an alert, without anyone knowing until it matters.</p>
+
+  <div class="pull-quote">
+    "The settings you deploy are a snapshot. The environment they're deployed into keeps moving. Most governance programs are very good at the snapshot and never build anything to manage the distance between that moment and every one that follows."
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">The Three Layers Nobody Separates</span>
+  </div>
+
+  <p>M365 governance fails in the gap between three layers that almost every organization collapses into one. Separating them is the prerequisite to understanding why controls that look right on paper produce outcomes that aren't.</p>
+
+  <div class="three-layer">
+    <div class="layer-row">
+      <div class="layer-label-col">
+        <div class="layer-tag intent">Intent</div>
+        <div class="layer-subtitle">What you mean. Lives in documents.</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-definition">The organization's policy in human language. What the business means by "only owners can invite guests" or "sensitive content shouldn't be broadly accessible." Intent is correct by definition: it's the desired state articulated before the system gets involved.</div>
+        <div class="layer-example">"Only project owners should be able to add external collaborators."<br>"Flows should not send data outside the organization."<br>"All Teams workspaces must have a designated owner."</div>
+      </div>
+    </div>
+    <div class="layer-row">
+      <div class="layer-label-col">
+        <div class="layer-tag config">Configuration</div>
+        <div class="layer-subtitle">The translation layer. Always incomplete.</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-definition">The attempt to translate intent into platform settings. Configuration is always a partial approximation of intent, applied on a specific day, by a specific admin, against the specific version of the platform that existed at that moment. It does not update itself when intent changes or when the platform introduces new pathways.</div>
+        <div class="layer-example">External sharing: "Only people in your organization" ✓<br>Guest invite settings: "Only admins" ✓<br>New Teams shared channel type ships with different sharing model: not reviewed ✗</div>
+      </div>
+    </div>
+    <div class="layer-row">
+      <div class="layer-label-col">
+        <div class="layer-tag behavior">Behavior</div>
+        <div class="layer-subtitle">What actually happened. The only thing that matters.</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-definition">System behavior is the only thing that actually matters. A guest got access. A link exists. A flow ran. A workspace persisted without an owner. The tenant has no memory of what you intended when you configured it. It only holds the state it's in right now, and that state reflects every action, exception, and bypass that accumulated since the last time someone actively cleaned it up.</div>
+        <div class="layer-example">A guest was added via Planner, which wasn't covered by the guest invite policy.<br>A file was shared via "specific people" link from OneDrive, outside SharePoint settings scope.<br>A flow was built in the default Power Platform environment because it was there and it worked.</div>
+      </div>
+    </div>
+  </div>
+
+  <p>The gap between configuration and behavior is where governance fails. Not during deployment, not because someone made a mistake, but because M365 is a platform that continuously adds new workloads, new features, and new sharing surfaces faster than any fixed configuration model can keep up with. Every new capability ships with defaults tuned for adoption, not for your compliance requirements.</p>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">The Three Sources of Drift</span>
+  </div>
+
+  <p>Governance programs don't usually fail during rollout. They fail afterward, quietly, through drift that accumulates in three predictable places. Naming them is how you stop being surprised by them.</p>
+
+  <div class="drift-grid">
+    <div class="drift-card">
+      <span class="drift-emoji">🔓</span>
+      <div class="drift-title">Exceptions</div>
+      <div class="drift-desc">A policy blocks something that genuinely needs to happen, so someone approves a workaround. The workaround gets added as an allow clause. The original timeline for revisiting it gets lost. Six months later nobody remembers the exception was supposed to be temporary. The admin who approved it has moved on, and the ticket that tracked it is closed. Most CA policies in mature tenants have more history in their exclusion groups than in their original design. The exceptions don't announce themselves. They just accumulate.</div>
+    </div>
+    <div class="drift-card">
+      <span class="drift-emoji">🚪</span>
+      <div class="drift-title">Bypasses</div>
+      <div class="drift-desc">M365 group creation is restricted through the Teams admin policy, but the same group gets created when someone starts a Planner board or adds a calendar in Outlook. External sharing is locked in SharePoint, but a file gets shared from OneDrive using a link type that wasn't in scope when the setting was written. Power Platform environments are governed, but the default environment still works, so makers keep using it because nobody stopped them. These aren't security incidents. They're the normal behavior of a platform where the same underlying object is reachable through a dozen different front doors.</div>
+    </div>
+    <div class="drift-card">
+      <span class="drift-emoji">🆕</span>
+      <div class="drift-title">New Features</div>
+      <div class="drift-desc">Microsoft ships into your tenant continuously. Shared channels arrived with a different permission model than standard channels. Copilot capabilities landed with defaults nobody reviewed before the first query ran. New connectors, new app types, new agent surfaces. Each one is a creation or sharing pathway your existing configuration wasn't written for. And each one arrives active before you've had a chance to evaluate it against your governance requirements.</div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">Real-World Cases Where This Played Out</span>
+  </div>
+
+  <p>These aren't hypotheticals. These are patterns that appear, in one form or another, in almost every mature M365 tenant. They follow directly from the intent-configuration-behavior gap.</p>
+
+  <div class="cases">
+    <div class="case-item">
+      <div class="case-num">Field Pattern 01</div>
+      <div class="case-title">The Exception That Became Policy</div>
+      <div class="case-body">A vendor needs guest access for a six-week engagement. Normal onboarding would take too long, so an admin grants access via a direct group membership bypass on a Friday. The work completes. Nobody offboards the guest. Six months later, the vendor's account is still active, still in the group, still has access to the SharePoint site with the project files. The exception that was supposed to be temporary became the permanent state. Nobody was responsible for closing it because nobody documented who approved it.</div>
+      <div class="case-lesson"><strong>Pattern:</strong> Exceptions without expiration dates and named owners become permanent. Every "just this once" is a permanent policy fork in waiting.</div>
+    </div>
+    <div class="case-item">
+      <div class="case-num">Field Pattern 02</div>
+      <div class="case-title">The Policy That Didn't Apply Where Work Happened</div>
+      <div class="case-body">An organization had a well-configured SharePoint external sharing policy: links scoped to existing guests only, no anonymous access. What they didn't account for was OneDrive. The SharePoint policy didn't cover OneDrive personal shares configured at a different inheritance tier. Users shared sensitive documents from their personal OneDrive using "specific people" links, technically within policy but practically outside the governance model. The admin center showed compliant. The data state was not.</div>
+      <div class="case-lesson"><strong>Pattern:</strong> Configuration at one layer doesn't automatically propagate to adjacent layers. M365's permission topology has too many inheritance boundaries for any single setting to be comprehensive.</div>
+    </div>
+    <div class="case-item">
+      <div class="case-num">Field Pattern 03</div>
+      <div class="case-title">The Governance Rollout That Ended</div>
+      <div class="case-body">A mid-size organization ran a full M365 governance project. DLP policies deployed. Sensitivity labels configured. Group creation restricted. External sharing tightened. Access reviews scheduled. The project closed, the consultant invoiced, the admin team moved on to the next initiative. Twelve months later: 40 new Microsoft 365 groups created via Planner and Outlook that bypassed the creation restriction. DLP policy hadn't been updated to cover new file types. Access reviews were running but every reviewer was approving everything in the first ten minutes. The project delivered governance at a point in time. The operating model to keep it current never existed.</div>
+      <div class="case-lesson"><strong>Pattern:</strong> A setting deployed on a specific day doesn't maintain itself. By the time the project closes, the tenant has already moved on to shipping new features the setting was never designed to cover.</div>
+    </div>
+  </div>
+
+  <div class="callout danger">
+    <span class="callout-label">The Default Settings Trap</span>
+    <span class="callout-icon">🚫</span>
+    <p><strong>Leaving something at default is still a decision.</strong> Microsoft ships settings that have to work across a customer base that includes everyone from a five-person startup to a global enterprise. Those defaults are tuned for adoption, not for your audit requirements. When an admin says "we left it at default," what that actually means is: we accepted the product team's security posture as a substitute for our own. That's not neutral. It's a choice, and it has an access state attached to it.</p>
+    <p>New features make this worse. Every time Microsoft ships a new capability into your tenant, it arrives with defaults already applied before you've reviewed them. Treating new feature releases as a standing review obligation, not a notification to wait for, is the only way to stay ahead of it.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">What Real Enforcement Looks Like</span>
+  </div>
+
+  <p>Governance that holds up over time is built on mechanisms that run whether or not anyone is paying attention. There are only a handful of things a governance control can actually do. Everything else is observation dressed up as enforcement.</p>
+
+  <div class="primitive-stack">
+    <div class="primitive">
+      <div class="prim-num">1</div>
+      <div class="prim-content">
+        <div class="prim-title">Block</div>
+        <div class="prim-desc">The system refuses to complete the action unless conditions are met. Not a warning. Not a nudge. A refusal. Conditional Access block policies are the clearest example in the M365 stack. DLP block-with-override is a weaker version because the user can still proceed. The distinction matters: a block is absolute. An override option means the control is optional.</div>
+        <div class="prim-verbs">CA: Block · DLP: Block with override · Sharing settings: Disable</div>
+      </div>
+    </div>
+    <div class="primitive">
+      <div class="prim-num">2</div>
+      <div class="prim-content">
+        <div class="prim-title">Force</div>
+        <div class="prim-desc">The user can get where they're going but only through a path the governance model controls. Guest invitations routed through Entitlement Management rather than ad-hoc direct invite. Teams provisioning restricted to approved templates rather than self-service creation. The action still happens. It just happens somewhere visible, with ownership attached, instead of wherever is fastest.</div>
+        <div class="prim-verbs">Entitlement management · Teams templates · Group creation restrictions</div>
+      </div>
+    </div>
+    <div class="primitive">
+      <div class="prim-num">3</div>
+      <div class="prim-content">
+        <div class="prim-title">Expire</div>
+        <div class="prim-desc">Access ends on a schedule unless someone actively confirms it should continue. Guest account expiration. Group lifecycle expiration. Sharing link expiration. PIM time-bound role assignments. This is the only enforcement mechanism that doesn't require anyone to remember to act. The window closes whether or not the admin is having a busy week.</div>
+        <div class="prim-verbs">Guest expiration · Group lifecycle · Link expiration · PIM time-bound roles</div>
+      </div>
+    </div>
+    <div class="primitive">
+      <div class="prim-num">4</div>
+      <div class="prim-content">
+        <div class="prim-title">Escalate</div>
+        <div class="prim-desc">When the accountable person doesn't act, the decision moves up the chain. Access reviews with escalation paths when owners don't respond. DLP policy violations routed to compliance queues when unacknowledged. The native platform gives you escalation hooks in access reviews and Compliance Manager workflows — detecting owner departure and escalating from there typically requires automation built on top, or a tool that monitors ownership state continuously.</div>
+        <div class="prim-verbs">Access review escalation · DLP compliance workflows · Ownership monitoring</div>
+      </div>
+    </div>
+    <div class="primitive">
+      <div class="prim-num">5</div>
+      <div class="prim-content">
+        <div class="prim-title">Remediate</div>
+        <div class="prim-desc">The system takes corrective action automatically, not just reports the issue. Removing stale guests when no one responds to an access review is native. Auto-archiving M365 group workspaces on lifecycle expiry is native. Disabling accounts after a period of inactivity is possible via Entra Lifecycle Workflows but requires Entra ID Governance licensing. The point is the same regardless: remediation closes the loop. Without it, you get an increasingly detailed record of a problem that isn't getting fixed.</div>
+        <div class="prim-verbs">Auto-remove on no review response · Auto-archive on lifecycle expiry · Lifecycle Workflows (Entra ID Governance)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-label">Dashboards Are Not Controls</span>
+    <span class="callout-icon">⚠️</span>
+    <p>Most organizations have reporting. They can show you counts, trends, and summaries across groups, guests, sharing links, and DLP hits. What most organizations can't show you is what changed because of that report. If the answer is nothing, you're not governing. You're producing evidence that the problem exists and filing it somewhere.</p>
+    <p>Reporting earns the name governance only when it's the first step in a loop that ends with a consequence. An alert fires, someone owns it, they have a window to act, and if they don't, the system defaults to the safer state. Without that loop, the most sophisticated reporting in the tenant is just a very detailed record of drift that nobody stopped.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">The Native Tooling Ceiling</span>
+  </div>
+
+  <p>None of this is an argument that Microsoft's native controls are useless. Conditional Access, DLP, retention policies, sensitivity labels, access reviews. These are real enforcement primitives and they work. The problem is consistency. Native controls live in workload silos with different enforcement models, different definitions of the same concepts, and different telemetry granularity depending on where you're standing.</p>
+
+  <div class="table-wrap">
+    <div class="table-label">Native Control Gaps — Where Workload Silos Create Governance Blind Spots</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Control</th>
+          <th>Where It Enforces</th>
+          <th>Where It Doesn't</th>
+          <th>Gap Impact</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>External sharing settings</strong></td>
+          <td>SharePoint sites, Teams connected sites</td>
+          <td>OneDrive at different inheritance tier, new shared channel types</td>
+          <td><span class="badge badge-warn">Partial</span></td>
+        </tr>
+        <tr>
+          <td><strong>Group creation restrictions</strong></td>
+          <td>Teams (via Teams admin policy)</td>
+          <td>Groups created via Outlook, Planner, apps, APIs</td>
+          <td><span class="badge badge-danger">Routinely Bypassed</span></td>
+        </tr>
+        <tr>
+          <td><strong>DLP policies</strong></td>
+          <td>Exchange, SharePoint, Teams chat (message content)</td>
+          <td>Files shared via OneDrive sync client, Power Platform connectors, third-party apps</td>
+          <td><span class="badge badge-warn">Partial</span></td>
+        </tr>
+        <tr>
+          <td><strong>Conditional Access</strong></td>
+          <td>Authentication events against Entra-registered apps</td>
+          <td>Access already granted (CA fires at sign-in, not at ongoing permission state)</td>
+          <td><span class="badge badge-warn">Point-in-time</span></td>
+        </tr>
+        <tr>
+          <td><strong>Access reviews</strong></td>
+          <td>Entra group membership, app assignments, privileged roles</td>
+          <td>SharePoint unique permissions, OneDrive sharing links, Power Platform connector access</td>
+          <td><span class="badge badge-warn">Identity layer only</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The result is a governance model that enforces consistently in some places and inconsistently in others, and most organizations can't tell you which is which across their tenant at any given moment. That's the native tooling ceiling. It isn't a reason to avoid native tools. It's a reason to understand exactly what they cover and build deliberately around the gaps.</p>
+
+  <hr class="divider">
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">Practical Checklist</span>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Map your enforcement verbs explicitly</strong>
+        For each governance control you have deployed, categorize it: does it Block, Force, Expire, Escalate, or Remediate? If the answer is "it reports," that is not an enforcement control. Build the map. The gaps will be obvious.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Review every exception for an expiration date and an owner</strong>
+        Pull every exclusion group, every CA policy allow-list, every DLP override that's been approved in the last 24 months. How many have a documented owner? How many have a review date? Every one without both is a permanent policy fork waiting to be discovered in an audit.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Test your group creation restriction for bypass paths</strong>
+        If you have a group creation restriction policy, test it. Try creating an M365 group from Outlook. Try creating a Planner board. Try an API call. Document which paths are blocked and which aren't. Most organizations with creation restrictions have at least two active bypass paths they didn't know about.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Review default settings on every feature shipped in the last 12 months</strong>
+        New M365 features ship into your tenant with defaults you didn't configure. Shared channels, new Copilot experiences, new Power Platform connector categories, new Teams apps. Each has a default behavior. Build a quarterly review of new feature defaults into your governance operating model.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Connect every dashboard to a remediation action</strong>
+        If a report finds a problem and nothing happens automatically or through a triggered workflow, replace the report with an alert that has a named owner and a response SLA. A report without a remediation path is documentation, not a control.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>The gap between configuration and control isn't a policy problem or a tooling problem. It's a continuity problem. Settings are static. M365 isn't. The platform keeps shipping, teams keep changing, and work keeps finding the path of least resistance through whatever the admin center didn't anticipate. The organizations that close this gap don't do it with better settings. They build enforcement that runs whether or not anyone is paying attention that week.</p>
+
+  <p>The next post applies this directly to the most visible symptom of governance failure: sprawl. Not because sprawl is the biggest risk, but because it's the most tangible evidence of what happens when lifecycle, the only sprawl countermeasure that actually scales, is missing from the operating model entirely.</p>
+
+  <div class="series-nav">
+    <div class="series-nav-label">M365 Governance Series</div>
+    <div class="series-posts">
+      <div class="series-post">
+        <span class="series-post-num">01</span>
+        <span>Groups Are the Connective Tissue — and Nobody Owns the Scissors</span>
+      </div>
+      <div class="series-post current">
+        <span class="series-post-num">02</span>
+        <span>The Governance Gap — Why Settings and Control Are Not the Same Thing</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">03</span>
+        <span>The Cleanup Campaign That Never Ends — Why Lifecycle Governance Wins</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">04</span>
+        <span>AI Readiness Is a Governance Audit You Haven't Done Yet</span>
+      </div>
+      <div class="series-post upcoming">
+        <span class="series-post-num">05</span>
+        <span>The Ownership Operating Model — Making Governance Continuous</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>

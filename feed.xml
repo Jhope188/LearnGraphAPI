@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 02 Aug 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 09 Aug 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>The Governance Gap — Why Settings and Control Are Not the Same Thing</title>
+      <link>https://conditionalaccess.tech/articles/governance/configuration-is-not-control.html</link>
+      <description>Settings are the starting point. What separates a configured tenant from a controlled one is operationalisation.</description>
+      <pubDate>Sun, 09 Aug 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/governance/configuration-is-not-control.html</guid>
+      <category>Governance</category>
+    </item>
 
     <item>
       <title>Mastering Groups: The Deep Dive</title>
