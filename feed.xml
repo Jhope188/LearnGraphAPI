@@ -18,6 +18,15 @@
     </item>
 
     <item>
+      <title>CA Policy Analyzer: July 2026 Update</title>
+      <link>https://conditionalaccess.tech/articles/conditional-access/ca-policy-analyzer-july-2026.html</link>
+      <description>Community-contributed fixes, new audit rules, and expanded coverage for real-world policy gaps — what shipped in the July 2026 release of the CA Policy Analyzer.</description>
+      <pubDate>Fri, 10 Jul 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/conditional-access/ca-policy-analyzer-july-2026.html</guid>
+      <category>Conditional Access</category>
+    </item>
+
+    <item>
       <title>AUs vs RMAUs: What's That?</title>
       <link>https://conditionalaccess.tech/articles/entra/au-vs-rmau.html</link>
       <description>A practical deep dive on Administrative Units and role-assignable variants in Microsoft Entra — where each fits, where each breaks down, and how to use them safely in real tenant design.</description>
