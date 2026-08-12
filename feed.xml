@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 09 Aug 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 12 Aug 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>10 CA Mistakes That Are Probably in Your Tenant Right Now</title>
+      <link>https://conditionalaccess.tech/articles/conditional-access/ca-mistakes-top-10.html</link>
+      <description>Not theory. These are the gaps that show up in real tenants — the ones that look configured but aren't doing what the admin thought. Some block users silently. Some leave doors wide open. All of them are fixable.</description>
+      <pubDate>Wed, 12 Aug 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/conditional-access/ca-mistakes-top-10.html</guid>
+      <category>Conditional Access</category>
+    </item>
 
     <item>
       <title>The Governance Gap — Why Settings and Control Are Not the Same Thing</title>
