@@ -40,18 +40,813 @@
     a:hover { text-decoration: underline; }
 
     /* ── Nav ── */
-  .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.85rem 6vw; background: rgba(10,22,40,0.88);
-    border-bottom: 1px solid rgba(255,255,255,0.07); backdrop-filter: blur(10px);
-    font-family: 'DM Sans', sans-serif; }
-  .wordmark { font-weight: 500; font-size: 0.95rem; letter-spacing: 0.01em;
-    color: var(--off-white); text-decoration: none; white-space: nowrap; }
-  .wordmark span { color: var(--teal); }
-  .site-nav { display: flex; gap: 1.75rem; align-items: center; }
-  .site-nav a { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--warm-gray); text-decoration: none; transition: color 0.2s; padding: 0.5rem 0; }
-  .site-nav a:hover { color: var(--off-white); }
-  .site-nav a.active { color: var(--teal); }
-  @media (max-width: 640px) { .site-nav { gap: 1.1rem; }
-    .site-nav a.hide-mobile { display: none; } }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 22, 40, 0.92);
+      backdrop-filter: blur(12px);
+    }
+    .nav-wordmark {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-shield {
+      width: 28px;
+      height: 28px;
+    }
+    .nav-brand {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      letter-spacing: -0.01em;
+    }
+    .nav-brand span { color: var(--color-teal); }
+    .nav-meta {
+      font-size: 0.72rem;
+      color: var(--color-text-dim);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: var(--color-base);
+      padding: 64px 40px 56px;
+      text-align: center;
+      animation: fadeUp 0.6s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-teal);
+      margin-bottom: 16px;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+      color: var(--color-text-primary);
+      margin-bottom: 20px;
+    }
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: var(--color-text-secondary);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      font-size: 0.75rem;
+      color: var(--color-text-dim);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .hero-meta-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--color-text-dim);
+    }
+
+    /* ── Image placeholder ── */
+    .img-placeholder {
+      background: var(--color-surface);
+      border: 2px dashed rgba(0,184,176,0.25);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 48px 24px;
+      margin: 32px 0;
+      color: var(--color-text-dim);
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .img-placeholder-icon {
+      width: 36px;
+      height: 36px;
+      opacity: 0.4;
+    }
+    .img-placeholder strong {
+      color: var(--color-teal);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+    }
+
+    /* ── Content layout ── */
+    .content-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 64px 40px 96px;
+    }
+
+    /* ── Prose ── */
+    .prose p {
+      color: var(--color-text-secondary);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .prose p:last-child { margin-bottom: 0; }
+
+    /* ── Section heading ── */
+    .section-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-teal);
+      margin-bottom: 8px;
+    }
+    .section-heading {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      color: var(--color-text-primary);
+      margin-bottom: 24px;
+    }
+    .section-block {
+      margin-bottom: 64px;
+    }
+
+    /* ── Definition cards ── */
+    .def-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .def-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--color-teal), transparent);
+    }
+    .def-card-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-teal);
+      margin-bottom: 12px;
+    }
+    .def-card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+    }
+    .def-card blockquote {
+      border-left: 3px solid var(--color-teal-dim);
+      padding-left: 16px;
+      margin: 0 0 16px;
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      font-style: italic;
+    }
+    .def-card p {
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .def-card p:last-child { margin-bottom: 0; }
+    .def-card a {
+      font-size: 0.75rem;
+      color: var(--color-text-dim);
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    /* ── Limitation list ── */
+    .limitation-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 0;
+    }
+    .limitation-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .limitation-list li:last-child { border-bottom: none; }
+    .limitation-list li::before {
+      content: '!';
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      background: rgba(245,200,66,0.10);
+      color: var(--color-warn);
+      border-radius: 50%;
+      font-size: 0.65rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 3px;
+    }
+
+    /* ── Callout ── */
+    .callout {
+      background: var(--color-surface);
+      border: 1px solid rgba(0,184,176,0.15);
+      border-left: 3px solid var(--color-teal);
+      border-radius: 0 6px 6px 0;
+      padding: 16px 20px;
+      margin: 32px 0;
+    }
+    .callout.warn {
+      border-left-color: var(--color-warn);
+      border-color: rgba(245,200,66,0.15);
+    }
+    .callout.danger {
+      border-left-color: var(--color-danger);
+      border-color: rgba(224,85,51,0.12);
+    }
+    .callout p {
+      color: var(--color-text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+    .callout strong {
+      color: var(--color-text-primary);
+    }
+
+    /* ── Pull quote ── */
+    .pull-quote {
+      border-left: 3px solid var(--color-teal);
+      padding: 12px 24px;
+      margin: 40px 0;
+    }
+    .pull-quote p {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── Comparison table ── */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 32px 0;
+      font-size: 0.875rem;
+    }
+    .comparison-table th {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-teal);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 2px solid var(--color-border);
+    }
+    .comparison-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+      vertical-align: top;
+    }
+    .comparison-table tr:hover td {
+      background: var(--color-surface-alt);
+    }
+    .check { color: var(--color-teal); font-weight: 700; }
+    .cross { color: var(--color-danger); font-weight: 700; }
+
+    /* ── Steps / Tutorial ── */
+    .step-list {
+      list-style: none;
+      padding: 0;
+      margin: 24px 0;
+    }
+    .step-item {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: rgba(0,184,176,0.10);
+      border: 1px solid var(--color-border);
+      border-radius: 50%;
+      color: var(--color-teal);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 4px;
+    }
+    .step-content {
+      flex: 1;
+    }
+    .step-content strong {
+      display: block;
+      color: var(--color-text-primary);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .step-content p {
+      color: var(--color-text-secondary);
+      font-size: 0.88rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── Shoutout card ── */
+    .shoutout-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 6px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .shoutout-icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+    }
+    .shoutout-text {
+      flex: 1;
+    }
+    .shoutout-text strong {
+      display: block;
+      color: var(--color-text-primary);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .shoutout-text p {
+      color: var(--color-text-secondary);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    /* ── Error message block ── */
+    .error-block {
+      background: rgba(224,85,51,0.06);
+      border: 1px solid rgba(224,85,51,0.2);
+      border-left: 3px solid var(--color-danger);
+      border-radius: 0 6px 6px 0;
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.82rem;
+      color: #e8a090;
+      line-height: 1.6;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--color-border);
+      margin: 48px 0;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--color-border);
+      padding: 40px;
+      text-align: center;
+    }
+    .footer-brand {
+      font-size: 0.85rem;
+      color: var(--color-text-dim);
+      margin-bottom: 12px;
+    }
+    .footer-brand a { color: var(--color-teal); }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      font-size: 0.75rem;
+      color: var(--color-text-dim);
+    }
+    .footer-links a { color: var(--color-text-dim); }
+    .footer-links a:hover { color: var(--color-teal); }
+
+    /* mono inline */
+    .mono {
+      font-family: 'Cascadia Code', 'Consolas', monospace;
+      font-size: 0.82rem;
+      color: var(--color-teal);
+      background: rgba(0,184,176,0.08);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    @media (max-width: 600px) {
+      .nav { padding: 16px 20px; }
+      .hero { padding: 56px 20px 48px; }
+      .content-wrap { padding: 48px 20px 80px; }
+      .footer { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="nav">
+  <a class="nav-wordmark" href="https://conditionalaccess.tech">
+    <svg class="nav-shield" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M14 2L4 6.5V13.5C4 19.2 8.4 24.5 14 26C19.6 24.5 24 19.2 24 13.5V6.5L14 2Z" fill="#0078d4"/>
+      <path d="M14 6L8 9V13.5C8 17.1 10.7 20.4 14 21.5C17.3 20.4 20 17.1 20 13.5V9L14 6Z" fill="rgba(255,255,255,0.15)"/>
+      <path d="M11.5 13.5L13.2 15.2L16.5 11.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="nav-brand">conditionalaccess<span>.tech</span></span>
+  </a>
+  <span class="nav-meta">Microsoft MVP &bull; Security: Identity &amp; Access</span>
+</nav>
+
+<!-- ── Hero ── -->
+<header class="hero">
+  <p class="hero-eyebrow">Entra ID &bull; Identity Architecture</p>
+  <h1 class="hero-title">AUs vs RMAUs<br>What's That?</h1>
+  <p class="hero-subtitle">Administrative Units and Restricted Management Administrative Units. Most MSPs don't know what they are. Time to fix that.</p>
+  <div class="hero-meta">
+    <span>Jon Hope</span>
+    <span class="hero-meta-dot"></span>
+    <span>July 2026</span>
+    <span class="hero-meta-dot"></span>
+    <span>8 min read</span>
+  </div>
+</header>
+
+<!-- ── Hero banner image ── -->
+<div style="max-width:960px;margin:0 auto;padding:0 40px 48px;">
+  <img src="AU-RMAU-Images/au-vs-rmau-banner.png" alt="Administration Units vs RMAU: Delegate and Control Access vs Protect Critical Identities" style="width:100%;border-radius:8px;display:block;" />
+</div>
+
+<!-- ── Main content ── -->
+<main class="content-wrap">
+
+  <!-- Intro section -->
+  <section class="section-block prose">
+    <p>The problem with having extremely smart and talented coworkers is they are often right when they discuss topics with you. Last week Lewis and I were discussing RMAUs and the consensus was most MSPs don't actually know what they are or how they function. I was like, sure they do. Everyone uses RMAUs. Turns out I was wrong.</p>
+
+    <p>A quick poll of MSPs showcased a simple fact: AUs and RMAUs are not as typical as I thought.</p>
+
+    <div class="shoutout-card">
+      <span class="shoutout-icon">👋</span>
+      <div class="shoutout-text">
+        <strong>Shoutout: <a href="https://www.linkedin.com/in/jay-kerai-cyber/" target="_blank" rel="noopener">Jay Kerai</a></strong>
+        <p>The main users of RMAUs from that poll? Myself and Jay. Most responses were either "not using them" or "What is an RMAU?" Being that Jay is one of the most well respected Cybersecurity Architects in the game with a proven track record of doing awesome things from a security perspective, I'd say I'm killing it.</p>
+      </div>
+    </div>
+
+    <p>Here is the official breakdown from Microsoft. The definitions are accurate as long as Microsoft's documentation is correct. That's not the point of the article though. The point is to demystify and provide context. The "Jon Hope angle," if we shall.</p>
+  </section>
+
+  <!-- Official definitions -->
+  <section class="section-block">
+    <p class="section-eyebrow">Microsoft Learn</p>
+    <h2 class="section-heading">The Official Definitions</h2>
+
+    <div class="def-card">
+      <p class="def-card-label">Administrative Unit</p>
+      <p class="def-card-title">AU: Administrative Unit</p>
+      <a href="https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/administrative-units" target="_blank" rel="noopener">learn.microsoft.com / administrative-units</a>
+      <blockquote>"An administrative unit is a Microsoft Entra resource that can be a container for other Microsoft Entra resources. An administrative unit can contain only users, groups, or devices. Administrative units restrict permissions in a role to any portion of your organization that you define."</blockquote>
+      <p>The core use case is delegated administration: scoping admin roles like Helpdesk Administrator or User Administrator so they apply only to a subset of the tenant, not the whole directory.</p>
+      <p>Key constraints: AUs cannot be nested. They are not available in Entra ID Governance features. Adding a group to an AU does <strong style="color:var(--color-text-primary)">not</strong> automatically bring its members into scope.</p>
+    </div>
+
+    <div class="def-card">
+      <p class="def-card-label">Restricted Management Administrative Unit</p>
+      <p class="def-card-title">RMAU: Restricted Management Administrative Unit</p>
+      <a href="https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/admin-units-restricted-management" target="_blank" rel="noopener">learn.microsoft.com / admin-units-restricted-management</a>
+      <blockquote>"Restricted management administrative units allow you to protect specific objects in your tenant from modification by anyone other than a specific set of people that you designate. This allows you to meet security or compliance requirements without having to remove tenant-level role assignments from your administrators."</blockquote>
+      <p>The key difference from a standard AU: an RMAU blocks even Global Administrators and Privileged Role Administrators from modifying objects inside it at tenant scope. Only admins explicitly assigned a role scoped to that RMAU can make changes. GA and PRA can still manage the RMAU itself (add/remove members, assign roles) but cannot modify the objects within it.</p>
+
+      <ul class="limitation-list">
+        <li>The restricted setting is permanent and cannot be changed after creation</li>
+        <li>Maximum 100 RMAUs per tenant</li>
+        <li>Incompatible with Entra ID Governance: PIM, Entitlement Management, Lifecycle Workflows, and Access Reviews all blocked</li>
+        <li>Only Security groups and Users/Devices can be members. M365 Groups, Distribution Groups, and Mail-Enabled Security Groups cannot</li>
+        <li>Graph application permissions do not apply inside an RMAU by default</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Jon Hope angle - AUs -->
+  <section class="section-block">
+    <p class="section-eyebrow">The Jon Hope Angle</p>
+    <h2 class="section-heading">AUs: The Cloud Equivalent of Active Directory OUs</h2>
+
+    <div class="prose">
+      <p>The fact is AUs and RMAUs are, to me, a natural evolution of what Active Directory attempted to accomplish. It used OUs to create a directory structure and limit access or policies based on roles and departments. Keep in mind Entra is a flat directory. The cloud doesn't function like AD, and thank god for that.</p>
+    </div>
+
+    <img src="AU-RMAU-Images/au-rmau-ad-diagram.png" alt="Administration Units vs RMAU vs AD OUs: Scope, Purpose and Control Compared" style="width:100%;border-radius:8px;display:block;margin:32px 0;" />
+
+    <div class="prose">
+      <p>That picture is worth more words than what I'll inevitably write, but the idea is simple: being able to delegate access based on region, department, or role.</p>
+
+      <p>Simple use case. We used Admin Units to restrict the network guys to on-premise NUK pollers that were used as a network object in Intune. I didn't want the network guys going in and rebooting Endpoints that the endpoint guys were managing. Let's be honest, I was Infrastructure, Endpoint and Security, but needless to say I wanted our network guys to be able to reboot and manage their own device if it hung or they needed the LAPS password. An Admin Unit ensures this is possible without providing access to everything else.</p>
+    </div>
+
+    <div class="pull-quote">
+      <p>In short: it provides a clean way to limit access based on needs. Nothing more, nothing less.</p>
+    </div>
+  </section>
+
+  <!-- RMAU section -->
+  <section class="section-block">
+    <p class="section-eyebrow">Locking It Down</p>
+    <h2 class="section-heading">Ok, What About RMAUs?</h2>
+
+    <div class="prose">
+      <p>Again, a lot of verbiage in the definitions above and it's all accurate, but the short and simple is: I need to lock things down, and this is how you do it. With a catch.</p>
+
+      <p>RMAUs are extremely sensitive containers that have to be carefully determined in terms of how they will be managed. The idea for me was simple: I had people who could exclude objects and groups, but there were certain groups that needed approval and a higher degree of control. I'm doing an entire masterclass deep dive on groups over on <a href="https://conditionalaccess.tech" target="_blank" rel="noopener">conditionalaccess.tech</a> and RMAUs will play a big role in that.</p>
+
+      <p>At a high level: I needed to control who had the ability to modify sensitive groups for CA.</p>
+    </div>
+
+    <div class="callout">
+      <p><strong>Think CA Exclusion Groups.</strong> I want complete control over my break glass group. I know, I know Jay, don't use groups for break glass. We'll examine that further in the Groups Deep Dive. However, if you do use groups, protect them with RMAUs. This is explicit control.</p>
+    </div>
+
+    <div class="prose">
+      <p>The idea is to be intentional with security. Global Admins will even find they are restricted, and honestly just enabling the RMAU most will go "what the crap, I can't add users" and just stop when they see this message:</p>
+    </div>
+
+    <img src="AU-RMAU-Images/breakglass-protection.png" alt="SG-Entra-AUG-CAP-BreakglassAccounts group showing restricted management administrative unit warning in Entra portal" style="width:100%;border-radius:8px;display:block;margin-bottom:16px;" />
+
+    <div class="error-block">
+      This user is a member of a restricted management administrative unit. Management rights are limited to administrators scoped on that administrative unit.
+    </div>
+
+    <div class="prose">
+      <p>The real OGs know that with GA comes great responsibility, and that they could add themselves to the Admin Unit, thus bypassing the restriction. So again, control who has the ability and roles needed to bypass the hurdles you put in place. The gate only works if you control who has the key.</p>
+    </div>
+
+    <div class="callout">
+      <p><strong>Intune still works.</strong> A common assumption is that an RMAU locks out device management entirely. It does not. Applying Intune policies to a device inside an RMAU is explicitly allowed. The restriction is Entra property modification only. Your endpoint team keeps full Intune scope.</p>
+    </div>
+
+    <div class="callout warn">
+      <p><strong>A note on GA bypass:</strong> Global Administrators and Privileged Role Administrators can assign themselves a role scoped to the RMAU, which gives them access. This action is auditable. Make sure you're watching your audit logs for <span class="mono">Add member to role scoped over Restricted Management Administrative Unit</span>.</p>
+    </div>
+  </section>
+
+  <!-- AU vs RMAU comparison -->
+  <section class="section-block">
+    <p class="section-eyebrow">Quick Reference</p>
+    <h2 class="section-heading">AU vs RMAU: Side by Side</h2>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>AU</th>
+          <th>RMAU</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Delegate scoped admin roles</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Blocks tenant-level Global Admins from modifying objects</td>
+          <td><span class="cross">No</span></td>
+          <td><span class="check">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Dynamic membership (users/devices)</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="check">Yes</span></td>
+        </tr>
+        <tr>
+          <td>Supports M365 Groups as members</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="cross">No</span></td>
+        </tr>
+        <tr>
+          <td>Compatible with PIM / Entitlement Management</td>
+          <td><span class="cross">No</span></td>
+          <td><span class="cross">No</span></td>
+        </tr>
+        <tr>
+          <td>Setting changeable after creation</td>
+          <td><span class="check">Yes</span></td>
+          <td><span class="cross">No, permanent</span></td>
+        </tr>
+        <tr>
+          <td>Tenant limit</td>
+          <td>No hard limit</td>
+          <td>100 max</td>
+        </tr>
+        <tr>
+          <td>License required</td>
+          <td>Entra P1 (admins)</td>
+          <td>Entra P1 (admins)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Tutorial section -->
+  <section class="section-block">
+    <p class="section-eyebrow">Tutorial</p>
+    <h2 class="section-heading">How the Heck Do I Do It?</h2>
+
+    <div class="prose">
+      <p>It's actually really simple. I did an in-depth article that I'm not gonna completely rehash here:</p>
+    </div>
+
+    <div class="callout">
+      <p><strong>Jon's Medium article:</strong> <a href="https://medium.com/@jhope188/securecloudfoundation-not-another-breakglass-b631b5e95e05" target="_blank" rel="noopener">SecureCloudFoundation: Not Another Breakglass</a></p>
+    </div>
+
+    <div class="prose">
+      <p>This one by Jan Bakker is even better on how to really set it up. In fact this is what I used to learn more about them and test in a lab environment, which I recommend before moving to prod:</p>
+    </div>
+
+    <div class="callout">
+      <p><strong>Jan Bakker:</strong> <a href="https://janbakker.tech/prevent-conditional-access-bypass-with-restricted-management-administrative-units-in-entra-id/" target="_blank" rel="noopener">Prevent Conditional Access Bypass with Restricted Management Administrative Units in Entra ID</a></p>
+    </div>
+
+    <div class="prose">
+      <p>Here's a quick walkthrough though.</p>
+    </div>
+
+    <!-- Step 1 -->
+    <ul class="step-list">
+      <li class="step-item">
+        <span class="step-num">1</span>
+        <div class="step-content">
+          <strong>Login to Entra, then Roles and Administration</strong>
+          <p>Navigate to the Microsoft Entra admin center and head to Roles and administrators in the left nav. Select Admin units from the menu.</p>
+        </div>
+      </li>
+    </ul>
+
+    <img src="AU-RMAU-Images/step1-admin-units-nav.png" alt="Entra admin center showing Admin units list with existing RMAUs" style="width:100%;border-radius:8px;display:block;margin:16px 0 32px;" />
+
+    <!-- Step 2 -->
+    <ul class="step-list">
+      <li class="step-item">
+        <span class="step-num">2</span>
+        <div class="step-content">
+          <strong>Create an RMAU and flip the toggle</strong>
+          <p>Hit Add, give it a meaningful name tied to what you're protecting, and set the Restricted management administrative unit toggle to Yes. That single toggle is what separates an AU from an RMAU. Thanks for the assist Owen.</p>
+        </div>
+      </li>
+    </ul>
+
+    <img src="AU-RMAU-Images/step2-add-rmau-form.png" alt="Add administrative unit form showing ConditionalAccessGroups RMAU with Restricted management toggle set to Yes" style="width:100%;border-radius:8px;display:block;margin:16px 0 24px;" />
+
+    <div class="callout warn">
+      <p><strong>Remember:</strong> This setting is permanent. Once created as an RMAU it cannot be converted back to a standard AU. Plan accordingly and test in a lab first.</p>
+    </div>
+
+    <img src="AU-RMAU-Images/owen-meme.png" alt="Owen Wilson WOW meme" style="width:100%;max-width:480px;border-radius:8px;display:block;margin:32px auto;" />
+
+    <!-- Step 3 -->
+    <ul class="step-list">
+      <li class="step-item">
+        <span class="step-num">3</span>
+        <div class="step-content">
+          <strong>Confirm it is live</strong>
+          <p>Head back to Admin units and you'll see it listed with Restricted management set to Yes. That's it. It's in.</p>
+        </div>
+      </li>
+    </ul>
+
+    <img src="AU-RMAU-Images/step3-rmaus-created.png" alt="Admin units list now showing ConditionalAccessGroups RMAU alongside existing RMAUs, all with Restricted management Yes" style="width:100%;border-radius:8px;display:block;margin:16px 0 32px;" />
+
+    <!-- Step 4 -->
+    <ul class="step-list">
+      <li class="step-item">
+        <span class="step-num">4</span>
+        <div class="step-content">
+          <strong>Assign roles scoped to the RMAU</strong>
+          <p>Jan digs into some specifics around assigning membership to it. Specific roles can be assigned directly to RMAUs. I typically use Groups Administrator for users managing the RMAU. This might be an SC-300 question, I don't know, but good knowledge to have none the less.</p>
+        </div>
+      </li>
+    </ul>
+
+    <img src="AU-RMAU-Images/step5-roles-rmau.png" alt="ConditionalAccessGroups RMAU Roles and administrators page showing available roles including Groups Administrator with 4 assignments" style="width:100%;border-radius:8px;display:block;margin:16px 0 32px;" />
+
+    <!-- Step 5 -->
+    <ul class="step-list">
+      <li class="step-item">
+        <span class="step-num">5</span>
+        <div class="step-content">
+          <strong>Add your Groups to restrict</strong>
+          <p>Then add the Security Groups you want to protect. These are the objects no tenant-level admin can touch without explicit RMAU scope. Notice every group here is a CA exclusion or control group.</p>
+        </div>
+      </li>
+    </ul>
+
+    <img src="AU-RMAU-Images/step6-groups-rmau.png" alt="ConditionalAccessGroups RMAU Groups tab showing all protected CA security groups including BreakglassAccounts, GlobalExclusions, GuestExclusions and more" style="width:100%;border-radius:8px;display:block;margin:16px 0;" />
+  </section>
+
+  <hr class="divider" />
+
+  <!-- When to use each -->
+  <section class="section-block">
+    <p class="section-eyebrow">Bottom Line</p>
+    <h2 class="section-heading">When to Use Each</h2>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;">
+
+      <div class="def-card">
+        <p class="def-card-label">Administrative Units</p>
+        <p class="def-card-title" style="font-size:1rem;">Use when you need to control what admins can see and manage</p>
+        <p>AUs are ideal for controlling administrative access by department, region, or business unit. The helpdesk team for the US division manages US objects. The network team manages network devices. Nobody manages outside their lane. It is delegation by design, not trust by default.</p>
+        <p>The guardrail here is scope. Admins still have their role, they just cannot apply it outside the boundary you define.</p>
+      </div>
+
+      <div class="def-card">
+        <p class="def-card-label">Restricted Management Administrative Units</p>
+        <p class="def-card-title" style="font-size:1rem;">Use when certain objects must not be touched by anyone without explicit approval</p>
+        <p>RMAUs are ideal when you need to protect specific groups, users, or devices from modification by any admin who has not been explicitly granted access at the RMAU scope. This includes junior tiers, contractors, and yes, Global Admins acting at tenant scope.</p>
+        <p>The guardrail here is protection. CA exclusion groups, break glass accounts, privileged role groups. These are the crown jewels. RMAU ensures that even well-intentioned admins cannot inadvertently modify what should never be touched without deliberate, auditable action.</p>
+      </div>
+
+    </div>
+
+    <div class="pull-quote">
+      <p>AUs control who manages what. RMAUs control who can touch the things that matter most. Both are guardrails. Neither replaces good judgment.</p>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <!-- Closing -->
+  <section class="section-block prose">
+    <p>See the image at the beginning of the article. Now you have mastered, well, are using RMAUs and AUs.</p>
+
+    <p>Would love for others to reach out and tell me how you use AUs or RMAUs. I have to imagine more people than what that poll showed are actively using them, but it definitely showed that it's not as typical as I initially thought. It all goes back to: security is hard. Our job is to be intentional and understand why and what we are doing. Lord knows AI makes things up sometimes. It's a true blessing and a curse.</p>
+
+    <p>Get out there and start protecting your critical identities.</p>
+  </section>
+
+  <!-- CTA -->
+  <div class="callout" style="text-align:center;border-left:none;border-top:2px solid var(--color-teal);border-radius:6px;padding:32px;">
+    <p style="font-size:1.05rem;margin-bottom:8px;"><strong>If you liked what you saw here or just appreciate a good meme, go check out the Groups Deep Dive on <a href="https://conditionalaccess.tech" target="_blank" rel="noopener">conditionalaccess.tech</a>. Soon to be released.</strong></p>
+    <p style="font-size:0.875rem;margin-top:12px;">If you get there before I finish it, wait a day and check again. Same as I do with my bank account waiting for payday.</p>
+  </div>
+
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <p class="footer-brand">
+    <a href="https://conditionalaccess.tech">conditionalaccess<span style="color:var(--color-teal)">.tech</span></a>
+    &nbsp;&bull;&nbsp; Jon Hope &nbsp;&bull;&nbsp; Microsoft MVP, Security: Identity &amp; Access
+  </p>
+  <div class="footer-links">
+    <a href="https://conditionalaccess.tech">Home</a>
+    <a href="https://www.linkedin.com/in/jon-hope/" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="https://medium.com/@jhope188" target="_blank" rel="noopener">Medium</a>
+  </div>
+</footer>
+
+</body>
+</html>
