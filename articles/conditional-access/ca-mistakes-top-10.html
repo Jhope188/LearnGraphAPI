@@ -52,7 +52,7 @@
   .hero {
     min-height: 92vh;
     display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 8rem 8vw 5rem;
+    padding: 8rem clamp(2rem, 8vw, 8rem) 5rem;
     background:
       radial-gradient(ellipse 55% 45% at 70% 25%, rgba(26,127,122,0.22) 0%, transparent 65%),
       radial-gradient(ellipse 35% 55% at 15% 75%, rgba(0,184,176,0.08) 0%, transparent 60%),
@@ -383,13 +383,15 @@
 <a href="https://conditionalaccess.tech" class="back-btn">&#8592; conditionalaccess.tech</a>
 
 <section class="hero">
-  <div class="hero-eyebrow">Conditional Access — Configuration Guide</div>
-  <h1>10 CA Mistakes That Are Probably in Your Tenant <em>Right Now</em></h1>
-  <p class="hero-sub">Not theory. These are the gaps that show up in real tenants, the ones that look configured but aren't doing what the admin thought. Some block users silently. Some leave doors wide open. All of them are fixable.</p>
-  <div class="hero-meta">
-    <span>Jon Hope — Microsoft MVP</span>
-    <span>August 2026</span>
-    <span>15 min read</span>
+  <div style="max-width:1100px;margin:0 auto;width:100%;">
+    <div class="hero-eyebrow">Conditional Access — Configuration Guide</div>
+    <h1>10 CA Mistakes That Are Probably in Your Tenant <em>Right Now</em></h1>
+    <p class="hero-sub">Not theory. These are the gaps that show up in real tenants, the ones that look configured but aren't doing what the admin thought. Some block users silently. Some leave doors wide open. All of them are fixable.</p>
+    <div class="hero-meta">
+      <span>Jon Hope — Microsoft MVP</span>
+      <span>August 2026</span>
+      <span>15 min read</span>
+    </div>
   </div>
   <div class="hero-rule"></div>
 </section>
