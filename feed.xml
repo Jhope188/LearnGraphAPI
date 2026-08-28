@@ -9,6 +9,33 @@
     <lastBuildDate>Thu, 28 Aug 2026 00:00:00 +0000</lastBuildDate>
 
     <item>
+      <title>The Ownership Operating Model</title>
+      <link>https://conditionalaccess.tech/articles/governance/ownership-operating-model.html</link>
+      <description>Governance doesn't fail because of technology. It fails because nobody owns anything. Building an operating model that sticks.</description>
+      <pubDate>Thu, 28 Aug 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/governance/ownership-operating-model.html</guid>
+      <category>Governance</category>
+    </item>
+
+    <item>
+      <title>Clean the House Before the Guests Arrive</title>
+      <link>https://conditionalaccess.tech/articles/governance/ai-readiness-governance-audit.html</link>
+      <description>Before Copilot goes live, you need to know what it will find. A practical audit framework for AI readiness governance.</description>
+      <pubDate>Thu, 28 Aug 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/governance/ai-readiness-governance-audit.html</guid>
+      <category>Governance</category>
+    </item>
+
+    <item>
+      <title>The Cleanup Campaign That Never Ends</title>
+      <link>https://conditionalaccess.tech/articles/governance/lifecycle-sprawl-countermeasure.html</link>
+      <description>Lifecycle management isn't a one-time project. It's a countermeasure against the entropy of a living tenant.</description>
+      <pubDate>Thu, 28 Aug 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/governance/lifecycle-sprawl-countermeasure.html</guid>
+      <category>Governance</category>
+    </item>
+
+    <item>
       <title>Why Your Encrypted Emails Won't Open and How to Fix It</title>
       <link>https://conditionalaccess.tech/articles/conditional-access/demo-ca-rpmsg-aip-exclusion.html</link>
       <description>Sensitivity labels encrypt email, but Conditional Access can block the decryption service. Here's why it happens and how to fix it with a targeted exclusion.</description>
