@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 12 Aug 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 Aug 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>Why Your Encrypted Emails Won't Open and How to Fix It</title>
+      <link>https://conditionalaccess.tech/articles/conditional-access/demo-ca-rpmsg-aip-exclusion.html</link>
+      <description>Sensitivity labels encrypt email, but Conditional Access can block the decryption service. Here's why it happens and how to fix it with a targeted exclusion.</description>
+      <pubDate>Thu, 28 Aug 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/conditional-access/demo-ca-rpmsg-aip-exclusion.html</guid>
+      <category>Conditional Access</category>
+    </item>
 
     <item>
       <title>10 CA Mistakes That Are Probably in Your Tenant Right Now</title>
