@@ -116,7 +116,7 @@ python3 .github/scripts/publish.py --config .publish-config.json
 The script updates these files automatically:
 | File | What changes |
 |---|---|
-| `articles.html` | featured article updated, series count +1, card activated/inserted |
+| `articles.html` | featured article updated, series count +1, card activated/inserted, show-more button `data-total` +1 |
 | `index.html` | Featured writing card title, description, and URL |
 | `feed.xml` | New `<item>` prepended, `lastBuildDate` updated |
 | `entra-news.html` | JS features array entry added, Features + Issues stat counts incremented |
@@ -132,6 +132,21 @@ After the script completes, confirm:
 2. `feed.xml` — new `<item>` is first in the channel
 3. If Entra News: `entra-news.html` feature-grid has a new row at the top
 4. Commit message is: `publish: [title] (Entra.News #NNN)` or `publish: [title]`
+
+---
+
+## 🔢 articles.html — Count sync rule (CRITICAL)
+
+Every section in `articles.html` has **two** numbers that must always match. When adding or activating any article card, update **both** in the same edit:
+
+| Element | Selector pattern | Example |
+|---|---|---|
+| Section badge | `<span id="count-[series]">N articles</span>` | `7 articles` |
+| Show-more button | `<button ... data-total="N">Show all N articles ↓</button>` | `data-total="7"` |
+
+**Series IDs:** `count-identity` / `count-conditional-access` / `count-governance` / `count-entra` / `count-msp`
+
+If the button is missing for a section, add one following the same pattern as the CA section. Never update one without the other.
 
 If anything looks wrong, read the relevant file and re-apply the specific fix.
 
