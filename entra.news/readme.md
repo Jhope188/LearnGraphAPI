@@ -15,7 +15,7 @@ Last Updated: August 2, 2026
 | | |
 |---|---|
 | Total Articles | 43 (all published) |
-| Entra News Features | 24 (across 22 issues) |
+| Entra News Features | 26 (across 24 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
