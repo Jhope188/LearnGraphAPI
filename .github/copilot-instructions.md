@@ -217,6 +217,7 @@ Use `fmt_display()` logic: `%b %-d, %Y`
 | `articles.html` | `entra-news.html` |
 | `index.html` (featured writing card) | `index.html` (Entra News stats) |
 | `feed.xml` | `entra.news/readme.md` |
+| | `appearances.html` (Featured N times heading, issues count, meta description) |
 
 ---
 
