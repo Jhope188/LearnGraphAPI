@@ -1,11 +1,26 @@
 # SharePoint & OneDrive — CIS Settings Reference
 **M365 Managed Settings | SharePoint Admin Center**
-*Last updated: May 2026*
+*Last updated: September 2026*
 
 **References:**
 - [Microsoft Learn: Manage sharing settings for SharePoint and OneDrive in Microsoft 365](https://learn.microsoft.com/sharepoint/turn-external-sharing-on-or-off)
 - [Microsoft Learn: Set-SPOTenant](https://learn.microsoft.com/powershell/module/microsoft.online.sharepoint.powershell/set-spotenant?view=sharepoint-ps)
 - [YouTube: SharePoint/OneDrive sharing expiration settings walkthrough](https://www.youtube.com/watch?v=H94rtivkzSw)
+- [Message Center MC1243549: Retirement of SharePoint One-Time Passcode (SPO OTP) and transition to Microsoft Entra B2B](https://deltapulse.app/item/MC1243549) ([Microsoft Learn FAQ](https://learn.microsoft.com/sharepoint/faqs-odspintegrationwithentrab2b))
+- [Message Center MC1454378: Microsoft 365 — The Next Generation of File & Folder Sharing ("hero link")](https://deltapulse.app/item/MC1454378) ([Announcement blog](https://techcommunity.microsoft.com/blog/onedriveblog/simple-smart-and-secure-the-next-step-in-sharing-files-in-microsoft-365/4411655))
+- [Deltapulse #553220: Admin policy for expiring "People in your organization" links](https://deltapulse.app/item/553220)
+- [Deltapulse #557682: Entra B2B integration for external sharing in OneDrive & SharePoint](https://deltapulse.app/item/557682)
+
+---
+
+## 🚨 Recent Guidance Changes (last 6 months, reviewed Sep 2026)
+
+Two Microsoft 365 changes materially affect this baseline and should be reviewed against CIS v7 Foundations before the next audit cycle:
+
+1. **SPO One-Time Passcode retirement → Entra B2B becomes mandatory (MC1243549).** Starting **May 2026**, all *new* external sharing invitations/authentication use Microsoft Entra B2B instead of SPO OTP. Beginning **October 2026** (rescheduled from July/August), SPO OTP authentication itself retires — external users without a matching Entra B2B guest account will get **access denied** on previously shared "specific people" links. Critically: **the `EnableAzureADB2BIntegration` setting (section #13 below) stops controlling external sharing behavior from May 2026, and the option to disable Entra B2B integration is being removed entirely.** This turns section #13 from an optional CIS L2-style recommendation into a mandatory, non-configurable default. Action: ensure the **Guest Inviter** role is assigned appropriately, confirm Entra External ID **email OTP is not disabled** (it's now the fallback authentication path), and proactively audit/create B2B guest accounts for external collaborators before October 2026 to avoid access-denied incidents.
+2. **Next-gen "hero link" sharing model (MC1454378).** Rolling out **mid-September to late-October 2026** worldwide (including GCC/GCC High/DoD). Introduces a single, updatable "hero link" per file/folder that defaults to **Only people added to the file** (no link-based access) unless broadened by the user or admin policy. Adds a new PowerShell parameter **`DefaultMainLinkScope`** (`OnlyPeopleAdded` | `Organization`) at the site/OneDrive level — this is **separate from** `DefaultSharingLinkType`/`DefaultLinkPermission` in section #12 and does **not** have a tenant-wide equivalent yet. Existing default link settings and expiration policies continue to apply to legacy links but **do not govern hero links**. Action: once rolled out, verify `DefaultMainLinkScope` on sensitive sites/OneDrives and update internal sharing documentation — this is a genuinely new control surface, not a replacement for #12.
+
+> Also monitor (lower priority, non-security-critical): the **admin policy for expiring "People in your organization" links** (Deltapulse #553220, GA since March 2026) — complements section #12.1's tenant-wide expiration controls for internal-only links specifically.
 
 ---
 
@@ -312,6 +327,8 @@ SharePoint admin center → **Policies** → **Sharing** → scroll to **"File a
 > - **Default (no policy):** Link type = *Specific people*, Permission = *Edit*
 > - **CIS Recommended:** Link type = *Only people in your organisation*, Permission = *View*
 
+> 🚨 **Update — September 2026 (MC1454378):** Microsoft is rolling out a third-generation sharing experience (mid-September to late-October 2026) built around a single, updatable **"hero link"** per file/folder, defaulting to **Only people added to the file**. This introduces a **new, separate** PowerShell parameter — **`DefaultMainLinkScope`** (`OnlyPeopleAdded` | `Organization`) — configured at the site collection or OneDrive level. It does **not** replace `DefaultSharingLinkType`/`DefaultLinkPermission` above; existing default link settings and expiration policies continue to apply only to legacy ("Other links") sharing, not to hero links. There is currently **no tenant-wide equivalent** for hero link audience — it must be set per site/OneDrive. Once this rolls out to your tenant, audit `DefaultMainLinkScope` on sensitive sites and update internal sharing guidance; do not assume section #12's settings cover it.
+
 ---
 
 ### 12.1 Tenant-Wide Sharing Link Expiration Controls
@@ -420,6 +437,8 @@ Set-PnPTenant -EnableAzureADB2BIntegration $true
 ```
 
 > ℹ️ **Not currently Inforcer managed.** This setting is not yet read, audited, or remediated by Inforcer. Configuration must be done manually via PowerShell or the admin center UI where available. This is a candidate for a future Inforcer managed setting.
+
+> 🚨 **Update — September 2026 (MC1243549):** This setting is being made **mandatory and non-configurable**. Per Microsoft's Message Center post, beginning **May 2026** `EnableAzureADB2BIntegration` no longer controls external sharing behavior, and beginning **October 2026** the **option to disable Entra B2B integration is removed entirely** as part of the SPO One-Time Passcode (OTP) retirement. In practice this means: (1) leave/set this to `true` regardless of legacy tenant configuration, (2) ensure the **Guest Inviter** role is assigned to the appropriate users so guest accounts can be created, (3) confirm **Email OTP for B2B guests** is not disabled in Entra External ID settings (it becomes the fallback auth path for links shared before rollout), and (4) proactively audit external users without a B2B guest account before October 2026 — after retirement they will receive **access denied** until a guest account is created or the content is reshared. See [Frequently Asked Questions: Improvements to external sharing in OneDrive & SharePoint](https://learn.microsoft.com/sharepoint/faqs-odspintegrationwithentrab2b).
 
 ---
 

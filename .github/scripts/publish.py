@@ -41,7 +41,7 @@ import sys
 from datetime import date, datetime
 from pathlib import Path
 
-ROOT       = Path(__file__).resolve().parent.parent
+ROOT       = Path(__file__).resolve().parent.parent.parent
 ARTICLES   = ROOT / "articles.html"
 INDEX      = ROOT / "index.html"
 FEED       = ROOT / "feed.xml"

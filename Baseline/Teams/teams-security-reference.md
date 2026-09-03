@@ -1,12 +1,26 @@
 # Microsoft Teams Security Reference
 **CIS M365 Foundations v7.0.0 + Current Threat Intelligence**  
-Last updated: August 2026
+Last updated: September 2026
 
 ---
 
 ## How to use this document
 
 Section 1 is the CIS v7.0.0 controls for Teams — what the benchmark says, where to configure it, and the operational impact. Section 2 is threat intelligence: real attack campaigns that have hit Teams, what they exploited, and what stops them. Some of those mitigations overlap with CIS; most don't. They're worth reviewing as a separate conversation with clients.
+
+---
+
+## 🚨 Recent Guidance Changes (last 6 months, reviewed Sep 2026)
+
+Several Microsoft 365 changes directly reinforce or extend the social-engineering mitigations in Section 2 and the messaging control in 8.6.1:
+
+1. **[MC1466296 — Report security concerns in meetings](https://deltapulse.app/item/MC1466296)** ([Roadmap 569207](https://deltapulse.app/item/569207)). New **"Report a concern"** button in the participant tile/pane during Teams meetings, letting attendees report phishing, impersonation, scams, and social engineering directly from a live meeting. Rolling out Targeted Release late September 2026, GA mid-to-late October 2026. **Enabled by default.** Reports (with meeting metadata) surface in Microsoft Defender portal (Defender for Office 365 Plan 1/2 or Defender XDR) and in Teams admin center under **Protection reports > User-reported security submissions**. This is a direct, built-in mitigation for the vishing/social-engineering pattern in **Attack 1** below — action: confirm security admins have access to these reports, update incident response docs, and brief users on when to use it vs. "Not a concern." A parallel Gov Cloud rollout is tracked separately ([Roadmap 569609](https://deltapulse.app/item/569609)).
+2. **[Roadmap 566201 — Block all identified external bots automatically](https://deltapulse.app/item/566201)** and **[Roadmap 558107 — Identify bots joining your Teams meetings](https://deltapulse.app/item/558107)**. Both rolling out/GA in 2026. Extends meeting-join hardening (8.5.x controls) to cover automated/bot participants, not just anonymous human users — worth auditing alongside 8.5.1–8.5.4.
+3. **[Roadmap 543239 — Brand Impersonation Protection for Teams Calling](https://deltapulse.app/item/543239)**. Rolling out 2026. Directly relevant to **Attack 3** (Midnight Blizzard MFA/impersonation phishing) — flags calls impersonating known brands/organizations. Worth confirming enrollment once GA.
+4. **[Roadmap 560702 — Security Detection Report in Teams Admin Center](https://deltapulse.app/item/560702)** and **[Roadmap 536571 — User reported security signals in Teams admin center](https://deltapulse.app/item/536571)**. Both launched in 2026. Give admins a consolidated view of user-reported and system-detected security signals — pairs with the new MC1466296 capability above for end-to-end visibility.
+5. **[Roadmap 536572 — External Domains Anomalies Report](https://deltapulse.app/item/536572)**. Launched. Directly supports the 8.2.1 domain-allowlist decision and **Attack 2** (Storm-0324/TeamsPhisher) — flags anomalous external domain activity even when a full allowlist isn't operationally feasible yet.
+
+> Also monitor: **[Roadmap 536573 — Report a Suspicious Call in Microsoft Teams](https://deltapulse.app/item/536573)** (launched, pairs with Defender for Office 365) and **[Roadmap 523211 — Simplified controls to manage external collaboration](https://deltapulse.app/item/523211)** (launched, may ease the 8.2.1 allowlist rollout discussion with clients).
 
 ---
 
@@ -79,6 +93,8 @@ Get-CsTenantFederationConfiguration | Select-Object AllowFederatedUsers, AllowTe
 |----|-------|-------|-------------|--------|
 | 8.6.1 | L1 | Users can report security concerns in Teams | TAC → Messaging → Messaging policies | Low |
 
+> 🚨 **Update — September 2026:** Microsoft is extending this capability directly into meetings. **[MC1466296](https://deltapulse.app/item/MC1466296)** adds a "Report a concern" option to the meeting participant tile/pane (Targeted Release late Sep 2026, GA Oct 2026, **on by default**), letting attendees flag phishing/impersonation/social engineering in real time. Reports surface in Defender portal and Teams admin center → Protection reports. No admin action required for enablement, but verify security admin access and update IR docs before GA.
+
 ---
 
 ### Cross-referenced controls (not in Section 8, but directly cover Teams)
@@ -129,6 +145,8 @@ Attackers increasingly use generic display names ("IT Support", "Helpdesk", "Sec
 3. **Add a client notification policy.** The Policies tab in TAC → Users → External access controls which *users* can exercise external comms. Consider restricting external access to a specific security group of people who actually need it, rather than leaving it open for all users.
 
 4. **User awareness — one specific message:** "Microsoft IT will never contact you unsolicited via Teams. If you receive an unexpected Teams call from IT support, hang up and verify through the internal IT ticketing system before sharing your screen."
+
+5. **New (Sep 2026): point users to the in-meeting "Report a concern" button.** [MC1466296](https://deltapulse.app/item/MC1466296) puts a native reporting control directly in the meeting participant pane, giving a lower-friction alternative to "hang up and call IT" when the vishing attempt happens inside an active Teams meeting rather than a cold Teams chat/call. This is enabled by default once it rolls out — fold it into the user awareness message above rather than treating it as a separate control.
 
 ---
 
@@ -250,3 +268,7 @@ The inbox flooding serves two purposes: it creates the pretext for the support c
 | Microsoft Learn: Quick Assist security guidance | learn.microsoft.com/windows/client-management |
 | Microsoft Learn: External access in Teams | learn.microsoft.com/microsoftteams/trusted-organizations-external-meetings-chat |
 | Zscaler: GoGRPC backdoor via Teams vishing | cybersecuritynews.com — July 2026 |
+| Deltapulse MC1466296: Report security concerns in meetings | [deltapulse.app/item/MC1466296](https://deltapulse.app/item/MC1466296) |
+| Deltapulse #566201: Block all identified external bots automatically | [deltapulse.app/item/566201](https://deltapulse.app/item/566201) |
+| Deltapulse #543239: Brand Impersonation Protection for Teams Calling | [deltapulse.app/item/543239](https://deltapulse.app/item/543239) |
+| Deltapulse #536572: External Domains Anomalies Report | [deltapulse.app/item/536572](https://deltapulse.app/item/536572) |
