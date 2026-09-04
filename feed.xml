@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 28 Aug 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 04 Sep 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>NHI? Never Heard of Him — The Service Principal Sitting in Your Tenant</title>
+      <link>https://conditionalaccess.tech/articles/entra/service-principal-shadow-admins.html</link>
+      <description>Every tenant has them. Most orgs can't see them. Some hold more privilege than any human admin, with none of the controls you've actually built.</description>
+      <pubDate>Fri, 04 Sep 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/entra/service-principal-shadow-admins.html</guid>
+      <category>Entra</category>
+    </item>
 
     <item>
       <title>The Ownership Operating Model</title>
