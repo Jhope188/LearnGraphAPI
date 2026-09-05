@@ -460,16 +460,30 @@
     .content { padding: 3rem 6vw 6rem; }
   }
 
+  /* Portrait phones/tablets: stack comparison images and code blocks
+     vertically so nothing is squeezed into unreadable slivers. Uses
+     orientation instead of a fixed width so it applies consistently
+     regardless of device pixel width. */
+  @media (max-width: 900px) and (orientation: portrait) {
+    .versus { grid-template-columns: 1fr; }
+    .screenshot-compare { grid-template-columns: 1fr; }
+  }
+
+  /* Landscape phones/tablets: short viewport height means the hero should
+     compress, and wide content (tables, code, side-by-side screenshots)
+     should bleed to the edges — and stay two columns — to use the extra
+     horizontal room instead of overflowing off-screen. */
   @media (max-width: 900px) and (orientation: landscape) {
     .hero { min-height: auto; padding: 5.5rem 6vw 2.5rem; }
-    .table-wrap, .screenshot-compare, .screenshot-single, pre {
+    .versus, .screenshot-compare { grid-template-columns: 1fr 1fr; }
+    .table-wrap, .versus, .screenshot-compare, .screenshot-single, pre {
       margin-left: -6vw; margin-right: -6vw; border-radius: 0;
+      width: calc(100% + 12vw);
+      max-width: calc(100% + 12vw);
     }
   }
 
   @media (max-width: 600px) {
-    .versus { grid-template-columns: 1fr; }
-    .screenshot-compare { grid-template-columns: 1fr; }
     .hero { padding: 6rem 6vw 4rem; }
     .mistake-num { font-size: 2.5rem; min-width: 2.25rem; }
   }
