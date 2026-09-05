@@ -401,6 +401,24 @@ blockquote {
   .sidebar-num { min-width: auto; }
   article { padding: 1.5rem 0 4rem; width: 100%; }
   h2, h3 { scroll-margin-top: 108px; }
+
+  /* Tables must stay within the viewport in portrait too. Without a fixed
+     layout, long unbreakable Graph permission strings in hidden/overflowing
+     columns force tall row heights while only the first column is visible,
+     producing the "huge vertical gaps" look. */
+  .perm-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .perm-table td, .perm-table th {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .perm-table code {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
 }
 @media (max-width: 600px) {
   .hero { padding: 5rem 1rem 3rem; }
@@ -421,10 +439,29 @@ blockquote {
      sidebar's edge-to-edge bleed margin must match or it clips/misaligns. */
   .sidebar { margin: 0 -1.5rem; }
   article { padding: 1.25rem 0 4rem; }
-  .perm-table, .screenshot-block, pre {
+  .screenshot-block, pre {
     margin-left: -1.5rem; margin-right: -1.5rem;
     width: calc(100% + 3rem);
     border-radius: 0;
+  }
+
+  /* Tables (unlike images/screenshots) must NOT bleed off the viewport edge —
+     the long unbreakable Graph permission strings inside <code> then force
+     the browser to clip or mid-word-break columns. Instead, keep the table
+     inside the padded container, force even column widths, and let long
+     code strings wrap cleanly within their own cell. */
+  .perm-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .perm-table td, .perm-table th {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .perm-table code {
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   /* Prevent large screenshots from overflowing short landscape viewports */
