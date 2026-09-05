@@ -525,6 +525,76 @@
     height: 14px;
     flex-shrink: 0;
   }
+
+  .page-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .container { margin: 0; max-width: 720px; }
+  .sidebar {
+    position: sticky;
+    top: 24px;
+    width: 220px;
+    flex-shrink: 0;
+    padding-top: 24px;
+    font-size: 0.85rem;
+  }
+  .sidebar ol {
+    list-style: none;
+    border-left: 2px solid var(--color-border);
+  }
+  .sidebar li { margin: 0; }
+  .sidebar a {
+    display: block;
+    padding: 8px 0 8px 16px;
+    color: var(--color-text-dim);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    margin-left: -2px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sidebar a:hover { color: var(--color-text-primary); }
+  .sidebar a.active {
+    color: var(--color-teal);
+    border-left-color: var(--color-teal);
+  }
+  .mobile-toc {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--color-base);
+    border-bottom: 1px solid var(--color-border);
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 16px;
+  }
+  .mobile-toc a {
+    display: inline-block;
+    color: var(--color-text-dim);
+    text-decoration: none;
+    font-size: 0.78rem;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    margin-right: 8px;
+  }
+  .mobile-toc a.active {
+    color: #fff;
+    background: var(--color-teal);
+  }
+  section[id] { scroll-margin-top: 24px; }
+
+  @media (max-width: 900px) {
+    .page-body { display: block; }
+    .sidebar { display: none; }
+    .mobile-toc { display: flex; }
+    .container { max-width: none; }
+    section[id] { scroll-margin-top: 56px; }
+  }
 </style>
 </head>
 <body>
@@ -564,13 +634,38 @@
   </div>
 </div>
 
+<!-- ── Mobile TOC ── -->
+<nav class="mobile-toc">
+  <a href="#whats-happening">Root Cause</a>
+  <a href="#broken-flow">Broken Flow</a>
+  <a href="#outlook-desktop">Outlook Desktop</a>
+  <a href="#policy-change">CA Policy Change</a>
+  <a href="#walkthrough">Walkthrough</a>
+  <a href="#non-technical">Non-Technical</a>
+  <a href="#add-exclusion">Baseline CA</a>
+  <a href="#key-facts">Key Facts</a>
+</nav>
+
 <!-- ══════════════════════════════════════════
      CONTAINER
 ══════════════════════════════════════════ -->
+<div class="page-body">
+  <aside class="sidebar">
+    <ol>
+      <li><a href="#whats-happening">Root Cause</a></li>
+      <li><a href="#broken-flow">Broken Flow</a></li>
+      <li><a href="#outlook-desktop">Outlook Desktop</a></li>
+      <li><a href="#policy-change">CA Policy Change</a></li>
+      <li><a href="#walkthrough">Walkthrough</a></li>
+      <li><a href="#non-technical">Non-Technical</a></li>
+      <li><a href="#add-exclusion">Baseline CA</a></li>
+      <li><a href="#key-facts">Key Facts</a></li>
+    </ol>
+  </aside>
 <div class="container">
 
   <!-- ── What Actually Happens ── -->
-  <section>
+  <section id="whats-happening">
     <div class="eyebrow">The Root Cause</div>
     <h2>What's Actually Happening</h2>
 
@@ -596,7 +691,7 @@
   </section>
 
   <!-- ── The Full Flow ── -->
-  <section>
+  <section id="broken-flow">
     <div class="eyebrow">Before the Fix</div>
     <h2>The Broken Flow</h2>
 
@@ -649,7 +744,7 @@
   </section>
 
   <!-- ── Why This Happens ── -->
-  <section>
+  <section id="outlook-desktop">
     <div class="eyebrow">The Technical Explanation</div>
     <h2>What Outlook Desktop Actually Does</h2>
 
@@ -692,7 +787,7 @@
   </section>
 
   <!-- ── What's in the CA Policy ── -->
-  <section>
+  <section id="policy-change">
     <div class="eyebrow">The Fix</div>
     <h2>What Needs to Change in the CA Policy</h2>
 
@@ -750,7 +845,7 @@
   <hr class="divider" />
 
   <!-- ── Demo Walkthrough ── -->
-  <section>
+  <section id="walkthrough">
     <div class="eyebrow">Live Demo</div>
     <h2>Step-by-Step Walkthrough</h2>
     <p>
@@ -887,7 +982,7 @@
   <hr class="divider" />
 
   <!-- ── What to Tell the Customer ── -->
-  <section>
+  <section id="non-technical">
     <div class="eyebrow">Customer Talking Points</div>
     <h2>The Non-Technical Version</h2>
 
@@ -918,7 +1013,7 @@
   </section>
 
   <!-- ── Baseline Policy Update ── -->
-  <section>
+  <section id="add-exclusion">
     <div class="eyebrow">IAC Baseline Update</div>
     <h2>Add AIP Exclusion to Your Baseline CA Policy</h2>
 
@@ -964,7 +1059,7 @@ Update-MgIdentityConditionalAccessPolicy `
   </section>
 
   <!-- ── Quick Reference ── -->
-  <section>
+  <section id="key-facts">
     <div class="eyebrow">Quick Reference</div>
     <h2>Key Facts</h2>
 
@@ -1012,11 +1107,31 @@ Update-MgIdentityConditionalAccessPolicy `
   </section>
 
 </div><!-- end container -->
+</div><!-- end page-body -->
 
 <footer>
   <p>conditionalaccess<span style="color:var(--color-teal)">.tech</span> &nbsp;·&nbsp; Jon Hope, Microsoft MVP &nbsp;·&nbsp;
   <a href="https://conditionalaccess.tech">conditionalaccess.tech</a></p>
 </footer>
+
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar a, .mobile-toc a');
+  var sections = document.querySelectorAll('.container section[id]');
+  if (!sections.length) return;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var id = entry.target.id;
+        links.forEach(function(l) {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(function(s) { observer.observe(s); });
+})();
+</script>
 
 </body>
 </html>
