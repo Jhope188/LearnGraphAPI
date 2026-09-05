@@ -472,6 +472,80 @@
       border-radius: 3px;
     }
 
+    .page-body {
+      display: flex;
+      align-items: flex-start;
+      gap: 40px;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .content-wrap { margin: 0; }
+    .sidebar {
+      position: sticky;
+      top: 88px;
+      width: 220px;
+      flex-shrink: 0;
+      padding-top: 64px;
+      font-size: 0.85rem;
+    }
+    .sidebar ol {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border-left: 2px solid var(--color-border, rgba(255,255,255,0.1));
+    }
+    .sidebar li { margin: 0; }
+    .sidebar a {
+      display: block;
+      padding: 8px 0 8px 16px;
+      color: var(--color-text-muted, #8a93a6);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      margin-left: -2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .sidebar a:hover { color: var(--color-text, #f0f0f0); }
+    .sidebar a.active {
+      color: var(--color-teal, #00b8b0);
+      border-left-color: var(--color-teal, #00b8b0);
+    }
+    .mobile-toc {
+      display: none;
+      position: sticky;
+      top: 68px;
+      z-index: 20;
+      background: var(--color-bg, #0b0f1a);
+      border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 10px 16px;
+      gap: 8px;
+    }
+    .mobile-toc a {
+      display: inline-block;
+      color: var(--color-text-muted, #8a93a6);
+      text-decoration: none;
+      font-size: 0.78rem;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      margin-right: 8px;
+    }
+    .mobile-toc a.active {
+      color: #fff;
+      background: var(--color-teal, #00b8b0);
+    }
+    .section-heading { scroll-margin-top: 88px; }
+
+    @media (max-width: 900px) {
+      .page-body { display: block; padding: 0; }
+      .sidebar { display: none; }
+      .mobile-toc { display: flex; }
+      .content-wrap { max-width: none; }
+      .section-heading { scroll-margin-top: 116px; }
+    }
+
     @media (max-width: 600px) {
       .nav { padding: 16px 20px; }
       .hero { padding: 56px 20px 48px; }
@@ -514,7 +588,28 @@
   <img src="AU-RMAU-Images/au-vs-rmau-banner.png" alt="Administration Units vs RMAU: Delegate and Control Access vs Protect Critical Identities" style="width:100%;border-radius:8px;display:block;" />
 </div>
 
+<!-- ── Mobile TOC ── -->
+<nav class="mobile-toc" id="mobile-toc">
+  <a href="#definitions">Definitions</a>
+  <a href="#au-explained">AUs</a>
+  <a href="#rmau-explained">RMAUs</a>
+  <a href="#comparison">Side by Side</a>
+  <a href="#how-to">How To</a>
+  <a href="#when-to-use">When to Use</a>
+</nav>
+
 <!-- ── Main content ── -->
+<div class="page-body">
+  <aside class="sidebar">
+    <ol>
+      <li><a href="#definitions">Definitions</a></li>
+      <li><a href="#au-explained">AUs</a></li>
+      <li><a href="#rmau-explained">RMAUs</a></li>
+      <li><a href="#comparison">Side by Side</a></li>
+      <li><a href="#how-to">How To</a></li>
+      <li><a href="#when-to-use">When to Use</a></li>
+    </ol>
+  </aside>
 <main class="content-wrap">
 
   <!-- Intro section -->
@@ -537,7 +632,7 @@
   <!-- Official definitions -->
   <section class="section-block">
     <p class="section-eyebrow">Microsoft Learn</p>
-    <h2 class="section-heading">The Official Definitions</h2>
+    <h2 class="section-heading" id="definitions">The Official Definitions</h2>
 
     <div class="def-card">
       <p class="def-card-label">Administrative Unit</p>
@@ -570,7 +665,7 @@
   <!-- Jon Hope angle - AUs -->
   <section class="section-block">
     <p class="section-eyebrow">The Jon Hope Angle</p>
-    <h2 class="section-heading">AUs: The Cloud Equivalent of Active Directory OUs</h2>
+    <h2 class="section-heading" id="au-explained">AUs: The Cloud Equivalent of Active Directory OUs</h2>
 
     <div class="prose">
       <p>The fact is AUs and RMAUs are, to me, a natural evolution of what Active Directory attempted to accomplish. It used OUs to create a directory structure and limit access or policies based on roles and departments. Keep in mind Entra is a flat directory. The cloud doesn't function like AD, and thank god for that.</p>
@@ -592,7 +687,7 @@
   <!-- RMAU section -->
   <section class="section-block">
     <p class="section-eyebrow">Locking It Down</p>
-    <h2 class="section-heading">Ok, What About RMAUs?</h2>
+    <h2 class="section-heading" id="rmau-explained">Ok, What About RMAUs?</h2>
 
     <div class="prose">
       <p>Again, a lot of verbiage in the definitions above and it's all accurate, but the short and simple is: I need to lock things down, and this is how you do it. With a catch.</p>
@@ -632,7 +727,7 @@
   <!-- AU vs RMAU comparison -->
   <section class="section-block">
     <p class="section-eyebrow">Quick Reference</p>
-    <h2 class="section-heading">AU vs RMAU: Side by Side</h2>
+    <h2 class="section-heading" id="comparison">AU vs RMAU: Side by Side</h2>
 
     <table class="comparison-table">
       <thead>
@@ -692,7 +787,7 @@
   <!-- Tutorial section -->
   <section class="section-block">
     <p class="section-eyebrow">Tutorial</p>
-    <h2 class="section-heading">How the Heck Do I Do It?</h2>
+    <h2 class="section-heading" id="how-to">How the Heck Do I Do It?</h2>
 
     <div class="prose">
       <p>It's actually really simple. I did an in-depth article that I'm not gonna completely rehash here:</p>
@@ -791,7 +886,7 @@
   <!-- When to use each -->
   <section class="section-block">
     <p class="section-eyebrow">Bottom Line</p>
-    <h2 class="section-heading">When to Use Each</h2>
+    <h2 class="section-heading" id="when-to-use">When to Use Each</h2>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;">
 
@@ -834,6 +929,7 @@
   </div>
 
 </main>
+</div>
 
 <!-- ── Footer ── -->
 <footer class="footer">
@@ -847,6 +943,25 @@
     <a href="https://medium.com/@jhope188" target="_blank" rel="noopener">Medium</a>
   </div>
 </footer>
+
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar a, .mobile-toc a');
+  var sections = document.querySelectorAll('.section-heading[id]');
+  if (!sections.length) return;
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var id = entry.target.id;
+        links.forEach(function(l) {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(function(s) { observer.observe(s); });
+})();
+</script>
 
 </body>
 </html>
