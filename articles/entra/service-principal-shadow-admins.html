@@ -986,9 +986,7 @@ blockquote {
 
   <h3>Enforcing secret lifetime at the policy level</h3>
 
-  <p>Individual guidance about secret rotation only works if someone follows it. App Management Method Policies let you enforce it at the tenant level via Graph API or the Application policies blade. The tenant-wide <code>tenantAppManagementPolicy</code> can cap password credential lifetime (e.g. 90 days), block symmetric key addition, and restrict custom password addition. All apply automatically to new app registrations from a defined date.</p>
-
-  <p>This is a Workload Identities Premium feature. Once configured, it closes the gap between policy intent and actual credential issuance. A developer can't create a two-year secret if the policy caps lifetime at 90 days. Schema and configuration options are documented on <a href="https://learn.microsoft.com/en-us/graph/api/resources/tenantappmanagementpolicy" target="_blank">Microsoft Learn: tenantAppManagementPolicy</a>.</p>
+  <p>Individual guidance about secret rotation only works if someone follows it. App Management Policies let you enforce it at the tenant level via Graph API or the Application policies blade. The tenant-wide <code>tenantAppManagementPolicy</code> can cap password credential lifetime (e.g. 90 days), block symmetric key addition, and restrict custom password addition. All apply automatically to new app registrations from a defined date. A developer can't create a two-year secret if the policy caps lifetime at 90 days. Schema and configuration options are documented on <a href="https://learn.microsoft.com/en-us/graph/api/resources/tenantappmanagementpolicy" target="_blank">Microsoft Learn: tenantAppManagementPolicy</a>.</p>
 
   <p>These controls are also surfaced in the Entra admin center under <strong>Enterprise Applications &gt; Application policies</strong>, where you can see and configure password restrictions, certificate lifetime restrictions, identifier URI restrictions, and sign-in audience restrictions without needing to call Graph directly.</p>
 
