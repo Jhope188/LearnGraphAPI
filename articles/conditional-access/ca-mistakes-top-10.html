@@ -104,11 +104,72 @@
     height: 1px; background: var(--border);
   }
 
+  /* PAGE BODY / SIDEBAR GUIDE (large-monitor layout) */
+  .page-body {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 3rem;
+    padding: 0 6vw;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 2rem;
+    flex: 0 0 220px;
+    padding: 5rem 0 8rem;
+    align-self: flex-start;
+  }
+
+  .sidebar-label {
+    font-size: 0.65rem; font-weight: 600;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-dim); margin-bottom: 1rem;
+  }
+
+  .sidebar ol {
+    list-style: none;
+    counter-reset: toc;
+    display: flex; flex-direction: column; gap: 0.65rem;
+  }
+
+  .sidebar li { counter-increment: toc; }
+
+  .sidebar a {
+    display: flex; gap: 0.6rem;
+    font-size: 0.82rem; line-height: 1.4;
+    color: var(--text-sec); text-decoration: none;
+    transition: color 0.15s;
+    border-left: 2px solid transparent;
+    padding-left: 0.75rem; margin-left: -0.85rem;
+  }
+
+  .sidebar a::before {
+    content: counter(toc, decimal-leading-zero);
+    color: var(--teal-dim); font-weight: 600; flex-shrink: 0;
+  }
+
+  .sidebar a:hover { color: var(--text-pri); }
+
+  .sidebar a.active {
+    color: var(--teal);
+    border-left-color: var(--teal);
+  }
+  .sidebar a.active::before { color: var(--teal); }
+
+  /* Mobile pill-bar TOC (replaces sidebar under 900px) */
+  .mobile-toc {
+    display: none;
+  }
+
   /* CONTENT */
   .content {
+    flex: 1;
+    min-width: 0;
     max-width: 800px;
     margin: 0 auto;
-    padding: 5rem 6vw 8rem;
+    padding: 5rem 0 8rem;
   }
 
   /* MISTAKE ENTRY */
@@ -358,6 +419,54 @@
   }
 
   /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+
+    .mobile-toc {
+      display: block;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(10,22,40,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.7rem 0;
+    }
+    .mobile-toc-inner {
+      display: flex; gap: 0.6rem;
+      overflow-x: auto;
+      padding: 0 6vw;
+      scrollbar-width: none;
+    }
+    .mobile-toc-inner::-webkit-scrollbar { display: none; }
+    .mobile-toc a {
+      flex-shrink: 0;
+      font-size: 0.78rem;
+      color: var(--text-sec);
+      text-decoration: none;
+      padding: 0.4rem 0.9rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      white-space: nowrap;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .mobile-toc a.active {
+      color: var(--teal);
+      border-color: var(--teal-dim);
+      background: rgba(0,184,176,0.08);
+    }
+
+    .page-body { padding: 0; }
+    .content { padding: 3rem 6vw 6rem; }
+  }
+
+  @media (max-width: 900px) and (orientation: landscape) {
+    .hero { min-height: auto; padding: 5.5rem 6vw 2.5rem; }
+    .table-wrap, .screenshot-compare, .screenshot-single, pre {
+      margin-left: -6vw; margin-right: -6vw; border-radius: 0;
+    }
+  }
+
   @media (max-width: 600px) {
     .versus { grid-template-columns: 1fr; }
     .screenshot-compare { grid-template-columns: 1fr; }
@@ -396,6 +505,38 @@
   <div class="hero-rule"></div>
 </section>
 
+<nav class="mobile-toc">
+  <div class="mobile-toc-inner">
+    <a href="#mistake-1">01 · Client App Conditions</a>
+    <a href="#mistake-2">02 · Grant Controls</a>
+    <a href="#mistake-3">03 · Device Registration</a>
+    <a href="#mistake-4">04 · Legacy MFA Setting</a>
+    <a href="#mistake-5">05 · Auth Strength</a>
+    <a href="#mistake-6">06 · Break-Glass Accounts</a>
+    <a href="#mistake-7">07 · Named Locations</a>
+    <a href="#mistake-8">08 · Device Compliance</a>
+    <a href="#mistake-9">09 · Session Controls</a>
+    <a href="#mistake-10">10 · Sensitivity Labels</a>
+  </div>
+</nav>
+
+<div class="page-body">
+  <aside class="sidebar">
+    <div class="sidebar-label">On This Page</div>
+    <ol>
+      <li><a href="#mistake-1">Excluding User Agents the Wrong Way</a></li>
+      <li><a href="#mistake-2">Confusing AND with OR in Grant Controls</a></li>
+      <li><a href="#mistake-3">CA Location Controls vs. Device Registration</a></li>
+      <li><a href="#mistake-4">Legacy MFA Setting Alongside CA</a></li>
+      <li><a href="#mistake-5">Phishing-Resistant MFA With No Way In</a></li>
+      <li><a href="#mistake-6">Break-Glass Exclusions Enumerated</a></li>
+      <li><a href="#mistake-7">Block Countries, Exempt With No Protection</a></li>
+      <li><a href="#mistake-8">Compliant Device vs. Device Filter</a></li>
+      <li><a href="#mistake-9">Sign-In Frequency Set to Every Time</a></li>
+      <li><a href="#mistake-10">Sensitivity Label Encryption Breaks</a></li>
+    </ol>
+  </aside>
+
 <main class="content">
 
   <div class="intro">
@@ -404,7 +545,7 @@
   </div>
 
   <!-- 01 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-1">
     <div class="mistake-header">
       <div class="mistake-num">01</div>
       <div class="mistake-titles">
@@ -437,7 +578,7 @@
   </div>
 
   <!-- 02 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-2">
     <div class="mistake-header">
       <div class="mistake-num">02</div>
       <div class="mistake-titles">
@@ -474,7 +615,7 @@
   </div>
 
   <!-- 03 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-3">
     <div class="mistake-header">
       <div class="mistake-num">03</div>
       <div class="mistake-titles">
@@ -495,7 +636,7 @@
   </div>
 
   <!-- 04 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-4">
     <div class="mistake-header">
       <div class="mistake-num">04</div>
       <div class="mistake-titles">
@@ -521,7 +662,7 @@
   </div>
 
   <!-- 05 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-5">
     <div class="mistake-header">
       <div class="mistake-num">05</div>
       <div class="mistake-titles">
@@ -547,7 +688,7 @@
   </div>
 
   <!-- 06 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-6">
     <div class="mistake-header">
       <div class="mistake-num">06</div>
       <div class="mistake-titles">
@@ -568,7 +709,7 @@
   </div>
 
   <!-- 07 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-7">
     <div class="mistake-header">
       <div class="mistake-num">07</div>
       <div class="mistake-titles">
@@ -594,7 +735,7 @@
   </div>
 
   <!-- 08 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-8">
     <div class="mistake-header">
       <div class="mistake-num">08</div>
       <div class="mistake-titles">
@@ -642,7 +783,7 @@
   </div>
 
   <!-- 09 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-9">
     <div class="mistake-header">
       <div class="mistake-num">09</div>
       <div class="mistake-titles">
@@ -670,7 +811,7 @@
   </div>
 
   <!-- 10 -->
-  <div class="mistake">
+  <div class="mistake" id="mistake-10">
     <div class="mistake-header">
       <div class="mistake-num">10</div>
       <div class="mistake-titles">
@@ -729,5 +870,27 @@
   </div>
 
 </main>
+</div>
+
+<script>
+  (function () {
+    var links = document.querySelectorAll('.sidebar a, .mobile-toc a');
+    var sections = Array.prototype.slice.call(document.querySelectorAll('.mistake[id]'));
+    if (!links.length || !sections.length) return;
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          links.forEach(function (link) {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+          });
+        }
+      });
+    }, { rootMargin: '-15% 0px -70% 0px' });
+
+    sections.forEach(function (section) { observer.observe(section); });
+  })();
+</script>
+
 </body>
 </html>
