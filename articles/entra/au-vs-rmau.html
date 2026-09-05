@@ -39,43 +39,56 @@
     }
     a:hover { text-decoration: underline; }
 
-    /* ── Nav ── */
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 40px;
-      border-bottom: 1px solid var(--color-border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    /* ── Topbar ── */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 52px; z-index: 100;
       background: rgba(10, 22, 40, 0.92);
+      border-bottom: 1px solid var(--color-border);
       backdrop-filter: blur(12px);
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
     }
-    .nav-wordmark {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .topbar-left {
+      display: flex; align-items: center; gap: 0.6rem;
       text-decoration: none;
+      min-width: 0;
     }
-    .nav-shield {
-      width: 28px;
-      height: 28px;
-      object-fit: contain;
-      display: block;
+    .topbar-left img {
+      width: 32px; height: 32px;
+      object-fit: contain; border-radius: 4px;
+      flex-shrink: 0;
     }
-    .nav-brand {
-      font-size: 1rem;
-      font-weight: 600;
+    .topbar-site {
+      font-size: 0.9rem; font-weight: 600;
       color: var(--color-text-primary);
       letter-spacing: -0.01em;
+      white-space: nowrap;
     }
-    .nav-brand span { color: var(--color-teal); }
-    .nav-meta {
-      font-size: 0.72rem;
+    .topbar-divider {
+      width: 1px; height: 18px;
+      background: var(--color-border);
+      margin: 0 0.75rem;
+      flex-shrink: 0;
+    }
+    .topbar-article {
+      font-size: 0.8rem;
       color: var(--color-text-dim);
-      letter-spacing: 0.05em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+    .topbar-right {
+      display: flex; align-items: center; gap: 0.4rem;
+      text-decoration: none;
+      font-size: 0.8rem;
+      color: var(--color-text-dim);
+      transition: color 0.15s;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .topbar-right:hover { color: var(--color-teal); text-decoration: none; }
 
     /* ── Hero ── */
     .hero {
@@ -515,7 +528,7 @@
     .mobile-toc {
       display: none;
       position: sticky;
-      top: 68px;
+      top: 52px;
       z-index: 20;
       background: var(--color-bg, #0b0f1a);
       border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));
@@ -538,20 +551,19 @@
       color: #fff;
       background: var(--color-teal, #00b8b0);
     }
-    .section-heading { scroll-margin-top: 88px; }
+    .section-heading { scroll-margin-top: 72px; }
 
     @media (max-width: 900px) {
       .page-body { display: block; padding: 0; }
       .sidebar { display: none; }
       .mobile-toc { display: flex; }
       .content-wrap { max-width: none; }
-      .section-heading { scroll-margin-top: 116px; }
-      .nav-meta { display: none !important; }
-      .nav { flex-wrap: nowrap; }
+      .section-heading { scroll-margin-top: 112px; }
     }
 
     @media (max-width: 600px) {
-      .nav { padding: 16px 20px; }
+      .topbar { padding: 0 1rem; }
+      .topbar-site { font-size: 0.82rem; }
       .hero { padding: 56px 20px 48px; }
       .content-wrap { padding: 48px 20px 80px; }
       .footer { padding: 32px 20px; }
@@ -561,14 +573,16 @@
 </head>
 <body>
 
-<!-- ── Navigation ── -->
-<nav class="nav">
-  <a class="nav-wordmark" href="https://conditionalaccess.tech">
-    <img class="nav-shield" src="https://conditionalaccess.tech/assets/NewConditionalaccess.tech.png" alt="" />
-    <span class="nav-brand">conditionalaccess<span>.tech</span></span>
+<!-- ── Topbar ── -->
+<header class="topbar">
+  <a href="https://conditionalaccess.tech" class="topbar-left">
+    <img src="https://conditionalaccess.tech/assets/NewConditionalaccess.tech.png" alt="" />
+    <span class="topbar-site">conditionalaccess.tech</span>
+    <span class="topbar-divider"></span>
+    <span class="topbar-article">AUs vs RMAUs</span>
   </a>
-  <span class="nav-meta">Microsoft MVP &bull; Security: Identity &amp; Access</span>
-</nav>
+  <a href="https://conditionalaccess.tech/articles.html" class="topbar-right">← All Articles</a>
+</header>
 
 <!-- ── Hero ── -->
 <header class="hero">
