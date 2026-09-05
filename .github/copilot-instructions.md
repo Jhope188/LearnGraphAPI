@@ -221,7 +221,58 @@ Use `fmt_display()` logic: `%b %-d, %Y`
 
 ---
 
-## 📄 Article HTML template standards
+## � Mobile Layout & Navigation Standard (all articles)
+
+Every article must use this exact header/navigation pattern. This was validated across iPhone (402×874) and Android (Pixel 8, 412×915) form factors in portrait and landscape using `mobile-test.html`. Apply verbatim to new articles — do not invent variations.
+
+### Fixed topbar (required, identical markup/CSS on every article)
+```html
+<header class="topbar">
+  <a href="https://conditionalaccess.tech" class="topbar-left">
+    <img src="https://conditionalaccess.tech/assets/NewConditionalaccess.tech.png" alt="" />
+    <span class="topbar-site">conditionalaccess.tech</span>
+    <span class="topbar-divider"></span>
+    <span class="topbar-article">[Short Article Title]</span>
+  </a>
+  <a href="https://conditionalaccess.tech/articles.html" class="topbar-right">← All Articles</a>
+</header>
+```
+- `.topbar` is `position: fixed; height: 52px;` — never variable-height, never a `.nav` custom to one article.
+- `.topbar-left` must have `min-width: 0` and `.topbar-article` must have `overflow:hidden; text-overflow:ellipsis; white-space:nowrap` so long titles truncate instead of wrapping/breaking the bar on narrow phones.
+- `.topbar-right` always points to `articles.html` with the exact label `← All Articles`.
+- Never reintroduce a floating `.back-btn`, `.logo-badge`, or standalone `.wordmark` — the topbar replaces all of those.
+
+### Desktop TOC vs. mobile TOC (900px breakpoint)
+- **Desktop (>900px):** vertical sticky `.sidebar` (`position: sticky; top: 2rem`), numbered links, active state = colored text + left border accent.
+- **Mobile (≤900px):** `.sidebar` is hidden (`display:none`) and one of two things takes over:
+  1. `.mobile-toc` — horizontal scrollable pill bar, OR
+  2. `.series-nav` — horizontal tab bar reused as the mobile TOC (only when the article is part of a numbered series with its own series nav).
+- Whichever mobile nav is used **must** be `position: sticky; top: 52px;` (exactly the topbar height) so it docks directly under the fixed topbar with no gap and never disappears while scrolling.
+- Mobile nav active-state styling is unified as a **filled pill**: `background: var(--color-teal); color: var(--color-base);` (dark text on solid teal) — not an outline/underline style. Inactive pills use a subtle border/background (`rgba(255,255,255,0.03–0.05)`).
+- Add `scroll-margin-top` to section headings so anchored jumps land below the fixed topbar + mobile nav (~108–112px on mobile, ~2–4rem on desktop).
+
+### Responsive images (required on every article with screenshots)
+Add this landscape safeguard so screenshots never overflow a short landscape viewport:
+```css
+@media (max-width: 900px) and (orientation: landscape) {
+  .screenshot-block img, .screenshot-panel img, .screenshot-single img, .img-block img {
+    max-width: 100%; width: auto; height: auto;
+    max-height: calc(100vh - 52px - 56px);
+    object-fit: contain;
+    display: block; margin-left: auto; margin-right: auto;
+  }
+}
+```
+
+### Testing requirement before publish
+- Use `mobile-test.html` (served locally, e.g. `python3 -m http.server 8000`) to check every new/edited article.
+- Test **both** device presets in the tester's Device dropdown — iPhone 17 Pro (402×874) and Pixel 8 / Android (412×915) — in both Portrait and Landscape.
+- Confirm: topbar stays fixed, mobile nav is sticky directly under it (no gap, no disappearing), active pill is filled-teal, and images don't overflow in landscape.
+- Always cache-bust (`?t=timestamp`, already built into the tester's Reload/page-select) before trusting a screenshot.
+
+---
+
+## �📄 Article HTML template standards
 
 Every article HTML file **must** include the following. Apply these when creating a new article or updating an existing one.
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Mobile Layout Test — iPhone 17 Pro</title>
+<title>Mobile Layout Test — iPhone &amp; Android</title>
 <style>
   :root {
     --portrait-w: 402px;
@@ -89,7 +89,7 @@
 <body>
 
 <h1>Mobile Layout Tester</h1>
-<div class="sub">iPhone 17 Pro form factor (402 × 874 CSS px) &middot; live iframe of the deployed pages</div>
+<div class="sub" id="sub-label">iPhone 17 Pro form factor (402 × 874 CSS px) &middot; live iframe of the deployed pages</div>
 
 <div class="controls">
   <label for="page">Page:</label>
@@ -100,8 +100,13 @@
     <option value="https://conditionalaccess.tech/articles/entra/mastering-groups-deep-dive.html">mastering-groups-deep-dive.html</option>
     <option value="https://conditionalaccess.tech/articles/entra/service-principal-shadow-admins.html">service-principal-shadow-admins.html (NHI)</option>
   </select>
-  <button id="btn-portrait" class="active">Portrait 402×874</button>
-  <button id="btn-landscape">Landscape 874×402</button>
+  <label for="device-select">Device:</label>
+  <select id="device-select">
+    <option value="iphone" data-w="402" data-h="874" data-label="iPhone 17 Pro">iPhone 17 Pro (402×874)</option>
+    <option value="android" data-w="412" data-h="915" data-label="Pixel 8 (Android)">Pixel 8 (412×915)</option>
+  </select>
+  <button id="btn-portrait" class="active">Portrait</button>
+  <button id="btn-landscape">Landscape</button>
   <button id="btn-reload">Reload</button>
 </div>
 
@@ -117,34 +122,54 @@
 <div class="dims" id="dims">Rendering at <strong>402 × 874</strong></div>
 
 <script>
-  var device = document.getElementById('device');
+  var deviceFrame = document.getElementById('device');
+  var deviceSelect = document.getElementById('device-select');
   var frame = document.getElementById('frame');
   var pageSelect = document.getElementById('page');
   var dims = document.getElementById('dims');
+  var subLabel = document.getElementById('sub-label');
   var btnP = document.getElementById('btn-portrait');
   var btnL = document.getElementById('btn-landscape');
   var btnReload = document.getElementById('btn-reload');
+  var currentOrientation = 'portrait';
 
   function loadPage() {
     var cacheBust = pageSelect.value + (pageSelect.value.indexOf('?') > -1 ? '&' : '?') + 't=' + Date.now();
     frame.src = cacheBust;
   }
 
+  function applyDevice() {
+    var opt = deviceSelect.options[deviceSelect.selectedIndex];
+    var w = opt.getAttribute('data-w');
+    var h = opt.getAttribute('data-h');
+    var label = opt.getAttribute('data-label');
+    document.documentElement.style.setProperty('--portrait-w', w + 'px');
+    document.documentElement.style.setProperty('--portrait-h', h + 'px');
+    subLabel.textContent = label + ' form factor (' + w + ' × ' + h + ' CSS px) \u00b7 live iframe of the deployed pages';
+    setOrientation(currentOrientation);
+  }
+
   function setOrientation(mode) {
-    device.classList.remove('portrait', 'landscape');
-    device.classList.add(mode);
+    currentOrientation = mode;
+    var opt = deviceSelect.options[deviceSelect.selectedIndex];
+    var w = opt.getAttribute('data-w');
+    var h = opt.getAttribute('data-h');
+    deviceFrame.classList.remove('portrait', 'landscape');
+    deviceFrame.classList.add(mode);
     btnP.classList.toggle('active', mode === 'portrait');
     btnL.classList.toggle('active', mode === 'landscape');
     dims.innerHTML = mode === 'portrait'
-      ? 'Rendering at <strong>402 &times; 874</strong>'
-      : 'Rendering at <strong>874 &times; 402</strong>';
+      ? 'Rendering at <strong>' + w + ' &times; ' + h + '</strong>'
+      : 'Rendering at <strong>' + h + ' &times; ' + w + '</strong>';
   }
 
   pageSelect.addEventListener('change', loadPage);
+  deviceSelect.addEventListener('change', applyDevice);
   btnP.addEventListener('click', function () { setOrientation('portrait'); });
   btnL.addEventListener('click', function () { setOrientation('landscape'); });
   btnReload.addEventListener('click', loadPage);
 
+  applyDevice();
   loadPage();
 </script>
 
