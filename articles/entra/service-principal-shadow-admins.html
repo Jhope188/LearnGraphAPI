@@ -423,6 +423,20 @@ blockquote {
     width: calc(100% + 3rem);
     border-radius: 0;
   }
+
+  /* Prevent large screenshots from overflowing short landscape viewports */
+  .screenshot-block img,
+  .screenshot-panel img,
+  .screenshot-single img,
+  .img-block img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    max-height: calc(100vh - 52px - 56px);
+    object-fit: contain;
+    display: block;
+    margin-left: auto; margin-right: auto;
+  }
 }
 </style>
 </head>
