@@ -43,7 +43,7 @@ a:hover { text-decoration: underline; }
 /* === TOP BAR === */
 .topbar {
   position: fixed; top: 0; left: 0; right: 0;
-  height: 52px; z-index: 60;
+  height: 52px; z-index: 100;
   background: rgba(10,15,30,0.92);
   border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(12px);
@@ -54,24 +54,31 @@ a:hover { text-decoration: underline; }
 .topbar-left {
   display: flex; align-items: center; gap: 0.6rem;
   text-decoration: none;
+  min-width: 0;
 }
 .topbar-left img {
   width: 32px; height: 32px;
   object-fit: contain; border-radius: 4px;
+  flex-shrink: 0;
 }
 .topbar-site {
   font-size: 0.9rem; font-weight: 600;
   color: var(--color-text-primary);
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 .topbar-divider {
   width: 1px; height: 18px;
   background: var(--color-border);
   margin: 0 0.75rem;
+  flex-shrink: 0;
 }
 .topbar-article {
   font-size: 0.8rem;
   color: var(--color-text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .topbar-right {
   display: flex; align-items: center; gap: 0.4rem;
@@ -79,6 +86,8 @@ a:hover { text-decoration: underline; }
   font-size: 0.8rem;
   color: var(--color-text-dim);
   transition: color 0.15s;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .topbar-right:hover { color: var(--color-teal); text-decoration: none; }
 
@@ -426,7 +435,7 @@ blockquote {
     <span class="topbar-divider"></span>
     <span class="topbar-article">NHI? Never Heard of Him</span>
   </a>
-  <a href="https://conditionalaccess.tech" class="topbar-right">← All Articles</a>
+  <a href="https://conditionalaccess.tech/articles.html" class="topbar-right">← All Articles</a>
 </header>
 
 <!-- HERO -->
