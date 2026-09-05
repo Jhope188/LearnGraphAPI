@@ -70,6 +70,22 @@
     top: 50%; left: 10px; transform: translateY(-50%) rotate(90deg);
   }
 
+  /* Android punch-hole camera (Pixel-style) — small centered circle,
+     not a Dynamic-Island pill. Shown instead of .notch when device=android. */
+  .punch-hole {
+    position: absolute;
+    top: 12px; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 12px;
+    background: #000;
+    border: 1px solid #2a2a2a;
+    border-radius: 50%;
+    z-index: 10;
+  }
+  .device.landscape .punch-hole {
+    top: 50%; left: 12px; transform: translateY(-50%);
+  }
+  .notch.hidden, .punch-hole.hidden { display: none; }
+
   iframe {
     width: 100%; height: 100%;
     border: none;
@@ -102,8 +118,8 @@
   </select>
   <label for="device-select">Device:</label>
   <select id="device-select">
-    <option value="iphone" data-w="402" data-h="874" data-label="iPhone 17 Pro">iPhone 17 Pro (402×874)</option>
-    <option value="android" data-w="412" data-h="915" data-label="Pixel 8 (Android)">Pixel 8 (412×915)</option>
+    <option value="iphone" data-w="402" data-h="874" data-label="iPhone 17 Pro" data-punch="false">iPhone 17 Pro (402×874)</option>
+    <option value="android" data-w="412" data-h="915" data-label="Pixel 8 (Android)" data-punch="true">Pixel 8 (412×915)</option>
   </select>
   <button id="btn-portrait" class="active">Portrait</button>
   <button id="btn-landscape">Landscape</button>
@@ -113,7 +129,8 @@
 <div class="stage">
   <div class="device portrait" id="device">
     <div class="screen">
-      <div class="notch"></div>
+      <div class="notch" id="notch"></div>
+      <div class="punch-hole hidden" id="punch-hole"></div>
       <iframe id="frame" src=""></iframe>
     </div>
   </div>
@@ -131,6 +148,8 @@
   var btnP = document.getElementById('btn-portrait');
   var btnL = document.getElementById('btn-landscape');
   var btnReload = document.getElementById('btn-reload');
+  var notchEl = document.getElementById('notch');
+  var punchEl = document.getElementById('punch-hole');
   var currentOrientation = 'portrait';
 
   function loadPage() {
@@ -143,9 +162,12 @@
     var w = opt.getAttribute('data-w');
     var h = opt.getAttribute('data-h');
     var label = opt.getAttribute('data-label');
+    var isPunch = opt.getAttribute('data-punch') === 'true';
     document.documentElement.style.setProperty('--portrait-w', w + 'px');
     document.documentElement.style.setProperty('--portrait-h', h + 'px');
     subLabel.textContent = label + ' form factor (' + w + ' × ' + h + ' CSS px) \u00b7 live iframe of the deployed pages';
+    notchEl.classList.toggle('hidden', isPunch);
+    punchEl.classList.toggle('hidden', !isPunch);
     setOrientation(currentOrientation);
   }
 
