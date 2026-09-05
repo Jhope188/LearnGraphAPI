@@ -33,6 +33,57 @@
     min-height: 100vh;
   }
 
+  /* ── Topbar ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 52px; z-index: 100;
+    background: rgba(10, 22, 40, 0.92);
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25rem;
+  }
+  .topbar-left {
+    display: flex; align-items: center; gap: 0.6rem;
+    text-decoration: none;
+    min-width: 0;
+  }
+  .topbar-left img {
+    width: 32px; height: 32px;
+    object-fit: contain; border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .topbar-site {
+    font-size: 0.9rem; font-weight: 600;
+    color: var(--color-text-primary);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+  }
+  .topbar-divider {
+    width: 1px; height: 18px;
+    background: var(--color-border);
+    margin: 0 0.75rem;
+    flex-shrink: 0;
+  }
+  .topbar-article {
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar-right {
+    display: flex; align-items: center; gap: 0.4rem;
+    text-decoration: none;
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
+    transition: color 0.15s;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .topbar-right:hover { color: var(--color-teal); text-decoration: none; }
+
   /* ── Hero ── */
   .hero {
     background:
@@ -47,31 +98,6 @@
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .wordmark {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 32px;
-  }
-
-  .wordmark-shield { display: none; } /* replaced by real logo badge */
-
-  .wordmark-text {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-text-primary);
-    letter-spacing: -0.01em;
-  }
-
-  .wordmark-text span { color: var(--color-teal); }
-
-  .wordmark-sub {
-    font-size: 0.72rem;
-    color: var(--color-text-dim);
-    letter-spacing: 0.05em;
-    margin-top: 2px;
   }
 
   .eyebrow {
@@ -447,23 +473,6 @@
 
   footer a { color: var(--color-teal); text-decoration: none; }
 
-  /* ── Logo badge ── */
-  .logo-badge {
-    position: fixed; top: 1rem; right: 1rem;
-    background: rgba(10,15,30,0.88);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 8px; z-index: 50;
-    backdrop-filter: blur(8px);
-    transition: background 0.2s;
-    display: flex; align-items: center;
-    padding: 0.3rem; text-decoration: none;
-  }
-  .logo-badge:hover { background: rgba(10,15,30,0.98); }
-  .logo-badge img { width: 48px; height: 48px; object-fit: contain; border-radius: 4px; display: block; }
-
-  /* ── Hero wordmark — hide old polygon shield ── */
-  .wordmark-shield { display: none; }
-
   /* ── Responsive ── */
 
   /* ── Demo screenshots ── */
@@ -494,38 +503,6 @@
     .demo-step-num { display: none; }
   }
 
-  /* ── Back button ── */
-  .back-btn {
-    position: fixed;
-    top: 1rem;
-    left: 1rem;
-    z-index: 50;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: rgba(13, 33, 55, 0.85);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 8px;
-    color: var(--color-text-primary);
-    font-size: 0.82rem;
-    font-weight: 500;
-    text-decoration: none;
-    font-family: "Segoe UI", system-ui, sans-serif;
-    backdrop-filter: blur(8px);
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .back-btn:hover {
-    background: rgba(13, 33, 55, 0.98);
-    border-color: rgba(0,184,176,0.3);
-    color: var(--color-teal);
-  }
-  .back-btn svg {
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
-  }
-
   .page-body {
     display: flex;
     align-items: flex-start;
@@ -536,10 +513,10 @@
   .container { margin: 0; max-width: 720px; }
   .sidebar {
     position: sticky;
-    top: 24px;
+    top: 88px;
     width: 220px;
     flex-shrink: 0;
-    padding-top: 24px;
+    padding-top: 64px;
     font-size: 0.85rem;
   }
   .sidebar ol {
@@ -564,7 +541,7 @@
   .mobile-toc {
     display: none;
     position: sticky;
-    top: 0;
+    top: 52px;
     z-index: 20;
     background: var(--color-base);
     border-bottom: 1px solid var(--color-border);
@@ -586,40 +563,34 @@
     color: #fff;
     background: var(--color-teal);
   }
-  section[id] { scroll-margin-top: 24px; }
+  section[id] { scroll-margin-top: 72px; }
 
   @media (max-width: 900px) {
     .page-body { display: block; }
     .sidebar { display: none; }
     .mobile-toc { display: flex; }
     .container { max-width: none; }
-    section[id] { scroll-margin-top: 56px; }
+    section[id] { scroll-margin-top: 112px; }
   }
 </style>
 </head>
 <body>
 
-<a href="https://conditionalaccess.tech" class="back-btn">
-  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M10 12L6 8l4-4"/>
-  </svg>
-  conditionalaccess.tech
-</a>
+<header class="topbar">
+  <a href="https://conditionalaccess.tech" class="topbar-left">
+    <img src="https://conditionalaccess.tech/assets/NewConditionalaccess.tech.png" alt="conditionalaccess.tech" />
+    <span class="topbar-site">conditionalaccess.tech</span>
+    <span class="topbar-divider"></span>
+    <span class="topbar-article">CA + Purview Demo</span>
+  </a>
+  <a href="https://conditionalaccess.tech/articles.html" class="topbar-right">← All Articles</a>
+</header>
 
-<a href="https://conditionalaccess.tech" class="logo-badge" target="_blank" rel="noopener"><img src="data:image/png;base64,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" alt="conditionalaccess.tech" /></a>
 
 <!-- ══════════════════════════════════════════
      HERO
 ══════════════════════════════════════════ -->
 <div class="hero">
-  <div class="wordmark">
-    <div class="wordmark-shield"></div>
-    <div>
-      <div class="wordmark-text">conditionalaccess<span>.tech</span></div>
-      <div class="wordmark-sub">Microsoft MVP · Security: Identity &amp; Access</div>
-    </div>
-  </div>
-
   <div class="eyebrow">Demo Guide · Conditional Access + Purview</div>
   <h1>Why Your Encrypted Emails Won't Open and How to Fix It</h1>
   <p class="hero-sub">

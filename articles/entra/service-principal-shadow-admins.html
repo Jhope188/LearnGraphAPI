@@ -378,14 +378,16 @@ blockquote {
     align-items: center;
     padding: 0.45rem 0.9rem;
     border-left: none;
-    border-bottom: 2px solid transparent;
-    border-radius: 100px;
-    background: rgba(0,184,176,0.05);
+    border-bottom: none;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
     margin-left: 0;
+    color: var(--color-text-dim);
   }
   .sidebar nav a.active {
-    background: rgba(0,184,176,0.12);
-    border-bottom-color: var(--color-teal);
+    color: #fff;
+    background: var(--color-teal);
+    border-bottom: none;
   }
   .sidebar-num { min-width: auto; }
   article { padding: 1.5rem 0 4rem; width: 100%; }
