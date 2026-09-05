@@ -61,6 +61,8 @@
     .nav-shield {
       width: 28px;
       height: 28px;
+      object-fit: contain;
+      display: block;
     }
     .nav-brand {
       font-size: 1rem;
@@ -544,7 +546,8 @@
       .mobile-toc { display: flex; }
       .content-wrap { max-width: none; }
       .section-heading { scroll-margin-top: 116px; }
-      .nav-meta { display: none; }
+      .nav-meta { display: none !important; }
+      .nav { flex-wrap: nowrap; }
     }
 
     @media (max-width: 600px) {
@@ -561,11 +564,7 @@
 <!-- ── Navigation ── -->
 <nav class="nav">
   <a class="nav-wordmark" href="https://conditionalaccess.tech">
-    <svg class="nav-shield" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M14 2L4 6.5V13.5C4 19.2 8.4 24.5 14 26C19.6 24.5 24 19.2 24 13.5V6.5L14 2Z" fill="#0078d4"/>
-      <path d="M14 6L8 9V13.5C8 17.1 10.7 20.4 14 21.5C17.3 20.4 20 17.1 20 13.5V9L14 6Z" fill="rgba(255,255,255,0.15)"/>
-      <path d="M11.5 13.5L13.2 15.2L16.5 11.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
+    <img class="nav-shield" src="https://conditionalaccess.tech/assets/NewConditionalaccess.tech.png" alt="" />
     <span class="nav-brand">conditionalaccess<span>.tech</span></span>
   </a>
   <span class="nav-meta">Microsoft MVP &bull; Security: Identity &amp; Access</span>
