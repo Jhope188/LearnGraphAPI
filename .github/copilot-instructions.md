@@ -266,10 +266,20 @@ Add this landscape safeguard so screenshots never overflow a short landscape vie
 }
 ```
 
+### Flex containers must not silently overflow (required on every article with `.step-block`/screenshots)
+A flex child's default `min-width` is `auto`, not `0`. If a `.step-block`/`.step-content` wraps a wide screenshot or code block, the flex item can force the whole layout wider than the viewport on mobile — this drags the sticky sidebar/mobile-toc pill bar out of alignment with the fixed topbar the moment the page is scrolled sideways (looks like the nav "jumps" or briefly misaligns, and can leave a stuck state when rotating orientation). Always pair flex-based content wrappers with an explicit reset:
+```css
+.step-block { display: flex; gap: 1rem; align-items: flex-start; min-width: 0; }
+.step-content { flex: 1; min-width: 0; }
+.screenshot-block { max-width: 100%; }
+.screenshot-block img { width: 100%; max-width: 100%; height: auto; display: block; }
+```
+This was the root cause found in the NHI article's Section 6 (Step A/B/C investigation screenshots) — apply this pattern to every new `.step-block` section, not just ones with images, since text-only step blocks are safe but any future embedded media inside one is not.
+
 ### Testing requirement before publish
 - Use `mobile-test.html` (served locally, e.g. `python3 -m http.server 8000`) to check every new/edited article.
-- Test **both** device presets in the tester's Device dropdown — iPhone 17 Pro (402×874) and Pixel 8 / Android (412×915) — in both Portrait and Landscape.
-- Confirm: topbar stays fixed, mobile nav is sticky directly under it (no gap, no disappearing), active pill is filled-teal, and images don't overflow in landscape.
+- **Always test both device presets** in the tester's Device dropdown — iPhone 17 Pro (402×874) and Pixel 8 / Android (412×915) — in **both** Portrait and Landscape, before publishing or considering an article/layout change done. Never assume iPhone-only testing covers Android; the punch-hole vs. Dynamic-Island frame and differing safe-area math means it doesn't.
+- Confirm: topbar stays fixed, mobile nav is sticky directly under it (no gap, no disappearing), active pill is filled-teal, images don't overflow in landscape, and scrolling within any section (including sideways/inner-scroll on wide content) doesn't shift the sidebar/topbar out of alignment.
 - Always cache-bust (`?t=timestamp`, already built into the tester's Reload/page-select) before trusting a screenshot.
 
 ---
