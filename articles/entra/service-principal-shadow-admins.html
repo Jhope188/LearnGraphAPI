@@ -357,13 +357,14 @@ blockquote {
 @media (max-width: 900px) {
   .page-body { flex-direction: column; padding: 0 1rem; gap: 0; align-items: stretch; }
   .sidebar {
-    width: 100%;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
     position: sticky;
     top: 52px;
     max-height: none;
     overflow-y: visible;
     padding: 0;
-    margin: 0 -1rem;
     z-index: 40;
     background: rgba(10,15,30,0.94);
     backdrop-filter: blur(12px);
@@ -435,9 +436,6 @@ blockquote {
   .hero-subtitle, .hero-sub { font-size: 0.92rem; margin-bottom: 0.5rem; }
   .meta { gap: 1rem; }
   .page-body { padding: 0 1.5rem; }
-  /* .page-body padding is 1.5rem here (vs 1rem in the base ≤900px rule), so the
-     sidebar's edge-to-edge bleed margin must match or it clips/misaligns. */
-  .sidebar { margin: 0 -1.5rem; }
   article { padding: 1.25rem 0 4rem; }
   .screenshot-block, pre {
     margin-left: -1.5rem; margin-right: -1.5rem;
