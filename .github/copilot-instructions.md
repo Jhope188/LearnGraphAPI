@@ -277,6 +277,16 @@ A flex child's default `min-width` is `auto`, not `0`. If a `.step-block`/`.step
 ```
 This was the root cause found in the NHI article's Section 6 (Step A/B/C investigation screenshots) — apply this pattern to every new `.step-block` section, not just ones with images, since text-only step blocks are safe but any future embedded media inside one is not.
 
+### Landscape edge-to-edge bleed must not apply to nested step-block screenshots
+The landscape media query bleeds `.screenshot-block`/`pre` to the viewport edges via `margin-left/right: -1.5rem; width: calc(100% + 3rem);`. This is correct for screenshots that are **direct children of `article`**, but breaks for screenshots nested inside a `.step-block` (Section 6-style walkthroughs) if that nested element also carries an inline `style="margin:0.8rem 0"` for vertical spacing: inline styles always win over external rules for the properties they set, so the inline margin overrides the bleed's `margin-left`/`margin-right` back to `0` — but the external `width: calc(100% + 3rem)` is untouched by that inline style (it never set `width`), leaving the box 3rem wider than its container with no offsetting negative margin. It overflows off the right edge and drags the whole page into horizontal scroll, but **only in landscape** (portrait never applies this bleed rule) and **only for nested/inline-styled screenshots** — a bug that's easy to miss because it doesn't reproduce for direct-child screenshots or in portrait. Always pair the landscape bleed rule with a corrective override:
+```css
+.step-block .screenshot-block, .step-block pre {
+  margin-left: 0; margin-right: 0;
+  width: 100%; max-width: 100%;
+  border-radius: 6px;
+}
+```
+
 ### Testing requirement before publish
 - Use `mobile-test.html` (served locally, e.g. `python3 -m http.server 8000`) to check every new/edited article.
 - **Always test both device presets** in the tester's Device dropdown — iPhone 17 Pro (402×874) and Pixel 8 / Android (412×915) — in **both** Portrait and Landscape, before publishing or considering an article/layout change done. Never assume iPhone-only testing covers Android; the punch-hole vs. Dynamic-Island frame and differing safe-area math means it doesn't.

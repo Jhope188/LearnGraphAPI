@@ -435,6 +435,16 @@ blockquote {
     width: calc(100% + 3rem);
     border-radius: 0;
   }
+
+  /* Screenshots/code nested inside a .step-block must NOT bleed — see
+     copilot-instructions.md "Flex containers must not silently overflow"
+     for why an inline margin style on the nested element defeats the
+     bleed's negative margin while leaving its width unopposed. */
+  .step-block .screenshot-block, .step-block pre {
+    margin-left: 0; margin-right: 0;
+    width: 100%; max-width: 100%;
+    border-radius: 6px;
+  }
 }
 </style>
 </head>

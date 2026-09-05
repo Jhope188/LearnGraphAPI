@@ -445,6 +445,23 @@ blockquote {
     border-radius: 0;
   }
 
+  /* Screenshots/code nested inside a .step-block (Section 6's Step A/B/C
+     investigation walkthrough) must NOT use the page-edge bleed above.
+     Those elements carry an inline `style="margin:0.8rem 0"` for vertical
+     spacing, which (being inline) always wins over the external
+     margin-left/margin-right bleed declared here — but does NOT override
+     the sibling `width: calc(100% + 3rem)` rule, since inline style never
+     touched `width`. The result was a box 3rem wider than its container
+     with no offsetting negative margin, overflowing off the right edge
+     and dragging the whole page into horizontal scroll in landscape only.
+     Reset both properties explicitly, scoped to the nested case, so they
+     stay contained within their flex column instead of bleeding. */
+  .step-block .screenshot-block, .step-block pre {
+    margin-left: 0; margin-right: 0;
+    width: 100%; max-width: 100%;
+    border-radius: 6px;
+  }
+
   /* Tables (unlike images/screenshots) must NOT bleed off the viewport edge —
      the long unbreakable Graph permission strings inside <code> then force
      the browser to clip or mid-word-break columns. Instead, keep the table
