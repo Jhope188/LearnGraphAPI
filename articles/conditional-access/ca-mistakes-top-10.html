@@ -488,16 +488,19 @@
       font-size: 0.78rem;
       color: var(--text-sec);
       text-decoration: none;
-      padding: 0.4rem 0.9rem;
-      border-radius: 100px;
-      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.02);
       white-space: nowrap;
-      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      font-weight: 600;
+      transition: color 0.15s, border-color 0.15s, background 0.15s, box-shadow 0.15s;
     }
     .mobile-toc a.active {
       color: var(--base);
       border-color: var(--teal);
       background: var(--teal);
+      box-shadow: 0 6px 18px rgba(0,184,176,0.12);
     }
 
     .page-body { padding: 0; }
