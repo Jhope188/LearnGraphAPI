@@ -365,7 +365,7 @@ blockquote {
    docked under the topbar, instead of disappearing. Keeps in-page navigation
    available on small screens without eating vertical space. */
 @media (max-width: 900px) {
-  .page-body { flex-direction: column; padding: 0 1rem; gap: 0; }
+  .page-body { flex-direction: column; padding: 0 1rem; gap: 0; align-items: stretch; }
   .sidebar {
     width: 100%;
     position: sticky;
@@ -407,7 +407,7 @@ blockquote {
     border-bottom-color: var(--color-teal);
   }
   .sidebar-num { min-width: auto; }
-  article { padding: 1.5rem 0 4rem; }
+  article { padding: 1.5rem 0 4rem; width: 100%; }
 }
 @media (max-width: 600px) {
   .hero { padding: 5rem 1rem 3rem; }
