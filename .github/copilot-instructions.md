@@ -277,15 +277,19 @@ A flex child's default `min-width` is `auto`, not `0`. If a `.step-block`/`.step
 ```
 This was the root cause found in the NHI article's Section 6 (Step A/B/C investigation screenshots) — apply this pattern to every new `.step-block` section, not just ones with images, since text-only step blocks are safe but any future embedded media inside one is not.
 
-### Landscape edge-to-edge bleed must not apply to nested step-block screenshots
-The landscape media query bleeds `.screenshot-block`/`pre` to the viewport edges via `margin-left/right: -1.5rem; width: calc(100% + 3rem);`. This is correct for screenshots that are **direct children of `article`**, but breaks for screenshots nested inside a `.step-block` (Section 6-style walkthroughs) if that nested element also carries an inline `style="margin:0.8rem 0"` for vertical spacing: inline styles always win over external rules for the properties they set, so the inline margin overrides the bleed's `margin-left`/`margin-right` back to `0` — but the external `width: calc(100% + 3rem)` is untouched by that inline style (it never set `width`), leaving the box 3rem wider than its container with no offsetting negative margin. It overflows off the right edge and drags the whole page into horizontal scroll, but **only in landscape** (portrait never applies this bleed rule) and **only for nested/inline-styled screenshots** — a bug that's easy to miss because it doesn't reproduce for direct-child screenshots or in portrait. Always pair the landscape bleed rule with a corrective override:
+### Landscape edge-to-edge bleed must not apply the page-padding formula to nested step-block screenshots
+The landscape media query bleeds `.screenshot-block`/`pre` to the viewport edges via `margin-left/right: -1.5rem; width: calc(100% + 3rem);`. This formula is only correct for elements that are **direct children of `article`** (whose own left edge sits exactly 1.5rem from the true viewport edge). It breaks in two independent ways for screenshots/code nested inside a `.step-block` (Section 6-style walkthroughs):
+1. **Inline-style collision** — if the nested element carries an inline `style="margin:0.8rem 0"` for vertical spacing, inline styles always win over external rules for the properties they set, so the inline margin overrides the bleed's `margin-left`/`margin-right` back to `0` — but the external `width: calc(100% + 3rem)` is untouched (inline never set `width`), leaving the box 3rem wider than its container with no offsetting negative margin. **Fix:** never put margin as an inline style on anything that might sit inside a bleed rule's selector — use a class (`.step-media { margin: 0.8rem 0; }` / `.step-pre { margin: 0.6rem 0; }`) instead, so the cascade resolves normally.
+2. **Wrong reference frame** — even with the inline style removed, `.step-block`'s flex layout indents `.step-content` to the right of the step-number circle (28px + 1rem gap). The `-1.5rem` bleed assumes the element's box starts exactly at the page padding, so it under-bleeds on the left (only recovers part of the indent) while the width addition still overflows on the right. **Fix:** for anything nested inside `.step-block`, use the viewport-relative bleed technique instead of the padding-matching one:
 ```css
 .step-block .screenshot-block, .step-block pre {
-  margin-left: 0; margin-right: 0;
-  width: 100%; max-width: 100%;
-  border-radius: 6px;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  border-radius: 0;
 }
 ```
+This is the same `100vw` technique already required for the mobile nav bleed (see above) — it's immune to nesting depth/indentation entirely, unlike the page-padding-matching formula. Both bugs are landscape-only and easy to miss because they don't reproduce for direct-child screenshots, in portrait, or in desktop devtools resizing.
 
 ### Testing requirement before publish
 - Use `mobile-test.html` (served locally, e.g. `python3 -m http.server 8000`) to check every new/edited article.
