@@ -14,14 +14,14 @@ Last Updated: September 6, 2026
 
 | | |
 |---|---|
-| Total Articles | 44 (all published) |
+| Total Articles | 52 (all published) |
 | Entra News Features | 27 (across 25 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
 | Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 22 of 44 published (50%) |
+| Unique Articles Featured | 24 of 52 published (46%) |
 | Publication Period | September 2025 — September 2026 |
 
 > Current public archive snapshot: Entra News #165 (September 6, 2026). The feature timeline above already includes the Jon Hope features from issues #153, #154, #157, #160, and #165. The current public weekly issue is now #165.
@@ -55,12 +55,20 @@ Last Updated: September 6, 2026
 
 ## 📝 Complete Article Catalogue
 
-### 2026 (21 articles)
+### 2026 (33 articles)
 
 | # | Title | Published | Responses | Saves | Entra News |
 |---|-------|-----------|-----------|-------|------------|
-| 44 | NHI? Never Heard of Him — The Service Principal Sitting in Your Tenant | Sep 4 | — | — | ✅ #165 |
-| 43 | AUs vs RMAUs: What's That? | Jul 27 | — | — | ✅ #160 |
+| 52 | NHI? Never Heard of Him — The Service Principal Sitting in Your Tenant | Sep 4 | — | — | ✅ #165 |
+| 51 | The Ownership Operating Model | Aug 28 | — | — | — |
+| 50 | Clean the House Before the Guests Arrive | Aug 28 | — | — | — |
+| 49 | The Cleanup Campaign That Never Ends | Aug 28 | — | — | — |
+| 48 | Why Your Encrypted Emails Won't Open and How to Fix It | Aug 28 | — | — | — |
+| 47 | 10 CA Mistakes That Are Probably in Your Tenant Right Now | Aug 12 | — | — | ✅ #164 |
+| 46 | The Governance Gap — Why Settings and Control Are Not the Same Thing | Aug 9 | — | — | — |
+| 45 | Mastering Groups: The Deep Dive | Aug 2 | — | — | ✅ #162 |
+| 44 | AUs vs RMAUs: What's That? | Jul 27 | — | — | ✅ #160 |
+| 43 | CA Policy Analyzer: July 2026 Update | Jul 10 | — | — | — |
 | 42 | Groups Are the Connective Tissue — and Nobody Owns the Scissors | Jul 6 | — | — | — |
 | 41 | Baseline Scopes: Microsoft Closed the Side Door | Jul 2 | — | — | — |
 | 40 | Groups: The Connective Tissue | Jun 16 | — | — | ✅ #157 |
