@@ -4,9 +4,9 @@ Author: Jon Hope | M365 Solutions Architect at Inforcer
 Medium: [medium.com/@jhope188](https://medium.com/@jhope188)  
 Blog: [conditionalaccess.tech](https://conditionalaccess.tech/)  
 Followers: 103  
-Last Updated: August 2, 2026
+Last Updated: September 6, 2026
 
-> Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #160 (published August 2, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
+> Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #165 (published September 6, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
 
 ---
 
@@ -14,17 +14,17 @@ Last Updated: August 2, 2026
 
 | | |
 |---|---|
-| Total Articles | 43 (all published) |
-| Entra News Features | 26 (across 24 issues) |
+| Total Articles | 44 (all published) |
+| Entra News Features | 27 (across 25 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
 | Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 21 of 43 published (49%) |
-| Publication Period | September 2025 — August 2026 |
+| Unique Articles Featured | 22 of 44 published (50%) |
+| Publication Period | September 2025 — September 2026 |
 
-> Current public archive snapshot: Entra News #160 (August 2, 2026). The feature timeline above already includes the Jon Hope features from issues #153, #154, #157, and #160. The current public weekly issue is now #160.
+> Current public archive snapshot: Entra News #165 (September 6, 2026). The feature timeline above already includes the Jon Hope features from issues #153, #154, #157, #160, and #165. The current public weekly issue is now #165.
 
 ---
 
@@ -59,6 +59,7 @@ Last Updated: August 2, 2026
 
 | # | Title | Published | Responses | Saves | Entra News |
 |---|-------|-----------|-----------|-------|------------|
+| 44 | NHI? Never Heard of Him — The Service Principal Sitting in Your Tenant | Sep 4 | — | — | ✅ #165 |
 | 43 | AUs vs RMAUs: What's That? | Jul 27 | — | — | ✅ #160 |
 | 42 | Groups Are the Connective Tissue — and Nobody Owns the Scissors | Jul 6 | — | — | — |
 | 41 | Baseline Scopes: Microsoft Closed the Side Door | Jul 2 | — | — | — |
