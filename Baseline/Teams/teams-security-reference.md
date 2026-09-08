@@ -19,6 +19,7 @@ Several Microsoft 365 changes directly reinforce or extend the social-engineerin
 3. **[Roadmap 543239 — Brand Impersonation Protection for Teams Calling](https://deltapulse.app/item/543239)**. Rolling out 2026. Directly relevant to **Attack 3** (Midnight Blizzard MFA/impersonation phishing) — flags calls impersonating known brands/organizations. Worth confirming enrollment once GA.
 4. **[Roadmap 560702 — Security Detection Report in Teams Admin Center](https://deltapulse.app/item/560702)** and **[Roadmap 536571 — User reported security signals in Teams admin center](https://deltapulse.app/item/536571)**. Both launched in 2026. Give admins a consolidated view of user-reported and system-detected security signals — pairs with the new MC1466296 capability above for end-to-end visibility.
 5. **[Roadmap 536572 — External Domains Anomalies Report](https://deltapulse.app/item/536572)**. Launched. Directly supports the 8.2.1 domain-allowlist decision and **Attack 2** (Storm-0324/TeamsPhisher) — flags anomalous external domain activity even when a full allowlist isn't operationally feasible yet.
+6. **["Chat With People Who Don't Use Teams" (external B2B chat)](https://mrmicrosoft.com/how-to-disable-chat-with-people-who-dont-use-teams-feature/)** — new as of September 2026, **on by default**. Any Teams user can now start a chat with an external email address that has no Teams license or existing tenant relationship; Microsoft Entra B2B collaboration silently provisions a guest identity for that recipient the moment the first message is sent. This is a materially different risk from federation (8.2.x) — it creates directory-backed guest objects with no team/channel/group association, so existing guest lifecycle reviews may not catch them. See new control **8.6.2** below. Also expands the external-contact attack surface referenced in **Attack 1** and **Attack 2** — external chat is now a guest-creation vector, not just a messaging vector.
 
 > Also monitor: **[Roadmap 536573 — Report a Suspicious Call in Microsoft Teams](https://deltapulse.app/item/536573)** (launched, pairs with Defender for Office 365) and **[Roadmap 523211 — Simplified controls to manage external collaboration](https://deltapulse.app/item/523211)** (launched, may ease the 8.2.1 allowlist rollout discussion with clients).
 
@@ -92,8 +93,33 @@ Get-CsTenantFederationConfiguration | Select-Object AllowFederatedUsers, AllowTe
 | ID | Level | Title | Portal Path | Impact |
 |----|-------|-------|-------------|--------|
 | 8.6.1 | L1 | Users can report security concerns in Teams | TAC → Messaging → Messaging policies | Low |
+| 8.6.2 | L2 | External B2B chat with people not using Teams disabled | Teams Messaging Policy (PowerShell only — no TAC toggle) | Medium |
 
 > 🚨 **Update — September 2026:** Microsoft is extending this capability directly into meetings. **[MC1466296](https://deltapulse.app/item/MC1466296)** adds a "Report a concern" option to the meeting participant tile/pane (Targeted Release late Sep 2026, GA Oct 2026, **on by default**), letting attendees flag phishing/impersonation/social engineering in real time. Reports surface in Defender portal and Teams admin center → Protection reports. No admin action required for enablement, but verify security admin access and update IR docs before GA.
+
+**8.6.2 — "Chat With People Who Don't Use Teams":** New Teams capability (Sep 2026, on by default) letting any tenant user start a chat with an external email address that has no Teams license or M365 tenant. The recipient accepts an invitation and joins the conversation without the conventional unmanaged-account flow. Under the hood this relies on Microsoft Entra B2B collaboration — Teams silently creates a B2B guest identity for the external participant the first time a message is sent.
+
+*Why it's a distinct risk from federation and guest access:*
+
+| Mechanism | Directory object created? | Governance surface |
+|---|---|---|
+| External access (federation) | None | No Conditional Access or sign-in log visibility for the external party |
+| Guest access (teams/channels) | B2B guest, added deliberately | Full B2B governance, tied to a team or group with clear ownership |
+| Teams external chat (this feature) | B2B guest, created when the first message is sent | Full B2B governance, but with no team, channel, or group association |
+
+The guest identity is real and subject to existing B2B controls (invitation restrictions, allowed/blocked domains, access reviews, expiration), but because it isn't tied to a project, team, or SharePoint site, its business justification is far less obvious — making it easy for lifecycle reviews to miss. Key risks: guest account sprawl from ad hoc chats with vendors/customers/former contractors, a new phishing/impersonation channel, and inherited access if the external identity is later compromised.
+
+**Recommendation:** disable by default, enable selectively for business groups with a genuine need (customer/vendor-facing teams), and fold newly created guests into existing guest expiration and access review processes.
+
+```powershell
+# Disable tenant-wide
+Set-CsTeamsMessagingPolicy -Identity "Global" -UseB2BInvitesToAddExternalUsers $false
+
+# Or assign a policy with it disabled to specific users/groups, leaving
+# a separate policy enabled only for teams with a genuine external-chat need
+```
+
+Disabling only blocks the chat-initiated B2B invite mechanism — it does **not** remove existing guest accounts created this way, revoke their permissions, or affect federation (8.2.x) or deliberate guest/team invitations. For recurring external collaboration, shared channels (see **Attack 5**) remain the better-governed alternative since they don't create a guest object in the host tenant at all.
 
 ---
 
@@ -254,6 +280,7 @@ The inbox flooding serves two purposes: it creates the pretext for the support c
 - Shared channel audit and creation policy
 - Teams app permission governance
 - Migrate from Quick Assist to Intune Remote Help
+- 8.6.2 — Decide default posture for external B2B chat ("Chat With People Who Don't Use Teams"); coordinate with client on which business groups need it before disabling tenant-wide
 
 ---
 
@@ -272,3 +299,4 @@ The inbox flooding serves two purposes: it creates the pretext for the support c
 | Deltapulse #566201: Block all identified external bots automatically | [deltapulse.app/item/566201](https://deltapulse.app/item/566201) |
 | Deltapulse #543239: Brand Impersonation Protection for Teams Calling | [deltapulse.app/item/543239](https://deltapulse.app/item/543239) |
 | Deltapulse #536572: External Domains Anomalies Report | [deltapulse.app/item/536572](https://deltapulse.app/item/536572) |
+| MrMicrosoft: How to Disable Chat With People Who Don't Use Teams Feature | [mrmicrosoft.com](https://mrmicrosoft.com/how-to-disable-chat-with-people-who-dont-use-teams-feature/) — Sep 7, 2026 |
