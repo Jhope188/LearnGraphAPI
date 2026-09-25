@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 04 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 25 Sep 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>The Azure Policy Baseline That Protects MSP Customers from Themselves</title>
+      <link>https://conditionalaccess.tech/articles/azure/azure-policy-msp-governance.html</link>
+      <description>Guardrails, HIPAA controls, AI spend protection, and the KQL alert most people never build.</description>
+      <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/azure/azure-policy-msp-governance.html</guid>
+      <category>Azure</category>
+    </item>
 
     <item>
       <title>NHI? Never Heard of Him — The Service Principal Sitting in Your Tenant</title>
