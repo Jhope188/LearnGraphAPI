@@ -198,7 +198,7 @@ $Groups = @(
         # Service plan GUID: 41781fb2-bc02-4b7c-bd55-b576c07bb09f (AAD_PREMIUM / Entra P1)
         # -and userType eq Member excludes guests from this group.
         # capabilityStatus eq Enabled excludes suspended/deprovisioned licence seats.
-        Rule        = '(user.assignedPlans -any (assignedPlan.servicePlanId -eq "41781fb2-bc02-4b7c-bd55-b576c07bb09f" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")'
+        Rule        = '(user.assignedPlans -any (assignedPlan.servicePlanId -eq "41781fb2-bc02-4b7c-bd55-b576c07bb09d" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")'
     }
     @{
         Name        = "SG-Entra-DUG-License-P2InternalUsers"
