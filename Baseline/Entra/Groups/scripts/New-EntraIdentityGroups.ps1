@@ -195,7 +195,7 @@ $Groups = @(
         Name        = "SG-Entra-DUG-License-P1InternalUsers"
         Description = "Dynamic — all internal (Member) users with Entra ID P1 licence assigned and active. Used to scope P1 features like CA and SSPR."
         Type        = "Dynamic"
-        # Service plan GUID: 41781fb2-bc02-4b7c-bd55-b576c07bb09f (AAD_PREMIUM / Entra P1)
+        # Service plan GUID: 41781fb2-bc02-4b7c-bd55-b576c07bb09d (AAD_PREMIUM / Entra P1)
         # -and userType eq Member excludes guests from this group.
         # capabilityStatus eq Enabled excludes suspended/deprovisioned licence seats.
         Rule        = '(user.assignedPlans -any (assignedPlan.servicePlanId -eq "41781fb2-bc02-4b7c-bd55-b576c07bb09d" -and assignedPlan.capabilityStatus -eq "Enabled")) -and (user.userType -eq "Member")'
