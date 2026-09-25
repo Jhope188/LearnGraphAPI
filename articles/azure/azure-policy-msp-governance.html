@@ -243,9 +243,18 @@ blockquote {
   .sidebar-num { min-width: auto; }
   article { padding: 1.5rem 0 4rem; width: 100%; }
   h2, h3 { scroll-margin-top: 128px; }
-  .perm-table { table-layout: fixed; width: 100%; }
-  .perm-table td, .perm-table th { overflow-wrap: break-word; word-break: break-word; }
-  .perm-table code { white-space: normal; overflow-wrap: break-word; word-break: break-word; }
+  /* The Effect column (Deny/Audit/DeployIfNotExists) breaks into vertical
+     single-letter columns if forced into a narrow fixed width on mobile.
+     Instead of squeezing columns, let the table keep its natural layout
+     and scroll horizontally inside .table-scroll — nothing overlaps or
+     breaks mid-word, and desktop is untouched since the wrapper only
+     activates overflow when content is actually wider than the viewport. */
+  .table-scroll {
+    width: 100vw; margin-left: calc(-50vw + 50%); margin-right: calc(-50vw + 50%);
+    overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 1rem;
+  }
+  .table-scroll .perm-table { width: auto; min-width: 640px; table-layout: auto; }
+  .perm-table code { white-space: nowrap; }
 }
 @media (max-width: 600px) {
   .hero { padding: 5rem 1rem 3rem; }
@@ -320,6 +329,7 @@ blockquote {
 
   <p>Policies 1–15 were part of the original objectives and build. These apply to every managed customer regardless of industry and cover the foundational questions: location controls, compute guardrails, backup, tagging, monitoring, and resource protection.</p>
 
+  <div class="table-scroll">
   <table class="perm-table">
     <thead>
       <tr>
@@ -351,6 +361,7 @@ blockquote {
       <tr><td>15</td><td>Deploy Dependency Agent to Windows VMs with Azure Monitoring Agent settings</td><td class="effect-deploy">DeployIfNotExists</td><td>Adds the Dependency Agent alongside AMA for VM Insights service map and network dependency views.</td></tr>
     </tbody>
   </table>
+  </div>
 
   <hr />
 
@@ -358,6 +369,7 @@ blockquote {
 
   <p>This is where the HIPAA controls come in. These were driven by working in the medical industry. For non-healthcare customers the security rationale still holds. The regulatory citation just does not apply.</p>
 
+  <div class="table-scroll">
   <table class="perm-table">
     <thead>
       <tr>
@@ -398,6 +410,7 @@ blockquote {
       <tr><td>32</td><td>Resource logs in Logic Apps should be enabled</td><td class="effect-audit">Audit</td><td>Flags Logic Apps with diagnostic logging disabled. Automation workflows touching patient or financial data must produce an audit trail.</td><td style="font-size:0.78rem; color:var(--color-text-dim);">§ 164.312(b) Audit Controls</td></tr>
     </tbody>
   </table>
+  </div>
 
   <hr />
 
@@ -413,6 +426,7 @@ blockquote {
 
   <p>The resource providers in scope:</p>
 
+  <div class="table-scroll">
   <table class="perm-table">
     <thead>
       <tr>
@@ -430,6 +444,7 @@ blockquote {
       <tr><td><code>Microsoft.Search/searchServices</code></td><td>Azure AI Search</td><td>Commonly deployed as a RAG backend. Hourly billing per Search unit at the standard tier accumulates quickly.</td></tr>
     </tbody>
   </table>
+  </div>
 
   <div class="callout callout-warn">
     <div class="callout-label">Deployment Note</div>
