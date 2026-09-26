@@ -506,10 +506,10 @@ footer p { margin-bottom: 8px; }
       <p class="prose">For perspective: a synced passkey is still far less of a security concern than SMS, in my opinion. Microsoft's own guidance calls any passkey a significant upgrade over phishable MFA. What worries me is the unintended configuration. You designed a policy, and a migration quietly widened it.</p>
 
       <ul class="checklist">
-        <li>Open <strong>Passkey (FIDO2)</strong> and check every target against every profile. Find the profile the migration created and see who it applies to.</li>
+        <li>Open <strong>Passkey (FIDO2)</strong> and check every target against every profile. Work out which profile your SMS and Voice users landed in and who else it applies to. Microsoft doesn't say whether the migration creates a new profile or uses one you already have.</li>
         <li>Narrow that profile's targets, or tighten its settings, so it doesn't sit on top of a stricter profile you built on purpose.</li>
         <li>Pull the registered passkeys for your privileged users and delete any that don't meet the policy you intended.</li>
-        <li>Profiles are capped at three, including the Default profile. Check that the new one hasn't left you without room for the profile you actually need.</li>
+        <li>Entra currently supports up to three passkey profiles, including the Default profile, with more in development. If an extra profile appeared, it's using one of those three slots, and you have to remove its targets before you can delete it.</li>
       </ul>
     </section>
 
@@ -534,7 +534,6 @@ footer p { margin-bottom: 8px; }
             <tr><td>Stop the automatic changes</td><td>Set <span class="mono">passkeyDynamicMigration</span> to <span class="mono">true</span> (covered in <a href="sms-voice-retirement-part1.html#s04">Part 1</a>). Temporary, ends February 1, 2027.</td><td><span class="badge badge-warn">Beta API</span></td></tr>
             <tr><td>Take users out of scope</td><td>Move them off SMS and Voice in the Authentication Methods Policy and legacy MFA settings.</td><td><span class="badge badge-ok">Documented</span></td></tr>
             <tr><td>Control snoozes yourself</td><td>Switch the campaign from Microsoft managed to <strong>Enabled</strong>. Microsoft managed locks the snooze settings.</td><td><span class="badge badge-ok">Documented</span></td></tr>
-            <tr><td>Flip it back to Disabled</td><td>Test it in each tenant. The docs don't say whether a Disabled state set after September 1 sticks.</td><td><span class="badge badge-danger">Verify</span></td></tr>
           </tbody>
         </table>
       </div>
