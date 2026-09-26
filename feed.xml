@@ -9,6 +9,15 @@
     <lastBuildDate>Sat, 26 Sep 2026 00:00:00 +0000</lastBuildDate>
 
     <item>
+      <title>SMS and Voice Retirement, Part 2</title>
+      <link>https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part2.html</link>
+      <description>Four weeks after September 1: the Global Admin date change to ignore, the all-types passkey profile, registration campaigns that wouldn't stay disabled, and what Soprano and Telesign charge for SMS in Entra ID.</description>
+      <pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part2.html</guid>
+      <category>Entra</category>
+    </item>
+
+    <item>
       <title>SMS and Voice Retirement, Part 1</title>
       <link>https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part1.html</link>
       <description>Microsoft is not removing SMS and Voice from Entra ID. It is ending Microsoft-provided telephony. What changed on September 1, what happens February 1, 2027, and how MSPs find and move their SMS and Voice users.</description>
