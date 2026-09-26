@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 25 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 26 Sep 2026 00:00:00 +0000</lastBuildDate>
+
+    <item>
+      <title>SMS and Voice Retirement, Part 1</title>
+      <link>https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part1.html</link>
+      <description>Microsoft is not removing SMS and Voice from Entra ID. It is ending Microsoft-provided telephony. What changed on September 1, what happens February 1, 2027, and how MSPs find and move their SMS and Voice users.</description>
+      <pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part1.html</guid>
+      <category>Entra</category>
+    </item>
 
     <item>
       <title>The Azure Policy Baseline That Protects MSP Customers from Themselves</title>
