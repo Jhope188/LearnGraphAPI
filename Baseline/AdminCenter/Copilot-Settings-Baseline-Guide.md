@@ -1,12 +1,17 @@
 # Microsoft 365 Copilot Settings —  Baseline Configuration Guide
 
-**Document Version:** 1.2
-**Last Updated:** July 2026
-**Changelog:** v1.2 — Added 7 new settings visible in July 2026 admin center: Screen and camera sharing, Copilot Release preferences (GA), Dataverse data available, AI providers for other large language models (split from subprocessors), AI models in preview, AI experiences enabled by usage-based billing, Copilot connector email notification  
-v1.1 — Added EU/EFTA-specific setting: Flexible inferencing during peak load periods (effective April 17, 2026)
-**Source Reference:** Microsoft Learn — [Manage Microsoft 365 Copilot scenarios in the Microsoft 365 admin center](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-page)
-**Admin Role Required:** AI Administrator (to view and configure); Global Reader (view-only)
-**Navigation:** Microsoft 365 admin center → Copilot → Settings → View all
+- **Document Version:** 1.4
+- **Last Updated:** September 2026
+- **Source Reference:** Microsoft Learn — [Manage Microsoft 365 Copilot scenarios in the Microsoft 365 admin center](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-page)
+- **Admin Role Required:** AI Administrator (to view and configure); Global Reader (view-only)
+- **Navigation:** Microsoft 365 admin center → Copilot → Settings → View all
+
+**Changelog:**
+
+- **v1.4** — Added new [Section 0: Optimize Tab Readiness Scorecard](#0-optimize-tab-readiness-scorecard) documenting the admin center's **Copilot → Optimize** guided checklist view (Deployment essentials, Data security, Workflow enablement, User experiences), which is a distinct surface from the View all settings catalog
+- **v1.3** — Added 3 new settings found in September 2026 admin center review: Advanced package uploads (available Sept 25, 2026; default behavior locks in Oct 25, 2026 if not configured), Fabric data in Microsoft Copilot, Custom link for blocked Microsoft Copilot app
+- **v1.2** — Added 7 new settings visible in July 2026 admin center: Screen and camera sharing, Copilot Release preferences (GA), Dataverse data available, AI providers for other large language models (split from subprocessors), AI models in preview, AI experiences enabled by usage-based billing, Copilot connector email notification
+- **v1.1** — Added EU/EFTA-specific setting: Flexible inferencing during peak load periods (effective April 17, 2026)
 
 ---
 
@@ -36,6 +41,54 @@ Before configuring these settings, the following foundations must be in place:
 - **Sensitivity labels** deployed and applied to high-value content
 - **SharePoint oversharing** remediated (disable "Everyone except external users" at tenant level; review SAM Access Review reports)
 - **Entra roles** reviewed — use the AI Administrator role rather than Global Administrator for Copilot management tasks
+
+---
+
+## 0. Optimize Tab Readiness Scorecard
+
+> **This is a separate admin center surface from the "View all" settings catalog documented in Sections 1–4 below.** Navigate to **Microsoft 365 admin center → Copilot → Optimize** (not Settings → View all) to see this guided checklist. It presents a rolling scorecard with **Required / Recommended / Optional** counts and groups checks into four categories, each showing a live Status and Impact column per item. Some items map 1:1 to settings already documented elsewhere in this guide; others (marked **NEW** below) are not represented anywhere else and should be tracked here.
+
+**Current tenant snapshot (September 26, 2026):** Two categories require immediate action — **Prevent SharePoint content from being overshared** (0% files protected) and **Enable connectors** (no connectors available to users). One category needs review — **Enhance data compliance for Copilot interactions** (55% complete). Everything else is either fully compliant (green) or not yet evaluated (`--`).
+
+### 0.1 Deployment essentials
+
+| Check | Status | Impact | Baseline Recommendation |
+|---|---|---|---|
+| Users on supported update channel | -- (not yet evaluated) | -- | **NEW** — Standardize Microsoft 365 Apps update channel (Current Channel or Monthly Enterprise Channel) org-wide; devices on deprecated/unsupported channels should be remediated via Intune/Config Manager policy |
+| Turn on web search for Microsoft 365 Copilot and Microsoft 365 Copilot Chat | -- (not yet evaluated) | -- | Related to Section 1 (User Access) web-grounding settings — enable deliberately, with awareness that web results are returned unfiltered by DLP |
+| Assign someone the AI administrator role | -- (not yet evaluated) | -- | Prerequisites section (previously prose-only) — **promote to a discrete tracked item**; assign to a named individual, not Global Administrator |
+| Pre-requisite licenses assigned | -- (not yet evaluated) | -- | Prerequisites section (implicit) — confirm Microsoft 365 Copilot licenses are assigned to all intended pilot/rollout users |
+| Allow the Copilot app for your end users | -- (not yet evaluated) | -- | Section 1 (User Access) app-availability settings — enable only after Sections 1–2 baseline settings are configured |
+
+### 0.2 Data security
+
+| Check | Status | Impact | Baseline Recommendation |
+|---|---|---|---|
+| Prevent SharePoint content from being overshared | 🔴 **Action required** | Files protected: 0% | Prerequisites section (prose: "SharePoint oversharing remediated") — **promote to a discrete tracked item and prioritize immediately**: run a SharePoint Advanced Management oversharing report and remediate before wide Copilot rollout. 0% protected is a real, unresolved tenant gap |
+| Enhance data compliance for Copilot interactions | 🟠 Action recommended | Actions completed: 55% | **NEW** — likely maps to Purview Communication Compliance / Insider Risk Management policies extended to Copilot; review the remaining 45% of recommended actions |
+| Prevent data leakage in Copilot interactions | 🟢 Completed | Enforcing for 100% of people | **NEW** — confirmed Purview DLP policies extend to Copilot interaction surfaces (prompts/responses) for all users; no action needed, keep documented as a maintained control |
+| Turn on audit logs for your org | 🟢 Completed | On for everyone | Prerequisites section ("Microsoft Purview Audit enabled") — **promote to a discrete tracked item**; confirmed enabled org-wide, no action needed |
+
+### 0.3 Workflow enablement
+
+| Check | Status | Impact | Baseline Recommendation |
+|---|---|---|---|
+| Enable connectors | 🔴 **Action required** | No connectors available to users | **NEW** — ⚠️ **Real, unresolved tenant gap, not just a documentation gap.** No Copilot connectors are configured, which directly limits Copilot's ability to ground responses in enterprise data sources. Review and enable approved connectors (SharePoint, Teams, Exchange, or third-party) as a priority action |
+| Allow agent access for users | -- (not yet evaluated) | -- | **NEW** — controls whether end users can access/use Copilot agents at all; review before broader agent rollout |
+| Allow access to agents built by your org | -- (not yet evaluated) | -- | **NEW** — governs internally-authored Declarative Agents; scope to approved publishers/makers before enabling broadly |
+| Allow access to agents built by external providers | -- (not yet evaluated) | -- | **NEW** — higher-risk than org-built agents; recommend disabled or allow-listed only until a vetting process exists |
+| Allow access to agents built by Microsoft | -- (not yet evaluated) | -- | **NEW** — lowest-risk agent category (first-party); reasonable to enable once other Deployment/Data security items are green |
+| Deploy agents to your organization | -- (not yet evaluated) | -- | **NEW** — the actual deployment/publishing action for agents to the tenant; sequence this last, after all four access-control items above are configured |
+
+### 0.4 User experiences
+
+| Check | Status | Impact | Baseline Recommendation |
+|---|---|---|---|
+| Pin Copilot apps to the Windows taskbar | 🟠 Action recommended | Off for everyone | **NEW** — low-risk UX/adoption setting; currently off for everyone — enable at discretion once governance items in 0.1–0.3 are resolved, not a security priority |
+| Copilot in Teams meetings | 🟢 Completed | On for everyone | **NEW** — confirmed enabled org-wide; no action needed |
+| Allow Anthropic as Microsoft subprocessor | 🟢 Completed | On for everyone | Related to Section 2 (Data Access) subprocessor/AI-provider settings already documented — confirmed enabled org-wide; verify this decision still matches current subprocessor risk review |
+| Pin Copilot in the Microsoft 365 apps | -- (not yet evaluated) | -- | **NEW** — low-risk UX/adoption setting; not yet evaluated |
+| Enable multimodal input and output for Copilot | -- (not yet evaluated) | -- | **NEW** — controls image/voice input-output capabilities; review against data-handling policy before enabling, not yet evaluated |
 
 ---
 
@@ -523,6 +576,60 @@ If enabling usage-based features:
 
 ---
 
+### 2.11 Advanced Package Uploads *(New — September 25, 2026)*
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → All settings → Advanced package uploads |
+| **Applies to** | Microsoft 365 Copilot, Cowork |
+| **Default State** | Not configured — behaves as "Allow all users" until an admin selects an option |
+| **Rollout Timeline** | Setting became available September 25, 2026. If left unconfigured, advanced uploads remain allowed for all users starting October 25, 2026 (i.e., the unconfigured/default behavior is formally locked in on that date, matching current behavior). |
+| **Microsoft Docs** | [Manage Microsoft Copilot Settings — Advanced package uploads](https://learn.microsoft.com/en-gb/microsoft-365/copilot/microsoft-365-copilot-page#advanced-package-uploads) |
+
+**What it does:** Controls which users in the organization can upload **advanced** agent and plugin packages to Microsoft 365 Copilot and Cowork — including uploads made through the [Microsoft 365 Agents Toolkit](https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/agents-toolkit-fundamentals). Admins can choose to allow all users, restrict uploads to specific users or Microsoft Entra ID groups, or block advanced uploads entirely.
+
+An **advanced package** is defined as either:
+- A Declarative Agent that includes **actions** (not just instructions), or
+- An **MCP server** package
+
+A **basic package** — a Declarative Agent with instructions only and no actions — is **not** affected by this setting and can still be uploaded regardless of configuration here.
+
+This setting applies only to packages uploaded by members of your organization. It does **not** affect agents built by Microsoft or third-party ISVs distributed through the Microsoft 365 app store / Integrated Apps.
+
+**Security/Compliance Relevance:** High. Advanced packages (actions-capable Declarative Agents and MCP servers) can execute actions and access external systems on a user's behalf — a materially larger attack surface than instruction-only agents. Unrestricted self-service upload of advanced packages allows any user to introduce agents capable of taking actions against organizational data and connected systems, bypassing the same governance review that should apply to any other integration with write/action capability. This is directly related to the existing Agents governance guidance in section 2.6 — MCP servers in particular can bridge Copilot to arbitrary external tooling if not vetted.
+
+**Baseline Recommendation:** **Restrict advanced package uploads to a named security group of vetted developers/IT staff; do not leave this unconfigured**
+
+1. **Do not rely on the default.** The unconfigured state permits all users to upload advanced packages — this should be treated the same as any other "allow all" default in the Copilot agent ecosystem (see 2.6 Agents).
+2. **Configure before October 25, 2026** so the deliberate choice is in place before the default behavior formally locks in.
+3. Restrict uploads to a defined Entra ID group (e.g., a Copilot/agent developer group) rather than allowing tenant-wide self-service.
+4. Require any advanced package (actions-capable agent or MCP server) to go through the same review process as other Integrated Apps / Copilot Studio maker governance already established in section 2.6.
+5. Document the chosen configuration (allow all / restrict / block) as part of the organization's AI agent governance policy, alongside the existing agent vetting process.
+
+---
+
+### 2.12 Fabric Data in Microsoft Copilot
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → Data access → Fabric data in Microsoft Copilot |
+| **Applies to** | Microsoft 365 Copilot |
+| **Default State** | Off by default |
+
+**What it does:** Controls whether Microsoft 365 Copilot can access data stored in Microsoft Fabric — the unified analytics platform spanning data warehousing, lakehouses, data engineering, real-time analytics, and Power BI. When enabled, Copilot can ground its responses using data from Fabric workspaces the user has access to, similar to how Dataverse access is controlled in section 2.7.
+
+**Security/Compliance Relevance:** High. Fabric typically houses an organization's most consolidated and sensitive analytical data — combined datasets spanning finance, sales, HR, and operations that may not exist in this aggregated form anywhere else. Connecting Copilot to Fabric expands the blast radius of any oversharing issue, since a single Fabric semantic model can span data that was previously siloed across separate source systems. Access is governed by Fabric workspace roles and item-level/OneLake data access controls — organizations must confirm these are correctly scoped (least privilege) before enabling Copilot grounding.
+
+**Baseline Recommendation:** **Disabled by default; enable only after a Fabric workspace access review**
+
+Before enabling:
+1. Inventory Fabric workspaces and confirm workspace role assignments follow least privilege
+2. Review OneLake data access roles and any row-level/object-level security applied to sensitive semantic models
+3. Confirm sensitivity labels are applied to Fabric items where supported
+4. Engage the data platform/BI team — this is not a decision for the Microsoft 365 admin alone, mirroring the Dataverse guidance in section 2.7
+
+---
+
 ## 3. Copilot Actions
 
 Settings in this tab control what Copilot can generate or do in response to user prompts.
@@ -668,6 +775,24 @@ This is a straightforward operational notification with no meaningful security d
 
 ---
 
+### 4.5 Custom Link for Blocked Microsoft Copilot App
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Copilot → Settings → Other settings → Custom link for blocked Microsoft Copilot app |
+| **Applies to** | Microsoft Copilot app |
+| **Default State** | No link configured by default |
+
+**What it does:** Lets admins provide a custom URL that is shown to users when the Microsoft Copilot app is blocked for them (for example, by license assignment, Conditional Access, or an app-blocking policy). Instead of a generic "access denied" message, blocked users are directed to an organization-defined page — typically explaining why access was blocked and how to request it.
+
+**Security/Compliance Relevance:** Low — this is a user communication and help-desk deflection control, not an access control itself. It does not change who is blocked; it only changes what blocked users see. Getting this right reduces confused help-desk tickets and gives the organization a controlled channel to communicate AI governance decisions (e.g., "Copilot is not yet available for your role — see the AI rollout plan").
+
+**Baseline Recommendation:** **Configure with a link to an internal Copilot access/rollout FAQ page**
+
+Point this at an internal page (e.g., intranet or SharePoint site) that explains the phased Copilot rollout, current eligibility criteria, and how to request early access or report an issue. This complements the readiness-gate approach already used for pinning and taskbar access (sections 1.2/1.3) by giving blocked users a clear, governed explanation rather than a dead end.
+
+---
+
 ## 5. Summary Baseline Table
 
 | # | Setting | Category | Baseline | Security Recommendation | Priority | EU/EFTA Only |
@@ -702,6 +827,9 @@ This is a straightforward operational notification with no meaningful security d
 | 28 | AI models in preview | Data Access | **Disabled** for production tenants | 🔴 Disable — preview models have incomplete security/compliance validation; pilot only with documented risk acceptance | High | No |
 | 29 | AI experiences enabled by usage-based billing | Data Access | **Disabled** until budget policy and billing controls are in place | ⚠️ Disable — financial and governance risk; require cost owner and spending alerts before enabling | Medium | No |
 | 30 | Copilot connector email notification | Other Settings | **Enable** (route to team mailbox) | ✅ Enable — operational notification with no security downside; prevents silent connector failures | Low | No |
+| 31 | **Advanced package uploads** *(new Sep 2026)* | Data Access | **Restrict to named security group** | 🔴 Restrict — unconfigured default allows all users to upload actions-capable agents/MCP servers; configure before Oct 25, 2026 | High | No |
+| 32 | **Fabric data in Microsoft Copilot** *(new Sep 2026)* | Data Access | **Disabled** until Fabric workspace access review | 🔴 Disable — Fabric aggregates high-sensitivity analytical data across the org; audit workspace roles before enabling | High | No |
+| 33 | **Custom link for blocked Microsoft Copilot app** *(new Sep 2026)* | Other Settings | Configure with internal FAQ/rollout link | ✅ Low risk — improves user communication, no access control impact | Low | No |
 
 ---
 
@@ -724,6 +852,8 @@ Before enabling Copilot broadly, confirm each of the following:
 - [ ] Teams meeting policy reviewed and Copilot transcript behavior configured
 - [ ] AI acceptable use policy published and communicated to users
 - [ ] Training completed for Copilot users (Microsoft Copilot adoption hub or equivalent)
+- [ ] **Advanced package uploads** configured to a named security group (not left as unconfigured/allow-all) — deadline October 25, 2026 before default behavior locks in
+- [ ] **Fabric data in Microsoft Copilot** reviewed against Fabric workspace role assignments before enabling
 - [ ] **[EU/EFTA only]** Flexible inferencing setting audited and documented — default changed to **On** April 17, 2026; disable for regulated industries unless DPO/legal has approved cross-boundary processing with documented transfer mechanism
 
 ---
@@ -737,6 +867,9 @@ Before enabling Copilot broadly, confirm each of the following:
 - [Turn on AI disclaimers in Microsoft 365 Copilot](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-ai-disclaimers)
 - [Get started with Opal in Microsoft 365 Copilot](https://learn.microsoft.com/copilot/microsoft-365/opal-settings-manage)
 - [Manage agents in the Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/manage-copilot-agents-integrated-apps)
+- [Manage Microsoft Copilot Settings — Advanced package uploads](https://learn.microsoft.com/en-gb/microsoft-365/copilot/microsoft-365-copilot-page#advanced-package-uploads)
+- [Agents for Microsoft 365 Copilot](https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/agents-overview)
+- [Microsoft 365 Agents Toolkit Overview — Teams](https://learn.microsoft.com/en-us/microsoftteams/platform/toolkit/agents-toolkit-fundamentals)
 - [Manage Microsoft 365 Copilot in Teams meetings and events](https://learn.microsoft.com/en-us/microsoftteams/copilot-teams-transcription)
 - [Flex routing (EU and EFTA) — Microsoft Learn](https://learn.microsoft.com/en-us/microsoft-365/copilot/copilot-flex-routing)
 - [Flex Routing Dilemma for European Copilot Customers — Office 365 IT Pros](https://office365itpros.com/2026/04/07/flex-routing-copilot-europe/)
