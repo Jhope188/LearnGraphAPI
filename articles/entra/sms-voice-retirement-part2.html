@@ -300,6 +300,9 @@ footer p { margin-bottom: 8px; }
 .calc-inputs input:focus, .calc-inputs select:focus { outline: 2px solid var(--color-teal); outline-offset: 1px; }
 .calc-out .bar-row { grid-template-columns: 160px 1fr 110px; }
 .calc-note { font-size: 0.82rem; margin: 14px 0 0; line-height: 1.6; }
+.calc-hint { font-size: 0.68rem; font-weight: 400; letter-spacing: 0; color: var(--color-text-dim); line-height: 1.4; }
+.calc-total { display: block; font-family: 'Cascadia Code', monospace; font-size: 0.78rem; color: var(--color-text-primary); margin-bottom: 6px; }
+.calc-warn { display: block; color: var(--color-warn); margin-bottom: 6px; }
 @media (max-width: 700px) {
   .countdown { grid-template-columns: repeat(2, 1fr); }
   .calc { grid-template-columns: 1fr; }
@@ -639,12 +642,12 @@ footer p { margin-bottom: 8px; }
       </div>
 
       <h3 id="s07-calc">Run your numbers</h3>
-      <p class="prose">Plug in one customer's SMS holdouts. The break-even line tells you when Soprano's per-user plan beats per message. Soprano's band depends on where the phone numbers are, and the Telesign bar always uses its US rate.</p>
+      <p class="prose">Plug in one customer's SMS holdouts. You're charged per MFA prompt that sends a code, not per sign-in, so for most users this is well under one a day. The break-even line tells you when Soprano's per-user plan beats per message. Soprano's band depends on where the phone numbers are, and the Telesign bar always uses its US rate.</p>
 
       <div class="calc">
         <div class="calc-inputs">
           <label>Users who need SMS<input type="number" id="cUsers" min="1" max="100000" value="25"></label>
-          <label>SMS sign-ins per user per month<input type="number" id="cAuths" min="1" max="2000" value="20"></label>
+          <label>SMS codes per user, per month<input type="number" id="cAuths" min="1" max="2000" value="20"><span class="calc-hint">Each user, not the whole customer. One code a day is about 30.</span></label>
           <label>Soprano destination band
             <select id="cBand">
               <option value="0.008">Low: $0.008</option>
@@ -770,8 +773,8 @@ footer p { margin-bottom: 8px; }
       { label: 'Soprano per message', v: perTx, c: '--s1' },
       { label: 'Telesign, US usage', v: tele, c: '--s2', tip: 'SMS Verify at $0.0095 to US numbers. Add the support plan ($500 to $5,000) or the $250 bundle.' }
     ], fmt);
-    var be = 3 / r;
-    document.getElementById('calcNote').innerHTML = 'Soprano break-even at this band: <strong>' + (be >= 100 ? Math.round(be) : be.toFixed(1)) + ' SMS per user per month</strong>. Below that, per message is cheaper. Soprano per user over the 1-year term: <strong>$' + (billable * 36).toLocaleString('en-US') + '</strong>' + (u < 10 ? ' (10-user minimum)' : '') + '. Passkeys: <strong>$0</strong> extra.';
+    var total = u * a, be = 3 / r;
+    document.getElementById('calcNote').innerHTML = '<span class="calc-total">' + total.toLocaleString('en-US') + ' SMS a month across ' + u + ' user' + (u === 1 ? '' : 's') + '</span>' + (total >= 10000 ? '<span class="calc-warn">Over 10K messages a month, Soprano\'s list rates no longer apply. They quote volume pricing instead, so treat the per-message figure as an upper bound.</span>' : '') + 'Soprano break-even at this band: <strong>' + (be >= 100 ? Math.round(be) : be.toFixed(1)) + ' SMS per user per month</strong>. Below that, per message is cheaper. Soprano per user over the 1-year term: <strong>$' + (billable * 36).toLocaleString('en-US') + '</strong>' + (u < 10 ? ' (10-user minimum)' : '') + '. Passkeys: <strong>$0</strong> extra.';
   }
   [U, A, B].forEach(function(el){ el.addEventListener('input', calc); });
   calc();
