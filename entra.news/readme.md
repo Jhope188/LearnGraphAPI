@@ -14,17 +14,17 @@ Last Updated: September 6, 2026
 
 | | |
 |---|---|
-| Total Articles | 52 (all published) |
-| Entra News Features | 27 (across 25 issues) |
+| Total Articles | 55 (all published) |
+| Entra News Features | 29 (across 26 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
-| Double-Feature Issues | 2 (Issues #141 & #142 — two articles each) |
+| Double-Feature Issues | 3 (Issues #141 & #142, and #168 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 24 of 52 published (46%) |
+| Unique Articles Featured | 26 of 55 published (47%) |
 | Publication Period | September 2025 — September 2026 |
 
-> Current public archive snapshot: Entra News #165 (September 6, 2026). The feature timeline above already includes the Jon Hope features from issues #153, #154, #157, #160, and #165. The current public weekly issue is now #165.
+> Current public archive snapshot: Entra News #168 (September 27, 2026). The feature timeline above already includes the Jon Hope features from issues #153, #154, #157, #160, #165, and the double-feature in #168 (SMS and Voice Retirement, Part 1 and Part 2). The current public weekly issue is now #168.
 
 ---
 
@@ -55,10 +55,13 @@ Last Updated: September 6, 2026
 
 ## 📝 Complete Article Catalogue
 
-### 2026 (33 articles)
+### 2026 (36 articles)
 
 | # | Title | Published | Responses | Saves | Entra News |
 |---|-------|-----------|-----------|-------|------------|
+| 55 | SMS and Voice Retirement, Part 2 | Sep 26 | — | — | ✅ #168 |
+| 54 | SMS and Voice Retirement, Part 1 | Sep 26 | — | — | ✅ #168 |
+| 53 | The Azure Policy Baseline That Protects MSP Customers from Themselves | Sep 25 | — | — | — |
 | 52 | NHI? Never Heard of Him — The Service Principal Sitting in Your Tenant | Sep 4 | — | — | ✅ #165 |
 | 51 | The Ownership Operating Model | Aug 28 | — | — | — |
 | 50 | Clean the House Before the Guests Arrive | Aug 28 | — | — | — |
