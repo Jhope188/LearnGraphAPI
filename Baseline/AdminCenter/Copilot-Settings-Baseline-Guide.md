@@ -1,6 +1,6 @@
 # Microsoft 365 Copilot Settings —  Baseline Configuration Guide
 
-- **Document Version:** 1.4
+- **Document Version:** 1.5
 - **Last Updated:** September 2026
 - **Source Reference:** Microsoft Learn — [Manage Microsoft 365 Copilot scenarios in the Microsoft 365 admin center](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-page)
 - **Admin Role Required:** AI Administrator (to view and configure); Global Reader (view-only)
@@ -8,6 +8,7 @@
 
 **Changelog:**
 
+- **v1.5** — Added new [Section 3.4: Agent Settings](#34-agent-settings-new-sep-2026) documenting the dedicated Copilot → Agents → Settings page (Agent feedback sharing, Agent Management Rules, Allowed agent types, Policy template, Sharing, Tags, User access) — the actual configuration surface behind the Section 0.3 agent-access checklist items
 - **v1.4** — Added new [Section 0: Optimize Tab Readiness Scorecard](#0-optimize-tab-readiness-scorecard) documenting the admin center's **Copilot → Optimize** guided checklist view (Deployment essentials, Data security, Workflow enablement, User experiences), which is a distinct surface from the View all settings catalog
 - **v1.3** — Added 3 new settings found in September 2026 admin center review: Advanced package uploads (available Sept 25, 2026; default behavior locks in Oct 25, 2026 if not configured), Fabric data in Microsoft Copilot, Custom link for blocked Microsoft Copilot app
 - **v1.2** — Added 7 new settings visible in July 2026 admin center: Screen and camera sharing, Copilot Release preferences (GA), Dataverse data available, AI providers for other large language models (split from subprocessors), AI models in preview, AI experiences enabled by usage-based billing, Copilot connector email notification
@@ -694,6 +695,34 @@ Avoid enabling transcript-dependent Copilot features for all users without first
 2. eDiscovery holds will capture transcripts
 3. Sensitivity labels can be applied to meeting recordings/transcripts
 4. Employees have been informed that meeting content is captured
+
+---
+
+### 3.4 Agent Settings *(new Sep 2026)*
+
+| Field | Value |
+|---|---|
+| **Admin Location** | Microsoft 365 admin center → Copilot → Agents → Settings (distinct page from Copilot → Settings → View all) |
+| **Applies to** | Declarative Agents, Copilot Studio agents, and any AI agent surfaced through Microsoft 365 Copilot |
+| **Default State** | Varies by control (see below) |
+
+**What it does:** This is a dedicated governance page for AI agents, separate from both the "View all" settings catalog (Sections 1–4) and the Optimize scorecard (Section 0). It groups seven controls:
+
+| Control | What it does | Baseline Recommendation |
+|---|---|---|
+| **Agent feedback sharing** | Controls whether agent usage feedback is shared with agent developers to help them improve agent quality and reliability | Disable for agents handling regulated/sensitive data; enable for low-risk internal productivity agents where developer feedback loops add value |
+| **Agent Management Rules** | Set and run rules to manage or perform actions on agents (e.g., auto-disable, auto-tag, conditional publishing) | Define at least one rule requiring new agents to be reviewed before broad publishing; treat this as the enforcement layer behind Section 0.3's "Deploy agents to your organization" check |
+| **Allowed agent types** | Specify which categories of AI agents (shared, external, org-built, Microsoft-built) are permitted org-wide | Start restrictive — allow Microsoft-built and org-built only; require explicit review before enabling shared or external agent types (maps to Section 0.3's agent-access items) |
+| **Policy template** | Create pre-set policies, rules, and allowlists for new AI agents | Build a template before broad agent rollout so every new agent inherits a consistent baseline instead of ad hoc configuration |
+| **Sharing** | Manage who can share AI agents within the organization and which methods they can use | Restrict sharing to named groups initially; broad/anonymous sharing of agents is equivalent to broad app consent risk |
+| **Tags** | Manage the tags admins and users can apply to agents; add descriptions, create new tags, or remove tags everywhere | Use tags to distinguish data sensitivity or review status (e.g., "Reviewed," "Pilot," "Restricted-Data") — low effort, high value for later audits |
+| **User access** | Control which users or groups can interact with AI agents | Scope to a named pilot group before org-wide rollout; do not default to "all users" until Section 0.3's agent-access checklist items are green |
+
+**Security/Compliance Relevance:** High. This page is the actual control surface behind several checks already flagged in [Section 0.3 (Workflow enablement)](#03-workflow-enablement) — "Allow agent access for users," "Allow access to agents built by your org/external providers/Microsoft," and "Deploy agents to your organization." Those Optimize-tab items report status; this page is where the underlying configuration actually lives.
+
+** Baseline Recommendation:** **Configure User access and Allowed agent types first (they gate everything else), then build a Policy template before any agent deployment, and treat Agent Management Rules as the ongoing enforcement/review mechanism.**
+
+Sequence: (1) User access → scope to pilot group, (2) Allowed agent types → org-built + Microsoft-built only, (3) Policy template → establish the baseline every new agent inherits, (4) Sharing → restrict to named groups, (5) Agent Management Rules → require review before publishing, (6) Tags → apply consistently for audit trail, (7) Agent feedback sharing → decide per data sensitivity.
 
 ---
 
