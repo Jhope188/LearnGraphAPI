@@ -1122,6 +1122,83 @@ Publishing/auto-apply policies don't have a SIM equivalent the way DLP policies 
 2. Check **Data classification → Content explorer** in the Purview portal to see actual label adoption before turning on any auto-apply policy — auto-apply on top of an untested label taxonomy just compounds a mistake at scale.
 3. Only add auto-apply once the manual labels are confirmed correct and the client's on E5-tier.
 
+# Part 5 — Browser extension & device onboarding prerequisites
+
+Covers deploying the Microsoft Purview browser extension (Chrome/Firefox) and the native Edge configuration needed for DLP, Insider Risk Management (IRM), and DSPM for AI. Source: Microsoft Purview device onboarding / IRM browser support / DSPM for AI documentation, verified live.
+
+## Two separate artifacts — don't conflate them
+
+This deployment involves two distinct things that come from two different places. Mixing them up is the easiest mistake to make here:
+
+| | Device onboarding package | Browser extension profile |
+|---|---|---|
+| **Where it comes from** | Microsoft Purview portal → Settings → Device onboarding → Onboarding → pick OS → pick deployment method → **Download package** | Built by hand in Intune (Settings Catalog / Custom profile referencing the Chrome Web Store extension ID) |
+| **What it does** | Registers the device with Purview/MDE so it can report telemetry at all — has nothing to do with browsers | Force-installs the actual extension into an already-onboarded browser |
+| **Platform** | Both Windows and Mac | **Windows only** — see below |
+| **Deployed for this build** | Windows *and* Mac | Windows *only* |
+
+A device with the onboarding package but no browser extension still reports to Endpoint DLP for file-based activity (USB, print, network share). It just won't have Chrome/Firefox browser-level DLP/IRM/DSPM coverage until the extension profile is also pushed.
+
+## This deployment: onboard Mac, build the browser profile for Windows only
+
+**Mac devices:** onboarded via the device onboarding package (Purview → Settings → Device onboarding → Onboarding → macOS → Intune or JAMF as deployment method → Download package → deploy per the macOS Intune/JAMF procedure). No browser extension profile gets built for Mac — Edge, Chrome, Firefox, and Safari are all natively supported there, so there's nothing for an extension to do.
+
+**Windows devices:** onboarded the same way (macOS steps above, Windows equivalent) *and* get the separate browser extension profile built in Intune, since Chrome and Firefox have no native Purview support on Windows.
+
+## Requirement matrix by browser, platform, and capability
+
+| Browser | Platform | DLP | IRM | DSPM for AI |
+|---|---|---|---|---|
+| Microsoft Edge | Windows | Not required (native) | Not required (native) | **Required** (extension/config profile) |
+| Microsoft Edge | macOS | Not required (native) | Not required (native) — not supported for browsing to other AI sites | **Not supported** |
+| Google Chrome | Windows | **Required** (extension) | **Required** (extension) | **Required** (extension) |
+| Google Chrome | macOS | Not required (native) | Not required (native) — not supported for browsing to other AI sites | **Not supported** |
+| Mozilla Firefox | Windows | **Required** (extension) | **Required** (extension) | **Required** (extension) |
+| Mozilla Firefox | macOS | Not required (native) | Not required (native) — not supported for browsing to other AI sites | **Not supported** |
+
+**Edge is a special case, not a contradiction:** Edge never needs the browser *extension* — but it still needs a *configuration profile* pushed via Intune to turn on its native Purview DLP integration, and for DSPM for AI specifically, Windows Edge does require that profile. Don't read "Edge: not required" as "nothing to deploy" — there's still a config profile in your Intune policy list even when no extension is involved. This Edge config profile is Windows-only in this build, same as the Chrome/Firefox extension profiles — no Edge profile gets built for Mac either, since Edge is natively supported there too.
+
+**Coverage gap to disclose on Mac-heavy or BYOD environments:** native browser DLP (paste-to-browser, upload-to-cloud blocking) works fine on Mac across all four browsers once the device onboarding package is deployed. But DSPM for AI — visibility into *which* AI sites users visit, IRM risk signals from AI browsing, Adaptive Protection risk-based blocking of AI usage — has no Mac path at all, extension or not. If a client asks whether they're covered on AI usage across their whole fleet, the honest answer is: DLP yes, AI-usage visibility/posture management no, on Mac.
+
+## Deployment steps — device onboarding (both platforms)
+
+```
+Microsoft Purview portal → Settings → Device onboarding → Onboarding
+  → Select operating system: Windows 10 (or macOS)
+  → Deployment method: Mobile Device Management / Microsoft Intune
+  → Download package
+
+Windows: deploy the resulting configuration package via Intune as a
+  device onboarding/EDR configuration profile.
+
+macOS: extract the package — DeviceComplianceOnboarding.xml/.plist plus
+  the bundled mdatp.mobileconfig — and deploy both as Intune (or JAMF)
+  configuration profiles per the macOS onboarding procedure. No browser
+  extension profile follows this step for Mac; onboarding alone is the
+  full deployment there.
+```
+
+## Deployment steps — browser extension profiles (Windows only)
+
+```powershell
+# Settings Catalog / Custom profile names, matching the naming convention
+# already in use: Win-[Browser]-MSPurviewBrowserExt
+# Built independently in Intune — NOT part of the device onboarding download above.
+
+# Chrome — force-install via Settings Catalog
+# Google > Google Chrome > Extensions > Configure the list of force-installed apps and extensions
+# Value: echcggldkblhodogklpincgchnpgcdco;https://clients2.google.com/service/update2/crx
+
+# Firefox — Custom profile (ADMX-backed), same extension ID pattern via Firefox's
+# enterprise policy JSON (ExtensionSettings), pushed as a Custom configuration profile.
+
+# Edge — Settings Catalog profile enabling native DLP/DSPM integration,
+# NOT an extension push. Separate profile, same deployment mechanism (Intune).
+```
+
+Confirm devices show a healthy onboarding + policy sync status in the Microsoft Purview portal before assuming the extension push alone is sufficient — an extension profile targeting an un-onboarded device does nothing.
+
+
 # Rollout sequence for every policy above
 
 | Day(s) | Mode | Action |
