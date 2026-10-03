@@ -27,12 +27,29 @@ article-archive/
 
 ```bash
 pip3 install playwright && python3 -m playwright install chromium   # one-time, for visual export
+
+# Full regen of every article published/linked from articles.html (fast - no
+# visual-component screenshots unless you ask for them):
 python3 article-archive/scripts/convert.py
+python3 article-archive/scripts/convert.py --visual-export-all   # + screenshot every table/grid
+
+# Just one article, always with visual-component export (this is what
+# .github/scripts/publish.py calls automatically on every publish - see below):
+python3 article-archive/scripts/convert.py --article articles/entra/service-principal-shadow-admins.html --series entra
 ```
 
-This re-reads the 23 published articles listed at the top of `scripts/convert.py` (in
-`articles/`, not `catech-branded/`), rebuilds every `.md` / Medium `.html` file, and
-re-extracts embedded screenshots into `images/`. Re-run it any time an article is updated.
+Full-regen mode discovers the published article list from `articles.html`'s links (not a
+hand-maintained list), so newly published articles are picked up automatically.
+
+## Runs automatically on every publish
+
+`.github/scripts/publish.py` calls `convert.py --article ... --series ...` for the article
+being published, right before it commits and pushes, via `export_archive_copy()`. That means
+every `publish: ...` commit also includes an updated `catech-branded/` + `markdown/` +
+`medium/` (+ `images/`) copy of that article, with visual-component screenshots always on for
+the article actually being published. If the archive step fails for any reason (Playwright
+not installed, etc.) it prints a warning and the real site publish still completes - it never
+blocks a publish.
 
 ## How the conversion works
 
@@ -70,13 +87,12 @@ Detection is generic, not based on specific class names:
 - any div/section whose *every* direct child independently qualifies as a "card" (see above),
   with 2 or more such children, is treated as a visual grid and exported as one image
 
-This currently only runs for the slugs listed in `VISUAL_EXPORT_SLUGS` near the top of
-`convert.py` (`service-principal-shadow-admins`, the NHI article, as the initial test case).
-Set `VISUAL_EXPORT_SLUGS = None` to run it across every article once you're happy with the
-output quality - it adds real browser rendering time per article, so it's opt-in rather than
-always-on. Requires `pip3 install playwright && python3 -m playwright install chromium`; if
-Playwright isn't installed, this step is silently skipped and the rest of the conversion
-still runs exactly as before.
+Visual export always runs for a single `--article` invocation (used by `publish.py` and the
+test above). For full-regen mode, it's opt-in via `--visual-export-all` since it adds real
+browser rendering time per article. Requires
+`pip3 install playwright && python3 -m playwright install chromium`; if Playwright isn't
+installed, this step is silently skipped and the rest of the conversion still runs exactly
+as before.
 
 ## Medium copies
 

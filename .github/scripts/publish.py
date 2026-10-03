@@ -454,7 +454,41 @@ def update_entra_news(cfg: dict):
 # 6. Git commit + push
 # ─────────────────────────────────────────────────────────────────────────────
 
-def git_push(cfg: dict):
+def export_archive_copy(cfg: dict) -> list[str]:
+    """Save a markdown + Medium (+ visual-component screenshot) copy of the
+    just-published article under article-archive/, via
+    article-archive/scripts/convert.py --article ... --series ....
+    Never blocks the actual site publish — a failure here just prints a
+    warning and the normal publish continues without an archive copy."""
+    series   = cfg["series"]
+    filename = cfg["filename"]
+    article_rel = f"articles/{series}/{filename}"
+    article_path = ROOT / article_rel
+    if not article_path.exists():
+        print(f"  ⚠️  Skipping archive export — {article_rel} not found.")
+        return []
+
+    slug = Path(filename).stem
+    script = ROOT / "article-archive" / "scripts" / "convert.py"
+    try:
+        subprocess.run(
+            [sys.executable, str(script), "--article", article_rel, "--series", series],
+            cwd=ROOT, check=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError) as exc:
+        print(f"  ⚠️  Archive export failed ({exc}); continuing without it.")
+        return []
+
+    print(f"  🗄️  Archived to article-archive/{{catech-branded,markdown,medium}}/{series}/{slug}.*")
+    return [
+        f"article-archive/catech-branded/{series}/{slug}.html",
+        f"article-archive/markdown/{series}/{slug}.md",
+        f"article-archive/medium/{series}/{slug}.html",
+        f"article-archive/images/{series}/{slug}",
+    ]
+
+
+def git_push(cfg: dict, archive_files: list[str] = None):
     series   = cfg["series"]
     filename = cfg["filename"]
     title    = cfg["title"]
@@ -473,6 +507,12 @@ def git_push(cfg: dict):
         files.append(f"articles/{series}/{filename}")
 
     subprocess.run(["git", "add"] + files, cwd=ROOT, check=True)
+
+    # Archive paths use -A so a changed image count (added/removed screenshots
+    # between runs) is staged correctly, not just new/modified files.
+    for path in (archive_files or []):
+        if (ROOT / path).exists():
+            subprocess.run(["git", "add", "-A", "--", path], cwd=ROOT, check=True)
 
     msg = f"publish: {title}"
     if en_cfg:
@@ -530,9 +570,12 @@ def main():
         print("\n📰 Updating Entra News pages...")
         update_entra_news(cfg)
 
+    print("\n🗄️  Saving markdown + Medium archive copy...")
+    archive_files = export_archive_copy(cfg)
+
     if cfg["push"]:
         print("\n🔀 Committing and pushing...")
-        git_push(cfg)
+        git_push(cfg, archive_files)
     else:
         print("\n  Files updated locally. Run `git push origin main` when ready.")
 

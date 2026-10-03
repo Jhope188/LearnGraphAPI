@@ -16,23 +16,12 @@
 <blockquote><p>"Getting guests in is easy. Knowing what you're actually trusting when you let them in is the part most admins skip."</p></blockquote>
 <h2>01. The Three Guest Personas</h2>
 <p>Before any configuration discussion, the trust model needs to be right. Guest accounts in Entra map directly to the kind of risk decisions you make at your front door every day.</p>
-<p><em>Trusted Partner</em></p>
-<p><strong>🤝 Your Best Friend</strong></p>
-<p>Known relationship. Strong security posture on their side. You've configured explicit inbound trust because you've verified what they enforce at home.</p>
-<p>B2B Collaboration Member · B2B Direct Connect</p>
-<p><em>Credential-Based Trust</em></p>
-<p><strong>🚐 The Contractor</strong></p>
-<p>You let them in because of what they present. You're trusting the credential, not the person. And you don't know what's inside the van.</p>
-<p>B2B Collaboration Guest · Service Provider (GDAP)</p>
-<p><em>No Prior Trust</em></p>
-<p><strong>❓ The Stranger</strong></p>
-<p>No organizational backing. No home tenant to trust. Personal email, OTP verification only. Maximum scrutiny required before anything.</p>
-<p>Other External Users · OTP Guests</p>
+<img src="../../images/identity/who-did-you-let-in/who-did-you-let-in-component-01.png" alt="Comparison: Your Best Friend vs The Contractor vs The Stranger">
 <p>The challenge is that Entra surfaces <strong>six distinct external user types</strong>, and they behave fundamentally differently in how they authenticate, where MFA completes, and what CA policy controls are safe to apply. Most tenants treat all six identically. That's where the gaps start.</p>
 <h2>02. Not All Guests Are the Same</h2>
 <p>When you configure a Conditional Access policy and select "Guest or external users," the portal gives you six checkboxes. Most admins check all of them and move on. That's a mistake. The populations behind those checkboxes behave fundamentally differently, and applying the wrong grant control <strong>silently blocks users instead of prompting them for MFA</strong>.</p>
 <p>Entra Guest Types — CA Policy Reference</p>
-<table><thead><tr><th>Portal Checkbox Label</th><th>Graph API Value</th><th>Auth Strength Safe?</th><th>Notes</th></tr></thead><tbody><tr><td><strong>B2B collaboration guest users</strong></td><td>b2bCollaborationGuest</td><td>⚠ Mixed</td><td>Heterogeneous — contains both Entra-backed AND non-Entra guests (Google, OTP, SAML). Use basic mfa only.</td></tr><tr><td><strong>B2B collaboration member users</strong></td><td>b2bCollaborationMember</td><td>✓ Safe</td><td>Entra-backed only. Auth strength safe.</td></tr><tr><td><strong>B2B direct connect users</strong></td><td>b2bDirectConnectUser</td><td>✓ Safe</td><td>Entra-backed only. Auth strength safe. Requires inbound trust configured — else blocked entirely, no prompt, no fallback.</td></tr><tr><td><strong>Local guest users</strong></td><td>internalGuest</td><td>✓ Safe</td><td>Lives in your directory. Credentials managed by your tenant. Full auth strength support.</td></tr><tr><td><strong>Service provider users</strong></td><td>serviceProvider</td><td>⚠ Conditional</td><td>GDAP/CSP partners. MFA always from home tenant. Auth strength applicable — but only if partner uses native Entra MFA. DUO/Custom Controls will block.</td></tr><tr><td><strong>Other external users</strong></td><td>otherExternalUser</td><td>✗ Not Supported</td><td>Non-Entra IdP only. Auth strength NOT supported. Basic mfa only.</td></tr></tbody></table>
+<img src="../../images/identity/who-did-you-let-in/who-did-you-let-in-component-02.png" alt="Table: Portal Checkbox Label, Graph API Value, Auth Strength Safe?, Notes">
 <h2>03. The Credential Trust Problem</h2>
 <p>This is where the contractor analogy gets sharp. When you enable <strong>Trust MFA from home tenant</strong> in Cross-Tenant Access Settings, you're not just trusting the person. You're trusting the entire security posture of the tenant that issued their credential. The van looks right. The uniform looks right. But you don't know what's inside.</p>
 <p>✅</p>

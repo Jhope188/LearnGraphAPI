@@ -40,36 +40,28 @@ except ImportError:
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SITE_BASE = "https://conditionalaccess.tech/"
+ARTICLES_INDEX = os.path.join(REPO_ROOT, "articles.html")
 
-SOURCES = [
-    ("articles/azure/azure-policy-msp-governance.html", "azure"),
-    ("articles/conditional-access/baseline-scopes-publish/baseline-scopes.html", "conditional-access"),
-    ("articles/conditional-access/ca-mistakes-top-10.html", "conditional-access"),
-    ("articles/conditional-access/ca-policy-analyzer-july-2026.html", "conditional-access"),
-    ("articles/conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html", "conditional-access"),
-    ("articles/conditional-access/ca-safety-net.html", "conditional-access"),
-    ("articles/conditional-access/demo-ca-rpmsg-aip-exclusion.html", "conditional-access"),
-    ("articles/conditional-access/mfa-for-all-but-not-the-same.html", "conditional-access"),
-    ("articles/entra/au-vs-rmau.html", "entra"),
-    ("articles/entra/mastering-groups-deep-dive.html", "entra"),
-    ("articles/entra/service-principal-shadow-admins.html", "entra"),
-    ("articles/entra/sms-voice-retirement-part1.html", "entra"),
-    ("articles/entra/sms-voice-retirement-part2.html", "entra"),
-    ("articles/governance/ai-readiness-governance-audit.html", "governance"),
-    ("articles/governance/configuration-is-not-control.html", "governance"),
-    ("articles/governance/groups-connective-tissue.html", "governance"),
-    ("articles/governance/lifecycle-sprawl-countermeasure.html", "governance"),
-    ("articles/governance/ownership-operating-model.html", "governance"),
-    ("articles/identity/authentication-methods.html", "identity"),
-    ("articles/identity/groups-connective-tissue.html", "identity"),
-    ("articles/identity/identity-is-everything.html", "identity"),
-    ("articles/identity/passkeys.html", "identity"),
-    ("articles/identity/who-did-you-let-in.html", "identity"),
-]
 
-# Limit the real-browser table/grid screenshot export (requires Playwright) to
-# these slugs. Set to None to run it for every article in SOURCES.
-VISUAL_EXPORT_SLUGS = {"service-principal-shadow-admins"}
+def discover_sources():
+    """Find every published article from articles.html's link list, instead of
+    a hand-maintained list, so newly published articles are picked up without
+    editing this script. Falls back to an empty list if articles.html can't be
+    read (caller should then rely on --article for a single-article run)."""
+    try:
+        with open(ARTICLES_INDEX, encoding="utf-8") as f:
+            html = f.read()
+    except OSError:
+        return []
+    hrefs = sorted(set(re.findall(r'href="(articles/[^"]+\.html)"', html)))
+    sources = []
+    for href in hrefs:
+        parts = href.split("/")
+        if len(parts) < 3 or parts[1] == "_template":
+            continue
+        sources.append((href, parts[1]))
+    return sources
+
 
 SKIP_TAGS = {"script", "style", "nav", "header", "aside", "svg", "button",
              "input", "select", "option", "noscript", "form"}
@@ -926,31 +918,43 @@ def find_content_root(soup):
     return soup.body
 
 
-def convert_one(src_path, series):
+def convert_one(src_path, series, force_visual_export=False):
     rel_path = src_path
     base_url = urljoin(SITE_BASE, os.path.dirname(rel_path) + "/")
     full_path = os.path.join(REPO_ROOT, src_path)
     with open(full_path, encoding="utf-8") as f:
-        soup = BeautifulSoup(f.read(), "lxml")
+        raw_html = f.read()
+    soup = BeautifulSoup(raw_html, "lxml")
 
     meta = extract_meta(soup, rel_path)
     hero = extract_hero(soup)
     root = find_content_root(soup)
 
     slug = os.path.splitext(os.path.basename(src_path))[0]
+
+    # Keep a safe-keeping copy of the as-published HTML alongside the markdown/medium output.
+    branded_dir = os.path.join(REPO_ROOT, "article-archive", "catech-branded", series)
+    os.makedirs(branded_dir, exist_ok=True)
+    with open(os.path.join(branded_dir, f"{slug}.html"), "w", encoding="utf-8") as f:
+        f.write(raw_html)
+
+    img_save_dir = os.path.join(REPO_ROOT, "article-archive", "images", series, slug)
+    if os.path.isdir(img_save_dir):
+        import shutil
+        shutil.rmtree(img_save_dir)
+
     img_ctx = {
         "slug": slug,
         "counter": 0,
-        "save_dir": os.path.join(REPO_ROOT, "article-archive", "images", series, slug),
+        "save_dir": img_save_dir,
         "rel_prefix": f"../../images/{series}/{slug}/",
         "visual_map": {},
     }
 
-    if VISUAL_EXPORT_SLUGS is None or slug in VISUAL_EXPORT_SLUGS:
-        if root is not None:
-            print(f"  rendering visual components for {slug} via headless browser...")
-            img_ctx["visual_map"] = export_visual_components(soup, root, img_ctx)
-            print(f"  exported {len(img_ctx['visual_map'])} component screenshot(s)")
+    if force_visual_export and root is not None:
+        print(f"  rendering visual components for {slug} via headless browser...")
+        img_ctx["visual_map"] = export_visual_components(soup, root, img_ctx)
+        print(f"  exported {len(img_ctx['visual_map'])} component screenshot(s)")
 
     blocks = []
     if root is not None:
@@ -1020,30 +1024,58 @@ def render_medium_html(doc):
     return "\n".join(parts) + "\n"
 
 
+def convert_and_write(src_path, series, force_visual_export=False):
+    doc = convert_one(src_path, series, force_visual_export=force_visual_export)
+    md = render_markdown(doc)
+    html = render_medium_html(doc)
+
+    md_dir = os.path.join(REPO_ROOT, "article-archive", "markdown", series)
+    html_dir = os.path.join(REPO_ROOT, "article-archive", "medium", series)
+    os.makedirs(md_dir, exist_ok=True)
+    os.makedirs(html_dir, exist_ok=True)
+    md_path = os.path.join(md_dir, f'{doc["slug"]}.md')
+    html_path = os.path.join(html_dir, f'{doc["slug"]}.html')
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(md)
+    with open(html_path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+    word_count = len(re.findall(r"\w+", render_blocks_markdown(doc["blocks"])))
+    print(f'OK  {series:20s} {doc["slug"]:45s} words={word_count}')
+    return doc, word_count
+
+
 def main():
+    argv = sys.argv[1:]
+
+    article_arg = None
+    series_arg = None
+    visual_export_all = "--visual-export-all" in argv
+    if "--article" in argv:
+        article_arg = argv[argv.index("--article") + 1]
+    if "--series" in argv:
+        series_arg = argv[argv.index("--series") + 1]
+
+    if article_arg:
+        # Single-article mode: used by publish.py right after an article goes
+        # live, so it always gets the full export including visual components.
+        series = series_arg or article_arg.split("/")[1]
+        convert_and_write(article_arg, series, force_visual_export=True)
+        return
+
+    # Full regen mode: rebuild every published article's markdown/medium/images.
     images_root = os.path.join(REPO_ROOT, "article-archive", "images")
     if os.path.isdir(images_root):
         import shutil
         shutil.rmtree(images_root)
 
-    manifest_rows = []
-    for src_path, series in SOURCES:
-        doc = convert_one(src_path, series)
-        md = render_markdown(doc)
-        html = render_medium_html(doc)
+    sources = discover_sources()
+    if not sources:
+        print("No articles found via articles.html link discovery.", file=sys.stderr)
+        sys.exit(1)
 
-        md_path = os.path.join(REPO_ROOT, "article-archive", "markdown", series, f'{doc["slug"]}.md')
-        html_path = os.path.join(REPO_ROOT, "article-archive", "medium", series, f'{doc["slug"]}.html')
-        with open(md_path, "w", encoding="utf-8") as f:
-            f.write(md)
-        with open(html_path, "w", encoding="utf-8") as f:
-            f.write(html)
-
-        word_count = len(re.findall(r"\w+", render_blocks_markdown(doc["blocks"])))
-        manifest_rows.append((doc["series"], doc["slug"], doc["meta"]["title"] or doc["hero"]["title"], word_count))
-        print(f'OK  {series:20s} {doc["slug"]:45s} words={word_count}')
-
-    return manifest_rows
+    for src_path, series in sources:
+        convert_and_write(src_path, series, force_visual_export=visual_export_all)
 
 
 if __name__ == "__main__":
