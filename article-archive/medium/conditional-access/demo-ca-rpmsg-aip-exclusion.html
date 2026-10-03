@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Why Your Encrypted Emails Won't Open and How to Fix It</title>
+</head>
+<body>
+<h1>Why Your Encrypted Emails Won't Open and How to Fix It</h1>
+<p><em>Demo Guide · Conditional Access + Purview</em></p>
+<p>Sensitivity labels encrypt email. Conditional Access blocks the decryption service. The misconfiguration is invisible on your side. You find out when a recipient calls you.</p>
+<p><em>Originally published at <a href="https://conditionalaccess.tech/articles/conditional-access/demo-ca-rpmsg-aip-exclusion.html">conditionalaccess.tech</a></em></p>
+<hr>
+<p>The Root Cause</p>
+<h2>What's Actually Happening</h2>
+<p>The rpmsg file is a container. It's not the problem. What breaks is what happens when Outlook tries to <strong>unwrap it</strong>.</p>
+<p>When a recipient's Outlook desktop opens an rpmsg, it calls the Azure Rights Management endpoint in the sender's tenant to get a decryption key. That call is authenticated, which means it is subject to the sender's Conditional Access policies.</p>
+<blockquote><p>🛑 <strong>What Breaks:</strong> Your CA policy requires MFA on all cloud apps. The RMS token request hits that policy. The external recipient has no MFA registered in your tenant. The challenge fails, the key is never issued, the message stays sealed. Nothing logs on your side.</p></blockquote>
+<p>The service being hit is Microsoft Rights Management Services, App ID 00000012-0000-0000-c000-000000000000. It is a cloud app like any other in CA policy scope. "All cloud apps" means this one too.</p>
+<p>Before the Fix</p>
+<h2>The Broken Flow</h2>
+<p>1</p>
+<h3>User applies Confidential - Third Parties label in Outlook</h3>
+<p>Sensitivity label encryption is applied to the outbound email. Azure RMS wraps the message content.</p>
+<p>↓</p>
+<p>2</p>
+<h3>Email delivered to external recipient as rpmsg</h3>
+<p>Recipient receives the message with an rpmsg attachment or the OME wrapper. So far, expected behavior.</p>
+<p>↓</p>
+<p>3</p>
+<h3>Recipient's Outlook desktop tries to decrypt</h3>
+<p>Outlook contacts aadrm.com, the Azure RMS endpoint in the sender's tenant, to acquire a use license for decryption. This is a live authenticated call, not a cached operation.</p>
+<p>↓</p>
+<p>!</p>
+<h3>CA policy fires on the Rights Management service principal</h3>
+<p>"Require MFA for all users, all cloud apps" includes Microsoft Rights Management Services. The external recipient has no MFA registration in your tenant. CA blocks the token issuance. The decryption key is never returned.</p>
+<p>↓</p>
+<p>✕</p>
+<h3>Recipient sees an error: message will not open</h3>
+<p>Outlook desktop shows a generic access error. The recipient cannot read the message. No alert fires in your tenant. You won't know unless they tell you.</p>
+<p>The Technical Explanation</p>
+<h2>What Outlook Desktop Actually Does</h2>
+<h3>The Service Principal Involved</h3>
+<table><thead><tr><th>Service</th><th>App ID</th><th>What It Does</th><th>CA Impact</th></tr></thead><tbody><tr><td>Microsoft Rights Management Services</td><td>00000012-0000-0000-c000-000000000000</td><td>Issues use licenses for RMS-encrypted content at decryption time</td><td>Blocks decryption if MFA required and recipient can't satisfy it</td></tr></tbody></table>
+<p>Excluding AIP from the MFA policy does not weaken security. The external recipient authenticated to their own identity provider to reach this point. The RMS token request is a downstream call inside an already-authenticated Outlook session. A second MFA challenge on a service call the user cannot see or control is not a security control. It is a broken user experience with no compensating value.</p>
+<blockquote><p>ℹ️ <strong>Why This Is Not a Security Gap:</strong> CA enforces MFA at sign-in. The RMS token request happens after the user has already signed in. It is a background credential exchange, not a new session. Excluding AIP from MFA removes an unintended re-challenge on a call the user cannot see or complete.</p></blockquote>
+<p>Any client that goes through the OME portal hits this. The portal calls back to the sender's tenant to get a decryption key regardless of which browser or device the recipient uses. The rpmsg format is not the problem. The endpoint call is.</p>
+<p>The Fix</p>
+<h2>What Needs to Change in the CA Policy</h2>
+<p>Two options. Option A is the surgical fix: it leaves everything else unchanged.</p>
+<p>Option A: Recommended for Most Deployments</p>
+<h3>Exclude AIP service from your MFA policy</h3>
+<p>Add Microsoft Rights Management Services to the excluded cloud apps list in your "Require MFA All Users" policy. Internal users still get MFA enforced on every other app. The AIP token acquisition call is unblocked for all users including external.</p>
+<pre><code># CA policy after fix
+Policy Name  : CA002 - Require MFA - All Users
+Users        : All users
+Exclude Users: Azure-Breakglass, CA-Breakglass
+Cloud Apps   : All cloud apps
+Exclude Apps : Microsoft Rights Management Services
+               # App ID: 00000012-0000-0000-c000-000000000000
+Grant        : Require MFA</code></pre>
+<p>Option B: For Tighter External Posture</p>
+<h3>Scope the MFA policy to internal users only</h3>
+<p>Under Users in the CA policy, select All users but ensure All guest and external users is NOT included. This removes external users from the MFA requirement on all apps in this policy, not just AIP. Only appropriate if you have a separate CA policy handling external user MFA.</p>
+<pre><code>Assignments → Users → Include : All users
+Assignments → Users → Exclude : Guest and external users
+                                   Azure-Breakglass
+                                   CA-Breakglass</code></pre>
+<blockquote><p>⚠️ <strong>Caution:</strong> Option B removes external users from this MFA policy entirely, not just for AIP. Only use this if you have a dedicated external user MFA policy in place. Option A is the more surgical fix.</p></blockquote>
+<p>Microsoft Learn</p>
+<h3>External recipient can't open encrypted email</h3>
+<p>The official troubleshooting article documenting this exact behaviour. Covers CA policy blocking the AIP endpoint and labels scoped to internal recipients only, and documents the exclusion as the supported resolution.</p>
+<p><a href="https://learn.microsoft.com/en-us/troubleshoot/outlook/security/external-recipient-can%27t-open-encrypted-email">learn.microsoft.com › troubleshoot/outlook/security/external-recipient-cant-open-encrypted-email</a></p>
+<h3>Microsoft Entra configuration for encrypted content</h3>
+<p>Covers cross-tenant access for encrypted content. Explicitly states that Microsoft Rights Management Services must be removed from CA policies or external users excluded when external recipients need to open encrypted content.</p>
+<p><a href="https://learn.microsoft.com/en-us/purview/encryption-azure-ad-configuration">learn.microsoft.com › purview/encryption-azure-ad-configuration</a></p>
+<hr>
+<p>Live Demo</p>
+<h2>Step-by-Step Walkthrough</h2>
+<p>The failure state is what makes the fix meaningful.</p>
+<p>Phase 1: Show the Break</p>
+<p>1</p>
+<h3>CA policy: no Rights Management exclusion</h3>
+<p>The Require MFA All Users policy targets all cloud apps with no exclusions. Microsoft Rights Management Services is in scope. Any authenticated call to the RMS endpoint from an external recipient will be evaluated against this policy.</p>
+<p>Entra admin center → Protection → Conditional Access → Policies → CA002 - Require MFA - All Users</p>
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-01.jpg" alt="CA policy: only Microsoft Intune Enrollment excluded: no Rights Management entry">
+<p>2</p>
+<h3>Encrypted email: external recipient</h3>
+<p>The email is sent with the Confidential - Third Parties sensitivity label applied. This label uses user-defined permissions. The sender explicitly grants the external recipient access at send time. That grant is what puts the recipient through the RMS token acquisition flow, and where the CA policy intercepts it.</p>
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-02.jpg" alt="Encrypted email arrives: rpmsg attachment, recipient cannot open it without the OME portal, recipient cannot open it without the OME portal">
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-03.jpg" alt="No preview available: external mail client has no way to decrypt the rpmsg directly">
+<p>3</p>
+<h3>Decryption fails: CA blocks the RMS token</h3>
+<p>The recipient's client calls the sender's RMS endpoint to acquire a use license. CA evaluates that request, requires MFA, and the external recipient cannot satisfy the challenge. The token is denied. The sending tenant logs nothing. The failure is only visible to the recipient.</p>
+<p>4</p>
+<h3>Native Outlook: message breaks there too</h3>
+<p>The message also fails when opened natively in Outlook on the Inforcer tenant. No OME portal involved. Outlook desktop on the receiving side calls back to the sender's RMS endpoint directly, hits the same CA policy, and the decryption key is denied. The failure is not limited to the OME portal path.</p>
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-04.jpg" alt="">
+<p>Phase 2: Explain Why</p>
+<p>5</p>
+<h3>Microsoft Rights Management Services is a cloud app</h3>
+<p>Microsoft Rights Management Services appears in Enterprise Applications like any other cloud app. "All cloud apps" in the CA policy includes it, which is why the MFA requirement fires when an external recipient's client tries to acquire a decryption use license.</p>
+<p>Entra admin center → Applications → Enterprise applications → Search: Microsoft Rights Management</p>
+<p>6</p>
+<h3>Explain what Outlook desktop actually does</h3>
+<p>When Outlook desktop opens an rpmsg, it calls aadrm.com to get a decryption use license. That call is authenticated. CA evaluates it. The external recipient has no MFA registered in your tenant, so the token is denied and the key is never issued. OWA decrypts server-side; the browser never touches aadrm.com.</p>
+<p>Phase 3: Apply the Fix and Verify</p>
+<p>7</p>
+<h3>Add AIP to the excluded cloud apps list</h3>
+<p>Open the MFA for All Users policy. Under Cloud apps, switch to the Exclude tab. Add Microsoft Rights Management Services. Save the policy. The change takes effect within minutes.</p>
+<p>CA policy → Cloud apps or actions → Exclude → Select apps → search "Microsoft Rights Management" → Select → Save</p>
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-05.jpg" alt="Microsoft Rights Management Services added to excluded cloud apps: 2 resources now excluded">
+<p>8</p>
+<h3>With the exclusion in place: decryption succeeds</h3>
+<p>The same encrypted email, the same recipient, the same label. With Microsoft Rights Management Services excluded from the MFA policy, the RMS token request goes through. The encryption has not changed. The message is still protected and the rights are still enforced. MFA still applies to every other cloud app.</p>
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-06.jpg" alt="Email resent with exclusion in place: rpmsg arrives the same way">
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-07.jpg" alt="OME portal now prompts for one-time passcode: decryption proceeds">
+<p>9</p>
+<h3>Sign-in logs confirm the fix</h3>
+<p>The sign-in logs show a successful authentication entry for the Microsoft Rights Management Services app. Before the exclusion, the same app would have shown an interrupted or failed entry at the same step, the token request blocked by the MFA requirement.</p>
+<p>Entra admin center → Monitoring → Sign-in logs → filter App = Microsoft Rights Management Services</p>
+<img src="../../images/conditional-access/demo-ca-rpmsg-aip-exclusion/demo-ca-rpmsg-aip-exclusion-08.jpg" alt="Message opens: encrypted email decrypted successfully after CA exclusion">
+<hr>
+<p>Customer Talking Points</p>
+<h2>The Non-Technical Version</h2>
+<h3>What to say to the customer</h3>
+<p>"Your MFA policy is correct, but it is also blocking the background service call that lets recipients decrypt your protected emails. Excluding that one service fixes the delivery problem without touching the protection on the emails themselves."</p>
+<p>The protection from the sensitivity label is not weakened by this change. The email is still encrypted with Azure RMS. The recipient still has to authenticate to open it. The label still controls who can read, copy, forward, or print. What changes is that the service call Outlook desktop makes to get the decryption key is no longer interrupted by a secondary MFA challenge that the recipient has no way to complete.</p>
+<blockquote><p>⚠️ <strong>Healthcare Context:</strong> For customers with HIPAA obligations: this fix is not a HIPAA compliance gap. The encryption required under §164.312(e)(2)(ii) remains in place. Access control under §164.312(a)(1) is still enforced by the label encryption rights. The CA policy change affects the decryption delivery mechanism, not the protection itself.</p></blockquote>
+<p>IAC Baseline Update</p>
+<h2>Add AIP Exclusion to Your Baseline CA Policy</h2>
+<p>This exclusion should be standard in any baseline that deploys both sensitivity label encryption and MFA for all users. Without it, every customer who sends a labeled email externally will hit this. Add it to your CA baseline documentation and script templates.</p>
+<pre><code># PowerShell: add AIP exclusion to existing policy
+# Requires: Microsoft.Graph module
+
+$aipAppId = "00000012-0000-0000-c000-000000000000"
+
+# Get the Rights Management service principal object ID
+$aipSP = Get-MgServicePrincipal -Filter "AppId eq '$aipAppId'"
+
+# Get your MFA policy (update -PolicyId to your actual policy GUID)
+$policy = Get-MgIdentityConditionalAccessPolicy -ConditionalAccessPolicyId "&lt;your-policy-guid&gt;"
+
+# Build the updated excluded apps list
+$currentExcludes = $policy.Conditions.Applications.ExcludeApplications
+$updatedExcludes  = $currentExcludes + $aipSP.AppId
+
+# Update the policy
+Update-MgIdentityConditionalAccessPolicy `
+  -ConditionalAccessPolicyId $policy.Id `
+  -Conditions @{
+    Applications = @{
+      IncludeApplications = $policy.Conditions.Applications.IncludeApplications
+      ExcludeApplications = $updatedExcludes
+    }
+  }</code></pre>
+<blockquote><p>ℹ️ <strong>Breakglass Reminder:</strong> Verify both Azure-Breakglass and CA-Breakglass groups remain in excludeGroups on this policy after any update. The AIP app exclusion goes in excludeApplications, not in user excludes. They are separate arrays.</p></blockquote>
+<p>Quick Reference</p>
+<h2>Key Facts</h2>
+<table><thead><tr><th>Detail</th><th>Value</th></tr></thead><tbody><tr><td>Service principal name</td><td>Microsoft Rights Management Services</td></tr><tr><td>App ID (stable, all tenants)</td><td>00000012-0000-0000-c000-000000000000</td></tr><tr><td>Endpoint hit by Outlook desktop</td><td>aadrm.com</td></tr><tr><td>Does the OME portal also fail?</td><td>Yes. The portal calls the sender's RMS endpoint too. Both Outlook desktop and the OME portal are subject to the sender's CA policy.</td></tr><tr><td>Does the fix weaken encryption</td><td>No. Label encryption remains fully enforced.</td></tr><tr><td>Does the fix weaken MFA posture</td><td>No. MFA required on all other cloud apps unchanged.</td></tr><tr><td>HIPAA compliance impact</td><td>None. §164.312(e)(2)(ii) encryption still in place.</td></tr><tr><td>Sign-in log filter to verify</td><td>App = Microsoft Rights Management Services</td></tr></tbody></table>
+</body></html>

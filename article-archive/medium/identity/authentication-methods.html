@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Authentication Methods</title>
+</head>
+<body>
+<h1>Authentication Methods</h1>
+<p><em>Identity Security Series — Part 2 of 5</em></p>
+<p>Not all locks are created equal. The method you use to prove your identity determines what attacks you're vulnerable to — not just whether you're secure or not.</p>
+<p><em>Entra Authentication · May 26, 2026 · 9 min read</em></p>
+<p><em>Originally published at <a href="https://conditionalaccess.tech/articles/identity/authentication-methods.html">conditionalaccess.tech</a></em></p>
+<hr>
+<p>In the last post we established that identity is your perimeter and MFA is the deadbolt. But we skipped over something important: not all deadbolts are the same. A combination lock, a keyed padlock, a high-security deadbolt, and a biometric lock all keep the door closed. They don't all keep a determined attacker out.</p>
+<p>Authentication methods work exactly the same way. The question isn't just "do you have MFA?" It's what kind of MFA, and what does it actually fail against.</p>
+<blockquote><p>"Most organizations think they have MFA. What they actually have is the illusion of MFA — methods that stop casual attacks but fail the moment a threat actor is paying attention."</p></blockquote>
+<h2>01. The Lock Analogy, Extended</h2>
+<p>In the physical world, we understand intuitively that locks have different failure modes. A padlock fails to bolt cutters. A combination lock fails to someone watching over your shoulder. A key fails when someone makes a copy. We don't treat all locks as equally secure just because they all "lock."</p>
+<p>Authentication methods have the same structure. Each one fails against a specific class of attack. Understanding that isn't a technical exercise — it's the same risk judgment you already apply to your front door.</p>
+<p>🔓</p>
+<p><strong>Password only</strong> The combination lock on a school locker. Anyone watching over your shoulder has everything they need. Spray it across a breach database and it works everywhere the user reused it.</p>
+<p>Fails to: phishing, spray, breach replay</p>
+<p>📱</p>
+<p><strong>SMS / Voice OTP</strong> A key you can copy. The code exists somewhere in transit — the phone network — and can be intercepted. SIM swapping moves the number to an attacker's device. Real attacks, not theoretical ones.</p>
+<p>Fails to: SIM swap, SS7 intercept, real-time phishing</p>
+<p>🔢</p>
+<p><strong>OATH TOTP (authenticator app codes)</strong> A key stamped "Do Not Duplicate." Harder to copy, but the code is still a code. A convincing fake login page captures it in real time and replays it before it expires. Phishable.</p>
+<p>Fails to: real-time phishing, adversary-in-the-middle</p>
+<p>🔔</p>
+<p><strong>Microsoft Authenticator push + number matching</strong> A high-security deadbolt. Number matching broke the MFA fatigue attack — you can't approve a push you didn't initiate by accident. Still not phishing-resistant but significantly harder to abuse.</p>
+<p>Fails to: sophisticated AiTM phishing at scale</p>
+<p>🔐</p>
+<p><strong>FIDO2 / Windows Hello for Business / Passkeys</strong> The biometric lock. The credential is cryptographically bound to the specific origin it was created for and never leaves your device. A fake login page gets nothing useful. Cannot be phished. Full stop.</p>
+<p>Phishing-resistant</p>
+<h2>02. The Full Spectrum</h2>
+<p>Here's the full picture across every method Microsoft supports in Entra today. Two things to read in this table: how phishable the method is, and what the real-world friction looks like once it's deployed. The counterintuitive finding is that the most secure methods aren't always the highest friction — which matters when you're planning a migration.</p>
+<p>Authentication Methods — Entra ID Reference</p>
+<table><thead><tr><th>Method</th><th>Phishable?</th><th>SIM / Intercept Risk</th><th>User Friction</th><th>Entra Policy Name</th></tr></thead><tbody><tr><td><strong>Password only</strong></td><td>Yes</td><td>N/A</td><td>Low to set, high to manage</td><td>Legacy auth</td></tr><tr><td><strong>SMS / Voice OTP</strong></td><td>Yes</td><td>Yes</td><td>Low</td><td>SMS</td></tr><tr><td><strong>OATH TOTP (app codes)</strong></td><td>Yes</td><td>No</td><td>Medium</td><td>Software OATH token</td></tr><tr><td><strong>Authenticator push</strong></td><td>Reduced</td><td>No</td><td>Low</td><td>Microsoft Authenticator</td></tr><tr><td><strong>Authenticator + number matching</strong></td><td>Harder</td><td>No</td><td>Low</td><td>Microsoft Authenticator</td></tr><tr><td>⚠ Phishing-Resistant Line  Methods below cannot be intercepted or replayed</td><td></td><td></td><td></td><td></td></tr><tr><td><strong>CBA (Certificate-Based Auth)</strong></td><td>No</td><td>No</td><td>Medium-High</td><td>Certificate-based authentication</td></tr><tr><td><strong>FIDO2 security key</strong></td><td>No</td><td>No</td><td>Medium (hardware required)</td><td>FIDO2 security key</td></tr><tr><td><strong>Windows Hello for Business</strong></td><td>No</td><td>No</td><td>Very low once enrolled</td><td>Windows Hello for Business</td></tr><tr><td><strong>Passkeys</strong></td><td>No</td><td>No</td><td>Low</td><td>Passkey (device-bound / synced)</td></tr></tbody></table>
+<h2>03. The Phishing-Resistant Line</h2>
+<p>That dividing line in the table is the most important concept in this entire post. Everything above it can be intercepted by a convincing fake login page. Everything below it cannot — and the reason is worth understanding, because it's not magic.</p>
+<p>When you register a FIDO2 key or Windows Hello credential, the private key is generated on your device and never leaves it. When you authenticate, your device performs a cryptographic challenge-response that is <strong>bound to the exact origin</strong> it was created for. A fake Microsoft login page receives a challenge from a different origin. The credential refuses. The attack gets nothing useful.</p>
+<p>The physical world equivalent: imagine a master key that only works on one specific door in the entire world, and the lock verifies the key is genuine before opening. You cannot trick it with a replica door. The credential knows the difference.</p>
+<blockquote><p>✅ <strong>Phishing-Resistant — What It Actually Means:</strong> Phishing-resistant authentication methods (FIDO2, WHfB, CBA, Passkeys) use <strong>asymmetric cryptography bound to the authenticating origin</strong>. The private key never leaves the device. There is no code, no token, no credential to intercept in transit. An adversary-in-the-middle attack captures nothing of value. This is fundamentally different from "harder to phish" — it is architecturally impossible to phish.</p></blockquote>
+<blockquote><p>ℹ️ <strong>Certificate-Based Authentication — Quick Note:</strong> CBA sits in the same phishing-resistant tier as FIDO2 and WHfB and is the right answer for government, healthcare, and regulated environments already running smart card or PKI infrastructure. For most SMB and MSP environments without that foundation already in place, FIDO2 and passkeys are the more practical path. If your org issues PIV cards or has an existing PKI — CBA is worth a serious look. If it doesn't — keep moving.</p></blockquote>
+<h2>04. The Number Matching Moment</h2>
+<p>Before we get to the migration, this one deserves its own section because it's recent, it's actionable, and it changed something real.</p>
+<p>MFA fatigue attacks became a mainstream threat after a handful of high-profile breaches demonstrated the pattern: an attacker obtains a valid username and password, then hammers the target's phone with Authenticator push notifications at 2 AM until a tired or confused user approves one. Simple. Effective. Devastatingly low-tech.</p>
+<blockquote><p>⚠️ <strong>MFA Fatigue — How It Works:</strong> The attacker has your credentials. They don't need your MFA code. They just need you to approve a push notification you didn't initiate. Spam enough of them and eventually someone approves one — by accident, by confusion, or by frustration. <strong>Number matching removes that attack surface entirely.</strong> The user must type a number shown on the sign-in screen into the Authenticator app. You cannot approve a push you didn't initiate because you don't have the number to type.</p></blockquote>
+<p>Microsoft enabled number matching by default across Authenticator in 2023. If your tenant predates that rollout and you haven't verified the setting, check it today. It costs nothing, requires no hardware, and eliminates one of the most common attack patterns against MFA-enabled organizations.</p>
+<h2>05. The Config Problem Most Tenants Don't Know They Have</h2>
+<p>Here's the practitioner reality that doesn't show up in most documentation: <strong>most tenants have two places where authentication methods are configured</strong>, and they frequently contradict each other.</p>
+<p>The <strong>unified Authentication Methods Policy</strong> lives under Entra ID Protection and is where all modern method configuration should happen. It gives you per-method control, group-based targeting, and a single source of truth. This is the right place to work.</p>
+<p>The <strong>legacy MFA portal</strong> predates the unified policy and still exists in most tenants that predate 2022. It was the only option before the unified policy existed. Many organizations configured it years ago and haven't touched it since. The problem is that when both are active, they can silently override each other — a method you disabled in the unified policy may still be available because a legacy setting allows it, or a method you enabled isn't working because an old legacy block is still in place.</p>
+<blockquote><p>🛑 <strong>Critical — Audit Before You Migrate:</strong> <strong>Before you change any authentication method configuration, audit both locations.</strong> Entra Admin Center → Protection → Authentication Methods is the unified policy. The legacy portal is accessible via the old per-user MFA admin page. The migration path is to consolidate everything into the unified policy and disable the legacy settings — not manage both in parallel. Running both creates unpredictable behavior and makes troubleshooting a genuine pain. Your IT team needs to check this before any phishing-resistant rollout will be reliable.</p></blockquote>
+<hr>
+<h2>→ The Migration Ladder</h2>
+<p>You're not starting from zero. Most organizations have a mix — some users on SMS, some on the Authenticator app, a handful with hardware keys, and a long tail of legacy methods that nobody has cleaned up. The migration isn't a single step. It's a ladder, and the rungs matter.</p>
+<p>1</p>
+<p><strong>Get Everyone Off SMS and Voice OTP</strong></p>
+<p>This is the most common attack surface and the easiest win. SMS and voice OTP are the methods most frequently abused in real-world attacks. They're also the methods most organizations enabled first because they required no hardware and users understood them. That logic made sense in 2018. It doesn't hold now. Migrate these users to Authenticator push first — same friction, significantly better security posture.</p>
+<p>2</p>
+<p><strong>Set Authenticator + Number Matching as the Floor</strong></p>
+<p>Once SMS is gone, Authenticator with number matching becomes the minimum bar for every user in the organization. It's not phishing-resistant, but it eliminates MFA fatigue attacks and it's deployable today without any hardware procurement or device enrollment dependency. Verify number matching is enforced — not just enabled — across your tenant before calling this step done.</p>
+<p>3</p>
+<p><strong>Plan Your Phishing-Resistant Rollout</strong></p>
+<p>This is where most organizations pause because the options feel complicated. Hardware FIDO2 keys work but require procurement, distribution, and a backup plan. Windows Hello for Business is low-friction but depends on managed device enrollment. Passkeys are the path that finally makes phishing-resistant MFA accessible for a general user population — and that's exactly what the next post in this series covers.</p>
+<h2>→ The Takeaway</h2>
+<p>Authentication methods are not interchangeable. The method you choose determines what attacks you're exposed to, not just whether the door is locked. SMS MFA is better than nothing. It is not better than a phishing attack targeting your CFO on a Friday afternoon.</p>
+<p>The good news is the migration path is clearer than it's ever been. Get off SMS. Put number matching on as the floor. Then plan the phishing-resistant rollout with methods that actually fit your user population — which means understanding what passkeys are, how they work, and why they finally solve the friction problem that held phishing-resistant MFA back for years.</p>
+<p>That's next.</p>
+</body></html>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clean the House Before the Guests Arrive — Inforcer Blog</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0a0f1e;--deep:#0d1630;--teal:#00c2b3;--teal-dim:#007e76;
+    --off-white:#f0ede8;--warm-gray:#b0a99f;--accent:#ff5c35;
+    --card-bg:#111827;--purple:#7c6aff;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  .back-btn{position:fixed;top:1rem;left:1rem;background:rgba(10,15,30,0.88);border:1px solid rgba(255,255,255,0.12);color:#c8d8f0;padding:0.6rem 1.2rem;border-radius:8px;text-decoration:none;font-size:0.88rem;font-family:'DM Sans',sans-serif;z-index:50;backdrop-filter:blur(8px);transition:background 0.2s;min-height:44px;display:flex;align-items:center;}
+  .back-btn:hover{background:rgba(10,15,30,0.98);color:#fff;}
+  body{background:var(--navy);color:var(--off-white);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.75;overflow-x:hidden;}
+
+  .hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:6rem 8vw 4rem;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 75% 55% at 60% 38%,rgba(124,106,255,0.1) 0%,transparent 68%),radial-gradient(ellipse 40% 55% at 5% 75%,rgba(0,194,179,0.07) 0%,transparent 60%);pointer-events:none;}
+  .hero-label{font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.75rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:1.5rem;opacity:0;animation:fadeUp 0.6s 0.2s forwards;}
+  .hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8.5vw,7.5rem);line-height:0.95;letter-spacing:0.02em;color:var(--off-white);opacity:0;animation:fadeUp 0.7s 0.35s forwards;}
+  .hero h1 span{color:var(--purple);display:block;}
+  .hero-sub{margin-top:2rem;max-width:600px;font-size:1.1rem;color:var(--warm-gray);opacity:0;animation:fadeUp 0.7s 0.5s forwards;}
+  .hero-meta{margin-top:2.5rem;display:flex;gap:2rem;font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal-dim);opacity:0;animation:fadeUp 0.6s 0.65s forwards;}
+  .scroll-hint{position:absolute;bottom:2.5rem;left:8vw;display:flex;align-items:center;gap:0.75rem;font-size:0.75rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--warm-gray);opacity:0;animation:fadeUp 0.6s 1s forwards;}
+  .scroll-line{width:40px;height:1px;background:var(--teal);animation:pulse 2s infinite;}
+
+  .bridge-banner{background:linear-gradient(135deg,rgba(0,194,179,0.06),rgba(0,194,179,0.02));border-top:1px solid rgba(0,194,179,0.15);border-bottom:1px solid rgba(0,194,179,0.15);padding:1.5rem 6vw;display:flex;align-items:center;gap:1.25rem;}
+  .bridge-icon{font-size:1.4rem;flex-shrink:0;}
+  .bridge-text{font-size:0.9rem;color:var(--warm-gray);line-height:1.6;}
+  .bridge-text strong{color:var(--off-white);}
+  .bridge-text a{color:var(--teal);text-decoration:none;}
+  .bridge-text a:hover{text-decoration:underline;}
+
+  .content{max-width:780px;margin:0 auto;padding:0 6vw 8rem;}
+
+  .pull-quote{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(1.2rem,2.5vw,1.55rem);line-height:1.5;color:var(--off-white);border-left:3px solid var(--purple);padding-left:1.5rem;margin:3.5rem 0;}
+
+  .section-marker{display:flex;align-items:center;gap:1rem;margin:4rem 0 1.5rem;}
+  .section-num{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;line-height:1;color:var(--teal);opacity:0.25;min-width:2.5rem;}
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);letter-spacing:0.04em;color:var(--off-white);line-height:1.05;}
+
+  p{font-size:1.05rem;color:#c8c3bc;margin-bottom:1.4rem;}
+  strong{color:var(--off-white);font-weight:500;}
+
+  .callout{background:var(--card-bg);border:1px solid rgba(0,194,179,0.15);border-radius:4px;padding:1.5rem 1.75rem;margin:2.5rem 0;position:relative;overflow:hidden;}
+  .callout::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),transparent);}
+  .callout.danger{border-color:rgba(255,92,53,0.2);}
+  .callout.danger::before{background:linear-gradient(90deg,var(--accent),transparent);}
+  .callout.purple{border-color:rgba(124,106,255,0.2);}
+  .callout.purple::before{background:linear-gradient(90deg,var(--purple),transparent);}
+  .callout.warn{border-color:rgba(245,200,66,0.2);}
+  .callout.warn::before{background:linear-gradient(90deg,#f5c842,transparent);}
+  .callout-icon{font-size:1.5rem;margin-bottom:0.5rem;display:block;}
+  .callout p{margin:0;font-size:0.95rem;}
+  .callout p+p{margin-top:0.75rem;}
+  .callout-label{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--teal);font-weight:500;margin-bottom:0.5rem;}
+  .callout.danger .callout-label{color:var(--accent);}
+  .callout.warn   .callout-label{color:#f5c842;}
+  .callout.purple .callout-label{color:var(--purple);}
+
+  /* HOUSE ANALOGY */
+  .house-analogy{margin:3rem 0;border-radius:4px;overflow:hidden;border:1px solid rgba(124,106,255,0.15);}
+  .house-header{background:rgba(124,106,255,0.07);padding:1rem 1.5rem;border-bottom:1px solid rgba(124,106,255,0.1);display:flex;align-items:center;gap:0.75rem;}
+  .house-header-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.05em;color:var(--purple);}
+  .house-header-sub{font-size:0.78rem;color:var(--warm-gray);margin-top:1px;}
+  .house-rooms{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(124,106,255,0.08);}
+  .room{background:var(--card-bg);padding:1.4rem 1.2rem;position:relative;}
+  .room::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .room.clean::before{background:var(--teal);}
+  .room.messy::before{background:var(--accent);}
+  .room.unknown::before{background:#f5c842;}
+  .room-emoji{font-size:1.5rem;margin-bottom:0.6rem;display:block;}
+  .room-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;margin-bottom:0.3rem;}
+  .room.clean  .room-label{color:var(--teal);}
+  .room.messy  .room-label{color:var(--accent);}
+  .room.unknown .room-label{color:#f5c842;}
+  .room-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.04em;color:var(--off-white);margin-bottom:0.5rem;}
+  .room-desc{font-size:0.82rem;color:var(--warm-gray);line-height:1.6;}
+  .room-m365{margin-top:0.7rem;font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--teal-dim);padding:0.35rem 0.55rem;background:rgba(0,194,179,0.05);border-radius:2px;}
+  .room.messy  .room-m365{color:rgba(255,92,53,0.7);background:rgba(255,92,53,0.05);}
+  .room.unknown .room-m365{color:rgba(245,200,66,0.7);background:rgba(245,200,66,0.05);}
+  .house-footer{background:rgba(124,106,255,0.04);padding:1rem 1.5rem;border-top:1px solid rgba(124,106,255,0.08);font-size:0.88rem;color:var(--warm-gray);line-height:1.6;}
+  .house-footer strong{color:var(--purple);}
+
+  /* COPILOT MODEL */
+  .copilot-model{margin:3rem 0;border-radius:4px;overflow:hidden;border:1px solid rgba(124,106,255,0.12);}
+  .copilot-header{background:rgba(124,106,255,0.06);padding:1rem 1.5rem;border-bottom:1px solid rgba(124,106,255,0.1);display:flex;align-items:center;gap:0.75rem;}
+  .copilot-header-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.05em;color:var(--purple);}
+  .copilot-header-sub{font-size:0.78rem;color:var(--warm-gray);}
+  .copilot-rows{display:flex;flex-direction:column;}
+  .copilot-row{display:grid;grid-template-columns:160px 1fr;border-bottom:1px solid rgba(255,255,255,0.04);background:var(--card-bg);}
+  .copilot-row:last-child{border-bottom:none;}
+  .copilot-row-label{padding:1.1rem 1.25rem;border-right:1px solid rgba(255,255,255,0.04);background:rgba(124,106,255,0.03);display:flex;align-items:center;}
+  .copilot-label-text{font-size:0.77rem;font-weight:500;color:var(--purple);letter-spacing:0.05em;line-height:1.4;}
+  .copilot-row-body{padding:1.1rem 1.5rem;font-size:0.88rem;color:#a09890;line-height:1.65;}
+  .copilot-row-body strong{color:var(--off-white);}
+
+  /* FOUR ROOMS */
+  .readiness-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(0,194,179,0.08);border-radius:4px;overflow:hidden;margin:2.5rem 0;}
+  .rcard{background:var(--card-bg);padding:1.5rem;position:relative;}
+  .rcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .rcard.r1::before{background:var(--teal);}
+  .rcard.r2::before{background:#f5c842;}
+  .rcard.r3::before{background:var(--accent);}
+  .rcard.r4::before{background:var(--purple);}
+  .rcard-icon{font-size:1.4rem;margin-bottom:0.5rem;display:block;}
+  .rcard-label{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;font-weight:500;margin-bottom:0.4rem;}
+  .rcard.r1 .rcard-label{color:var(--teal);}
+  .rcard.r2 .rcard-label{color:#f5c842;}
+  .rcard.r3 .rcard-label{color:var(--accent);}
+  .rcard.r4 .rcard-label{color:var(--purple);}
+  .rcard-title{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:0.04em;color:var(--off-white);margin-bottom:0.6rem;}
+  .rcard-desc{font-size:0.86rem;color:var(--warm-gray);line-height:1.6;}
+  .rcard-question{margin-top:0.75rem;font-size:0.75rem;font-family:'JetBrains Mono',monospace;color:var(--teal-dim);padding:0.4rem 0.6rem;background:rgba(0,194,179,0.05);border-radius:2px;line-height:1.5;}
+  .rcard.r2 .rcard-question{color:rgba(245,200,66,0.6);background:rgba(245,200,66,0.04);}
+  .rcard.r3 .rcard-question{color:rgba(255,92,53,0.6);background:rgba(255,92,53,0.04);}
+  .rcard.r4 .rcard-question{color:rgba(124,106,255,0.6);background:rgba(124,106,255,0.04);}
+
+  /* TABLE */
+  .table-wrap{margin:2.5rem 0;border-radius:4px;overflow:hidden;border:1px solid rgba(0,194,179,0.1);}
+  .table-label{background:rgba(0,194,179,0.07);padding:0.75rem 1.25rem;font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);font-weight:500;border-bottom:1px solid rgba(0,194,179,0.1);}
+  table{width:100%;border-collapse:collapse;background:var(--card-bg);font-size:0.88rem;}
+  thead tr{background:rgba(0,194,179,0.05);}
+  th{padding:0.9rem 1rem;text-align:left;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal-dim);font-weight:500;border-bottom:1px solid rgba(0,194,179,0.1);font-family:'DM Sans',sans-serif;}
+  td{padding:0.9rem 1rem;border-bottom:1px solid rgba(255,255,255,0.04);color:#a09890;vertical-align:top;line-height:1.55;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:rgba(0,194,179,0.03);}
+  td strong{color:var(--off-white);}
+  .badge{display:inline-block;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border-radius:2px;font-weight:500;}
+  .badge-ok   {background:rgba(0,194,179,0.15);color:var(--teal);}
+  .badge-warn {background:rgba(245,200,66,0.12);color:#f5c842;}
+  .badge-danger{background:rgba(255,92,53,0.15);color:var(--accent);}
+
+  /* MATURITY */
+  .mat-wrap{border:1px solid rgba(0,194,179,0.1);border-radius:4px;overflow:hidden;margin:2.5rem 0;}
+  .maturity-stack{display:flex;flex-direction:column;}
+  .maturity-row{display:grid;grid-template-columns:160px 1fr 1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.04);background:var(--card-bg);}
+  .maturity-row:first-child{background:rgba(0,194,179,0.04);border-bottom:1px solid rgba(0,194,179,0.1);}
+  .maturity-row:last-child{border-bottom:none;}
+  .maturity-cell{padding:0.85rem 1rem;font-size:0.82rem;color:#a09890;line-height:1.5;border-right:1px solid rgba(255,255,255,0.04);}
+  .maturity-cell:last-child{border-right:none;}
+  .maturity-row:first-child .maturity-cell{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal-dim);font-weight:500;}
+  .maturity-cell strong{color:var(--off-white);}
+  .maturity-cell.not-ready{color:rgba(255,92,53,0.7);}
+  .maturity-cell.partial{color:rgba(245,200,66,0.7);}
+  .maturity-cell.ready{color:rgba(0,194,179,0.8);}
+
+  /* CHECKLIST */
+  .checklist{margin:2.5rem 0;display:flex;flex-direction:column;gap:0;}
+  .check-item{display:flex;gap:1rem;align-items:flex-start;padding:1rem 1.25rem;border:1px solid rgba(0,194,179,0.08);background:var(--card-bg);transition:background 0.2s;}
+  .check-item:first-child{border-radius:4px 4px 0 0;}
+  .check-item:last-child{border-radius:0 0 4px 4px;}
+  .check-item:not(:last-child){border-bottom:none;}
+  .check-item:hover{background:rgba(0,194,179,0.04);}
+  .check-box{width:18px;height:18px;border:2px solid var(--teal-dim);border-radius:3px;flex-shrink:0;margin-top:3px;opacity:0.5;}
+  .check-text{font-size:0.92rem;color:#a09890;line-height:1.65;}
+  .check-text strong{display:block;color:var(--off-white);margin-bottom:0.2rem;font-size:0.95rem;}
+
+  /* SERIES NAV */
+  .series-nav{margin-top:5rem;padding:2rem;background:var(--card-bg);border:1px solid rgba(0,194,179,0.12);border-radius:4px;position:relative;overflow:hidden;}
+  .series-nav::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),transparent);}
+  .series-nav-label{font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--teal);font-weight:500;margin-bottom:1.25rem;}
+  .series-posts{display:flex;flex-direction:column;gap:0.5rem;}
+  .series-post{display:flex;gap:1rem;align-items:center;padding:0.6rem 0.75rem;border-radius:3px;font-size:0.9rem;color:var(--warm-gray);}
+  .series-post.current{background:rgba(0,194,179,0.07);color:var(--off-white);font-weight:500;}
+  .series-post.upcoming{color:rgba(176,169,159,0.45);}
+  .series-post-num{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--teal-dim);min-width:1.5rem;opacity:0.6;}
+  .series-post.current .series-post-num{opacity:1;color:var(--teal);}
+
+  .cta-block{margin-top:5rem;padding:3rem;background:linear-gradient(135deg,rgba(0,194,179,0.08),rgba(0,194,179,0.02));border:1px solid rgba(0,194,179,0.2);border-radius:4px;text-align:center;}
+  .cta-block h2{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:0.05em;margin-bottom:1rem;color:var(--off-white);}
+  .cta-block p{max-width:480px;margin:0 auto 1.75rem;font-size:0.95rem;}
+  .btn{display:inline-block;background:var(--teal);color:var(--navy);font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.8rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.85rem 2rem;border-radius:2px;text-decoration:none;transition:opacity 0.2s;}
+  .btn:hover{opacity:0.85;}
+  .divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:3.5rem 0;}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+  @media(max-width:640px){
+    .house-rooms{grid-template-columns:1fr;}
+    .readiness-grid{grid-template-columns:1fr;}
+    .copilot-row{grid-template-columns:1fr;}
+    .copilot-row-label{border-right:none;border-bottom:1px solid rgba(255,255,255,0.04);}
+    .maturity-row{grid-template-columns:1fr;}
+    .maturity-cell{border-right:none;}
+    .hero{padding:5rem 6vw 3rem;}
+  }
+</style>
+</head>
+<body>
+
+<a href="https://conditionalaccess.tech" class="back-btn">&#8592; Home</a>
+
+<section class="hero">
+  <div class="hero-label">M365 Governance Series — Part 4 of 5</div>
+  <h1>Clean the House<span>Before Guests Arrive</span></h1>
+  <p class="hero-sub">Nobody invites everyone over and then starts cleaning while they're standing in the doorway. You clean first, then you open the door. AI readiness in Microsoft 365 works exactly the same way, and most organizations have the order completely backwards.</p>
+  <div class="hero-meta">
+    <span>Copilot Readiness</span>
+    <span>July 14, 2026</span>
+    <span>12 min read</span>
+  </div>
+  <div class="scroll-hint"><span class="scroll-line"></span>Continue Reading</div>
+</section>
+
+<div class="bridge-banner">
+  <span class="bridge-icon">🔗</span>
+  <div class="bridge-text">
+    <strong>Part 4 of the M365 Governance Series.</strong> Posts 1 through 3 built the ownership, configuration, and lifecycle foundation. This post applies all of that to the AI readiness question and reframes it around something every admin already understands intuitively: you clean the house before you let people in, not after.
+    <br><a href="#">&#8592; Read Part 3: The Cleanup Campaign That Never Ends — Why Lifecycle Governance Wins</a>
+  </div>
+</div>
+
+<main class="content">
+
+  <p>Here's how most Copilot rollouts actually go. The business approves the licenses. IT provisions the rollout. And fairly quickly, questions start coming in that nobody planned for. Why did Copilot surface those compensation figures in a response to a routine HR query? How did a general staff member end up seeing deal documents from two years ago? Why is a strategic planning file from a project that ended before half this team was hired showing up in everyday search results?</p>
+
+  <p>The answer to every one of those questions is the same: it was always there. The permissions were always that broad. The files were always that accessible. Nobody noticed because the manual effort required to stumble across a forgotten SharePoint site from a completed project was enough friction to make it a non-event. That friction is now gone.</p>
+
+  <p>Copilot queries on behalf of the user, across everything they're authorized to reach, in response to completely ordinary work questions. It doesn't know which files were intentional and which ones just never got cleaned up. It surfaces what the permission model allows. And in most tenants, the permission model allows considerably more than anyone designed.</p>
+
+  <div class="pull-quote">
+    "You wouldn't invite everyone over to help clean your house. You'd clean first, then open the door. The organizations getting the most from Copilot did the cleaning first. Everyone else is cleaning while guests are already standing in the hallway."
+  </div>
+
+  <p>This is not a Copilot criticism. Copilot is doing exactly what it was built to do: reducing friction between people and the information they need. The issue is that in an ungoverned tenant, "information they're authorized to reach" and "information that should be broadly accessible" are very different sets. The work this series has been building toward closes that gap. And you can't buy your way to AI readiness. You have to govern your way there.</p>
+
+  <div class="section-marker">
+    <span class="section-num">01</span>
+    <span class="section-title">Your M365 Tenant Is a House With a Lot of Rooms</span>
+  </div>
+
+  <p>When you prepare for guests, you think about which rooms are in shape to be seen and which ones need attention before anyone walks through the door. You make those decisions deliberately, before people arrive, because the alternative is realizing mid-visit that there's something out in the open that shouldn't be.</p>
+
+  <p>Every SharePoint site, every Teams workspace, every group with connected resources. Each one is a room in your M365 house. Some are clean, current, and ready for anyone who walks in. Some haven't been touched since a project wrapped eighteen months ago. And some you've genuinely forgotten exist. Before Copilot, guests wandered into the rooms they were led to. Now they have access to every room simultaneously, and they're searching all of them at once.</p>
+
+  <div class="house-analogy">
+    <div class="house-header">
+      <span>🏠</span>
+      <div>
+        <div class="house-header-title">Your M365 Tenant as a House</div>
+        <div class="house-header-sub">Copilot doesn't evaluate which rooms are ready. It opens all of them at the same time.</div>
+      </div>
+    </div>
+    <div class="house-rooms">
+      <div class="room clean">
+        <span class="room-emoji">✅</span>
+        <div class="room-label">Ready for Visitors</div>
+        <div class="room-title">The Living Room</div>
+        <div class="room-desc">Current content, verified group membership, sensitivity labels applied, active owner who knows what's in here. When Copilot surfaces this content, it's the right information reaching the right people at the right time. This is what governance enables.</div>
+        <div class="room-m365">Governed SharePoint sites · Labeled content · Active groups with verified owners</div>
+      </div>
+      <div class="room messy">
+        <span class="room-emoji">🚫</span>
+        <div class="room-label">Not Ready</div>
+        <div class="room-title">The Spare Room</div>
+        <div class="room-desc">A completed project workspace that never got archived. Files from 18 months ago still accessible. Former team members still in the group. Anyone-with-link sharing never expired. Nobody intended for this to persist. It just did, because nobody designed an end state for it.</div>
+        <div class="room-m365">Ownerless groups · Stale sites · Completed projects still live · Lingering guest accounts</div>
+      </div>
+      <div class="room unknown">
+        <span class="room-emoji">❓</span>
+        <div class="room-label">You Forgot This Existed</div>
+        <div class="room-title">The Basement</div>
+        <div class="room-desc">The group created three years ago that nobody actively manages anymore. The SharePoint site from a vendor engagement that ended without any cleanup. The flow still running that connects to a service nobody uses. Quiet doesn't mean empty. Copilot finds it anyway.</div>
+        <div class="room-m365">Inactive groups with no lifecycle · Orphaned vendor sites · Ungoverned automations</div>
+      </div>
+    </div>
+    <div class="house-footer">
+      <strong>The honest pre-deployment question:</strong> If every Copilot-licensed user could instantly search everything they're authorized to reach, how much of what surfaces is intentional? How much is historical accident? That ratio is your readiness gap. The only way to close it is the governance work, not the licensing purchase.
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">02</span>
+    <span class="section-title">How Copilot Actually Traverses the House</span>
+  </div>
+
+  <p>The reason the house analogy holds technically is that Copilot doesn't have its own permission model sitting above your existing one. It works through Microsoft Graph and is bound entirely by what the signed-in user is already authorized to reach: SharePoint, Teams, Exchange, OneDrive. There's no additional Copilot-specific barrier between the user and accessible content. There's no last-line-of-defense layer that catches things the permission model missed.</p>
+
+  <p>This is the right design. Security should be in the permission model, not bolted onto the AI layer. But it means the quality of your Copilot experience is a direct reflection of the quality of your authorization state, accumulated over the entire history of your tenant.</p>
+
+  <div class="copilot-model">
+    <div class="copilot-header">
+      <span>🤖</span>
+      <div>
+        <div class="copilot-header-title">Copilot M365 — What It Sees and Why</div>
+        <div class="copilot-header-sub">Copilot enforces your permission model exactly. The problem is what that model actually includes.</div>
+      </div>
+    </div>
+    <div class="copilot-rows">
+      <div class="copilot-row">
+        <div class="copilot-row-label"><div class="copilot-label-text">What it searches</div></div>
+        <div class="copilot-row-body">SharePoint sites the user has direct or group-inherited access to. Teams channels and conversations the user is a member of. Exchange mailbox content. OneDrive files the user owns or has been shared. Any content reachable via sharing links the user holds, including ones from years ago they've long forgotten about.</div>
+      </div>
+      <div class="copilot-row">
+        <div class="copilot-row-label"><div class="copilot-label-text">What governs it</div></div>
+        <div class="copilot-row-body">The same permission model that governs direct access. Group membership, SharePoint site permissions, sharing links, guest access scope. All of it. <strong>Copilot adds no restriction and no expansion beyond what the existing authorization model already allows.</strong> If the group is stale and the SharePoint site is still live, Copilot queries it. If the sharing link is three years old and was never expired, Copilot can surface that file.</div>
+      </div>
+      <div class="copilot-row">
+        <div class="copilot-row-label"><div class="copilot-label-text">What actually changes</div></div>
+        <div class="copilot-row-body">The cost of discovery. Before Copilot, surfacing a specific file from a forgotten SharePoint site from a project that ended eighteen months ago required knowing it existed and roughly where it was. Copilot does that search in response to a natural language query, across everything the user can reach, in seconds. Governance debt that was technically present but practically invisible becomes instantly accessible.</div>
+      </div>
+      <div class="copilot-row">
+        <div class="copilot-row-label"><div class="copilot-label-text">What actually helps</div></div>
+        <div class="copilot-row-body">Sensitivity labels that enforce encryption. These are the one control that constrains what Copilot surfaces regardless of how broad the underlying SharePoint permissions are, because the content itself is protected, not just the location. Labels, least-privilege permissions, and archived workspaces are the cleanup work that directly improves Copilot quality and safety simultaneously.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="callout-label">The Purchasing Trap</span>
+    <span class="callout-icon">⚠️</span>
+    <p><strong>Buying Copilot to become AI-ready gets the order backwards.</strong> The conversation in many organizations goes: "We need to move on AI, so let's license Copilot and figure out readiness as we go." But Copilot readiness isn't something you achieve by deploying Copilot. It's the governance state you need to be in before deployment reflects well on you. The purchase doesn't clean the house. It just invites guests into whatever state the house is currently in.</p>
+    <p>The right question before expanding access isn't "how do we roll this out?" It's "what does our authorization model actually look like right now, and would we be comfortable with every licensed user having instant search access to all of it?"</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">03</span>
+    <span class="section-title">The Four Rooms That Need Attention First</span>
+  </div>
+
+  <p>Genuine Copilot readiness isn't a separate project with a new workstream. It's the sum of the governance work the previous three posts have been building, applied specifically to the access state Copilot will traverse. Four areas. Each one a room in the house with a specific type of cleanup required before you open the doors wider.</p>
+
+  <div class="readiness-grid">
+    <div class="rcard r1">
+      <span class="rcard-icon">🏷️</span>
+      <div class="rcard-label">Room 1 — Data Classification</div>
+      <div class="rcard-title">Label the Valuables</div>
+      <div class="rcard-desc">Sensitivity labels are the primary mechanism for distinguishing what should move freely from what shouldn't. Labels that enforce encryption are especially valuable here because they constrain what Copilot can surface to a user regardless of how the underlying SharePoint permissions were configured. Without labeling, all content is effectively equal from the permission model's perspective. Because from the permission model's perspective, it is.</div>
+      <div class="rcard-question">Readiness check: What % of sensitive content carries a label that restricts access? Do you have auto-labeling policies deployed for known sensitive content types?</div>
+    </div>
+    <div class="rcard r2">
+      <span class="rcard-icon">🔑</span>
+      <div class="rcard-label">Room 2 — Permission Hygiene</div>
+      <div class="rcard-title">Tidy the Access Model</div>
+      <div class="rcard-desc">Overly broad site membership, anyone-with-link files from sharing that was never expiration-gated, stale group members from completed engagements, guest accounts with no review cycle. All of it expands the surface Copilot queries on behalf of every licensed user. Permission hygiene isn't just a security practice at this point, it's the filter between what people should be able to find and what years of accumulated access decisions actually allow.</div>
+      <div class="rcard-question">Readiness check: Do you have a current inventory of sites with external or org-wide sharing? When was the last time anyone-with-link files were audited for expiration?</div>
+    </div>
+    <div class="rcard r3">
+      <span class="rcard-icon">👥</span>
+      <div class="rcard-label">Room 3 — Group and Identity Governance</div>
+      <div class="rcard-title">Know Who Has the Keys</div>
+      <div class="rcard-desc">Every M365 group connected to a SharePoint site is a Copilot query surface. Ownerless groups, groups with stale membership, and groups whose dynamic rules have drifted from their original intent all expand Copilot's effective reach in ways nobody planned or approved. The ownerless group count from Post 1 of this series isn't just a governance metric. It's your Copilot readiness number in raw form.</div>
+      <div class="rcard-question">Readiness check: How many M365 groups in your tenant have zero or one verified owner? Each one with a connected SharePoint site is a room nobody is responsible for.</div>
+    </div>
+    <div class="rcard r4">
+      <span class="rcard-icon">📦</span>
+      <div class="rcard-label">Room 4 — Workspace Lifecycle</div>
+      <div class="rcard-title">Archive What's Done</div>
+      <div class="rcard-desc">Copilot searches content regardless of age. A project site from three years ago is as queryable as one created last week if it hasn't been archived. Retention policies, workspace expiration, and deliberate archival at project close determine whether Copilot synthesizes current, relevant context or three years of accumulated content that nobody intended to keep permanently accessible.</div>
+      <div class="rcard-question">Readiness check: What % of SharePoint content is subject to an active lifecycle policy? What is the process for archiving a workspace when a project ends? Does that process actually run?</div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">04</span>
+    <span class="section-title">What Gets Surfaced When the House Isn't Ready</span>
+  </div>
+
+  <p>These are patterns from real Copilot deployments, not constructed scenarios. Each one traces directly to a governance failure covered in the previous posts in this series. The throughline in every case is the same: an access state that was created for a legitimate purpose, at a specific moment, and then preserved indefinitely because nobody designed an end.</p>
+
+  <div class="table-wrap">
+    <div class="table-label">What Copilot Finds When the Governance Work Hasn't Been Done</div>
+    <table>
+      <thead>
+        <tr><th>What Surfaces</th><th>The Governance Failure Behind It</th><th>Risk Level</th><th>The Actual Fix</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Compensation data in a response to an HR query</strong></td>
+          <td>SharePoint site with department-wide membership, no sensitivity label on the files, no lifecycle archive after the annual planning cycle closed</td>
+          <td><span class="badge badge-danger">High</span></td>
+          <td>Label with encryption + restrict site membership + archive after each planning cycle at close, not on inactivity</td>
+        </tr>
+        <tr>
+          <td><strong>M&A due diligence files surfacing in strategy queries</strong></td>
+          <td>Project workspace never archived after deal close. Broad deal team membership still active. Anyone-with-link files from the virtual data room never expired.</td>
+          <td><span class="badge badge-danger">High</span></td>
+          <td>Immediate workspace archive + link expiration retroactively + deal content labeled with encryption before next transaction</td>
+        </tr>
+        <tr>
+          <td><strong>Client deliverables visible to the wrong team</strong></td>
+          <td>Group membership never reviewed after the engagement. Former project members remained in the group and retained access to the SharePoint site and all its content.</td>
+          <td><span class="badge badge-warn">Medium</span></td>
+          <td>Post-engagement access review as a standard close step + group expiration policy so membership doesn't persist past the relationship</td>
+        </tr>
+        <tr>
+          <td><strong>Departed employee's work content still appearing</strong></td>
+          <td>Offboarding process handled the user account correctly, but OneDrive content shared to a group during knowledge transfer was never removed. The share persisted after the account was disabled.</td>
+          <td><span class="badge badge-warn">Medium</span></td>
+          <td>Offboarding lifecycle policy that includes OneDrive shared content cleanup, not just account disable</td>
+        </tr>
+        <tr>
+          <td><strong>Internal strategic content reaching frontline roles</strong></td>
+          <td>Sensitivity label never applied at creation. Document was shared broadly when drafted as a working version and never reclassified as it became more sensitive over time.</td>
+          <td><span class="badge badge-danger">High</span></td>
+          <td>Auto-labeling on content matching known sensitive patterns so classification doesn't depend on the author remembering to do it at the right moment</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The common thread is timing, not intent. None of these were created maliciously. They were created intentionally for a specific purpose and then simply never cleaned up. In a world where discovery required human effort, that gap was manageable. In a world where Copilot does the discovery on behalf of every licensed user simultaneously, it isn't.</p>
+
+  <div class="section-marker">
+    <span class="section-num">05</span>
+    <span class="section-title">The Data Quality Problem Nobody Talks About</span>
+  </div>
+
+  <p>Every Copilot readiness conversation focuses on what data shouldn't be accessible. That's the right place to start, but it misses a second risk that's just as damaging and far less discussed: what happens when Copilot surfaces data that <em>is</em> accessible, and the data itself is wrong.</p>
+
+  <p>Most M365 tenants are full of content that was accurate at the time it was written and has never been touched since. Procedures from three years ago. Policy documents that reference systems no longer in use. HR guidance that predates the last reorganization. Training materials with screenshots of interfaces that have been redesigned twice. Nobody deleted them because nobody had a reason to go looking for them. They just sat there, quietly outdated, in SharePoint sites that still had broad access.</p>
+
+  <p>When Copilot surfaces that content in response to an employee query about current process, one of two things happens. Either the employee recognizes it's outdated and ignores it, which means they've learned not to trust Copilot results, which is its own problem. Or they don't recognize it's outdated and act on it. That's the worse outcome.</p>
+
+  <div class="callout danger">
+    <span class="callout-label">Garbage In, Garbage Out — The Reputation Risk</span>
+    <span class="callout-icon">🗑️</span>
+    <p><strong>Outdated content surfaced by Copilot isn't just an inconvenience. It's a credibility problem.</strong> An employee following an outdated HR procedure because Copilot recommended it. A client-facing team quoting internal guidance that hasn't been valid for eighteen months. A new hire onboarding against documentation from a process that no longer exists. The reputational and operational risk here isn't theoretical. It's the direct result of deploying a powerful discovery tool into a content environment that has never been curated for accuracy.</p>
+    <p>This is a governance gap that most Copilot readiness checklists don't address at all. Access governance asks: who can reach this content? Data quality governance asks: should this content still exist, and is it still correct? Both questions have to be answered before AI-assisted discovery can be trusted. An organization that deploys Copilot into an ungoverned content environment isn't just exposing sensitive files. It's systematically amplifying outdated information at the speed and scale of an AI query engine.</p>
+  </div>
+
+  <p>The fix isn't a one-time content audit. That's the same mistake as a one-time permissions cleanup. It works on the day it runs and degrades from there. The answer is a content lifecycle process that treats accuracy the same way access governance treats permissions: something that has to be actively confirmed, at a defined cadence, by someone who owns the content and can speak to whether it's still current.</p>
+
+  <p>For organizations preparing for Copilot, this means adding a content review dimension to the workspace lifecycle work from Post 3. When a workspace comes up for renewal, the question isn't just "does this resource still need to exist?" It's also "is the content in it still accurate enough to be surfaced by an AI that won't distinguish between a current policy document and one from 2021?"</p>
+
+  <div class="callout purple">
+    <span class="callout-label">A Note on Guests and Copilot Boundaries</span>
+    <span class="callout-icon">🤖</span>
+    <p><strong>By default, guests in your tenant do not receive Microsoft 365 Copilot licenses.</strong> Copilot is a per-user license assigned to your organization's members. Guests are excluded from the default scope. This is the correct baseline and it should stay that way unless there is a specific, deliberate business reason to extend AI access to external identities. However, this boundary applies to your tenant's Copilot, not to the guest's home tenant's AI tools. A guest who can browse directly to a SharePoint site in your tenant has that content available to their own organization's AI surfaces depending on how cross-tenant access is configured. The Copilot license boundary in your tenant and the underlying content permission boundary are not the same thing. Both need governance.</p>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">06</span>
+    <span class="section-title">Where Does Your House Actually Stand?</span>
+  </div>
+
+  <p>The honest readiness assessment before expanding Copilot access isn't a vendor checklist. It's the three questions from Post 5 of this series applied to the AI surface specifically: for every content area Copilot will query, can you say what exists there, who owns it, and why the current access state is what it is?</p>
+
+  <div class="mat-wrap">
+    <div class="table-label">AI Readiness Self-Assessment — Where Most Tenants Actually Land</div>
+    <div class="maturity-stack">
+      <div class="maturity-row">
+        <div class="maturity-cell"><strong>Area</strong></div>
+        <div class="maturity-cell"><strong>Not Ready</strong></div>
+        <div class="maturity-cell"><strong>Partially Ready</strong></div>
+        <div class="maturity-cell"><strong>Ready</strong></div>
+      </div>
+      <div class="maturity-row">
+        <div class="maturity-cell"><strong>Group Ownership</strong></div>
+        <div class="maturity-cell not-ready">Significant % ownerless. No minimum owner enforcement.</div>
+        <div class="maturity-cell partial">Owners assigned, not verified. No offboarding trigger on ownership gaps.</div>
+        <div class="maturity-cell ready">Minimum enforced. Offboarding wires to ownership audit. Reviews run with removal on non-response.</div>
+      </div>
+      <div class="maturity-row">
+        <div class="maturity-cell"><strong>Sensitivity Labels</strong></div>
+        <div class="maturity-cell not-ready">Not deployed or minimal manual adoption. No auto-labeling.</div>
+        <div class="maturity-cell partial">Deployed, manual labeling only. Known sensitive types still unlabeled at scale.</div>
+        <div class="maturity-cell ready">Auto-labeling on known sensitive content types. Encryption enforced on high-sensitivity content. Label required at creation for defined types.</div>
+      </div>
+      <div class="maturity-row">
+        <div class="maturity-cell"><strong>SharePoint Permissions</strong></div>
+        <div class="maturity-cell not-ready">Default broad access. No site inventory. Anyone-with-link widespread with no expiration.</div>
+        <div class="maturity-cell partial">Inventory exists. Link expiration set for new links only. No retroactive audit or cadenced review.</div>
+        <div class="maturity-cell ready">Least-privilege enforced. Oversharing reports actioned. Existing broad-access files reviewed and addressed.</div>
+      </div>
+      <div class="maturity-row">
+        <div class="maturity-cell"><strong>Workspace Lifecycle</strong></div>
+        <div class="maturity-cell not-ready">No expiration. No archival process. Cleanup campaigns only.</div>
+        <div class="maturity-cell partial">Expiration policy configured. Non-response extends rather than archives. No project-close archive process.</div>
+        <div class="maturity-cell ready">Expiration enforced. Non-response defaults to archive. Workspaces archived at project close as a standard step, not on an inactivity timer.</div>
+      </div>
+      <div class="maturity-row">
+        <div class="maturity-cell"><strong>Content Accuracy</strong></div>
+        <div class="maturity-cell not-ready">No content review process. Outdated documents sit alongside current ones with no distinction.</div>
+        <div class="maturity-cell partial">Some content owners assigned. No cadenced review. Outdated content present but no systematic cleanup.</div>
+        <div class="maturity-cell ready">Content review tied to workspace lifecycle. Owners confirm accuracy at renewal. Outdated content archived or deleted before AI deployment expands.</div>
+      </div>
+      <div class="maturity-row">
+        <div class="maturity-cell"><strong>Guest Lifecycle</strong></div>
+        <div class="maturity-cell not-ready">No expiration. No access reviews. Guests persist indefinitely.</div>
+        <div class="maturity-cell partial">Access reviews configured. No enforced consequence on non-response.</div>
+        <div class="maturity-cell ready">90-day review cadence. Removal on non-response. Account expiration enforced. Sponsor confirmed at each renewal.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Cleaning Checklist — Before You Open More Doors</span>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Run a SharePoint oversharing report before expanding Copilot licenses</strong>
+        Use SharePoint Advanced Management's oversharing reports or a Graph-based export to identify every site with anyone-with-link access, org-wide sharing, or external member access. Prioritize by sensitivity of content. This is the fastest way to reduce Copilot's exposure surface before more doors open.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Count your ownerless groups — that number is your readiness gap</strong>
+        Export all M365 groups and filter for zero or one owner. Every group with a connected SharePoint site and no verified owner is a room in the house that nobody is responsible for. That raw number is the most honest, concrete measure of where your authorization model actually stands for AI deployment.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Archive completed project workspaces at project close — don't wait for inactivity</strong>
+        Project sites are the highest-density risk surface: full of sensitive context from the engagement, often with broad membership that made sense during the project and doesn't after, nobody actively monitoring them. Archive at project close as a deliberate process step, not 90 days after the last Teams message. Inactivity is not the right trigger for this decision.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Deploy auto-labeling on your highest-sensitivity content types</strong>
+        Financial data, HR records, deal content, client deliverables. Sensitivity labels with encryption enforcement are the control that constrains what Copilot surfaces regardless of how the underlying SharePoint permissions are configured. Manual labeling doesn't scale. Auto-labeling policies need to run on the content patterns that matter most.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Pilot in your most governed area first</strong>
+        Find the team or workload that has verified group ownership, current access reviews, and labeled sensitive content. Start there. The initial rollout is both a value demonstration and a governance diagnostic. What Copilot surfaces in a well-governed pilot tells you a great deal about what it will surface when access expands.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Evaluate Restricted SharePoint Search as an interim control</strong>
+        Microsoft provides a tenant-level setting that limits Copilot to a defined subset of SharePoint sites rather than the full tenant scope. This is a practical interim measure during the cleanup period. It lets you expand Copilot access progressively as areas of the tenant are confirmed ready, rather than opening the entire house at once.
+      </div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div class="check-text">
+        <strong>Sequence the rollout — don't stop it</strong>
+        The right response to governance debt isn't to pause AI adoption indefinitely. It's to expand access into areas you've already cleaned, while cleanup continues in parallel elsewhere. Clean a room. Open that room. Clean the next one. Not a freeze, and not a full open on day one. The governance work and the AI deployment run together. Each one improves the other.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-marker">
+    <span class="section-num">→</span>
+    <span class="section-title">The Takeaway</span>
+  </div>
+
+  <p>AI readiness in M365 is a governance state you achieve, not a feature you turn on. The organizations getting the most from Copilot, safely, without the uncomfortable surprises, are the ones that cleaned the house before the guests arrived. Verified ownership, enforced lifecycle, cleaned permissions, labeled the valuables.</p>
+
+  <p>The organizations that didn't do that work aren't blocked from using Copilot. But they're discovering their accumulated governance debt in real time, surfaced by their own AI tool, in response to completely ordinary work queries from their own employees. That's a harder situation to be in, and it's entirely preventable with the same work this series has been building toward all along.</p>
+
+  <p>The cleanup has a compounding return. Every group you verify ownership on, every project site you archive, every sensitivity label you deploy: each one improves your Copilot experience and your overall governance posture at the same time. You're not doing two projects. You're doing one, and it delivers on both.</p>
+
+  <p>The final post brings everything together: what the ownership operating model looks like as a continuous discipline, the cadence that keeps the house clean after guests become regulars, and the three questions every governed tenant should be able to answer on demand.</p>
+
+  <div class="series-nav">
+    <div class="series-nav-label">M365 Governance Series</div>
+    <div class="series-posts">
+      <div class="series-post"><span class="series-post-num">01</span><span>Groups Are the Connective Tissue — and Nobody Owns the Scissors</span></div>
+      <div class="series-post"><span class="series-post-num">02</span><span>The Governance Gap — Why Settings and Control Are Not the Same Thing</span></div>
+      <div class="series-post"><span class="series-post-num">03</span><span>The Cleanup Campaign That Never Ends — Why Lifecycle Governance Wins</span></div>
+      <div class="series-post current"><span class="series-post-num">04</span><span>Clean the House Before the Guests Arrive — AI Readiness in M365</span></div>
+      <div class="series-post upcoming"><span class="series-post-num">05</span><span>The Ownership Operating Model — Making Governance Continuous</span></div>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <h2>Want More?</h2>
+    <p>Follow along for more writing on M365 security, identity, and the real-world thinking behind modern cyber defense.</p>
+    <a href="https://medium.com/@jhope188" class="btn" target="_blank">Read More on Medium</a>
+  </div>
+
+</main>
+</body>
+</html>

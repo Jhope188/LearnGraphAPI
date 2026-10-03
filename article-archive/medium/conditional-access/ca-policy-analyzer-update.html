@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Big Drop. Bigger Gaps Found.</title>
+</head>
+<body>
+<h1>Big Drop. Bigger Gaps Found.</h1>
+<p><em>CA Policy Analyzer — Release Update — May 2026</em></p>
+<p>Four major additions to the CA Policy Analyzer: persona-based coverage mapping, GitHub import for two popular Zero Trust frameworks, a Zero Trust baseline diff, and a rebuilt scoring engine. All live, all browser-based, no install required.</p>
+<p><em>Conditional Access · May 2026 · Free Tool</em></p>
+<p><em>Originally published at <a href="https://conditionalaccess.tech/articles/conditional-access/ca-policy-analyzer/ca-policy-analyzer-update.html">conditionalaccess.tech</a></em></p>
+<hr>
+<p>You pull down a Conditional Access framework and have no idea if you forgot a setting or if you're even working from the latest best practices. Today the next step is making sure the personas are protected too. This is a deep framework that makes sure every person in the org is accounted for and limited by Conditional Access to the resources they actually need on devices that are allowed to touch company data.</p>
+<p>I was recently a guest on the <strong>Not Another Tech Podcast</strong>, where we dug into exactly that problem. Before we get into the changelog, watch the episode. It covers how I think about CA at scale, some of the gaps I see repeatedly across customer environments, and a walkthrough of the tool itself.</p>
+<h2>00. Not Another Tech Podcast</h2>
+<p>▶ Watch Episode 11 — Conditional Access: Some Assembly Required — with Nate, Andy, Steve & Jon Hope</p>
+<p><a href="https://youtu.be/nSAEzmWoutk">Not Another Tech Podcast · Episode 11 — Click to watch on YouTube</a></p>
+<p>During that conversation, Nate, Identity and SecOps Lead at <strong>Threatscape</strong>, raised something that stuck with me. He made the case that the real question isn't "do you have MFA policies" — it's "which personas have which controls enforced." Persona-based CA is how Threatscape structures their deployments, and it's a model that makes the coverage question answerable. Admins, standard users, guests, workload identities. Distinct populations with distinct risk profiles, and most tenants can't answer coverage questions per persona without manually working through every policy.</p>
+<blockquote><p>"The question isn't whether you have MFA policies. It's whether the right controls are enforced for every identity persona in your tenant."</p></blockquote>
+<p>He also wanted the ability to <strong>import directly from a real-world CA framework on GitHub</strong>, rather than comparing against a generic template set. Both of those ideas are in this release.</p>
+<h2>01. Tool Walkthrough</h2>
+<p>▶ Watch CA Policy Analyzer — Full Feature Walkthrough (May 2026 Update)</p>
+<p><a href="https://youtu.be/sSwVG03IqDY">CA Policy Analyzer Walkthrough — Click to watch on YouTube</a></p>
+<h2>02. What's New</h2>
+<p>Updated</p>
+<p><strong>Gap Analysis &amp; Persona Baselines — Major Overhaul</strong></p>
+<p>The template library was rebuilt around the persona model. Templates are now organized by identity type so you can see whether each persona population (admins, standard users, guests, workload identities) has the expected controls in place. Matching logic was tightened and partial match scoring was recalibrated across all 39 templates. This is the foundation the new Personas tab builds on.</p>
+<p>Templates Tab</p>
+<p>New</p>
+<p><strong>Zero Trust Persona × Control Coverage</strong></p>
+<p>The feature that came directly out of Nate's feedback. A cross-referenced matrix of your major user personas against the core CA control categories: MFA enforcement, authentication strength, device compliance, sign-in risk, legacy auth block, and more. <strong>Shows exactly where you have coverage, where you have gaps, and where controls exist but are partial</strong>, per persona. No more inferring coverage from a flat findings list.</p>
+<p>New Tab — Personas</p>
+<p>New</p>
+<p><strong>Diff Against a Zero Trust Baseline</strong></p>
+<p>Pulls in one of the two community CA frameworks below and runs a structural diff against your tenant's current policies. Not a score, not a checklist — an explicit line-by-line comparison of <strong>what the framework requires versus what you have configured</strong>. Each gap is explained with remediation guidance. Particularly useful when you're doing a customer-facing review and need to show your work, not just hand over a number.</p>
+<p>New Tab — Baseline Gap</p>
+<p>New</p>
+<p><strong>Zero Trust Logic &amp; Scorecard</strong></p>
+<p>The scoring model was rewritten with <strong>three weighted pillars</strong>: CIS Benchmark Alignment (50 pts), Template Coverage (25 pts), and Configuration Quality (25 pts). CIS is the dominant factor because it's the most defensible baseline. The Configuration Quality pillar applies per-severity deductions with caps per category, so findings move the score meaningfully without collapsing it. The scorecard now shows which pillar is dragging the number and why.</p>
+<p>Scoring Engine</p>
+<h2>03. GitHub Import — Two Frameworks</h2>
+<p>The Baseline Gap tab loads directly from two of the most-referenced community CA frameworks. One click pulls the full policy set from GitHub and diffs it against your tenant. Both are built on Claus Jespersen's persona framework, both are actively maintained.</p>
+<p>Kenneth van Surksum</p>
+<p><code>kennethvs/cabaseline202510</code></p>
+<p>Community-maintained Zero Trust persona baseline, <strong>refreshed quarterly</strong>. The go-to reference for production-grade tenant hardening. Built around Claus Jespersen's framework structure with named exclusion groups, named locations, and a migration table.</p>
+<p><a href="https://github.com/kennethvs/cabaseline202510">↗ GitHub</a></p>
+<p>Joey Verlinden</p>
+<p><code>j0eyv/ConditionalAccessBaseline</code></p>
+<p>Persona-based baseline aligned with Microsoft's Zero Trust guidance. Includes <strong>67 CA policies, 33 exclusion groups, named location allow-lists</strong>, and a full DCToolbox-style restore bundle. Regularly updated, including Agent persona support added in recent versions.</p>
+<p><a href="https://github.com/j0eyv/ConditionalAccessBaseline">↗ GitHub</a></p>
+<blockquote><p>ℹ️ <strong>Why these two:</strong> Both frameworks are grounded in the same Claus Jespersen persona model that underpins the Personas tab, which means the diff is meaningful rather than structural noise. If your tenant is modeled after either of these baselines, or you're considering adopting one, the gap output maps directly to what you'd need to implement.</p></blockquote>
+<h2>04. The Scoring Pillars</h2>
+<p>The old model fed everything into one bucket and returned a number. The new model separates CIS compliance, best-practice coverage, and configuration quality because they represent different things. A tenant can pass every CIS control and still have a Swiss cheese CA policy set — the three-pillar model surfaces that.</p>
+<p>50</p>
+<p>CIS Alignment</p>
+<p>19 controls from CIS M365 v7. L1 controls carry 3× weight. The dominant pillar because CIS is the most defensible baseline in the field.</p>
+<p>25</p>
+<p>Template Coverage</p>
+<p>Priority-weighted across 39 best-practice templates. High-priority controls (MFA, legacy auth block, device compliance) contribute more than optional hardening.</p>
+<p>25</p>
+<p>Config Quality</p>
+<p>Starts at 25. Per-severity deductions with category caps. Two critical findings won't zero the pillar, but they will move it hard.</p>
+<h2>05. Try It</h2>
+<p>Runs entirely in your browser. No install, no backend, no data leaves your machine. Connects to Microsoft Graph with your own delegated credentials and reads your CA policies directly. Minimum role to run it is <strong>Security Reader</strong> once an admin has granted tenant-wide consent.</p>
+<p><a href="https://jhope188.github.io/ca-policy-analyzer">↗ jhope188.github.io/ca-policy-analyzer</a> <a href="https://github.com/Jhope188/ca-policy-analyzer">↗ GitHub Source</a></p>
+<p>Connect, run analysis, then start with the <strong>Personas</strong> tab if you want the coverage map, or <strong>Baseline Gap</strong> if you're doing a customer review. Dashboard gives you the score breakdown. CIS and Templates tabs sit behind the numbers.</p>
+</body></html>

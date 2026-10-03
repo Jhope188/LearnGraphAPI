@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MFA for All… But Not the Same.</title>
+</head>
+<body>
+<h1>MFA for All… But Not the Same.</h1>
+<p><em>Conditional Access Series · February 2026</em></p>
+<p>The foundational policy looks simple. One name. One rule. But behind ACME — GLOBAL — GRANT — MFA — All-Users is a decade of trial, error, and production scars.</p>
+<p><em>Conditional Access · Feb 16, 2026 · 7 min read · ✅ Entra News #137</em></p>
+<p><em>Originally published at <a href="https://conditionalaccess.tech/articles/conditional-access/mfa-for-all-but-not-the-same.html">conditionalaccess.tech</a></em></p>
+<hr>
+<p>Last week I was recording some videos on pushing out Conditional Access policies and ran into something familiar: <a href="https://share.vidyard.com/watch/kocjRP4syUjq2kWtvtGKQy">a missing service principal</a>.</p>
+<p>That failure forced me to revisit one of my foundational policies — the one I've used for years. And instead of just fixing it quietly, I decided to document it.</p>
+<p>Because if you've worked in Microsoft Entra ID long enough, you've felt the pain:</p>
+<p>A device failing to join Intune. A MAM policy breaking due to Defender. Passkey enrollment failing. A Conditional Access policy that looked perfect but didn't deploy. We've all discovered the hard way that <strong>identity is unforgiving</strong>.</p>
+<blockquote><p>"Over time, I built a standard approach for 'MFA for All Users.' I'm not saying it's best practice. I'm saying it's what I adopted through trial, error, and production scars."</p></blockquote>
+<h2>01. Examining the Policy</h2>
+<p>The policy name tells the full story:</p>
+<blockquote><p>ℹ️ <strong>Policy Name Convention:</strong> <strong>ACME — GLOBAL — GRANT — MFA — All-Users</strong><br><br> <strong>GLOBAL</strong> → Targets all users and all apps<br> <strong>GRANT</strong> → Requires something (MFA)<br> <strong>Foundation Policy</strong> → One of the six every tenant should have</p></blockquote>
+<p>This is the baseline. Everything builds from here.</p>
+<img src="https://conditionalaccess.tech/articles/conditional-access/images/CALayers.png" alt="Conditional Access layered approach: Foundations, Baseline, Apps/Devices, P2 and ZTCA">
+<h2>02. User Exclusions — The Easy Part</h2>
+<p>First stop: excluded groups.</p>
+<p><strong>Breakglass accounts are excluded.</strong> This is intentional and aligned with best practice — see <a href="https://medium.com/@jhope188/securecloudfoundation-not-another-breakglass-b631b5e95e05">Not Another Breakglass</a>. This is one of a couple policies to include the CA — GlobalExclusions group. You have to be careful that you don't treat this like breakglass and end up adding one person to a group and then they bypass everything.</p>
+<p>Next: <strong>directory synchronization accounts</strong>.</p>
+<p>Most hybrid environments use Microsoft Entra Connect to sync on-prem identities to Entra. If that sync identity is forced through MFA, synchronization breaks. This approach was reinforced the first time I ran Maester — specifically test <a href="https://maester.dev/docs/tests/MT.1020/">MT.1020</a>, which recommends excluding service accounts like the Microsoft Entra Connect Sync Account from Conditional Access policies.</p>
+<p>Instead of manually hunting sync accounts in every tenant, I standardized the exclusion. Is direct assignment cleaner? Possibly. Does this approach prevent human error across multiple tenants? Absolutely.</p>
+<p>A great piece of feedback I received came from <a href="https://github.com/jkerai1/">Jay</a>:</p>
+<p>J</p>
+<p>Jay · GitHub: jkerai1</p>
+<p>"You shouldn't need to exclude the directory synchronization account anymore — as long as Entra Connect is up to date."</p>
+<p>That stopped me for a minute. Because for years, excluding the sync account from Conditional Access was considered standard practice. So what changed?</p>
+<h2>03. What Changed in Version 2.5.76.0</h2>
+<blockquote><p>ℹ️ <strong>🔄 Updated Content:</strong> Starting with Entra Connect version <strong>2.5.76.0</strong>, Microsoft moved synchronization to Application-Based Authentication (ABA) by default when upgrading from legacy configurations. <a href="https://learn.microsoft.com/en-us/entra/identity/hybrid/connect/reference-connect-version-history#25760">Reference: Microsoft Learn</a></p></blockquote>
+<p>This means sync no longer relies on a username/password user account. It uses a service principal instead. Authentication is certificate-based, non-interactive, and <strong>not subject to user-targeted Conditional Access policies</strong>.</p>
+<p>In other words: <em>the original reason we excluded the directory sync user may no longer apply in modern deployments</em>. This needs to be evaluated on a case-by-case basis.</p>
+<h2>04. The Real Issue: Missing Service Principal</h2>
+<p>The policy failed because one of four excluded service principals didn't exist in the tenant. That's when the troubleshooting began.</p>
+<p>Here are the excluded apps — use <a href="https://aka.ms/AppNames">aka.ms/AppNames</a> to find app names by GUID:</p>
+<pre><code>// Excluded from ACME — GLOBAL — GRANT — MFA — All-Users
+"excludeApplications": [
+  "00000012-0000-0000-c000-000000000000", // Microsoft Rights Management Services
+  "d4ebce55-015a-49b5-a083-c84d1797ae8c", // Microsoft Intune Enrollment
+  "372140e0-b3b7-4226-8ef9-d57986796201", // Azure Windows VM Sign-In
+  "0000000a-0000-0000-c000-000000000000"   // Microsoft Intune (Legacy — Removed)
+]</code></pre>
+<table><thead><tr><th>Application</th><th>Purpose</th><th>Status</th></tr></thead><tbody><tr><td>Microsoft Rights Management Services 00000012-0000-0000-c000-000000000000</td><td>Encryption, IRM, sensitivity label enforcement</td><td>Keep</td></tr><tr><td>Microsoft Intune Enrollment d4ebce55-015a-49b5-a083-c84d1797ae8c</td><td>Azure AD Join, Autopilot, Company Portal, MDM bootstrap</td><td>Review</td></tr><tr><td>Azure Windows VM Sign-In 372140e0-b3b7-4226-8ef9-d57986796201</td><td>RDP to Entra-joined Azure VMs, AVD flows</td><td>Review</td></tr><tr><td>Microsoft Intune 0000000a-0000-0000-c000-000000000000</td><td>Device policy sync, compliance, app deployment (post-enrollment)</td><td>Removed</td></tr></tbody></table>
+<h2>05. Microsoft Rights Management Services</h2>
+<p>If you're using Purview sensitivity labels, this exclusion is often required. Encryption and IRM flows authenticate through this service principal, and blocking it with MFA can break label enforcement silently.</p>
+<p>Tony Redmond has an excellent breakdown: <a href="https://office365itpros.com/2024/02/12/conditional-access-mfa-email/">office365itpros.com — Conditional Access MFA & Email</a></p>
+<h2>06. Microsoft Intune Enrollment</h2>
+<p>This is the operationally necessary exclusion and the one that caused my failure. Intune Enrollment handles:</p>
+<p>Azure AD Join · Autopilot · Company Portal enrollment · Initial MDM bootstrap</p>
+<p>If MFA blocks this flow, <strong>enrollment fails</strong>. This was the missing service principal in my tenant. In my case, the principal had never been instantiated — it simply didn't exist.</p>
+<blockquote><p>ℹ️ <strong>🔄 Updated — CIS Guidance:</strong> <a href="https://www.linkedin.com/in/henrik-piecha/">Henrik Piecha</a> pointed out that updated CIS guidance now leans in the opposite direction — specifically recommending <strong>stronger protection</strong> of Microsoft Intune Enrollment, including sign-in frequency controls.<br><br> Reference: <a href="https://www.tenable.com/audits/items/CIS_Microsoft_365_Foundations_v5.0.0_L1_E3.audit:ae279571f175251c280c8ea1e670c846">CIS Microsoft 365 Foundations v5.0.0</a></p></blockquote>
+<p>I've previously excluded Intune Enrollment due to legacy workflows, hybrid join complexity, Autopilot edge cases, and troubleshooting scenarios. But guidance evolves. Platforms mature. And what once required exclusion may now deserve intentional hardening instead.</p>
+<h2>07. Microsoft Intune — Removed</h2>
+<p>This handles post-enrollment traffic: device policy sync, compliance checks, app deployment, configuration updates. This exclusion is legacy in my environment. Honestly? <strong>I would remove this today unless absolutely necessary.</strong></p>
+<p>In hindsight, this was likely added during troubleshooting. I suspect many environments have similar historical exclusions that were never revisited. The more critical exclusion is Intune Enrollment above.</p>
+<h2>08. Azure Windows VM Sign-In</h2>
+<p>Used when RDP-ing into Entra-joined Azure VMs, using the Azure AD Login extension, or in certain AVD flows. Originally excluded after running into MFA issues when testing Entra-joined VMs. <a href="https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-windows">Microsoft documentation</a> even suggests excluding it in some scenarios.</p>
+<p>Was it architecturally ideal? Probably not. But it fixed the problem quickly.</p>
+<h2>09. The Bigger Design Question</h2>
+<p>Excluding an app is easy. But is it the right approach? I explored whether a device filter would be cleaner:</p>
+<pre><code>device.trustType -ne "AzureAD"</code></pre>
+<p>The idea: instead of excluding Azure Windows VM Sign-In from the policy, conditionally allow only trusted, Entra-joined devices and keep everything else enforced. Architecturally, that feels more mature than a blanket exclusion.</p>
+<p>However, <a href="https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-windows?pivots=identity-extension-vm">Microsoft documentation</a> introduces an important limitation:</p>
+<blockquote><p>⚠️ <strong>Platform Limitation:</strong> When a Conditional Access policy requires a compliant device for the Azure Windows VM Sign-In resource and the connection is initiated from a <strong>Windows Server device</strong>, compliance evaluation isn't supported. OS-based filtering becomes unreliable for this flow.</p></blockquote>
+<p>What looked like a cleaner alternative now has technical constraints. It's not just about what we <em>want</em> Conditional Access to enforce — it's about what the platform can realistically evaluate for that specific resource.</p>
+<blockquote><p>"Not all exclusions are equal. And not all Conditional Access controls apply uniformly across every workload."</p></blockquote>
+<h2>10. The Swiss Cheese Effect</h2>
+<p>Fabian Bader wrote an excellent article on FOCI (Family of Client IDs): <a href="https://cloudbrothers.info/en/conditional-access-bypasses/">cloudbrothers.info — Conditional Access Bypasses</a></p>
+<p>Some applications are part of token families. <strong>Excluding one can implicitly allow others.</strong> That creates a Swiss cheese effect in Conditional Access — each exclusion punches a hole, and holes compound.</p>
+<blockquote><p>ℹ️ <strong>Good News:</strong> Azure Windows VM Sign-In is <strong>not FOCI-based</strong>. But the lesson remains: one exclusion can create multiple unintended allowances. Before excluding any app, check: <a href="https://entrascopes.com/">entrascopes.com</a></p></blockquote>
+<p>For a deep dive on the topic, <a href="https://www.youtube.com/watch?v=yYQBeDFEkps&list=PLuPHrE2HRFpOpFWfE0XLE3LsuMh0_8-Kr&index=97">this video</a> covers it well. I've also added the relevant links to my <a href="https://github.com/Jhope188/ConditionalAccessPolicies/blob/main/README.md">CA Repo on GitHub</a>.</p>
+<h2>11. Recreating Missing Service Principals</h2>
+<p>If any of the service principals above don't exist in your tenant, run the script below to instantiate them. I've included all potential apps just in case:</p>
+<pre><code>Connect-MgGraph -Scopes "Application.ReadWrite.All"
+
+# Microsoft Intune Enrollment
+New-MgServicePrincipal -AppId "d4ebce55-015a-49b5-a083-c84d1797ae8c"
+
+# Azure Windows VM Sign-In
+New-MgServicePrincipal -AppId "372140e0-b3b7-4226-8ef9-d57986796201"
+
+# Microsoft Rights Management Services
+New-MgServicePrincipal -AppId "00000012-0000-0000-c000-000000000000"</code></pre>
+<hr>
+<h2>→ Final Thought</h2>
+<p>"MFA for All Users" sounds simple. It isn't.</p>
+<p>What this experience reinforced:</p>
+<p><strong>Global policies are foundations, not finished architecture.</strong> Exclusions accumulate over time. Service principals evolve. Documentation changes. And yesterday's quick fix can become today's blind spot.</p>
+<p>Conditional Access isn't about making MFA universal. It's about making it <em>contextual</em>.</p>
+<p>The real maturity in identity isn't enabling MFA everywhere. It's continuously reevaluating why you excluded something in the first place. Because in identity, <strong>every exception tells a story</strong>. And eventually, you have to revisit it.</p>
+<p>With Audience Reporting in Conditional Access, we now have far better visibility into how policies affect users and workloads. That makes testing safer, analysis faster, and decisions more informed.</p>
+<p>Every exclusion should be questioned. Every legacy workaround should be retested. Because in identity architecture, the right answer five years ago might not be the right answer today.</p>
+</body></html>

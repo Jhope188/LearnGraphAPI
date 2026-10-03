@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Microsoft Gave Your Admins Until July. Don't Take It.</title>
+</head>
+<body>
+<h1>Microsoft Gave Your Admins Until July. Don't Take It.</h1>
+<p><em>Authentication Methods · SMS and Voice Retirement · Part 2</em></p>
+<p>Four weeks after September 1: the date change you should ignore, the passkey profile nobody asked for, the campaign that wouldn't stay disabled, and what bring-your-own telecom actually costs.</p>
+<p><em>Entra ID · Passkeys · MSP · · · Jon Hope · Microsoft MVP · Security: Identity &amp; Access</em></p>
+<p><em>Originally published at <a href="https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part2.html">conditionalaccess.tech</a></em></p>
+<hr>
+<p>Section 01</p>
+<h2>Where We Are: One Date Down, Three to Go</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/authentication/concept-sms-voice-retirement#retirement-timeline">Retirement timeline</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/concept-phone-providers">Choose a telephony provider</a> · <a href="https://mc.merill.net/message/MC1426371">MC1426371 (Message Center)</a></p>
+<p>In <a href="https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part1.html">Part 1</a> I covered what's changing and how to find your SMS and Voice users. Since then, September 1 has landed in every tenant that didn't opt out, and the questions on my calls have changed. People have stopped asking what's happening. Now they want to know why something happened that they didn't expect.</p>
+<p>Sep 1, 2026 Done Passkeys auto-enabled, campaign set to Microsoft managed</p>
+<p>Oct 30, 2026 34 Telephony provider setup opens</p>
+<p>Feb 1, 2027 128 Retirement for everyone else, internal guests included</p>
+<p>Jul 1, 2027 278 Retirement for Global Admins and external users</p>
+<p>Days remaining, calculated when the page loads.</p>
+<p>Section 02</p>
+<h2>The One Date Change You Should Ignore</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/authentication/concept-sms-voice-retirement-faq#do-global-administrators-and-external-users-have-a-different-retirement-date">Different date for Global Admins and external users</a> · <a href="https://learn.microsoft.com/entra/identity/role-based-access-control/security-emergency-access#create-emergency-access-accounts">Manage emergency access accounts</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/concept-sms-voice-retirement-faq#when-will-passkey-support-be-available-for-b2b-users">Passkey support for B2B users</a></p>
+<p>There's been one major change to who's impacted. Microsoft updated the retirement docs so that <strong>Global Administrators and external users</strong> keep Microsoft-provided SMS and Voice until <strong>July 1, 2027</strong>. Everyone else, internal guests included, still retires on February 1.</p>
+<p>My guess is Microsoft wants to limit the support cases that come from admins and break-glass accounts still sitting on SMS or Voice. I get the reasoning. Please don't use it.</p>
+<blockquote><p>Your admins and break-glass accounts should be the first accounts you move, and the least disruptive. They're the people who understand what a passkey is.</p></blockquote>
+<p>Global Admins</p>
+<h3>Move them this month</h3>
+<p>Nobody in the tenant has a better reason to be on a phishing-resistant method. The extension also only names <strong>Global Administrators</strong>. The docs don't extend it to other privileged roles, so treat every other admin role as a February 1 account.</p>
+<p>Break-glass</p>
+<h3>SMS was already wrong here</h3>
+<p>Microsoft's emergency access guidance recommends <strong>passkeys (FIDO2)</strong>, or certificate-based authentication if you already run a PKI. A break-glass account that depends on someone's phone is out of line with Microsoft's own guidance, retirement or not.</p>
+<p>Guests</p>
+<h3>The awkward gap</h3>
+<p>Passkey support for B2B and internal guest users is <em>planned</em> for the end of calendar year 2026 (<a href="https://mc.merill.net/message/MC1459133">MC1459133</a>). Internal guests still retire on February 1, which leaves a thin window between "passkeys work for guests" and "SMS stops working for them."</p>
+<p>Section 03</p>
+<h2>"We Already Had Passkeys Enabled." You Were Still in Scope.</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/authentication/concept-sms-voice-retirement#2-move-users-to-passkeys">Move users to passkeys</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/how-to-mfa-registration-campaign#passkey-nudge-evaluation-by-platform">Passkey nudge evaluation by platform</a></p>
+<p>This is the problem I've seen most: admins who didn't realize their users were in scope for the push, because passkeys were already enabled in the tenant. This is the note from Microsoft that everyone's working from, and it's been as clear as mud.</p>
+<img src="../../images/entra/sms-voice-retirement-part2/sms-voice-retirement-part2-01.webp" alt="Microsoft Learn Important note: On September 1, 2026, users enabled for SMS or Voice in the Entra Authentication Methods Policy, or in legacy MFA settings, will be auto-enabled for passkeys in AMP and put into a passkey profile allowing all types of passkeys. Registration Campaign settings will be set to Microsoft Managed state targeting passkeys.">
+<p><em>From Passkeys by default and retirement of Microsoft-provided SMS and voice authentication , Microsoft Learn.</em></p>
+<p>Read it slowly and you'll find three ways into scope that people miss:</p>
+<p>1</p>
+<p>Scope is "enabled for SMS or Voice", not "uses SMS or Voice"That includes users enabled through <strong>legacy MFA settings</strong>, not only the Authentication Methods Policy. Having passkeys enabled elsewhere in the tenant doesn't take anyone out of scope.</p>
+<p>2</p>
+<p>The Microsoft managed passkey campaign triggers after any MFA methodThe Authenticator campaign only fires after SMS or Voice MFA. The passkey campaign fires after <em>any</em> MFA method, so a user who signs in with Authenticator push can still get nudged.</p>
+<p>3</p>
+<p>The nudge is evaluated per OS and browserIt checks whether the user has a passkey usable on <em>this</em> device and browser, not whether one is registered on the account. Windows Hello for Business stops the nudge on Windows. The same user gets nudged on their iPhone or Mac.</p>
+<p>Section 04</p>
+<h2>The Passkey Profile Nobody Asked For</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/authentication/how-to-synced-passkeys#enable-and-target-groups-for-a-profile-for-synced-passkeys">Users scoped to multiple passkey profiles</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/how-to-authentication-passkeys-fido2#passkey-profiles">Passkey profiles and attestation</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/concept-authentication-passkeys-fido2#types-of-passkeys">Types of passkeys</a></p>
+<p>In-scope users were put into a passkey profile that allows <strong>all types of passkeys</strong>. On its own that sounds harmless. Combine it with how Entra evaluates multiple profiles and you get a configuration nobody chose.</p>
+<blockquote><p>🛑 <strong>How multiple profiles combine:</strong> When a user is scoped to more than one passkey profile, Entra allows registration and sign-in if the passkey satisfies <strong>at least one</strong> of them. So if you built a device-bound, attestation-enforced profile for your admins, and those admins were also enabled for SMS, the all-types profile now lets them register <strong>synced passkeys and unattested device-bound passkeys</strong> too.</p></blockquote>
+<p>It gets harder to undo. Attestation is only checked at registration time, so turning enforcement back on later doesn't block passkeys that were already registered without it. You have to find those passkeys and delete them.</p>
+<p>For perspective: a synced passkey is still far less of a security concern than SMS, in my opinion. Microsoft's own guidance calls any passkey a significant upgrade over phishable MFA. What worries me is the unintended configuration. You designed a policy, and a migration quietly widened it.</p>
+<ul><li>Open <strong>Passkey (FIDO2)</strong> and check every target against every profile. Work out which profile your SMS and Voice users landed in and who else it applies to. Microsoft doesn't say whether the migration creates a new profile or uses one you already have.</li><li>Narrow that profile's targets, or tighten its settings, so it doesn't sit on top of a stricter profile you built on purpose.</li><li>Pull the registered passkeys for your privileged users and delete any that don't meet the policy you intended.</li><li>Entra currently supports up to three passkey profiles, including the Default profile, with more in development. If an extra profile appeared, it's using one of those three slots, and you have to remove its targets before you can delete it.</li></ul>
+<p>Section 05</p>
+<h2>A Disabled Registration Campaign Doesn't Mean Off</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/authentication/concept-sms-voice-retirement#2-move-users-to-passkeys">Campaign set to Microsoft managed</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/how-to-mfa-registration-campaign#choose-a-campaign-state">Choose a campaign state</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/concept-sms-voice-retirement#temporarily-opt-out-of-the-automatic-passkey-enablement">Temporary opt-out</a></p>
+<p>The other issue I keep seeing: tenants that had the registration campaign set to <strong>Disabled</strong> and still got nudges. The wording explains it. On September 1, Microsoft sets Registration Campaign settings to <strong>Microsoft managed</strong>, targeting passkeys. The docs don't carve out tenants that had it disabled, and the reports I've seen line up with that.</p>
+<table><thead><tr><th>What you want</th><th>What actually works</th><th>Status</th></tr></thead><tbody><tr><td>Stop the automatic changes</td><td>Set passkeyDynamicMigration to true (covered in <a href="https://conditionalaccess.tech/articles/entra/sms-voice-retirement-part1.html#s04">Part 1</a>). Temporary, ends February 1, 2027.</td><td>Beta API</td></tr><tr><td>Take users out of scope</td><td>Move them off SMS and Voice in the Authentication Methods Policy and legacy MFA settings.</td><td>Documented</td></tr><tr><td>Control snoozes yourself</td><td>Switch the campaign from Microsoft managed to <strong>Enabled</strong>. Microsoft managed locks the snooze settings.</td><td>Documented</td></tr></tbody></table>
+<blockquote><p>⚠️ <strong>Moving target:</strong> Microsoft's registration campaign article says a new version of the campaign is rolling out, expected to finish by the end of September 2026. Until it reaches your tenant, what you see in the portal might not match the docs.</p></blockquote>
+<p>Section 06</p>
+<h2>Who Gets Nudged? Two Tools That Answer It Before Your Users Do</h2>
+<p>Source: <a href="https://youtu.be/le2UapLnP_0">Threatscape: Map out the passkey registration campaign</a> · <a href="https://nudge.janbakker.tech/">Jan Bakker: Campaign simulator</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/how-to-mfa-registration-campaign">Run a registration campaign</a></p>
+<p>The nudge logic depends on campaign state, targeted method, passkey profile, OS, browser, and which MFA method the user just used. That's too many variables to reason about in your head across a stack of customer tenants. Two people in the community built the answer.</p>
+<h3>Ru Campbell's breakdown</h3>
+<p><a href="https://www.linkedin.com/in/rlcam/">Ru Campbell</a> and Threatscape put together an excellent walkthrough on mapping out the passkey registration campaign, so you can work out whether a user will be in scope for a nudge.</p>
+<p>Video not loading? <a href="https://youtu.be/le2UapLnP_0">Watch it on YouTube</a>.</p>
+<h3>Jan Bakker's simulator</h3>
+<p>nudge.janbakker.tech</p>
+<h3>To nudge, or not to nudge?</h3>
+<p><a href="https://nudge.janbakker.tech/">Open the simulator</a></p>
+<p><a href="https://www.linkedin.com/in/jan-bakker/">Jan Bakker</a> went above and beyond and built a what-if tool for exactly this. Set the campaign state, targeted method, OS, browser, the MFA method used at sign-in, the local passkeys on that platform, and the passkey profile type. It returns a yes or no verdict with a reason trace showing which check decided it.</p>
+<p>It also models the things that suppress a nudge: an existing SSO session, a Conditional Access policy blocking <em>Register security information</em>, a terms of use screen, and custom controls. Those match Microsoft's own FAQ, and they're what explain the "why did this user never see it?" tickets.</p>
+<p>Section 07</p>
+<h2>The Providers Are Live in Security Store. Here's What SMS Costs Now.</h2>
+<p>Source: <a href="https://mc.merill.net/message/MC1426371">MC1426371 (Message Center)</a> · <a href="https://securitystore.microsoft.com/solutions/telesigncorporation1779799505747.telesign-verify-cyot-azure">Telesign Verify for Microsoft Entra</a> · <a href="https://securitystore.microsoft.com/solutions/sopranodesignlimited1620113206416.soprano_entraid_per_user">Soprano per user</a> · <a href="https://securitystore.microsoft.com/solutions/sopranodesignlimited1620113206416.soprano_entraid_per_transaction">Soprano per transaction</a> · <a href="https://www.telesign.com/pricing/verification-pricing">Telesign verification pricing</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/phone-providers-faq#how-much-does-choose-your-own-telephony-provider-cost">Telephony providers FAQ: costs</a></p>
+<p>Make sure you're checking the store. Microsoft's Message Center post set September 18 as the date provider information would be available, and the initial providers, Telesign and Soprano, have their listings up with pricing. You can't configure them in Entra until October 30, and Microsoft recommends finishing setup <strong>at least 4 weeks before February 1</strong>. That makes January 4, 2027 your real deadline, so price the options out with customers now.</p>
+<h3>The plans</h3>
+<table><thead><tr><th>Offer</th><th>Model</th><th>Price</th><th>What you get</th></tr></thead><tbody><tr><td>Soprano per user</td><td>Per enabled user</td><td>$3.00 / user / month<br>1-year term, $36 / user</td><td>10-user minimum. First month free: the 30-day trial covers up to 10 users and 100 messages. SMS, Voice, WhatsApp, Viber, RCS.</td></tr><tr><td>Soprano per transaction</td><td>Pay per message</td><td>$0 upfront<br>$0.008 to $0.38 per SMS</td><td>Billed by destination country band. List prices apply under 10K messages a month. Some countries require Sender ID registration, which can cost extra.</td></tr><tr><td>Telesign trial</td><td>Private preview</td><td>$0</td><td>$20 of free consumption.</td></tr><tr><td>Telesign Basic Bundle</td><td>Prepaid</td><td>$250 one-time</td><td>$250 of SMS and Voice consumption, plus Basic support.</td></tr><tr><td>Telesign Pay As You Go</td><td>Support tier + usage</td><td>$500 / $1,500 / $5,000<br>Starter / Advanced / Premier</td><td>Support plan price, no monthly minimum. Messages and calls billed at per-destination rates. US SMS Verify: $0.0095 per message. Voice Verify: priced through sales.</td></tr></tbody></table>
+<h3>Per-message rates</h3>
+<p>Soprano publishes rates by country band but doesn't list which countries sit in which band, so ask them for yours. Telesign's listing links to its public per-country pricing, where SMS Verify to US numbers is $0.0095. Voice is charted separately because it's priced per minute, and it's the number that should make you move voice users first.</p>
+<p>SMS OTP, price per message (USD) Soprano bandTelesign, US destinations</p>
+<p>Voice OTP, price per minute (USD) Soprano band</p>
+<p>Soprano's top voice rate, $8.00 a minute, is 21 times its top SMS rate. Telesign doesn't publish voice rates.</p>
+<h3>Run your numbers</h3>
+<p>Plug in one customer's SMS holdouts. You're charged per MFA prompt that sends a code, not per sign-in, so for most users this is well under one a day. The break-even line tells you when Soprano's per-user plan beats per message. Soprano's band depends on where the phone numbers are, and the Telesign bar always uses its US rate.</p>
+<p>Users who need SMS SMS codes per user, per monthEach user, not the whole customer. One code a day is about 30. Soprano destination band Low: $0.008 Low to Medium: $0.017 Medium: $0.08 Medium to High: $0.17 High: $0.38</p>
+<blockquote><p>⚠️ <strong>Before you quote a customer:</strong> These are list prices from the Security Store listings and Telesign's pricing page, checked on September 26, 2026, during private preview. Telesign lists each support plan as a "one-time payment" on a "1 month subscription" billing term, so confirm with Telesign whether it renews. None of these figures include the <strong>routing function in your Azure subscription</strong>, which carries standard Azure consumption charges (Microsoft expects them to be minimal next to telephony costs). Both listings are also tagged for Entra External ID, but Microsoft's FAQ says the feature is currently available only for Entra ID.</p></blockquote>
+<p>Closing</p>
+<h2>The Cheapest Telecom Provider Is the One You Don't Need</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/authentication/concept-sms-voice-retirement-faq#will-there-be-costs-associated-with-using-a-telephony-provider-through-microsoft-security-store">Costs: passkeys incur no additional cost</a> · <a href="https://learn.microsoft.com/entra/identity/authentication/concept-authentication-passkeys-fido2#choose-the-right-passkey-option">Choose the right passkey option</a></p>
+<p>Every user you move to a passkey costs nothing extra. Microsoft's FAQ says so outright. Every user you keep on SMS now carries a monthly line item, a provider contract, and an Azure resource somebody has to own.</p>
+<p>That changes the customer conversation. "Should we keep SMS?" used to be a security argument, and those are easy to put off. Now it's a number on an invoice, and the number keeps going for as long as the user stays on SMS. Take the calculator result into your next customer review and let the per-user figure make the case for passkeys.</p>
+</body></html>

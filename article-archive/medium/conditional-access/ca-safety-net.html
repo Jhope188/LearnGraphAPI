@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Safety Net</title>
+</head>
+<body>
+<h1>The Safety Net</h1>
+<p><em>Conditional Access Foundations · Final Post</em></p>
+<p>Why Azure is the foundation of every CA stack I've ever built. Build the net first. Then build the stack on top of it.</p>
+<p><em>Azure Monitor · · · Log Analytics · · · May 2026 · · · 9 min read</em></p>
+<p><em>Originally published at <a href="https://conditionalaccess.tech/articles/conditional-access/ca-safety-net.html">conditionalaccess.tech</a></em></p>
+<hr>
+<p>Before I deploy a single Conditional Access policy, before I configure a named location, before I touch anything in Entra ID, I build the safety net.</p>
+<p>That might seem backwards. Most people think about alerting as something you layer on after the fact, an afterthought, a nice-to-have. That mentality is exactly why most environments have exclusions that outlive their purpose by months, breakglass accounts nobody's watching, and CA gaps that quietly sit open until something goes wrong.</p>
+<blockquote><p>"The safety net isn't reactive. It's the prerequisite."</p></blockquote>
+<p><a href="https://github.com/Jhope188/ConditionalAccessPolicies">⚙️ Bicep templates, KQL queries, and runbooks for the full safety net <strong>github.com/Jhope188/ConditionalAccessPolicies</strong></a></p>
+<p>01</p>
+<p>Where Azure Meets Microsoft 365</p>
+<p>It is almost impossible to properly monitor and secure Microsoft 365 without Azure. Not everyone has E5. Not every client has P2 licensing across the board. But Azure has offered a legitimately low-cost path to advanced automation for years, and most people aren't using it.</p>
+<p>A well-configured Log Analytics Workspace costs pennies at SMB scale. Azure Automation Accounts are nearly free at low runbook execution volumes. The gap between "I wish I knew about this sooner" and "I know about this in real time" is often a $15/month Log Analytics workspace and a few Bicep templates.</p>
+<p>Log Analytics</p>
+<p>~$2–$15/mo</p>
+<p>Automation Account</p>
+<p>Near $0</p>
+<p>Key Vault</p>
+<p>~$0.03/10k ops</p>
+<p>Blob Storage</p>
+<p>~$2–$5/mo</p>
+<p>02</p>
+<p>What the Safety Net Actually Is</p>
+<p>In my case the safety net wasn't a single tool or a single alert. It was an Infrastructure as Code system that went in before any workload went live. The foundation was a Log Analytics Workspace paired with Blob Storage for log retention. From there:</p>
+<p><strong>Azure Automation Accounts</strong> act as the execution engine for scheduled and event-driven runbooks. <strong>Data Collection Rules</strong> route the right signals from the right sources into LAW. <strong>KQL queries and scheduled monitors</strong> turn raw log data into actionable alerts. <strong>Azure Runbooks (PowerShell)</strong> automate the logic that humans reliably forget to run manually. <strong>Key Vault</strong> stores the credentials and secrets everything else needs to operate.</p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-01.png" alt="Bicep IaC dependency graph">
+<p><em>Bicep IaC — Safety Net Infrastructure The full safety net as IaC: Log Analytics, Automation Accounts, Data Collection Rules, Runbooks, Key Vault, and Blob Storage. Goes in before any CA policy.</em></p>
+<p>03</p>
+<p>68 Alerts Before a Single CA Policy</p>
+<p>When I say I deploy this before touching CA, I mean it literally. The Bicep alerting package puts over 68 alert rules in place before anything else. Infrastructure health, resource hygiene, and the identity-critical events that matter for CA.</p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-02.png" alt="Azure Monitor alert rules list">
+<p><em>Azure Monitor — Alert Rules The deployed alerting package as it appears in the Azure portal: Scheduled Query Rules, Activity Log Alerts, and Metric Alerts across the full subscription. All deployed from Bicep before any workload goes live.</em></p>
+<p>Infrastructure Health</p>
+<ul><li>CPU_80_Alert / CPU_90_Alert</li><li>DiskThreshold_Alert</li><li>Memory_1GB / Memory_2GB_Alert</li><li>FileShareCapacity_Warn / Err</li><li>FSLogix_Storage / Throttling</li><li>NetworkLatency_Alert</li></ul>
+<p>Resource Hygiene</p>
+<ul><li>OrphanedNIC / Disk / NSG</li><li>OrphanedVNET / Subnet</li><li>OrphanedPublicIP / RouteTable</li><li>OrphanedAPIConnections</li><li>OrphanedPrivateEndpoints</li><li>OrphanedNATGateway</li></ul>
+<p>CA + Identity Critical</p>
+<ul><li>BreakglassAlertRule</li><li>GlobalAdminAlertRule</li><li>CA_Policy_Deleted_Alert</li><li>PolicyMonitor_Alert</li><li>RiskyUsers_Alert</li><li>AuthenticationMethodChange_Alert</li><li>EnterpriseAppRegisteredAlert</li><li>AccessManagement_Elevation_Critical</li><li>AdminOperations_Alert</li><li>EntraIDConnectABA_Alert</li></ul>
+<p>Lateral Movement Indicators</p>
+<ul><li>NSGPolicyAlertCreate</li><li>NSGPolicyAlertDelete</li><li>NSGPolicyAlertUpdate</li><li>SQLServerFWRuleCreated</li><li>SQLServerFWRuleDeleted</li></ul>
+<p>Orphaned resources aren't directly CA-related, but they matter. They're noise that hides real signals. The identity-critical column is the part that ties directly to CA.</p>
+<p>04</p>
+<p>The CA-Specific Piece</p>
+<p>Every layer in the CA stack has exclusions. Every exclusion is a gap. Some gaps are intentional: breakglass accounts are excluded from MFA by design. Some are operational: a user gets added to CA-GlobalExclusions because they're having an auth issue and someone will "fix it later." Some are forgotten, like that exclusion from six months ago that nobody removed.</p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-03.png" alt="Conditional Access foundations layer model diagram">
+<p><em>CA Foundations Layer Model Exclusions punch holes. Holes stack. Gaps reach the ground. The safety net catches what falls through — when a gap is exploited, alerting catches the fall.</em></p>
+<p>One example that ties directly to the previous post: Device Code Flow. Blocking it with a CA policy is the right move, but blocking it doesn't mean you'll know when someone tried to use it before the block went in, or when an exclusion opens the door back up. The signal exists in sign-in logs via AuthenticationProtocol == deviceCode.</p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-04.png" alt="Entra sign-in logs filtered by Device Code authentication protocol">
+<p><em>Entra Sign-In Logs — Device Code Filter Filtering sign-in logs by Authentication Protocol: Device Code. Most environments aren't querying for this. The CA policy blocks the flow; the log tells you if it happened anyway via an exclusion, a timing gap, or a policy that wasn't there yet.</em></p>
+<blockquote><p>ℹ️ <strong>Fabian Bader — Sentinel KQL:</strong> Fabian's <a href="https://github.com/f-bader/AzSentinelQueries/blob/master/Defender%20XDR/SignInWithDeviceCodeFlowFollowedByDeviceRegistration.md">SignInWithDeviceCodeFlowFollowedByDeviceRegistration</a> query correlates device code sign-ins against subsequent device registrations to surface the exact post-compromise pattern Storm-2372 used: token obtained via device code phishing, device registered within minutes, PRT acquired. The CA policy blocks the flow. The KQL tells you if it happened anyway.</p></blockquote>
+<p>05</p>
+<p>The GlobalExclusions Problem</p>
+<p>The most dangerous thing in a CA environment isn't a missing policy. It's an exclusion that stopped being temporary.</p>
+<p>I had an Azure Runbook on a schedule, daily at minimum and multiple times a day for sensitive groups, checking whether any user had been sitting in CA-GlobalExclusions longer than the threshold. When it found one, it didn't just log it. It sent an alert.</p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-05.png" alt="CA GlobalExclusions runbook source code">
+<p><em>Runbook — ACME-AZE2-CAGroup-Monitor PowerShell runbook connecting via Managed Identity, querying CA-GlobalExclusions by name, pulling current members, cross-referencing audit logs for when each was added, and flagging anyone past the threshold. No stored credentials.</em></p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-06.png" alt="Alert email showing user in CA exclusion group for more than 2 days">
+<p><em>Alert Email — CA-GlobalExclusions User in CA-GlobalExclusions for more than 2 days. Group: CA-GlobalExclusions. Total count: 1 member. A live gap in your MFA policy with nobody watching — until this fires.</em></p>
+<blockquote><p>⚠️ <strong>Threshold Rationale:</strong> A 2-day threshold is deliberate. Long enough not to generate noise for legitimate short-term exclusions, short enough that you're not letting someone fall through for a week before anyone notices. The alert routes to a Teams webhook, a PSA ticket, or both.</p></blockquote>
+<p>06</p>
+<p>The TravelingUsers Problem</p>
+<p>The operational reality is that location-based CA policies will block users who travel, and the solution most people reach for is adding them to a traveling users group that bypasses the Named Locations block. That's fine. That's what it's for. But how do you know when someone is in that group? How do you make sure they come out of it when they get home?</p>
+<p>Same pattern: a Runbook, a schedule, an alert.</p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-07.png" alt="CA TravelingUsers runbook source code">
+<p><em>Runbook — ACME-AZE2-CATravelingUser-Monitor Same logic as the GlobalExclusions monitor: connect via Managed Identity, query the group by name, pull current members, cross-reference audit logs for when each was added, flag anyone past the threshold. Output goes to Teams or email.</em></p>
+<blockquote><p>🛑 <strong>Important:</strong> The runbook shows a 0-day threshold. That was for testing. Set a real threshold before deploying. Zero days will alert on every member every run.</p></blockquote>
+<p>07</p>
+<p>Why This Matters More Than the Policies Themselves</p>
+<p>We will create gaps. Users call with auth issues at 7pm. Someone adds them to an exclusion group to unblock them. They get busy. The exclusion stays. Three months later that account gets compromised and you're trying to figure out why MFA didn't fire.</p>
+<p>The CA policies are the architecture. The safety net is what catches the architecture failing at 7pm on a Friday.</p>
+<p>The automation fills the gap between what you intend and what you actually remember to check at 9pm on a Tuesday. Nobody catches everything manually. That's not a criticism, it's just true.</p>
+<p>08</p>
+<p>The Licensing Reality</p>
+<p>You don't need E5 to do this.</p>
+<p>Log Analytics, Automation Accounts, Data Collection Rules, Key Vault: these are Azure resources. At SMB scale, most of the components stay within free tier limits. The ones that don't run well under $50/month total.</p>
+<p>The gap between "I can't afford E5" and "I have zero visibility" is mostly a willingness-to-build problem, not a budget problem.</p>
+<hr>
+<p>The Takeaway</p>
+<p>We started at the top of the CA stack and worked down: MFA, admins, locations, Device Code Flow, Legacy Auth. The safety net was always the missing piece at the bottom.</p>
+<p>Every policy you deploy creates potential gaps. Every exclusion is a calculated risk. The safety net doesn't eliminate them. It tells you when they're being used.</p>
+<p>Build the net first. Then build the stack on top of it.</p>
+<p><a href="https://github.com/Jhope188/ConditionalAccessPolicies">⚙️ Code, Bicep templates, and KQL queries referenced in this post <strong>github.com/Jhope188/ConditionalAccessPolicies</strong></a></p>
+<img src="../../images/conditional-access/ca-safety-net/ca-safety-net-08.png" alt="conditionalaccess.tech">
+<p>Jon Hope</p>
+<p>Microsoft MVP · Security: Identity & Access</p>
+</body></html>

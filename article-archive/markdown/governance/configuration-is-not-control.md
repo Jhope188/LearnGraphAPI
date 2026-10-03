@@ -1,0 +1,193 @@
+---
+title: "The Governance Gap"
+description: ""
+series: "governance"
+published: ""
+canonical_url: "https://conditionalaccess.tech/articles/governance/configuration-is-not-control.html"
+source: "catech-branded/governance/configuration-is-not-control.html"
+---
+# The Governance Gap
+
+*M365 Governance Series — Part 2 of 5*
+
+You set the policies when the project was live and the team was paying attention. The problem is what happens after, when the platform keeps adding surfaces, exceptions accumulate quietly, and the settings you wrote are no longer covering the territory they were built for.
+
+M365 Governance · June 30, 2026 · 11 min read
+
+At some point in almost every M365 security engagement, someone opens the admin center, points at a policy, and says: "This was supposed to prevent exactly that." And technically, they're right. The setting was there. It had been there for two years. It just didn't cover what everyone assumed it covered.
+
+That's the version of the story you can debug. The harder version is when the policy did exactly what it was configured to do, and the outcome still wasn't what anyone intended. A guest retained access to project files long after the engagement closed. A Teams workspace nobody monitors just became a Copilot result for someone three departments away. A flow kept running to an external connector that outlived the business case for it by a year.
+
+None of those are configuration failures. They're the gap between a setting you applied and the behavior you assumed would follow. That gap is where most M365 governance breaks down quietly, without an error, without an alert, without anyone knowing until it matters.
+
+> "The settings you deploy are a snapshot. The environment they're deployed into keeps moving. Most governance programs are very good at the snapshot and never build anything to manage the distance between that moment and every one that follows."
+
+## 01. The Three Layers Nobody Separates
+
+M365 governance fails in the gap between three layers that almost every organization collapses into one. Separating them is the prerequisite to understanding why controls that look right on paper produce outcomes that aren't.
+
+Intent
+
+What you mean. Lives in documents.
+
+The organization's policy in human language. What the business means by "only owners can invite guests" or "sensitive content shouldn't be broadly accessible." Intent is correct by definition: it's the desired state articulated before the system gets involved.
+
+"Only project owners should be able to add external collaborators."
+
+"Flows should not send data outside the organization."
+
+"All Teams workspaces must have a designated owner."
+
+Configuration
+
+The translation layer. Always incomplete.
+
+The attempt to translate intent into platform settings. Configuration is always a partial approximation of intent, applied on a specific day, by a specific admin, against the specific version of the platform that existed at that moment. It does not update itself when intent changes or when the platform introduces new pathways.
+
+External sharing: "Only people in your organization" ✓
+
+Guest invite settings: "Only admins" ✓
+
+New Teams shared channel type ships with different sharing model: not reviewed ✗
+
+Behavior
+
+What actually happened. The only thing that matters.
+
+System behavior is the only thing that actually matters. A guest got access. A link exists. A flow ran. A workspace persisted without an owner. The tenant has no memory of what you intended when you configured it. It only holds the state it's in right now, and that state reflects every action, exception, and bypass that accumulated since the last time someone actively cleaned it up.
+
+A guest was added via Planner, which wasn't covered by the guest invite policy.
+
+A file was shared via "specific people" link from OneDrive, outside SharePoint settings scope.
+
+A flow was built in the default Power Platform environment because it was there and it worked.
+
+The gap between configuration and behavior is where governance fails. Not during deployment, not because someone made a mistake, but because M365 is a platform that continuously adds new workloads, new features, and new sharing surfaces faster than any fixed configuration model can keep up with. Every new capability ships with defaults tuned for adoption, not for your compliance requirements.
+
+## 02. The Three Sources of Drift
+
+Governance programs don't usually fail during rollout. They fail afterward, quietly, through drift that accumulates in three predictable places. Naming them is how you stop being surprised by them.
+
+🔓 **Exceptions**
+
+A policy blocks something that genuinely needs to happen, so someone approves a workaround. The workaround gets added as an allow clause. The original timeline for revisiting it gets lost. Six months later nobody remembers the exception was supposed to be temporary. The admin who approved it has moved on, and the ticket that tracked it is closed. Most CA policies in mature tenants have more history in their exclusion groups than in their original design. The exceptions don't announce themselves. They just accumulate.
+
+🚪 **Bypasses**
+
+M365 group creation is restricted through the Teams admin policy, but the same group gets created when someone starts a Planner board or adds a calendar in Outlook. External sharing is locked in SharePoint, but a file gets shared from OneDrive using a link type that wasn't in scope when the setting was written. Power Platform environments are governed, but the default environment still works, so makers keep using it because nobody stopped them. These aren't security incidents. They're the normal behavior of a platform where the same underlying object is reachable through a dozen different front doors.
+
+🆕 **New Features**
+
+Microsoft ships into your tenant continuously. Shared channels arrived with a different permission model than standard channels. Copilot capabilities landed with defaults nobody reviewed before the first query ran. New connectors, new app types, new agent surfaces. Each one is a creation or sharing pathway your existing configuration wasn't written for. And each one arrives active before you've had a chance to evaluate it against your governance requirements.
+
+## 03. Real-World Cases Where This Played Out
+
+These aren't hypotheticals. These are patterns that appear, in one form or another, in almost every mature M365 tenant. They follow directly from the intent-configuration-behavior gap.
+
+**The Exception That Became Policy**
+
+A vendor needs guest access for a six-week engagement. Normal onboarding would take too long, so an admin grants access via a direct group membership bypass on a Friday. The work completes. Nobody offboards the guest. Six months later, the vendor's account is still active, still in the group, still has access to the SharePoint site with the project files. The exception that was supposed to be temporary became the permanent state. Nobody was responsible for closing it because nobody documented who approved it.
+
+Field Pattern 01
+
+**Pattern:** Exceptions without expiration dates and named owners become permanent. Every "just this once" is a permanent policy fork in waiting.
+
+**The Policy That Didn't Apply Where Work Happened**
+
+An organization had a well-configured SharePoint external sharing policy: links scoped to existing guests only, no anonymous access. What they didn't account for was OneDrive. The SharePoint policy didn't cover OneDrive personal shares configured at a different inheritance tier. Users shared sensitive documents from their personal OneDrive using "specific people" links, technically within policy but practically outside the governance model. The admin center showed compliant. The data state was not.
+
+Field Pattern 02
+
+**Pattern:** Configuration at one layer doesn't automatically propagate to adjacent layers. M365's permission topology has too many inheritance boundaries for any single setting to be comprehensive.
+
+**The Governance Rollout That Ended**
+
+A mid-size organization ran a full M365 governance project. DLP policies deployed. Sensitivity labels configured. Group creation restricted. External sharing tightened. Access reviews scheduled. The project closed, the consultant invoiced, the admin team moved on to the next initiative. Twelve months later: 40 new Microsoft 365 groups created via Planner and Outlook that bypassed the creation restriction. DLP policy hadn't been updated to cover new file types. Access reviews were running but every reviewer was approving everything in the first ten minutes. The project delivered governance at a point in time. The operating model to keep it current never existed.
+
+Field Pattern 03
+
+**Pattern:** A setting deployed on a specific day doesn't maintain itself. By the time the project closes, the tenant has already moved on to shipping new features the setting was never designed to cover.
+
+> 🛑 **The Default Settings Trap:** **Leaving something at default is still a decision.** Microsoft ships settings that have to work across a customer base that includes everyone from a five-person startup to a global enterprise. Those defaults are tuned for adoption, not for your audit requirements. When an admin says "we left it at default," what that actually means is: we accepted the product team's security posture as a substitute for our own. That's not neutral. It's a choice, and it has an access state attached to it. New features make this worse. Every time Microsoft ships a new capability into your tenant, it arrives with defaults already applied before you've reviewed them. Treating new feature releases as a standing review obligation, not a notification to wait for, is the only way to stay ahead of it.
+
+## 04. What Real Enforcement Looks Like
+
+Governance that holds up over time is built on mechanisms that run whether or not anyone is paying attention. There are only a handful of things a governance control can actually do. Everything else is observation dressed up as enforcement.
+
+1
+
+**Block**
+
+The system refuses to complete the action unless conditions are met. Not a warning. Not a nudge. A refusal. Conditional Access block policies are the clearest example in the M365 stack. DLP block-with-override is a weaker version because the user can still proceed. The distinction matters: a block is absolute. An override option means the control is optional.
+
+CA: Block · DLP: Block with override · Sharing settings: Disable
+
+2
+
+**Force**
+
+The user can get where they're going but only through a path the governance model controls. Guest invitations routed through Entitlement Management rather than ad-hoc direct invite. Teams provisioning restricted to approved templates rather than self-service creation. The action still happens. It just happens somewhere visible, with ownership attached, instead of wherever is fastest.
+
+Entitlement management · Teams templates · Group creation restrictions
+
+3
+
+**Expire**
+
+Access ends on a schedule unless someone actively confirms it should continue. Guest account expiration. Group lifecycle expiration. Sharing link expiration. PIM time-bound role assignments. This is the only enforcement mechanism that doesn't require anyone to remember to act. The window closes whether or not the admin is having a busy week.
+
+Guest expiration · Group lifecycle · Link expiration · PIM time-bound roles
+
+4
+
+**Escalate**
+
+When the accountable person doesn't act, the decision moves up the chain. Access reviews with escalation paths when owners don't respond. DLP policy violations routed to compliance queues when unacknowledged. The native platform gives you escalation hooks in access reviews and Compliance Manager workflows — detecting owner departure and escalating from there typically requires automation built on top, or a tool that monitors ownership state continuously.
+
+Access review escalation · DLP compliance workflows · Ownership monitoring
+
+5
+
+**Remediate**
+
+The system takes corrective action automatically, not just reports the issue. Removing stale guests when no one responds to an access review is native. Auto-archiving M365 group workspaces on lifecycle expiry is native. Disabling accounts after a period of inactivity is possible via Entra Lifecycle Workflows but requires Entra ID Governance licensing. The point is the same regardless: remediation closes the loop. Without it, you get an increasingly detailed record of a problem that isn't getting fixed.
+
+Auto-remove on no review response · Auto-archive on lifecycle expiry · Lifecycle Workflows (Entra ID Governance)
+
+> ⚠️ **Dashboards Are Not Controls:** Most organizations have reporting. They can show you counts, trends, and summaries across groups, guests, sharing links, and DLP hits. What most organizations can't show you is what changed because of that report. If the answer is nothing, you're not governing. You're producing evidence that the problem exists and filing it somewhere. Reporting earns the name governance only when it's the first step in a loop that ends with a consequence. An alert fires, someone owns it, they have a window to act, and if they don't, the system defaults to the safer state. Without that loop, the most sophisticated reporting in the tenant is just a very detailed record of drift that nobody stopped.
+
+## 05. The Native Tooling Ceiling
+
+None of this is an argument that Microsoft's native controls are useless. Conditional Access, DLP, retention policies, sensitivity labels, access reviews. These are real enforcement primitives and they work. The problem is consistency. Native controls live in workload silos with different enforcement models, different definitions of the same concepts, and different telemetry granularity depending on where you're standing.
+
+Native Control Gaps — Where Workload Silos Create Governance Blind Spots
+
+| Control | Where It Enforces | Where It Doesn't | Gap Impact |
+| --- | --- | --- | --- |
+| **External sharing settings** | SharePoint sites, Teams connected sites | OneDrive at different inheritance tier, new shared channel types | Partial |
+| **Group creation restrictions** | Teams (via Teams admin policy) | Groups created via Outlook, Planner, apps, APIs | Routinely Bypassed |
+| **DLP policies** | Exchange, SharePoint, Teams chat (message content) | Files shared via OneDrive sync client, Power Platform connectors, third-party apps | Partial |
+| **Conditional Access** | Authentication events against Entra-registered apps | Access already granted (CA fires at sign-in, not at ongoing permission state) | Point-in-time |
+| **Access reviews** | Entra group membership, app assignments, privileged roles | SharePoint unique permissions, OneDrive sharing links, Power Platform connector access | Identity layer only |
+
+The result is a governance model that enforces consistently in some places and inconsistently in others, and most organizations can't tell you which is which across their tenant at any given moment. That's the native tooling ceiling. It isn't a reason to avoid native tools. It's a reason to understand exactly what they cover and build deliberately around the gaps.
+
+---
+
+## → Practical Checklist
+
+**Map your enforcement verbs explicitly** For each governance control you have deployed, categorize it: does it Block, Force, Expire, Escalate, or Remediate? If the answer is "it reports," that is not an enforcement control. Build the map. The gaps will be obvious.
+
+**Review every exception for an expiration date and an owner** Pull every exclusion group, every CA policy allow-list, every DLP override that's been approved in the last 24 months. How many have a documented owner? How many have a review date? Every one without both is a permanent policy fork waiting to be discovered in an audit.
+
+**Test your group creation restriction for bypass paths** If you have a group creation restriction policy, test it. Try creating an M365 group from Outlook. Try creating a Planner board. Try an API call. Document which paths are blocked and which aren't. Most organizations with creation restrictions have at least two active bypass paths they didn't know about.
+
+**Review default settings on every feature shipped in the last 12 months** New M365 features ship into your tenant with defaults you didn't configure. Shared channels, new Copilot experiences, new Power Platform connector categories, new Teams apps. Each has a default behavior. Build a quarterly review of new feature defaults into your governance operating model.
+
+**Connect every dashboard to a remediation action** If a report finds a problem and nothing happens automatically or through a triggered workflow, replace the report with an alert that has a named owner and a response SLA. A report without a remediation path is documentation, not a control.
+
+## → The Takeaway
+
+The gap between configuration and control isn't a policy problem or a tooling problem. It's a continuity problem. Settings are static. M365 isn't. The platform keeps shipping, teams keep changing, and work keeps finding the path of least resistance through whatever the admin center didn't anticipate. The organizations that close this gap don't do it with better settings. They build enforcement that runs whether or not anyone is paying attention that week.
+
+The next post applies this directly to the most visible symptom of governance failure: sprawl. Not because sprawl is the biggest risk, but because it's the most tangible evidence of what happens when lifecycle, the only sprawl countermeasure that actually scales, is missing from the operating model entirely.
