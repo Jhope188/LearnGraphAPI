@@ -10,9 +10,13 @@ article-archive/
   catech-branded/<series>/<slug>.html   # exact copy of the live, as-published HTML
   markdown/<series>/<slug>.md           # plain-Markdown copy (YAML frontmatter + body)
   medium/<series>/<slug>.html           # stripped-down HTML safe to paste into Medium's editor
-  images/<series>/<slug>/img-NN.ext     # screenshots that were embedded as base64 in the
+  images/<series>/<slug>/
+    <slug>-NN.ext                       # screenshots that were embedded as base64 in the
                                          # source HTML, extracted to real files and shared
                                          # by reference between the markdown/ and medium/ copies
+    <slug>-component-NN.png             # real <table>s / multi-card grids, rendered with the
+                                         # article's own CSS in a headless browser and
+                                         # screenshotted - used only in medium/ (see below)
   scripts/convert.py                    # regenerates markdown/ + medium/ + images/ from
                                          # catech-branded/'s source articles list
 ```
@@ -22,6 +26,7 @@ article-archive/
 ## Regenerating
 
 ```bash
+pip3 install playwright && python3 -m playwright install chromium   # one-time, for visual export
 python3 article-archive/scripts/convert.py
 ```
 
@@ -50,6 +55,29 @@ This is a readability-first, content-complete conversion, not a pixel-perfect on
 layouts (side-by-side comparison grids, flowcharts, multi-column tables built from `div`s
 instead of `<table>`) are flattened into sequential prose/lists. Spot-check before publishing.
 
+## Visual component export (tables / comparison grids -> screenshots)
+
+Real `<table>` elements and multi-card "grid" components (comparison grids, defense stacks,
+persona rows, ...) render poorly once flattened to plain text, and Medium's own table support
+is weak. For these, `convert.py` uses Playwright to open the *original* article in a headless
+browser (so the real CSS applies), hides the fixed topbar/nav/sidebar chrome, and screenshots
+just that component - no manual cropping. The Medium HTML gets an `<img>` in that component's
+exact place instead of the flattened text; the Markdown copy is untouched, since a real GFM
+table or a flattened card list already reads fine as Markdown.
+
+Detection is generic, not based on specific class names:
+- every real `<table>` is always exported
+- any div/section whose *every* direct child independently qualifies as a "card" (see above),
+  with 2 or more such children, is treated as a visual grid and exported as one image
+
+This currently only runs for the slugs listed in `VISUAL_EXPORT_SLUGS` near the top of
+`convert.py` (`service-principal-shadow-admins`, the NHI article, as the initial test case).
+Set `VISUAL_EXPORT_SLUGS = None` to run it across every article once you're happy with the
+output quality - it adds real browser rendering time per article, so it's opt-in rather than
+always-on. Requires `pip3 install playwright && python3 -m playwright install chromium`; if
+Playwright isn't installed, this step is silently skipped and the rest of the conversion
+still runs exactly as before.
+
 ## Medium copies
 
 The `medium/` HTML files only use tags Medium's editor understands when pasted
@@ -57,4 +85,6 @@ The `medium/` HTML files only use tags Medium's editor understands when pasted
 `hr`) with no CSS classes or inline styles. Open a file in a browser, select all, and paste
 into Medium's story editor. Image `src` paths are relative to this folder (`../../images/...`),
 so keep the whole `article-archive/` folder together, or re-upload the images manually if you
-move a single file out on its own.
+move a single file out on its own. For the `component-NN.png` screenshots specifically, Medium
+needs its own uploaded copy of each image (it won't fetch a local file path when you paste) -
+upload each one at the point it appears in the pasted draft.

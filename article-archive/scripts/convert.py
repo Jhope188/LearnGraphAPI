@@ -16,6 +16,13 @@ generically:
     it into a title line + description paragraph(s) + nested list, preserving
     reading order without needing to know the component's specific class names.
 
+Real <table> elements and multi-card "grid" components (comparison grids, defense
+stacks, persona rows, ...) render poorly on Medium once flattened to plain text. For
+those, a real headless browser (Playwright) renders the original article with its
+own CSS, screenshots just that component, and the Medium HTML gets an <img> in its
+place instead of the flattened text. The Markdown copy is unaffected - it keeps the
+normal GFM table / flattened-card text, since that already reads fine as Markdown.
+
 Run: python3 article-archive/scripts/convert.py
 """
 import base64
@@ -25,6 +32,11 @@ import sys
 from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup, Comment, NavigableString, Tag
+
+try:
+    from playwright.sync_api import sync_playwright
+except ImportError:
+    sync_playwright = None
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 SITE_BASE = "https://conditionalaccess.tech/"
@@ -54,6 +66,10 @@ SOURCES = [
     ("articles/identity/passkeys.html", "identity"),
     ("articles/identity/who-did-you-let-in.html", "identity"),
 ]
+
+# Limit the real-browser table/grid screenshot export (requires Playwright) to
+# these slugs. Set to None to run it for every article in SOURCES.
+VISUAL_EXPORT_SLUGS = {"service-principal-shadow-admins"}
 
 SKIP_TAGS = {"script", "style", "nav", "header", "aside", "svg", "button",
              "input", "select", "option", "noscript", "form"}
@@ -219,6 +235,120 @@ def numbered_heading_text(tag):
         return None
     sep = ". " if num_text[:1].isdigit() else " "
     return f"{num_text}{sep}{title_text}"
+
+
+# ---------------------------------------------------------------------------
+# Visual-component export: real <table>s and multi-card "grid" wrappers render
+# poorly as flattened text on Medium, so a real browser screenshots them from
+# the original, fully-styled article instead.
+# ---------------------------------------------------------------------------
+
+VISUAL_CHROME_HIDE_SELECTORS = (
+    ".topbar, .site-header, .mobile-toc, nav, aside.sidebar, .back-btn, "
+    ".scroll-hint, .series-nav, .cta-block"
+)
+
+
+def find_visual_export_targets(root):
+    """Return content tags (in document order) that should be rendered as a
+    screenshot for the Medium copy: every real <table>, and every div/section
+    that's a grid of 2+ card-like children (comparison grids, persona rows,
+    defense stacks, ...), regardless of what the component's CSS class is
+    called. Skips anything already covered by an outer target."""
+    targets = []
+    covered_ids = set()
+
+    def is_covered(tag):
+        return any(id(anc) in covered_ids for anc in tag.parents)
+
+    for el in root.find_all(True):
+        if should_skip(el) or is_covered(el):
+            continue
+        if el.name == "table":
+            targets.append(el)
+            covered_ids.add(id(el))
+            continue
+        if el.name in ("div", "section"):
+            direct = [c for c in el.find_all(True, recursive=False) if c.name not in ("script", "style")]
+            if len(direct) < 2:
+                continue
+            card_children = [c for c in direct if is_leaf_card_component(c)]
+            if len(card_children) >= 2 and len(card_children) == len(direct):
+                targets.append(el)
+                covered_ids.add(id(el))
+    return targets
+
+
+def infer_alt_text(el):
+    if el.name == "table":
+        heads = [h for h in (inline_text(th) for th in el.find_all("th")) if h][:4]
+        return ("Table: " + ", ".join(heads)) if heads else "Data table"
+    titles = []
+    for c in el.find_all(True):
+        classes = c.get("class") or []
+        if any("title" in cls for cls in classes):
+            t = inline_text(c)
+            if t:
+                titles.append(t)
+        if len(titles) >= 3:
+            break
+    return ("Comparison: " + " vs ".join(titles)) if titles else "Visual comparison"
+
+
+def export_visual_components(soup, root, img_ctx):
+    """Tag each export target with a temporary data-cx-export id, render the
+    full document (with its own CSS) in a headless browser, screenshot each
+    tagged element with site chrome hidden, and return
+    {id(tag): {"src": relative_path, "alt": alt_text}}."""
+    if sync_playwright is None or img_ctx is None:
+        return {}
+    targets = find_visual_export_targets(root)
+    if not targets:
+        return {}
+
+    for i, el in enumerate(targets, start=1):
+        el["data-cx-export"] = str(i)
+
+    os.makedirs(img_ctx["save_dir"], exist_ok=True)
+    tmp_path = os.path.join(img_ctx["save_dir"], f'.render-{img_ctx["slug"]}.html')
+    with open(tmp_path, "w", encoding="utf-8") as fh:
+        fh.write(str(soup))
+
+    mapping = {}
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            try:
+                page = browser.new_page()
+                page.goto("file://" + tmp_path)
+                page.evaluate(
+                    "(sel) => document.querySelectorAll(sel).forEach("
+                    "e => e.style.setProperty('display', 'none', 'important'))",
+                    VISUAL_CHROME_HIDE_SELECTORS,
+                )
+                for i, el in enumerate(targets, start=1):
+                    locator = page.locator(f'[data-cx-export="{i}"]')
+                    if locator.count() == 0:
+                        continue
+                    fname = f'{img_ctx["slug"]}-component-{i:02d}.png'
+                    out_path = os.path.join(img_ctx["save_dir"], fname)
+                    try:
+                        locator.first.scroll_into_view_if_needed()
+                        locator.first.screenshot(path=out_path)
+                    except Exception as exc:
+                        print(f'  WARN: screenshot failed for component {i}: {exc}', file=sys.stderr)
+                        continue
+                    mapping[id(el)] = {"src": img_ctx["rel_prefix"] + fname, "alt": infer_alt_text(el)}
+            finally:
+                browser.close()
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+    for el in targets:
+        del el["data-cx-export"]
+
+    return mapping
 
 
 def render_card(tag, base_url, img_ctx=None):
@@ -526,7 +656,14 @@ def walk_blocks(node, blocks, base_url, img_ctx=None):
             continue
 
         if name == "table":
-            blocks.append(render_table(child, base_url))
+            visual = (img_ctx or {}).get("visual_map", {}).get(id(child))
+            if visual:
+                tbl = render_table(child, base_url)
+                md_str = render_table_markdown(tbl)
+                html_img = f'<img src="{visual["src"]}" alt="{escape_html(visual["alt"])}">'
+                blocks.append({"type": "raw", "md": md_str, "html": html_img})
+            else:
+                blocks.append(render_table(child, base_url))
             continue
 
         if name == "pre":
@@ -577,6 +714,14 @@ def walk_blocks(node, blocks, base_url, img_ctx=None):
                     continue
             if is_leaf_card_component(child):
                 blocks.extend(render_card(child, base_url, img_ctx))
+                continue
+            visual = (img_ctx or {}).get("visual_map", {}).get(id(child))
+            if visual:
+                sub_blocks = []
+                walk_blocks(child, sub_blocks, base_url, img_ctx)
+                md_str = render_blocks_markdown(sub_blocks)
+                html_img = f'<img src="{visual["src"]}" alt="{escape_html(visual["alt"])}">'
+                blocks.append({"type": "raw", "md": md_str, "html": html_img})
                 continue
             # generic container: recurse, preserving order
             walk_blocks(child, blocks, base_url, img_ctx)
@@ -798,7 +943,14 @@ def convert_one(src_path, series):
         "counter": 0,
         "save_dir": os.path.join(REPO_ROOT, "article-archive", "images", series, slug),
         "rel_prefix": f"../../images/{series}/{slug}/",
+        "visual_map": {},
     }
+
+    if VISUAL_EXPORT_SLUGS is None or slug in VISUAL_EXPORT_SLUGS:
+        if root is not None:
+            print(f"  rendering visual components for {slug} via headless browser...")
+            img_ctx["visual_map"] = export_visual_components(soup, root, img_ctx)
+            print(f"  exported {len(img_ctx['visual_map'])} component screenshot(s)")
 
     blocks = []
     if root is not None:

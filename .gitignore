@@ -18,3 +18,7 @@ __pycache__/
 *.xlsx
 *.log
 .publish-config.json
+
+# article-archive: ephemeral render file used mid-screenshot-export; removed on
+# normal completion, ignored as a safety net if a run is interrupted
+article-archive/images/**/.render-*.html
