@@ -1,13 +1,14 @@
 # Microsoft 365 Copilot Settings —  Baseline Configuration Guide
 
-- **Document Version:** 1.5
-- **Last Updated:** September 2026
+- **Document Version:** 1.6
+- **Last Updated:** October 2026
 - **Source Reference:** Microsoft Learn — [Manage Microsoft 365 Copilot scenarios in the Microsoft 365 admin center](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-page)
 - **Admin Role Required:** AI Administrator (to view and configure); Global Reader (view-only)
 - **Navigation:** Microsoft 365 admin center → Copilot → Settings → View all
 
 **Changelog:**
 
+- **v1.6** — Corrected 3 settings renamed by Microsoft since this guide was last reviewed against the live admin center ("View all" list, October 2026): [2.7](#27-business-applications-data-in-work-iq-available-to-copilot) "Dataverse Data Available in Microsoft 365 Copilot" → **Business Applications data in Work IQ available to Copilot** (also corrected its default state — confirmed via Microsoft Learn as **On for all users by default**, not off, which changes this from a "disabled, review before enabling" item to an "on today, review immediately" item); [2.8](#28-ai-providers-operating-as-independent-processors) "AI Providers for Other Large Language Models" → **AI providers operating as independent processors**; [2.9](#29-experimental-and-preview-ai-models) "AI Models in Preview" → **Experimental and preview AI models**. Also corrected [3.4](#34-agent-settings-new-sep-2026)'s "Allowed agent types" row to its actual name, **Agent and plugin access**, and expanded it to document the real control structure (separate Microsoft/your-org/external-publisher checkboxes, plus an "All external publishers" vs "Only certified external publishers" choice when external is allowed) — the prior entry didn't capture that external-publisher agents (e.g., third-party agent builders) default to **All external publishers**, not certified-only.
 - **v1.5** — Added new [Section 3.4: Agent Settings](#34-agent-settings-new-sep-2026) documenting the dedicated Copilot → Agents → Settings page (Agent feedback sharing, Agent Management Rules, Allowed agent types, Policy template, Sharing, Tags, User access) — the actual configuration surface behind the Section 0.3 agent-access checklist items
 - **v1.4** — Added new [Section 0: Optimize Tab Readiness Scorecard](#0-optimize-tab-readiness-scorecard) documenting the admin center's **Copilot → Optimize** guided checklist view (Deployment essentials, Data security, Workflow enablement, User experiences), which is a distinct surface from the View all settings catalog
 - **v1.3** — Added 3 new settings found in September 2026 admin center review: Advanced package uploads (available Sept 25, 2026; default behavior locks in Oct 25, 2026 if not configured), Fabric data in Microsoft Copilot, Custom link for blocked Microsoft Copilot app
@@ -461,7 +462,7 @@ Key actions: restrict who can create Copilot Studio agents (limit to licensed ma
 
 | Field | Value |
 |---|---|
-| **Admin Location** | Copilot → Settings → Data access → AI providers for other large language models |
+| **Admin Location** | Copilot → Settings → Data access → AI providers operating as Microsoft subprocessors |
 | **Applies to** | Microsoft 365 Copilot Chat, Copilot Studio |
 | **Default State** | Available to configure; off by default for non-Microsoft LLMs |
 
@@ -497,33 +498,37 @@ Configure the Agents page to:
 
 ---
 
-### 2.7 Dataverse Data Available in Microsoft 365 Copilot
+### 2.7 Business Applications Data in Work IQ Available to Copilot *(renamed — formerly "Dataverse Data Available in Microsoft 365 Copilot")*
 
 | Field | Value |
 |---|---|
-| **Admin Location** | Copilot → Settings → Data access → Dataverse data available in Microsoft 365 Copilot |
-| **Applies to** | Microsoft 365 Copilot |
-| **Default State** | Off by default |
+| **Admin Location** | Copilot → Settings → Data access → Business Applications data in Work IQ available to Copilot |
+| **Applies to** | Microsoft 365 Copilot, Copilot Chat, Power Apps, Dynamics 365 |
+| **Default State** | **All users** (confirmed via Microsoft Learn — this is **not** off by default) |
 
-**What it does:** Controls whether Microsoft 365 Copilot can access business data stored in Microsoft Dataverse — the underlying data platform for Dynamics 365 and Power Apps. When enabled, Copilot can draw on Dataverse records (CRM data, business process data, financial records, operational data) to ground its responses, and Copilot capabilities can be extended into Dynamics 365 and Power Apps experiences.
+**What it does:** This is the tenant-level control in a three-level cascading setting that governs whether Microsoft 365 Copilot can access business data stored in Microsoft Dataverse — the underlying data platform for Dynamics 365 and Power Apps, now marketed under the **Work IQ** umbrella (business skills, semantic modeling, and Dataverse access through Copilot Chat, Research, and Agent Builder). The three levels:
+1. **Tenant level (this setting, Microsoft 365 admin center):** allows or blocks bidirectional data sharing between Microsoft 365 Copilot Chat and Dataverse across the whole tenant. Options are No users / All users (default) / Specific groups.
+2. **Environment level (Power Platform admin center):** the **Work IQ** environment setting turns on business skills/semantic modeling/Dataverse access for that specific environment.
+3. **App level (Power Apps maker portal):** the per-app "Enable Copilot in model-driven apps" setting determines which apps actually share data.
+All three must be on for a given app's data to reach Copilot — but the tenant-level setting documented here is **on for everyone by default**, so it's not the gate most admins assume it is.
 
-**Security/Compliance Relevance:** High. Dataverse frequently stores some of the most sensitive business data in an organization: customer records, financial transactions, HR information, sales pipeline data, and operational records. Connecting this data to Copilot significantly expands the data surface available for AI-assisted retrieval and processing. Access control in Dataverse relies on environment-level security roles and column-level security — organizations must confirm these controls are correctly scoped before enabling Copilot access.
+**Security/Compliance Relevance:** Critical. Dataverse frequently stores some of the most sensitive business data in an organization: customer records, financial transactions, HR information, sales pipeline data, and operational records. Because the tenant-level setting is **on by default**, any environment/app where an owner later turns on Work IQ or app-level Copilot access will immediately start sharing data with Microsoft 365 Copilot — with no additional tenant-level prompt or approval. Access control in Dataverse relies on environment-level security roles and column-level security — organizations must confirm these controls are correctly scoped, and should not assume the tenant-level setting is currently blocking anything.
 
-**Baseline Recommendation:** **Disabled by default; enable only after a Dataverse data governance review**
+**Baseline Recommendation:** **Check this today — it is likely already on. Restrict to a named group or disable until a Dataverse data governance review is complete.**
 
-Before enabling:
-1. Audit what data exists in Dataverse environments (Dynamics 365, Power Apps) and confirm sensitivity classification is complete
-2. Verify environment-level security roles are correctly scoped (principle of least privilege)
-3. Confirm sensitivity labels or equivalent access controls are applied to regulated Dataverse tables
-4. Engage the Power Platform / Dynamics 365 team — this is not a decision for the Microsoft 365 admin alone
+1. **Do not assume this is off.** Verify the actual tenant-level configuration in Copilot → Settings → Data access → Business Applications data in Work IQ available to Copilot — the shipped default is All users.
+2. Audit what data exists in Dataverse environments (Dynamics 365, Power Apps) and confirm sensitivity classification is complete
+3. Verify environment-level security roles are correctly scoped (principle of least privilege)
+4. Confirm sensitivity labels or equivalent access controls are applied to regulated Dataverse tables
+5. Engage the Power Platform / Dynamics 365 team — this is not a decision for the Microsoft 365 admin alone; both the tenant-level and environment-level (Work IQ) settings need a deliberate owner
 
 ---
 
-### 2.8 AI Providers for Other Large Language Models
+### 2.8 AI Providers Operating as Independent Processors *(renamed — formerly "AI Providers for Other Large Language Models")*
 
 | Field | Value |
 |---|---|
-| **Admin Location** | Copilot → Settings → Data access → AI providers for other large language models |
+| **Admin Location** | Copilot → Settings → Data access → AI providers operating as independent processors |
 | **Applies to** | Copilot Studio, Microsoft 365 Copilot, Microsoft 365 |
 | **Default State** | Off by default |
 
@@ -537,11 +542,11 @@ This represents a higher risk category than subprocessor-model providers. Any en
 
 ---
 
-### 2.9 AI Models in Preview
+### 2.9 Experimental and Preview AI Models *(renamed — formerly "AI Models in Preview")*
 
 | Field | Value |
 |---|---|
-| **Admin Location** | Copilot → Settings → Data access → AI models in preview |
+| **Admin Location** | Copilot → Settings → Data access → Experimental and preview AI models |
 | **Applies to** | Copilot Studio, Microsoft 365 Copilot, Microsoft 365 |
 | **Default State** | Off by default |
 
@@ -712,17 +717,17 @@ Avoid enabling transcript-dependent Copilot features for all users without first
 |---|---|---|
 | **Agent feedback sharing** | Controls whether agent usage feedback is shared with agent developers to help them improve agent quality and reliability | Disable for agents handling regulated/sensitive data; enable for low-risk internal productivity agents where developer feedback loops add value |
 | **Agent Management Rules** | Set and run rules to manage or perform actions on agents (e.g., auto-disable, auto-tag, conditional publishing) | Define at least one rule requiring new agents to be reviewed before broad publishing; treat this as the enforcement layer behind Section 0.3's "Deploy agents to your organization" check |
-| **Allowed agent types** | Specify which categories of AI agents (shared, external, org-built, Microsoft-built) are permitted org-wide | Start restrictive — allow Microsoft-built and org-built only; require explicit review before enabling shared or external agent types (maps to Section 0.3's agent-access items) |
+| **Agent and plugin access** *(renamed — formerly listed as "Allowed agent types")* | Three independent checkboxes control which **publishers** of agents/plugins users can install: "Allow apps, agents, and plugins built by **Microsoft**," by **your organization**, and by **external publishers**. If external publishers is checked, a second choice appears: **"All external publishers"** or **"Only certified external publishers."** This is the control that determines whether a third-party-built agent (e.g., one built by Anthropic, another vendor, or any other outside developer) can be installed at all, and if so, whether it must be Microsoft-certified first. | Keep Microsoft and your-organization checked. If external publishers must be allowed, select **"Only certified external publishers,"** not "All external publishers" — the latter permits any outside developer's agent with no certification bar. Treat "All external publishers" as equivalent to allowing unreviewed third-party app consent. |
 | **Policy template** | Create pre-set policies, rules, and allowlists for new AI agents | Build a template before broad agent rollout so every new agent inherits a consistent baseline instead of ad hoc configuration |
 | **Sharing** | Manage who can share AI agents within the organization and which methods they can use | Restrict sharing to named groups initially; broad/anonymous sharing of agents is equivalent to broad app consent risk |
 | **Tags** | Manage the tags admins and users can apply to agents; add descriptions, create new tags, or remove tags everywhere | Use tags to distinguish data sensitivity or review status (e.g., "Reviewed," "Pilot," "Restricted-Data") — low effort, high value for later audits |
 | **User access** | Control which users or groups can interact with AI agents | Scope to a named pilot group before org-wide rollout; do not default to "all users" until Section 0.3's agent-access checklist items are green |
 
-**Security/Compliance Relevance:** High. This page is the actual control surface behind several checks already flagged in [Section 0.3 (Workflow enablement)](#03-workflow-enablement) — "Allow agent access for users," "Allow access to agents built by your org/external providers/Microsoft," and "Deploy agents to your organization." Those Optimize-tab items report status; this page is where the underlying configuration actually lives.
+**Security/Compliance Relevance:** High. This page is the actual control surface behind several checks already flagged in [Section 0.3 (Workflow enablement)](#03-workflow-enablement) — "Allow agent access for users," "Allow access to agents built by your org/external providers/Microsoft," and "Deploy agents to your organization." Those Optimize-tab items report status; this page is where the underlying configuration actually lives. **Agent and plugin access specifically governs third-party/external agent builders** — if your tenant allows external publishers and has it set to "All external publishers," any outside developer's agent (including ones built with other AI platforms' tooling) can currently be installed with no Microsoft certification requirement. Check this setting directly rather than assuming it's restrictive.
 
-** Baseline Recommendation:** **Configure User access and Allowed agent types first (they gate everything else), then build a Policy template before any agent deployment, and treat Agent Management Rules as the ongoing enforcement/review mechanism.**
+** Baseline Recommendation:** **Configure User access and Agent and plugin access first (they gate everything else), then build a Policy template before any agent deployment, and treat Agent Management Rules as the ongoing enforcement/review mechanism.**
 
-Sequence: (1) User access → scope to pilot group, (2) Allowed agent types → org-built + Microsoft-built only, (3) Policy template → establish the baseline every new agent inherits, (4) Sharing → restrict to named groups, (5) Agent Management Rules → require review before publishing, (6) Tags → apply consistently for audit trail, (7) Agent feedback sharing → decide per data sensitivity.
+Sequence: (1) User access → scope to pilot group, (2) Agent and plugin access → Microsoft + your organization checked; if external publishers is enabled, set it to "Only certified external publishers," not "All external publishers," (3) Policy template → establish the baseline every new agent inherits, (4) Sharing → restrict to named groups, (5) Agent Management Rules → require review before publishing, (6) Tags → apply consistently for audit trail, (7) Agent feedback sharing → decide per data sensitivity.
 
 ---
 
@@ -851,9 +856,9 @@ Point this at an internal page (e.g., intranet or SharePoint site) that explains
 | 23 | Copilot AI disclaimer | Other Settings | **Enable (Bold) + custom policy URL** | 🔴 Enable — legal and compliance requirement; users must see AI-generated content notice | High | No |
 | 24 | Screen and camera sharing | User Access | Enable with acceptable use policy and user awareness | ⚠️ Enable with controls — visual input can capture sensitive on-screen content; confirm Purview audit coverage | Medium | No |
 | 25 | Copilot Release preferences: General Availability | User Access | **General Availability (standard)** | ⚠️ Stay on GA — targeted/early release reduces security review window for new capabilities | Medium | No |
-| 26 | Dataverse data available in Microsoft 365 Copilot | Data Access | **Disabled** until Dataverse governance review | 🔴 Disable — Dataverse holds high-sensitivity business data; access control audit required before enabling | High | No |
-| 27 | AI providers for other large language models | Data Access | **Disabled** | 🔴 Disable — non-subprocessor providers operate outside Microsoft trust boundary; full legal/DPA review required | Critical | No |
-| 28 | AI models in preview | Data Access | **Disabled** for production tenants | 🔴 Disable — preview models have incomplete security/compliance validation; pilot only with documented risk acceptance | High | No |
+| 26 | Business Applications data in Work IQ available to Copilot *(renamed, formerly "Dataverse data available")* | Data Access | **On for all users by default** — restrict or disable pending Dataverse governance review | 🔴 **Check immediately** — default is All users, not Off as previously documented; Dataverse holds high-sensitivity business data; access control audit required | Critical | No |
+| 27 | AI providers operating as independent processors *(renamed, formerly "AI providers for other large language models")* | Data Access | **Disabled** | 🔴 Disable — non-subprocessor providers operate outside Microsoft trust boundary; full legal/DPA review required | Critical | No |
+| 28 | Experimental and preview AI models *(renamed, formerly "AI models in preview")* | Data Access | **Disabled** for production tenants | 🔴 Disable — preview models have incomplete security/compliance validation; pilot only with documented risk acceptance | High | No |
 | 29 | AI experiences enabled by usage-based billing | Data Access | **Disabled** until budget policy and billing controls are in place | ⚠️ Disable — financial and governance risk; require cost owner and spending alerts before enabling | Medium | No |
 | 30 | Copilot connector email notification | Other Settings | **Enable** (route to team mailbox) | ✅ Enable — operational notification with no security downside; prevents silent connector failures | Low | No |
 | 31 | **Advanced package uploads** *(new Sep 2026)* | Data Access | **Restrict to named security group** | 🔴 Restrict — unconfigured default allows all users to upload actions-capable agents/MCP servers; configure before Oct 25, 2026 | High | No |
@@ -882,6 +887,8 @@ Before enabling Copilot broadly, confirm each of the following:
 - [ ] AI acceptable use policy published and communicated to users
 - [ ] Training completed for Copilot users (Microsoft Copilot adoption hub or equivalent)
 - [ ] **Advanced package uploads** configured to a named security group (not left as unconfigured/allow-all) — deadline October 25, 2026 before default behavior locks in
+- [ ] **Business Applications data in Work IQ available to Copilot** checked directly — default is **On for all users**, not off; restrict or disable pending Dataverse governance review
+- [ ] **Agent and plugin access** reviewed — if external publishers are allowed, confirm it's set to "Only certified external publishers," not "All external publishers"
 - [ ] **Fabric data in Microsoft Copilot** reviewed against Fabric workspace role assignments before enabling
 - [ ] **[EU/EFTA only]** Flexible inferencing setting audited and documented — default changed to **On** April 17, 2026; disable for regulated industries unless DPO/legal has approved cross-boundary processing with documented transfer mechanism
 
@@ -890,6 +897,7 @@ Before enabling Copilot broadly, confirm each of the following:
 ## 7. References
 
 - [Manage Microsoft 365 Copilot scenarios in the Microsoft 365 admin center](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-page)
+- [Business Applications in Work IQ default settings](https://learn.microsoft.com/power-platform/admin/business-applications-work-iq/default-settings#cascading-control-settings)
 - [Configure a secure and governed foundation for Microsoft 365 Copilot](https://learn.microsoft.com/copilot/microsoft-365/configure-secure-governed-data-foundation-microsoft-365-copilot)
 - [Microsoft Purview data security and compliance protections for generative AI apps](https://learn.microsoft.com/en-us/purview/ai-microsoft-purview)
 - [Data, privacy, and security for Microsoft 365 Copilot](https://learn.microsoft.com/copilot/microsoft-365/microsoft-365-copilot-privacy)
