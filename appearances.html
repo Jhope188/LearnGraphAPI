@@ -15,6 +15,29 @@
     .featured-video-grid { grid-template-columns: 1fr !important; }
     .featured-video-embed { padding-bottom: 56.25% !important; min-height: 200px !important; }
   }
+  .li-scroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,184,176,0.35) transparent;
+  }
+  .li-scroll::-webkit-scrollbar { height: 6px; }
+  .li-scroll::-webkit-scrollbar-track { background: transparent; }
+  .li-scroll::-webkit-scrollbar-thumb { background: rgba(0,184,176,0.35); border-radius: 3px; }
+  .li-card {
+    flex: 0 0 300px;
+    scroll-snap-align: start;
+  }
+  .li-card p {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 </style>
 <!-- Matomo -->
 <script>
@@ -153,6 +176,34 @@
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;"><i class="ph-fill ph-youtube-logo" style="font-size:28px;color:#e05533;"></i><span style="font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase;color:#4a6a80;font-weight:600;">YouTube</span></div>
           <h3 style="font-size:1.3rem;font-weight:600;margin:0 0 10px;color:#e8f0f8;line-height:1.25;">YouTube Appearances</h3>
           <p style="font-size:0.95rem;line-height:1.65;color:#7a9bb5;margin:0;">Watch Jon on YouTube, covering identity security, Conditional Access, and Microsoft 365 strategy across guest appearances and sessions.</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- LATEST ON LINKEDIN -->
+    <section style="max-width:1100px;margin:0 auto;padding:24px 32px 24px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <i class="ph-bold ph-linkedin-logo" style="font-size:24px;color:#0a66c2;"></i>
+          <h2 style="font-size:1.3rem;font-weight:600;margin:0;color:#e8f0f8;">Latest on LinkedIn</h2>
+        </div>
+        <a class="btn-ghost" href="https://www.linkedin.com/in/jhope188" target="_blank" rel="noopener" style="font-size:0.82rem;padding:8px 14px;gap:6px;">Follow on LinkedIn <i class="ph-bold ph-arrow-up-right" style="font-size:13px;"></i></a>
+      </div>
+      <div class="li-scroll">
+        <a class="li-card lift-strong" href="https://www.linkedin.com/posts/jhope188_dont-sleep-on-this-setting-its-already-on-activity-7516494811063934978-Su4M" target="_blank" rel="noopener" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:20px 22px;text-decoration:none;">
+          <div style="font-size:0.78rem;color:#4a6a80;margin-bottom:8px;"><i class="ph ph-calendar-blank" style="font-size:14px;vertical-align:-2px;"></i> Oct 15, 2026</div>
+          <p style="font-size:0.92rem;line-height:1.6;color:#e8f0f8;margin:0 0 10px;">Don't sleep on this setting, it's already on and exposed via Graph API. Security needs to be intentional.</p>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;color:#00b8b0;">View post <i class="ph-bold ph-arrow-up-right" style="font-size:13px;"></i></span>
+        </a>
+        <a class="li-card lift-strong" href="https://www.linkedin.com/posts/jhope188_if-you-didnt-catch-this-past-weeks-entrachat-activity-7516090768948826112-idSa" target="_blank" rel="noopener" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:20px 22px;text-decoration:none;">
+          <div style="font-size:0.78rem;color:#4a6a80;margin-bottom:8px;"><i class="ph ph-calendar-blank" style="font-size:14px;vertical-align:-2px;"></i> Oct 14, 2026</div>
+          <p style="font-size:0.92rem;line-height:1.6;color:#e8f0f8;margin:0 0 10px;">Recapping Entra.Chat on identity and network convergence, plus a hands-on walkthrough of testing Global Secure Access traffic configuration, scripts and config notes included.</p>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;color:#00b8b0;">View post <i class="ph-bold ph-arrow-up-right" style="font-size:13px;"></i></span>
+        </a>
+        <a class="li-card lift-strong" href="https://www.linkedin.com/posts/jhope188_microsofts-2026-digital-defense-report-calls-activity-7515387882115584000-3n_I" target="_blank" rel="noopener" style="display:block;background:#0d2137;border:1px solid rgba(0,184,176,0.12);border-radius:10px;padding:20px 22px;text-decoration:none;">
+          <div style="font-size:0.78rem;color:#4a6a80;margin-bottom:8px;"><i class="ph ph-calendar-blank" style="font-size:14px;vertical-align:-2px;"></i> Oct 12, 2026</div>
+          <p style="font-size:0.92rem;line-height:1.6;color:#e8f0f8;margin:0 0 10px;">Microsoft's 2026 Digital Defense Report flags indirect prompt injection as a growing risk, and how Defender for Office 365 now catches it at the mail flow layer before an AI agent ever reads the message.</p>
+          <span style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;font-weight:600;color:#00b8b0;">View post <i class="ph-bold ph-arrow-up-right" style="font-size:13px;"></i></span>
         </a>
       </div>
     </section>
