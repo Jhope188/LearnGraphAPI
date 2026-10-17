@@ -603,7 +603,7 @@ Microsoft Graph activity logs need Entra ID P1 or P2, and nothing is kept unless
 
 ### Sign-ins from an unfamiliar IP
 
-The backup app's sign-ins came from 144[.]172[.]64[.]128, a RouterHosting address (AS14956). The Cloud Management apps' activity came from an Azure range that also carries legitimate ConnectWise traffic, so IP alone wouldn't have flagged that part. An alert on a service principal signing in from an IP it hasn't used recently would have caught the backup app sign-ins.
+The backup app's sign-ins came from 144.172.64[.]128, a RouterHosting address (AS14956). The Cloud Management apps' activity came from an Azure range that also carries legitimate ConnectWise traffic, so IP alone wouldn't have flagged that part. An alert on a service principal signing in from an IP it hasn't used recently would have caught the backup app sign-ins.
 
 ### No alert on SP self-assigning directory roles
 
@@ -611,7 +611,7 @@ In the Huntress case the Cloud Management (MS Teams) app added itself to Global 
 
 ### KQL: hunting for this incident
 
-These use the indicators published by [Inforcer](https://www.inforcer.com/insights/when-the-backup-app-becomes-the-way-in) and [Huntress](https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access): the attacker IP 144[.]172[.]64[.]128, the ConnectWise publisher tenant 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7, and six ConnectWise and SkyKick app IDs. Run them as far back as your retention allows, because the unattributed token activity started in July.
+These use the indicators published by [Inforcer](https://www.inforcer.com/insights/when-the-backup-app-becomes-the-way-in) and [Huntress](https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access): the attacker IP 144.172.64[.]128, the ConnectWise publisher tenant 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7, and six ConnectWise and SkyKick app IDs. Run them as far back as your retention allows, because the unattributed token activity started in July.
 
 | App ID | App |
 | --- | --- |
