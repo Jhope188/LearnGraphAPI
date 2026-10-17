@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 26 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>App Registrations and Enterprise Apps: What the Entra Object Model Actually Looks Like</title>
+      <link>https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html</link>
+      <description>A ConnectWise (formerly SkyKick) vendor credential compromise reached 162 customer tenants in October 2026. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.</description>
+      <pubDate>Sat, 17 Oct 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html</guid>
+      <category>Entra</category>
+    </item>
+
 
     <item>
       <title>SMS and Voice Retirement, Part 2</title>
