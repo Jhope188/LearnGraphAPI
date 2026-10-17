@@ -1,6 +1,6 @@
 ---
 title: "App Registrations and Enterprise Apps: What the Entra object model actually looks like"
-description: "A ConnectWise (formerly SkyKick) vendor credential compromise reached 162 customer tenants in October 2026. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it."
+description: "A ConnectWise (formerly SkyKick) vendor credential compromise hit customer tenants across the MSP space in October 2026, and it will not be the last. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it."
 series: "entra"
 published: "2026-10-17"
 canonical_url: "https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html"
@@ -10,7 +10,7 @@ source: "catech-branded/entra/entra-app-registrations-guide.html"
 
 *Entra Identity Platform · Architecture*
 
-The blueprint vs the deployed instance, OAuth 2.0 and OIDC as protocol, how redirect URIs enforce security, and how one vendor credential reached 162 customer tenants.
+The blueprint vs the deployed instance, OAuth 2.0 and OIDC as protocol, how redirect URIs enforce security, and how one vendor credential compromise hit customer tenants across the MSP space.
 
 Entra ID · OAuth 2.0 · OIDC · Security · · · Microsoft MVP · Security: Identity & Access
 
@@ -537,7 +537,7 @@ Part 11
 
 Source: [Inforcer: When the Backup App Becomes the Way In](https://www.inforcer.com/insights/when-the-backup-app-becomes-the-way-in) · [Huntress: Vendor Credential Enables Unauthorized Access](https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access) · [Microsoft Learn: Entra ID Guide for ISVs](https://learn.microsoft.com/entra/architecture/guide-for-independent-software-developers) · [Microsoft Learn: Security Operations for Applications](https://learn.microsoft.com/entra/architecture/security-operations-applications)
 
-This past week (October 2026), an attacker used a credential belonging to ConnectWise Cloud Backup (formerly SkyKick) to sign in to customer tenants. By 16 October, Huntress had confirmed unauthorized sign-ins in 162 tenants. No user was involved. The attacker presented a client assertion for the vendor's app, normally backed by a certificate held in ConnectWise's own tenant, and requested tokens for Microsoft Graph.
+This past week (October 2026), an attacker used a credential belonging to ConnectWise Cloud Backup (formerly SkyKick) to sign in to customer tenants. By 16 October, Huntress had confirmed unauthorized sign-ins across customer tenants, and the true scope across the broader MSP space is almost certainly larger than any single vendor's confirmed count. No user was involved. The attacker presented a client assertion for the vendor's app, normally backed by a certificate held in ConnectWise's own tenant, and requested tokens for Microsoft Graph.
 
 ### How the attack worked
 
@@ -745,4 +745,4 @@ Apps hosted on rotating cloud addresses will be noisy in the last query, so expe
 - Verify your app does not rely on Exchange Admin, Global Admin, or privileged Graph roles that are not strictly required
 - Follow Microsoft's official [Entra ID Guide for ISVs](https://learn.microsoft.com/entra/architecture/guide-for-independent-software-developers) and the [security operations guide for applications](https://learn.microsoft.com/entra/architecture/security-operations-applications) for credential monitoring templates and Sentinel detection rules
 
-The ConnectWise incident will not be the last. Backup, RMM and integration apps follow the same trust model: a credential in the vendor's tenant authenticates to resources in yours. Every vendor app you leave installed is a standing grant of that trust, whether anyone still uses it or not.
+**The ConnectWise incident will not be the last!** Backup, RMM and integration apps follow the same trust model: a credential in the vendor's tenant authenticates to resources in yours. Every vendor app you leave installed is a standing grant of that trust, whether anyone still uses it or not.

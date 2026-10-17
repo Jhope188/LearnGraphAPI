@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="A ConnectWise (formerly SkyKick) vendor credential compromise reached 162 customer tenants in October 2026. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.">
+<meta name="description" content="A ConnectWise (formerly SkyKick) vendor credential compromise hit customer tenants across the MSP space in October 2026, and it will not be the last. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.">
 <link rel="canonical" href="https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html">
 <link rel="alternate" type="application/rss+xml" title="conditionalaccess.tech" href="/feed.xml">
 <meta property="og:type" content="article">
 <meta property="og:title" content="App Registrations, Enterprise Apps &amp; OAuth 2.0">
-<meta property="og:description" content="A ConnectWise (formerly SkyKick) vendor credential compromise reached 162 customer tenants in October 2026. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.">
+<meta property="og:description" content="A ConnectWise (formerly SkyKick) vendor credential compromise hit customer tenants across the MSP space in October 2026, and it will not be the last. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.">
 <meta property="og:url" content="https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html">
 <meta property="og:image" content="https://conditionalaccess.tech/assets/og/entra-app-registrations-guide.png">
 <meta property="og:site_name" content="conditionalaccess.tech">
@@ -16,7 +16,7 @@
 <meta property="article:author" content="Jon Hope">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="App Registrations, Enterprise Apps &amp; OAuth 2.0">
-<meta name="twitter:description" content="A ConnectWise (formerly SkyKick) vendor credential compromise reached 162 customer tenants in October 2026. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.">
+<meta name="twitter:description" content="A ConnectWise (formerly SkyKick) vendor credential compromise hit customer tenants across the MSP space in October 2026, and it will not be the last. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.">
 <meta name="twitter:image" content="https://conditionalaccess.tech/assets/og/entra-app-registrations-guide.png">
 <title>App Registrations, Enterprise Apps &amp; OAuth 2.0 | conditionalaccess.tech</title>
 <style>
@@ -512,7 +512,7 @@ td.support-yes, td.support-partial, td.support-no { white-space: nowrap; }
 <div class="hero">
   <span class="eyebrow">Entra Identity Platform &middot; Architecture</span>
   <h1>App Registrations and Enterprise Apps: What the Entra object model actually looks like</h1>
-  <p class="subtitle">The blueprint vs the deployed instance, OAuth 2.0 and OIDC as protocol, how redirect URIs enforce security, and how one vendor credential reached 162 customer tenants.</p>
+  <p class="subtitle">The blueprint vs the deployed instance, OAuth 2.0 and OIDC as protocol, how redirect URIs enforce security, and how one vendor credential compromise hit customer tenants across the MSP space.</p>
   <div class="hero-meta">
     <span class="tag">Entra ID</span>
     <span class="tag">OAuth 2.0</span>
@@ -1468,7 +1468,7 @@ Content-Type: application/json
         <a href="https://learn.microsoft.com/entra/architecture/security-operations-applications" target="_blank">Microsoft Learn: Security Operations for Applications</a>
       </div>
 
-      <p>This past week (October 2026), an attacker used a credential belonging to ConnectWise Cloud Backup (formerly SkyKick) to sign in to customer tenants. By 16 October, Huntress had confirmed unauthorized sign-ins in 162 tenants. No user was involved. The attacker presented a client assertion for the vendor's app, normally backed by a certificate held in ConnectWise's own tenant, and requested tokens for Microsoft Graph.</p>
+      <p>This past week (October 2026), an attacker used a credential belonging to ConnectWise Cloud Backup (formerly SkyKick) to sign in to customer tenants. By 16 October, Huntress had confirmed unauthorized sign-ins across customer tenants, and the true scope across the broader MSP space is almost certainly larger than any single vendor's confirmed count. No user was involved. The attacker presented a client assertion for the vendor's app, normally backed by a certificate held in ConnectWise's own tenant, and requested tokens for Microsoft Graph.</p>
 
       <h3>How the attack worked</h3>
 
@@ -1725,7 +1725,7 @@ AADServicePrincipalSignInLogs
         </div>
       </div>
 
-      <p>The ConnectWise incident will not be the last. Backup, RMM and integration apps follow the same trust model: a credential in the vendor's tenant authenticates to resources in yours. Every vendor app you leave installed is a standing grant of that trust, whether anyone still uses it or not.</p>
+      <p><strong>The ConnectWise incident will not be the last!</strong> Backup, RMM and integration apps follow the same trust model: a credential in the vendor's tenant authenticates to resources in yours. Every vendor app you leave installed is a standing grant of that trust, whether anyone still uses it or not.</p>
 
     </section>
 

@@ -10,7 +10,7 @@
     <item>
       <title>App Registrations and Enterprise Apps: What the Entra Object Model Actually Looks Like</title>
       <link>https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html</link>
-      <description>A ConnectWise (formerly SkyKick) vendor credential compromise reached 162 customer tenants in October 2026. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.</description>
+      <description>A ConnectWise (formerly SkyKick) vendor credential compromise hit customer tenants across the MSP space in October 2026, and it will not be the last. How App Registrations, Enterprise Apps, and OAuth 2.0 actually work in Entra ID, and the application management policies that would have stopped it.</description>
       <pubDate>Sat, 17 Oct 2026 00:00:00 +0000</pubDate>
       <guid isPermaLink="true">https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html</guid>
       <category>Entra</category>
