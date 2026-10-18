@@ -603,7 +603,7 @@ Microsoft Graph activity logs need Entra ID P1 or P2, and nothing is kept unless
 
 ### Sign-ins from an unfamiliar IP
 
-The backup app's sign-ins came from 144.172.64[.]128, a RouterHosting address (AS14956). The Cloud Management apps' activity came from an Azure range that also carries legitimate ConnectWise traffic, so IP alone wouldn't have flagged that part. An alert on a service principal signing in from an IP it hasn't used recently would have caught the backup app sign-ins.
+The backup app's sign-ins came from 144.172.64[.]128, 144.172.64[.]99, and 144.172.64[.]60 — all RouterHosting addresses (AS14956). The Cloud Management apps' activity came from an Azure range that also carries legitimate ConnectWise traffic, so IP alone wouldn't have flagged that part. An alert on a service principal signing in from an IP it hasn't used recently would have caught the backup app sign-ins.
 
 ### No alert on SP self-assigning directory roles
 
@@ -611,7 +611,7 @@ In the Huntress case the Cloud Management (MS Teams) app added itself to Global 
 
 ### KQL: hunting for this incident
 
-These use the indicators published by [Inforcer](https://www.inforcer.com/insights/when-the-backup-app-becomes-the-way-in) and [Huntress](https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access): the attacker IP 144.172.64[.]128, the ConnectWise publisher tenant 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7, and six ConnectWise and SkyKick app IDs. Run them as far back as your retention allows, because the unattributed token activity started in July.
+These use the indicators published by [Inforcer](https://www.inforcer.com/insights/when-the-backup-app-becomes-the-way-in) and [Huntress](https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access): the attacker IPs 144.172.64[.]128, 144.172.64[.]99, and 144.172.64[.]60, the ConnectWise publisher tenant 3f9cd7a0-127a-4ed4-bf06-2f830d5616b7, and six ConnectWise and SkyKick app IDs. Run them as far back as your retention allows, because the unattributed token activity started in July.
 
 | App ID | App |
 | --- | --- |
@@ -622,13 +622,13 @@ These use the indicators published by [Inforcer](https://www.inforcer.com/insigh
 | `c921256f-04a7-44e8-9b2a-69c33929ba19` | Cloud Services Partner Portal (SkyKick Partner Portal) |
 | `0de14c77-b9b0-4137-9360-34878a929827` | Cloud Management, MS Graph |
 
-**Any sign-in by a ConnectWise app, or from the attacker IP**
+**Any sign-in by a ConnectWise app, or from the attacker IPs**
 
 ```
 AADServicePrincipalSignInLogs
 | where TimeGenerated > datetime(2026-07-01)
 | where AppOwnerTenantId == "3f9cd7a0-127a-4ed4-bf06-2f830d5616b7"
-    or IPAddress == "144.172.64.128"
+    or IPAddress in ("144.172.64.128", "144.172.64.99", "144.172.64.60")
 | summarize FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated), SignIns = count()
     by ServicePrincipalName, AppId, ServicePrincipalId, IPAddress, ResourceDisplayName, ResultType
 ```
@@ -662,12 +662,12 @@ AuditLogs
     Changes = TargetResources[0].modifiedProperties
 ```
 
-**What was requested from the attacker IP** (Inforcer's query, needs Microsoft Graph activity logs)
+**What was requested from the attacker IPs** (Inforcer's query, needs Microsoft Graph activity logs)
 
 ```
 MicrosoftGraphActivityLogs
 | where TimeGenerated > datetime(2026-10-01)
-| where IPAddress == "144.172.64.128"
+| where IPAddress in ("144.172.64.128", "144.172.64.99", "144.172.64.60")
 | summarize Requests = count(), FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
     by AppId, UserAgent, RequestMethod, ResponseStatusCode
 ```

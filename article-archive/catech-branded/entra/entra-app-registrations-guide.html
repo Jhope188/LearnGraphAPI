@@ -1587,7 +1587,7 @@ Content-Type: application/json
         </div>
         <div class="card">
           <h3>Sign-ins from an unfamiliar IP</h3>
-          <p>The backup app's sign-ins came from <span class="mono">144.172.64[.]128</span>, a RouterHosting address (AS14956). The Cloud Management apps' activity came from an Azure range that also carries legitimate ConnectWise traffic, so IP alone wouldn't have flagged that part. An alert on a service principal signing in from an IP it hasn't used recently would have caught the backup app sign-ins.</p>
+          <p>The backup app's sign-ins came from <span class="mono">144.172.64[.]128</span>, <span class="mono">144.172.64[.]99</span>, and <span class="mono">144.172.64[.]60</span> — all RouterHosting addresses (AS14956). The Cloud Management apps' activity came from an Azure range that also carries legitimate ConnectWise traffic, so IP alone wouldn't have flagged that part. An alert on a service principal signing in from an IP it hasn't used recently would have caught the backup app sign-ins.</p>
         </div>
         <div class="card">
           <h3>No alert on SP self-assigning directory roles</h3>
@@ -1597,7 +1597,7 @@ Content-Type: application/json
 
       <h3>KQL: hunting for this incident</h3>
 
-      <p>These use the indicators published by <a href="https://www.inforcer.com/insights/when-the-backup-app-becomes-the-way-in" target="_blank" style="color:var(--color-teal)">Inforcer</a> and <a href="https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access" target="_blank" style="color:var(--color-teal)">Huntress</a>: the attacker IP <span class="mono">144.172.64[.]128</span>, the ConnectWise publisher tenant <span class="mono">3f9cd7a0-127a-4ed4-bf06-2f830d5616b7</span>, and six ConnectWise and SkyKick app IDs. Run them as far back as your retention allows, because the unattributed token activity started in July.</p>
+      <p>These use the indicators published by <a href="https://www.inforcer.com/insights/when-the-backup-app-becomes-the-way-in" target="_blank" style="color:var(--color-teal)">Inforcer</a> and <a href="https://www.huntress.com/blog/vendor-credential-enables-unauthorized-access" target="_blank" style="color:var(--color-teal)">Huntress</a>: the attacker IPs <span class="mono">144.172.64[.]128</span>, <span class="mono">144.172.64[.]99</span>, and <span class="mono">144.172.64[.]60</span>, the ConnectWise publisher tenant <span class="mono">3f9cd7a0-127a-4ed4-bf06-2f830d5616b7</span>, and six ConnectWise and SkyKick app IDs. Run them as far back as your retention allows, because the unattributed token activity started in July.</p>
 
       <div class="table-wrap">
         <table>
@@ -1613,11 +1613,11 @@ Content-Type: application/json
         </table>
       </div>
 
-      <p><strong>Any sign-in by a ConnectWise app, or from the attacker IP</strong></p>
+      <p><strong>Any sign-in by a ConnectWise app, or from the attacker IPs</strong></p>
       <pre>AADServicePrincipalSignInLogs
 | where TimeGenerated > datetime(2026-07-01)
 | where AppOwnerTenantId == "3f9cd7a0-127a-4ed4-bf06-2f830d5616b7"
-    or IPAddress == "144.172.64.128"
+    or IPAddress in ("144.172.64.128", "144.172.64.99", "144.172.64.60")
 | summarize FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated), SignIns = count()
     by ServicePrincipalName, AppId, ServicePrincipalId, IPAddress, ResourceDisplayName, ResultType</pre>
 
@@ -1644,10 +1644,10 @@ Content-Type: application/json
     Target = tostring(TargetResources[0].displayName),
     Changes = TargetResources[0].modifiedProperties</pre>
 
-      <p><strong>What was requested from the attacker IP</strong> (Inforcer's query, needs Microsoft Graph activity logs)</p>
+      <p><strong>What was requested from the attacker IPs</strong> (Inforcer's query, needs Microsoft Graph activity logs)</p>
       <pre>MicrosoftGraphActivityLogs
 | where TimeGenerated > datetime(2026-10-01)
-| where IPAddress == "144.172.64.128"
+| where IPAddress in ("144.172.64.128", "144.172.64.99", "144.172.64.60")
 | summarize Requests = count(), FirstSeen = min(TimeGenerated), LastSeen = max(TimeGenerated)
     by AppId, UserAgent, RequestMethod, ResponseStatusCode</pre>
 
