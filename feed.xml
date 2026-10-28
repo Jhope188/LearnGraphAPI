@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 17 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Policy Plans Change How You Organize Conditional Access</title>
+      <link>https://conditionalaccess.tech/articles/conditional-access/catech-policy-plans-october-2026.html</link>
+      <description>Entra's new Conditional Access policy plans (preview) let you define targeting and exclusions once and layer scenario rules underneath, plus the Security Defaults update that blocks device code flow, and the Message Center and Roadmap items moving SMS, passkey and agent timelines this October.</description>
+      <pubDate>Wed, 28 Oct 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/conditional-access/catech-policy-plans-october-2026.html</guid>
+      <category>Conditional Access</category>
+    </item>
+
     <item>
       <title>App Registrations and Enterprise Apps: What the Entra Object Model Actually Looks Like</title>
       <link>https://conditionalaccess.tech/articles/entra/entra-app-registrations-guide.html</link>

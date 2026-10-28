@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Entra's new Conditional Access policy plans (preview) let you define targeting and exclusions once and layer scenario rules underneath, plus the Security Defaults update that blocks device code flow, and the Message Center and Roadmap items moving SMS, passkey and agent timelines this October.">
+<link rel="canonical" href="https://conditionalaccess.tech/articles/conditional-access/catech-policy-plans-october-2026.html">
+<link rel="alternate" type="application/rss+xml" title="conditionalaccess.tech" href="/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Policy Plans Change How You Organize Conditional Access">
+<meta property="og:description" content="Entra's new Conditional Access policy plans (preview) let you define targeting and exclusions once and layer scenario rules underneath, plus the Security Defaults update that blocks device code flow, and the Message Center and Roadmap items moving SMS, passkey and agent timelines this October.">
+<meta property="og:url" content="https://conditionalaccess.tech/articles/conditional-access/catech-policy-plans-october-2026.html">
+<meta property="og:image" content="https://conditionalaccess.tech/assets/og/catech-policy-plans-october-2026.png">
+<meta property="og:site_name" content="conditionalaccess.tech">
+<meta property="article:published_time" content="2026-10-28">
+<meta property="article:author" content="Jon Hope">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Policy Plans Change How You Organize Conditional Access">
+<meta name="twitter:description" content="Entra's new Conditional Access policy plans (preview) let you define targeting and exclusions once and layer scenario rules underneath, plus the Security Defaults update that blocks device code flow, and the Message Center and Roadmap items moving SMS, passkey and agent timelines this October.">
+<meta name="twitter:image" content="https://conditionalaccess.tech/assets/og/catech-policy-plans-october-2026.png">
+<title>Policy Plans Change How You Organize Conditional Access | conditionalaccess.tech</title>
+<style>
+:root {
+  --color-base:#0a1628; --color-surface:#0d2137; --color-surface-alt:#112840;
+  --color-border:rgba(0,184,176,0.12); --color-teal:#00b8b0; --color-teal-dim:#1a7f7a;
+  --color-ms-blue:#0078d4; --color-text-primary:#e8f0f8; --color-text-secondary:#7a9bb5;
+  --color-text-dim:#4a6a80; --color-warn:#f5c842; --color-danger:#e05533;
+  --sidebar-w:260px; --topbar-h:52px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--color-base);color:var(--color-text-secondary);line-height:1.75;font-size:1rem}
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--topbar-h);background:rgba(10,22,40,0.92);border-bottom:1px solid var(--color-border);backdrop-filter:blur(10px);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:14px}
+.topbar-left{display:flex;align-items:center;gap:10px;text-decoration:none;min-width:0;flex:1}
+.topbar-left img{width:30px;height:30px;border-radius:4px;display:block;flex-shrink:0;object-fit:contain}
+.topbar-site{font-size:0.82rem;font-weight:600;letter-spacing:0.04em;color:var(--color-text-secondary);flex-shrink:0}
+.topbar-divider{width:1px;height:20px;background:var(--color-border);flex-shrink:0}
+.topbar-article{font-size:0.8rem;color:var(--color-text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.topbar-right{display:flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;letter-spacing:0.06em;color:var(--color-text-dim);text-decoration:none;flex-shrink:0;transition:color .15s}
+.topbar-right:hover{color:var(--color-teal)}
+.layout{display:flex;flex-direction:row;min-height:calc(100vh - var(--topbar-h));max-width:1080px;margin:0 auto}
+.hero{background:radial-gradient(ellipse 55% 55% at 65% 20%,rgba(26,127,122,0.22) 0%,transparent 65%),radial-gradient(ellipse 35% 55% at 15% 80%,rgba(0,184,176,0.08) 0%,transparent 60%),#0a1628;padding:calc(var(--topbar-h) + 72px) 24px 60px;margin-top:0;text-align:center;animation:fadeUp .55s ease forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.hero .eyebrow{font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-teal);margin-bottom:14px;display:block}
+.hero h1{font-size:clamp(1.6rem,3vw,2.6rem);font-weight:600;letter-spacing:-0.01em;line-height:1.15;color:var(--color-text-primary);max-width:820px;margin:0 auto 18px}
+.hero .subtitle{font-size:1rem;color:var(--color-text-secondary);max-width:620px;margin:0 auto 28px;line-height:1.65}
+.hero-meta{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;font-size:0.75rem;color:var(--color-text-dim)}
+.tag{display:inline-block;background:rgba(0,184,176,0.08);border:1px solid rgba(0,184,176,0.2);border-radius:3px;padding:2px 8px;font-size:0.65rem;font-weight:600;letter-spacing:0.08em;color:var(--color-teal);text-transform:uppercase}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;position:sticky;top:var(--topbar-h);height:calc(100vh - var(--topbar-h));overflow-y:auto;border-right:1px solid var(--color-border);background:var(--color-surface);padding:28px 0 40px;scrollbar-width:thin;scrollbar-color:rgba(0,184,176,0.2) transparent}
+.sidebar-label{font-size:0.6rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-teal);padding:0 20px;margin-bottom:10px;display:block}
+.sidebar-nav{list-style:none}
+.sidebar-item{display:block;padding:7px 20px 7px 18px;border-left:2px solid transparent;text-decoration:none;font-size:0.8rem;color:var(--color-text-dim);line-height:1.4;transition:color .15s,border-color .15s,background .15s}
+.sidebar-item:hover{color:var(--color-text-secondary);background:rgba(0,184,176,0.04);border-left-color:rgba(0,184,176,0.3)}
+.sidebar-item.active{color:var(--color-teal);border-left-color:var(--color-teal);background:rgba(0,184,176,0.06);font-weight:600}
+.sidebar-num{font-family:'Cascadia Code',monospace;font-size:0.62rem;color:var(--color-teal);opacity:.6;margin-right:6px}
+.sidebar-sub{padding-left:32px;font-size:0.75rem;color:var(--color-text-dim);opacity:.8}
+.sidebar-sub:hover{opacity:1}
+.sidebar-gap{height:1px;background:var(--color-border);margin:12px 20px}
+.content{flex:1;min-width:0;width:820px;max-width:820px;padding:48px 48px 80px}
+.prose{max-width:724px}
+.eyebrow{font-size:0.68rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--color-teal);margin-bottom:8px;display:block}
+h2{font-size:1.3rem;font-weight:600;color:var(--color-text-primary);letter-spacing:0.01em;line-height:1.3;margin-bottom:14px}
+h3{font-size:1rem;font-weight:600;color:var(--color-text-primary);margin-bottom:10px;margin-top:22px}
+p{margin-bottom:16px}
+section{margin-bottom:60px;scroll-margin-top:calc(var(--topbar-h) + 16px)}
+.card{background:var(--color-surface);border:1px solid var(--color-border);border-radius:6px;padding:22px 26px;margin-bottom:20px;transition:border-color .15s ease}
+.card:hover{border-color:rgba(0,184,176,0.25)}
+.card-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin:20px 0}
+.card-grid .card{margin-bottom:0}
+.card h3{margin-top:0}
+.card p:last-child{margin-bottom:0}
+.card .card-label{font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-teal);display:block;margin-bottom:8px}
+.table-wrap{overflow-x:auto;margin-top:8px;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:0.85rem;min-width:580px}
+thead tr{background:var(--color-surface-alt);border-bottom:1px solid rgba(0,184,176,0.2)}
+thead th{padding:10px 14px;text-align:left;font-size:0.63rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-teal)}
+tbody tr{border-bottom:1px solid rgba(0,184,176,0.07);transition:background .12s ease}
+tbody tr:hover{background:rgba(0,184,176,0.03)}
+td{padding:10px 14px;vertical-align:top;color:var(--color-text-secondary)}
+td:first-child{color:var(--color-text-primary);font-weight:600}
+td a{color:var(--color-text-secondary);text-decoration:none;border-bottom:1px dotted var(--color-text-dim)}
+td a:hover{color:var(--color-teal)}
+.mono{font-family:'Cascadia Code','Consolas',monospace;font-size:0.76rem;color:var(--color-teal);background:rgba(0,184,176,0.08);padding:2px 6px;border-radius:3px;overflow-wrap:break-word;word-break:break-word}
+.callout{background:var(--color-surface);border:1px solid rgba(0,184,176,0.15);border-left:3px solid var(--color-teal);border-radius:0 6px 6px 0;padding:14px 18px;margin:20px 0;font-size:0.9rem}
+.callout.warn{border-left-color:#f5c842}
+.callout.danger{border-left-color:var(--color-danger)}
+.callout p:last-child{margin-bottom:0}
+.callout-label{font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;display:block;color:var(--color-teal)}
+.callout.warn .callout-label{color:#f5c842}
+.callout.danger .callout-label{color:var(--color-danger)}
+.badge{font-size:0.6rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;display:inline-block;white-space:nowrap}
+.badge-ok{background:rgba(0,184,176,0.12);color:var(--color-teal)}
+.badge-warn{background:rgba(245,200,66,0.10);color:#f5c842}
+.badge-danger{background:rgba(224,85,51,0.12);color:var(--color-danger)}
+.flow{background:var(--color-surface);border:1px solid var(--color-border);border-radius:6px;padding:22px 26px;margin:20px 0}
+.flow-steps{display:flex;flex-direction:column}
+.flow-step{display:flex;gap:14px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(0,184,176,0.07)}
+.flow-step:last-child{border-bottom:none}
+.step-num{min-width:26px;height:26px;background:rgba(0,184,176,0.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--color-teal);flex-shrink:0;margin-top:2px}
+.step-content{flex:1}
+.step-label{font-size:0.8rem;font-weight:600;color:var(--color-text-primary);display:block;margin-bottom:2px}
+.step-desc{font-size:0.84rem}
+.source-chip{display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;background:rgba(0,184,176,0.05);border:1px solid rgba(0,184,176,0.12);border-radius:4px;padding:5px 10px;font-size:0.7rem;color:var(--color-text-dim);margin-bottom:20px;margin-top:-4px;line-height:1.7}
+.source-chip span{color:var(--color-teal);font-weight:600;margin-right:2px}
+.source-chip a{color:var(--color-text-secondary);text-decoration:none}
+.source-chip a:hover{color:var(--color-teal);text-decoration:underline}
+.source-chip .sep{color:var(--color-text-dim);margin:0 1px}
+.pull-quote{border-left:3px solid var(--color-teal);padding:8px 0 8px 18px;margin:28px 0;font-size:1rem;color:var(--color-text-primary);font-weight:500;line-height:1.55;max-width:724px}
+.video-wrap{position:relative;width:100%;max-width:724px;aspect-ratio:16/9;border:1px solid var(--color-border);border-radius:6px;overflow:hidden;margin:20px 0;background:var(--color-surface)}
+.yt-facade{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:#000;cursor:pointer;display:block}.yt-facade img{width:100%;height:100%;object-fit:cover;display:block;opacity:.92;transition:opacity .15s}.yt-facade:hover img{opacity:1}.yt-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:block;line-height:0}
+.video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+ul.plain{margin:0 0 16px 20px;max-width:724px}
+ul.plain li{margin-bottom:6px}
+footer{border-top:1px solid var(--color-border);padding:28px 48px 28px calc(var(--sidebar-w) + 48px);font-size:0.78rem;color:var(--color-text-dim);max-width:1080px;margin:0 auto}
+footer a{color:var(--color-teal);text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer p{margin-bottom:8px}
+@media (max-width:900px){.layout{flex-direction:column}.sidebar{width:100%;position:sticky;top:var(--topbar-h);height:auto;max-height:none;overflow-y:visible;border-right:none;border-bottom:1px solid var(--color-border);padding:0;z-index:40}.sidebar-label{display:none}.sidebar-nav{display:flex;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 14px;gap:6px;scrollbar-width:none}.sidebar-nav::-webkit-scrollbar{display:none}.sidebar-nav li{flex-shrink:0}.sidebar-item{white-space:nowrap;padding:7px 12px;border-left:none;border-radius:100px;background:rgba(0,184,176,.05)}.sidebar-item.sidebar-sub{padding-left:12px}.sidebar-item.active{background:rgba(0,184,176,.12);border-left:none}.sidebar-gap{display:none}.content{padding:32px 28px 60px}footer{padding:24px 28px}section{scroll-margin-top:calc(var(--topbar-h) + 56px)}}
+@media (max-width:700px){.hero{padding:calc(var(--topbar-h) + 40px) 16px 36px}.content{padding:28px 16px 48px;max-width:100%}.card-grid{grid-template-columns:1fr}footer{padding:24px 16px}}
+@media (max-width:900px) and (orientation:landscape){.table-wrap,.flow,.video-wrap{width:100vw;margin-left:calc(-50vw + 50%);margin-right:calc(-50vw + 50%);border-radius:0}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="https://conditionalaccess.tech" class="topbar-left">
+    <img src="https://conditionalaccess.tech/assets/NewConditionalaccess.tech.png" alt="" />
+    <span class="topbar-site">conditionalaccess.tech</span>
+    <span class="topbar-divider"></span>
+    <span class="topbar-article">Policy Plans Change How You Organize CA</span>
+  </a>
+  <a href="https://conditionalaccess.tech/articles.html" class="topbar-right">&larr; All Articles</a>
+</header>
+
+<div class="hero">
+  <span class="eyebrow">Conditional Access · October 2026</span>
+  <h1>Policy Plans Turn Conditional Access From a Flat List Into Something You Can Organize</h1>
+  <p class="subtitle">Entra now lets you define targeting and exclusions once and hang scenario rules underneath. The same month moved Security Defaults, passkey registration and the SMS retirement date.</p>
+  <div class="hero-meta">
+    <span class="tag">Policy plans · Preview</span>
+    <span class="tag">Security defaults</span>
+    <span class="dot">·</span>
+    <span>Microsoft MVP · Security: Identity &amp; Access</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <nav class="sidebar" aria-label="Article sections">
+    <span class="sidebar-label">In this article</span>
+    <ul class="sidebar-nav">
+      <li><a href="#s01" class="sidebar-item"><span class="sidebar-num">01</span>The month in Conditional Access</a></li>
+      <li><a href="#s02" class="sidebar-item"><span class="sidebar-num">02</span>Security Defaults</a></li>
+      <li><a href="#s03" class="sidebar-item"><span class="sidebar-num">03</span>How policy plans work</a></li>
+      <li><a href="#s03-video" class="sidebar-item sidebar-sub">Video walkthrough</a></li>
+      <li><a href="#s04" class="sidebar-item"><span class="sidebar-num">04</span>Reorganizing around plans</a></li>
+      <li><a href="#s05" class="sidebar-item"><span class="sidebar-num">05</span>Migrating without double enforcement</a></li>
+      <li><a href="#s06" class="sidebar-item"><span class="sidebar-num">06</span>Dates for the calendar</a></li>
+      <li><div class="sidebar-gap"></div></li>
+      <li><a href="#closing" class="sidebar-item"><span class="sidebar-num" style="opacity:0.4">&darr;</span>What the docs do not say</a></li>
+    </ul>
+  </nav>
+
+  <main class="content">
+
+    <section id="s01">
+      <span class="eyebrow">Section 01</span>
+      <h2>Two Headline Changes, Ten Smaller Ones You Still Have to Schedule</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://deltapulse.app/item/MC1450133" target="_blank">MC1450133</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1450134" target="_blank">MC1450134</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1465763" target="_blank">MC1465763</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1528000" target="_blank">MC1528000</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1519855" target="_blank">MC1519855</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1478962" target="_blank">MC1478962</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1481309" target="_blank">MC1481309</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1506733" target="_blank">MC1506733</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/571879" target="_blank">Roadmap 571879</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/569432" target="_blank">Roadmap 569432</a>
+      </div>
+
+      <p class="prose">There's been so much going on that staying on top of every change to Entra, Conditional Access and Microsoft in general feels impossible. Here are some of the items around Entra and Conditional Access you may or may not have seen already.</p>
+
+      <p class="prose" style="font-size:0.85rem;color:var(--color-text-dim)">Items below come from the Message Center and Roadmap, 28 September to 28 October. Policy plans and Security Defaults have no item there, so those two sections come from Microsoft Learn.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Change</th><th>What happens</th><th>When</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><a href="https://deltapulse.app/item/MC1450133" target="_blank">MC1450133</a> Passkey as first MFA method</td><td>Password-only users can register a passkey without first setting up SMS or voice.</td><td>Phased, Nov 2026 to Feb 2027. Timeline updated 26 Oct.</td><td><span class="badge badge-ok">Rolling out</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/MC1450134" target="_blank">MC1450134</a> WHfB and macOS PSSO as standalone MFA</td><td>Both count as MFA on their own, including for step-up, authentication strength and sign-in frequency checks.</td><td>Early Nov 2026. Timeline updated 27 Oct.</td><td><span class="badge badge-ok">Rolling out</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/MC1465763" target="_blank">MC1465763</a> SMS first-factor auto-disable</td><td>Tenants with no successful SMS first-factor sign-ins in 30 days lose the capability. SMS for MFA and password reset is unaffected.</td><td>Mid Sep to Nov 2026. Updated 28 Oct.</td><td><span class="badge badge-warn">Timeline slipped</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/MC1528000" target="_blank">MC1528000</a> SMS and voice retirement</td><td>Microsoft-provided SMS and voice authentication retire.</td><td>From 1 Feb 2027</td><td><span class="badge badge-danger">Retirement</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/MC1519855" target="_blank">MC1519855</a> Choose your own telephony provider</td><td>Third-party provider for SMS and voice through Microsoft Security Store. Some users keep Microsoft-provided delivery until 1 Jul 2027.</td><td>GA 30 Oct 2026</td><td><span class="badge badge-ok">GA</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/MC1506733" target="_blank">MC1506733</a> Agent blueprint creation</td><td>Default users can create agent blueprints unless you turn off Users can create agent blueprints.</td><td>From 4 Nov, complete late Nov 2026</td><td><span class="badge badge-warn">Action may be required</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/MC1478962" target="_blank">MC1478962</a> Teams Android</td><td>Stricter Conditional Access evaluation for resource-specific policies can cause sign-in failures on app version 1449/1.0.96.2026249711.</td><td>Late Sep to mid Oct 2026</td><td><span class="badge badge-warn">Review exclusions</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/MC1481309" target="_blank">MC1481309</a> Sign-in script injection</td><td>Content Security Policy on login.microsoftonline.com blocks externally injected scripts. Affects custom script-injecting tools only.</td><td>Mid Oct 2026</td><td><span class="badge badge-ok">Reminder</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/571879" target="_blank">Roadmap 571879</a> Granular CA for Teams meetings</td><td>Conditional Access targeting for Teams meetings.</td><td>Not dated</td><td><span class="badge badge-warn">In development</span></td></tr>
+            <tr><td><a href="https://deltapulse.app/item/569432" target="_blank">Roadmap 569432</a> Passkeys for B2B users</td><td>Passkey support for external users.</td><td>Not dated</td><td><span class="badge badge-warn">In development</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-label">Timelines moved this month</span>
+        <p>Three of these items carried an update note in the last week saying the timeline changed. Re-check the dates in your own Message Center before you commit change windows to them.</p>
+      </div>
+    </section>
+
+    <section id="s02">
+      <span class="eyebrow">Section 02</span>
+      <h2>Security Defaults Now Block Device Code Flow, and New Tenants Get a 24-Hour Window</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://learn.microsoft.com/entra/fundamentals/security-defaults" target="_blank">Security defaults in Microsoft Entra ID</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/managed-policies" target="_blank">Microsoft-managed Conditional Access policies</a>
+      </div>
+
+      <p class="prose">Security Defaults is the free-tier baseline, and Learn now lists six enforced controls. Device code flow blocking is the newest. The page states that from 1 July 2026 every new Entra tenant blocks it as part of Security Defaults. That date is more than three months old, so treat it as established behavior, not as this month's news.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <span class="card-label">MFA</span>
+          <h3>Registration and prompts</h3>
+          <p>All users register for MFA, administrators do MFA at every sign-in, and everyone else is prompted when Microsoft decides it is necessary.</p>
+        </div>
+        <div class="card">
+          <span class="card-label">Protocols</span>
+          <h3>Legacy auth and device code</h3>
+          <p>Legacy authentication protocols are blocked, including Exchange ActiveSync basic authentication. Device code flow is blocked too.</p>
+        </div>
+        <div class="card">
+          <span class="card-label">Management plane</span>
+          <h3>Azure Resource Manager</h3>
+          <p>The Azure portal, Entra admin center, Azure PowerShell and Azure CLI all require MFA for every user who reaches them.</p>
+        </div>
+      </div>
+
+      <p class="prose">Two details matter for tenants you hand over to customers. New tenants get Security Defaults enabled at creation but with a 24-hour grace period before enforcement. And the Directory Synchronization Accounts role is excluded from the MFA requirement.</p>
+
+      <h3 id="s02-upgrade">The upgrade path is Microsoft-managed policies</h3>
+      <p class="prose">Security Defaults and Conditional Access are mutually exclusive. To move on, disable Security Defaults, then enable the Microsoft-managed Conditional Access policies that mirror it: block legacy authentication, MFA for Azure management, MFA for admins and MFA for all users. Learn says to do this immediately after disabling, because the tenant is unprotected in between.</p>
+
+      <div class="callout warn">
+        <span class="callout-label">Docs inconsistency</span>
+        <p>The Security Defaults page lists 16 administrator roles that must do MFA. The managed-policies page describes the matching policy with 14. If you are translating Security Defaults into your own policy, compare the two lists before you rely on either.</p>
+      </div>
+
+    </section>
+
+    <section id="s03">
+      <span class="eyebrow">Section 03</span>
+      <h2>A Plan Is a Container With Shared Targeting, Not a New Kind of Policy</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policy-plans" target="_blank">What are Conditional Access policy plans? (preview)</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-create-conditional-access-policy-plan" target="_blank">Create a policy plan (preview)</a>
+      </div>
+
+      <p class="prose">Policy plans are in preview. They group related rules under shared assignments and conditions, so you define the user population and the emergency access exclusions once and write each scenario as a rule underneath. Learn names the problem directly: separate policies for Windows, macOS, iOS and Android repeat the same targeting, and a missed exclusion is a common source of lockouts.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <span class="card-label">Part 1</span>
+          <h3>Plan details</h3>
+          <p>Name, description, tags and owners. Owners record accountability and grant no permissions. Details do not affect enforcement.</p>
+        </div>
+        <div class="card">
+          <span class="card-label">Part 2</span>
+          <h3>Shared conditions</h3>
+          <p>Optional include and exclude targeting that applies to every rule: identities, resources, actions, risk, platforms, locations and client apps.</p>
+        </div>
+        <div class="card">
+          <span class="card-label">Part 3</span>
+          <h3>Rules</h3>
+          <p>One enforcement scenario each, with its own assignments, conditions, grant and session controls. A plan needs at least one.</p>
+        </div>
+      </div>
+
+      <h3 id="s03-rules">Four rules of inheritance</h3>
+      <ul class="plain">
+        <li>A rule inherits the plan's targeting and cannot narrow it.</li>
+        <li>Exclusions accumulate. If the plan excludes groups A and B and a rule adds C, the effective exclusions are A, B and C. A rule can never remove a plan-level exclusion.</li>
+        <li>Identity type must be consistent. A plan that targets users cannot also target agents at plan level. Leave identities to the rules if you need both.</li>
+        <li>All users and All resources are available at rule level only, not in shared conditions.</li>
+      </ul>
+
+      <div class="pull-quote">Each rule is then evaluated as an independent enforcement decision in the same way as a standalone policy. Each rule appears separately in sign-in logs.</div>
+
+      <p class="prose">That is the part to hold on to. The plan is an authoring and change-management construct. At sign-in, a rule behaves like a policy and shows up in the logs as its own entry, so your troubleshooting workflow does not change.</p>
+
+      <h3 id="s03-coexist">Plans sit beside your existing policies</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Capability</th><th>Existing policy</th><th>Plan and rules</th></tr></thead>
+          <tbody>
+            <tr><td>Targeting</td><td>Defined per policy and duplicated</td><td>Defined once in shared conditions, or per rule</td></tr>
+            <tr><td>Change management</td><td>Each policy updated individually</td><td>One change to shared conditions reaches every rule</td></tr>
+            <tr><td>Templates</td><td>One template per policy</td><td>Several templates in one plan, or one template per plan</td></tr>
+            <tr><td>Evaluation</td><td>Every applicable policy must be satisfied</td><td>Every applicable rule must be satisfied, with no precedence between the two</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-label">Preview limitation</span>
+        <p>During preview, plans that target users with Location as a condition get one-hour access tokens and no instant IP enforcement check. If a plan depends on named locations for security, read the continuous access evaluation limitations before you turn it on.</p>
+      </div>
+
+      <h3 id="s03-video">Video walkthrough</h3>
+      <p class="prose">The video below covers the same model visually and works as a companion to the Learn pages. Where the two differ, the documentation is the reference.</p>
+      <div class="video-wrap" id="ytwrap">
+        <button type="button" class="yt-facade" id="ytplay" aria-label="Play video: New Conditional Access policy plans">
+          <img src="data:image/jpeg;base64,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XB6xERAREQQilQghQrJZBVFNksgqitZLIiqhWUIIRSouERCJdRcKiUUZlGZESiqXKMyCyKuZRmVRa6hVzKLoi11F1W6XQTdLquZRdVFrqLqt1F1UWuououougtdRdVul0Ra6i65+LVIhpmsMuyMzwzPe2Uc5v7LrSdVTVGGUzYpA87YQyOEhaX2OnnDiNbpauO7mPFM54rlR4hLEakVEYyxyCNga+5uQLC5txvcrL+lIhYOjk2hfs8jQHG9r8x5wmxMro7Q9SbY8AsYNwDYi43FLq5E1mE/7vxUioHO0rXRMhtbQqGc4crCoj4ke5aaJ1htbwniP21cSxn7be1c5QnU7OoHtO5wPvVguSpTodnWRcnO8bnuHvVhPKN0ju1TovZ1EXNFTMPt/AKfK5rekOxOlO0b0kjYm5nH+65r3F7y47yoc5zzdxJPWoWpxxm3RERaZddF5Tyxx7p/cx/KnLHHun9zH8q82vY9WUrynljj3T+5j+VOWOPdP7mP5U0erIvKeWOPdP7mP5U5Y490/uY/lTR6si8p5Y490/uY/lTljj3T+5j+VNHqyheVcsce6f3MfyqOWGPdP7lnypo9WuozBeVcr8d6d3TPlUcrsd6d3TPlTUeqF6jOvK+VuOdO7pngnKzHOnd0zwTR6kXqpevL+VmN9N7pngo5V4303umeCaPUNoqmReY8qsa6b3TPBRyqxrpvdM8E0enbRVMi8z5U4z0zumeCcqMZ6Z3TPBNR6WZE2i8z5UYz0zumeCcqMZ6Z3TPBNMelmRNovNOU+MdM7pngnKfGOmd2zwTsY9LzqM6815T4x0zu2eCcp8Y6Z3bPBXsmPSs6jOvNuU+MdM7tngnKfGOmd2zwTsY9IzpnXm/KfGOmd2zwTlPjHTO7Z4J2h1ej50zrzflNjHTO7Z4Jymxjpnds8E7ROr0jMozLzjlNjHTO7Z4Jymxjpnds8Fe0OtejZkzLznlNi/TO7Z4Jymxfpnds8E7w616NmS6855TYv0vu2eCcpsY6Z3bPBO8TrXoToo3TMlc272AhpvuvvWJ1HCZTJ5wJkbKQDpmAsF8Fymxfpfds8E5TYx0vu2eCdoda+5loGyOmO0cBI5slrA5Xi1j8NyMonCSF7nxXjkLzkiyA3aRx618Nymxjpnds8E5TYx0zu2eCdoda9Ful151ymxjpnds8E5TYx0zu2eCveJ0r0W6LzrlNjHTO7Z4KeU+MdM7pngr5IdK9Eui865TYx0zu2eCcpsY6Z3TPBPJE8deiovOuU2MdM7pngnKbGOmd2zwTyQ8deiovOuU2MdM7tngnKbGOmd2zwTyQ8deiIvO+U2MdM7tngnKbGOmd0zwV8kPHXoiLzvlNjHTO6Z4JymxjpndM8E8kPHXoiledcpsY6Z3TPBTynxjpndM8E8kPHXoiLzvlPjHTO6Z4JynxjpndM8E8kPHXIREXB2EREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB//2Q==" alt="New Conditional Access policy plans video thumbnail">
+          <span class="yt-btn"><svg width="68" height="48" viewBox="0 0 68 48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.2.3 34 .3 34 .3S12.8.3 7.5 1.7a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6C12.8 47.7 34 47.7 34 47.7s21.2 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#00b8b0"/><path d="M27 34V14l18 10z" fill="#0a1628"/></svg></span>
+        </button>
+      </div>
+      <p class="prose" style="font-size:0.8rem"><a href="https://youtu.be/BUI5LZPoHAs" target="_blank" style="color:var(--color-teal)">Watch on YouTube</a></p>
+    </section>
+
+    <section id="s04">
+      <span class="eyebrow">Section 04</span>
+      <h2>Organize by Security Objective and Stop Organizing by Policy Count</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-migrate-conditional-access-policy-plan" target="_blank">Migrate policies to a policy plan (preview)</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-create-conditional-access-policy-plan" target="_blank">Create a policy plan (preview)</a>
+      </div>
+
+      <p class="prose">Learn's guidance for building a plan is to pick a security objective first, put only what applies to every scenario in shared conditions, and write variations as rules. The migration page gives three ways to find candidates: group by protected resource, by persona, or by shared condition.</p>
+
+      <p class="prose">My read on what this means for a policy set that grew organically: the flat list has no place to record intent, so every policy carries its own copy of the exclusions and its own naming. A plan gives intent a home. A "require compliant device" plan holds one exclusion list and one owner, with a rule per platform. An "agent risk" plan holds the shared risk condition, with one rule for agent users and another for autonomous agents.</p>
+
+      <div class="card-grid">
+        <div class="card">
+          <span class="card-label">Break glass</span>
+          <h3>One exclusion, not forty</h3>
+          <p>Put emergency access accounts in the plan's shared exclusions. No rule can omit them and no rule can remove them.</p>
+        </div>
+        <div class="card">
+          <span class="card-label">Ownership</span>
+          <h3>A name on every plan</h3>
+          <p>Plan owners and tags give you somewhere to record who answers for a set of controls. Owners grant no edit rights, so keep your role assignments separate.</p>
+        </div>
+        <div class="card">
+          <span class="card-label">Scale</span>
+          <h3>Global Secure Access</h3>
+          <p>Learn calls out hundreds of network-scoped rules that share one user population and app set as a target use case.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Naming still matters</span>
+        <p>A plan name should state the objective, and each rule name should state what varies. Keep your existing policy naming convention on the rules so exports and sign-in log filters stay readable.</p>
+      </div>
+    </section>
+
+    <section id="s05">
+      <span class="eyebrow">Section 05</span>
+      <h2>Migrating Is Safe Only if You Remember Both Sets Are Still Enforcing</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-migrate-conditional-access-policy-plan" target="_blank">Migrate policies to a policy plan (preview)</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-report-only" target="_blank">Analyze Conditional Access policy impact</a>
+      </div>
+
+      <p class="prose">There is a built-in migration tool. On the Policies page, the Migrate to Conditional Access Policy plans banner starts it. It analyzes the policies you select, moves what they have in common into shared conditions, maps each policy to a rule and proposes the plan for review. Your original policies are not changed.</p>
+
+      <div class="flow">
+        <div class="flow-steps">
+          <div class="flow-step"><div class="step-num">1</div><div class="step-content"><span class="step-label">Select policies with a common intent</span><span class="step-desc">Entra ID, Conditional Access, Policies, then Get started on the migration banner. Start with a small related group.</span></div></div>
+          <div class="flow-step"><div class="step-num">2</div><div class="step-content"><span class="step-label">Review shared conditions and proposed rules</span><span class="step-desc">Settings the policies have in common become shared conditions. Every generated rule starts in the Off state.</span></div></div>
+          <div class="flow-step"><div class="step-num">3</div><div class="step-content"><span class="step-label">Set rules to Report-only</span><span class="step-desc">Compare rule results in sign-in logs against the original policies. Learn expects them to be equivalent.</span></div></div>
+          <div class="flow-step"><div class="step-num">4</div><div class="step-content"><span class="step-label">Turn rules On, then turn the originals Off</span><span class="step-desc">Learn says to disable the original policies only once you are confident the plan covers your intended posture. Delete after the validation period.</span></div></div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <span class="callout-label">Double enforcement</span>
+        <p>Existing policies and plan rules accumulate independently, and every applicable one must be satisfied. Between step 4 and the original policies going Off, a user faces both. If you add a stricter rule than the original, the stricter one wins in practice. Plan that overlap window deliberately.</p>
+      </div>
+    </section>
+
+    <section id="s06">
+      <span class="eyebrow">Section 06</span>
+      <h2>Four Dates Before the End of February</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://deltapulse.app/item/MC1506733" target="_blank">MC1506733</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1519855" target="_blank">MC1519855</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1450134" target="_blank">MC1450134</a>
+        <span class="sep">·</span>
+        <a href="https://deltapulse.app/item/MC1528000" target="_blank">MC1528000</a>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Event</th><th>Your action</th></tr></thead>
+          <tbody>
+            <tr><td>30 Oct 2026</td><td>Choose your own telephony provider reaches GA</td><td>Decide which user populations genuinely need SMS or voice, and which can move to passkeys.</td></tr>
+            <tr><td>4 Nov 2026</td><td>Default users can create agent blueprints</td><td>Set Users can create agent blueprints to No if you want creation limited to admins.</td></tr>
+            <tr><td>Early Nov 2026</td><td>WHfB and macOS PSSO count as standalone MFA</td><td>Update onboarding guidance and re-check authentication strength policies that assumed an extra passkey.</td></tr>
+            <tr><td>1 Feb 2027</td><td>Microsoft-provided SMS and voice retire</td><td>Finish migration or configure a customer-managed provider before this date.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="prose">Start the audit with every policy and authentication strength that accepts SMS or voice as a method, and decide what replaces it before February.</p>
+    </section>
+
+    <section id="closing">
+      <span class="eyebrow">Open questions</span>
+      <h2>The Plan Documentation Is Silent on Scale, and That Is the Question to Test</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policy-plans" target="_blank">What are Conditional Access policy plans? (preview)</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-migrate-conditional-access-policy-plan" target="_blank">Migrate policies to a policy plan (preview)</a>
+      </div>
+
+      <p class="prose">The plans pages do not say whether each rule counts against the per-tenant Conditional Access policy limit. Learn's limit figures also disagree between cached and live versions, so I am not quoting a number here. If rules count individually, a plan with sixty rules is sixty policies for limit purposes, and consolidation buys you tidiness but no headroom.</p>
+
+      <p class="prose">I am testing policy plans now and will present my own opinion on them in a deeper dive due later in November. The scale question is first on the list, along with how rules show up in sign-in logs. If you get to a lab tenant before I publish, add rules until something stops you and send me what you find.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p>Conditional Access content sourced from Microsoft Learn, verified 28 October 2026. Change items from the Microsoft 365 Message Center and Roadmap via DeltaPulse. Policy plans are in preview.</p>
+  <p>
+    <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policy-plans">Policy plans</a> ·
+    <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-migrate-conditional-access-policy-plan">Migration</a> ·
+    <a href="https://learn.microsoft.com/entra/fundamentals/security-defaults">Security defaults</a> ·
+    <a href="https://learn.microsoft.com/entra/identity/conditional-access/managed-policies">Managed policies</a>
+  </p>
+  <p style="margin-top:16px;">conditionalaccess<span style="color:var(--color-teal)">.tech</span> · Microsoft MVP · Security: Identity &amp; Access</p>
+<p style="margin-top:20px;"><a href="https://conditionalaccess.tech/articles.html" style="color:var(--color-teal);font-weight:600;">Keep Reading / Browse All Articles</a></p>
+<p style="margin-top:8px;font-size:0.75rem;"><a href="https://conditionalaccess.tech/feed.xml" style="color:var(--color-text-dim);">RSS feed</a> &middot; <a href="https://medium.com/@jhope188" target="_blank" rel="noopener" style="color:var(--color-text-dim);">Medium</a></p>
+</footer>
+
+<script>
+(function(){
+  var b=document.getElementById('ytplay');
+  if(!b)return;
+  b.addEventListener('click',function(){
+    var w=document.getElementById('ytwrap');
+    var f=document.createElement('iframe');
+    f.src='https://www.youtube.com/embed/BUI5LZPoHAs?autoplay=1&rel=0';
+    f.title='New Conditional Access policy plans';
+    f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen=true;
+    w.innerHTML='';w.appendChild(f);
+  });
+})();
+</script>
+<script>
+(function(){
+  const items=document.querySelectorAll('.sidebar-item');
+  const sections=[];
+  items.forEach(a=>{const id=a.getAttribute('href').replace('#','');const el=document.getElementById(id);if(el)sections.push({id,el,a});});
+  if(!sections.length)return;
+  const topbarH=52;
+  function onScroll(){
+    const y=window.scrollY+topbarH+24;
+    let cur=sections[0];
+    for(const s of sections){if(s.el.offsetTop<=y)cur=s;}
+    items.forEach(a=>a.classList.remove('active'));
+    if(cur)cur.a.classList.add('active');
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>

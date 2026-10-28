@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Policy Plans Turn Conditional Access From a Flat List Into Something You Can Organize</title>
+</head>
+<body>
+<h1>Policy Plans Turn Conditional Access From a Flat List Into Something You Can Organize</h1>
+<p><em>Conditional Access · October 2026</em></p>
+<p>Entra now lets you define targeting and exclusions once and hang scenario rules underneath. The same month moved Security Defaults, passkey registration and the SMS retirement date.</p>
+<p><em>Policy plans · Preview · Security defaults · · · Microsoft MVP · Security: Identity &amp; Access</em></p>
+<p><em>Originally published at <a href="https://conditionalaccess.tech/articles/conditional-access/catech-policy-plans-october-2026.html">conditionalaccess.tech</a></em></p>
+<hr>
+<p>Section 01</p>
+<h2>Two Headline Changes, Ten Smaller Ones You Still Have to Schedule</h2>
+<p>Source: <a href="https://deltapulse.app/item/MC1450133">MC1450133</a> · <a href="https://deltapulse.app/item/MC1450134">MC1450134</a> · <a href="https://deltapulse.app/item/MC1465763">MC1465763</a> · <a href="https://deltapulse.app/item/MC1528000">MC1528000</a> · <a href="https://deltapulse.app/item/MC1519855">MC1519855</a> · <a href="https://deltapulse.app/item/MC1478962">MC1478962</a> · <a href="https://deltapulse.app/item/MC1481309">MC1481309</a> · <a href="https://deltapulse.app/item/MC1506733">MC1506733</a> · <a href="https://deltapulse.app/item/571879">Roadmap 571879</a> · <a href="https://deltapulse.app/item/569432">Roadmap 569432</a></p>
+<p>There's been so much going on that staying on top of every change to Entra, Conditional Access and Microsoft in general feels impossible. Here are some of the items around Entra and Conditional Access you may or may not have seen already.</p>
+<p>Items below come from the Message Center and Roadmap, 28 September to 28 October. Policy plans and Security Defaults have no item there, so those two sections come from Microsoft Learn.</p>
+<img src="../../images/conditional-access/catech-policy-plans-october-2026/catech-policy-plans-october-2026-component-01.png" alt="Table: Change, What happens, When, Status">
+<blockquote><p>⚠️ <strong>Timelines moved this month:</strong> Three of these items carried an update note in the last week saying the timeline changed. Re-check the dates in your own Message Center before you commit change windows to them.</p></blockquote>
+<p>Section 02</p>
+<h2>Security Defaults Now Block Device Code Flow, and New Tenants Get a 24-Hour Window</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/fundamentals/security-defaults">Security defaults in Microsoft Entra ID</a> · <a href="https://learn.microsoft.com/entra/identity/conditional-access/managed-policies">Microsoft-managed Conditional Access policies</a></p>
+<p>Security Defaults is the free-tier baseline, and Learn now lists six enforced controls. Device code flow blocking is the newest. The page states that from 1 July 2026 every new Entra tenant blocks it as part of Security Defaults. That date is more than three months old, so treat it as established behavior, not as this month's news.</p>
+<p>MFA</p>
+<h3>Registration and prompts</h3>
+<p>All users register for MFA, administrators do MFA at every sign-in, and everyone else is prompted when Microsoft decides it is necessary.</p>
+<p>Protocols</p>
+<h3>Legacy auth and device code</h3>
+<p>Legacy authentication protocols are blocked, including Exchange ActiveSync basic authentication. Device code flow is blocked too.</p>
+<p>Management plane</p>
+<h3>Azure Resource Manager</h3>
+<p>The Azure portal, Entra admin center, Azure PowerShell and Azure CLI all require MFA for every user who reaches them.</p>
+<p>Two details matter for tenants you hand over to customers. New tenants get Security Defaults enabled at creation but with a 24-hour grace period before enforcement. And the Directory Synchronization Accounts role is excluded from the MFA requirement.</p>
+<h3>The upgrade path is Microsoft-managed policies</h3>
+<p>Security Defaults and Conditional Access are mutually exclusive. To move on, disable Security Defaults, then enable the Microsoft-managed Conditional Access policies that mirror it: block legacy authentication, MFA for Azure management, MFA for admins and MFA for all users. Learn says to do this immediately after disabling, because the tenant is unprotected in between.</p>
+<blockquote><p>⚠️ <strong>Docs inconsistency:</strong> The Security Defaults page lists 16 administrator roles that must do MFA. The managed-policies page describes the matching policy with 14. If you are translating Security Defaults into your own policy, compare the two lists before you rely on either.</p></blockquote>
+<p>Section 03</p>
+<h2>A Plan Is a Container With Shared Targeting, Not a New Kind of Policy</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policy-plans">What are Conditional Access policy plans? (preview)</a> · <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-create-conditional-access-policy-plan">Create a policy plan (preview)</a></p>
+<p>Policy plans are in preview. They group related rules under shared assignments and conditions, so you define the user population and the emergency access exclusions once and write each scenario as a rule underneath. Learn names the problem directly: separate policies for Windows, macOS, iOS and Android repeat the same targeting, and a missed exclusion is a common source of lockouts.</p>
+<p>Part 1</p>
+<h3>Plan details</h3>
+<p>Name, description, tags and owners. Owners record accountability and grant no permissions. Details do not affect enforcement.</p>
+<p>Part 2</p>
+<h3>Shared conditions</h3>
+<p>Optional include and exclude targeting that applies to every rule: identities, resources, actions, risk, platforms, locations and client apps.</p>
+<p>Part 3</p>
+<h3>Rules</h3>
+<p>One enforcement scenario each, with its own assignments, conditions, grant and session controls. A plan needs at least one.</p>
+<h3>Four rules of inheritance</h3>
+<ul><li>A rule inherits the plan's targeting and cannot narrow it.</li><li>Exclusions accumulate. If the plan excludes groups A and B and a rule adds C, the effective exclusions are A, B and C. A rule can never remove a plan-level exclusion.</li><li>Identity type must be consistent. A plan that targets users cannot also target agents at plan level. Leave identities to the rules if you need both.</li><li>All users and All resources are available at rule level only, not in shared conditions.</li></ul>
+<blockquote><p>Each rule is then evaluated as an independent enforcement decision in the same way as a standalone policy. Each rule appears separately in sign-in logs.</p></blockquote>
+<p>That is the part to hold on to. The plan is an authoring and change-management construct. At sign-in, a rule behaves like a policy and shows up in the logs as its own entry, so your troubleshooting workflow does not change.</p>
+<h3>Plans sit beside your existing policies</h3>
+<img src="../../images/conditional-access/catech-policy-plans-october-2026/catech-policy-plans-october-2026-component-02.png" alt="Table: Capability, Existing policy, Plan and rules">
+<blockquote><p>⚠️ <strong>Preview limitation:</strong> During preview, plans that target users with Location as a condition get one-hour access tokens and no instant IP enforcement check. If a plan depends on named locations for security, read the continuous access evaluation limitations before you turn it on.</p></blockquote>
+<h3>Video walkthrough</h3>
+<p>The video below covers the same model visually and works as a companion to the Learn pages. Where the two differ, the documentation is the reference.</p>
+<p><a href="https://youtu.be/BUI5LZPoHAs">Watch on YouTube</a></p>
+<p>Section 04</p>
+<h2>Organize by Security Objective and Stop Organizing by Policy Count</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-migrate-conditional-access-policy-plan">Migrate policies to a policy plan (preview)</a> · <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-create-conditional-access-policy-plan">Create a policy plan (preview)</a></p>
+<p>Learn's guidance for building a plan is to pick a security objective first, put only what applies to every scenario in shared conditions, and write variations as rules. The migration page gives three ways to find candidates: group by protected resource, by persona, or by shared condition.</p>
+<p>My read on what this means for a policy set that grew organically: the flat list has no place to record intent, so every policy carries its own copy of the exclusions and its own naming. A plan gives intent a home. A "require compliant device" plan holds one exclusion list and one owner, with a rule per platform. An "agent risk" plan holds the shared risk condition, with one rule for agent users and another for autonomous agents.</p>
+<p>Break glass</p>
+<h3>One exclusion, not forty</h3>
+<p>Put emergency access accounts in the plan's shared exclusions. No rule can omit them and no rule can remove them.</p>
+<p>Ownership</p>
+<h3>A name on every plan</h3>
+<p>Plan owners and tags give you somewhere to record who answers for a set of controls. Owners grant no edit rights, so keep your role assignments separate.</p>
+<p>Scale</p>
+<h3>Global Secure Access</h3>
+<p>Learn calls out hundreds of network-scoped rules that share one user population and app set as a target use case.</p>
+<blockquote><p>ℹ️ <strong>Naming still matters:</strong> A plan name should state the objective, and each rule name should state what varies. Keep your existing policy naming convention on the rules so exports and sign-in log filters stay readable.</p></blockquote>
+<p>Section 05</p>
+<h2>Migrating Is Safe Only if You Remember Both Sets Are Still Enforcing</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-migrate-conditional-access-policy-plan">Migrate policies to a policy plan (preview)</a> · <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-report-only">Analyze Conditional Access policy impact</a></p>
+<p>There is a built-in migration tool. On the Policies page, the Migrate to Conditional Access Policy plans banner starts it. It analyzes the policies you select, moves what they have in common into shared conditions, maps each policy to a rule and proposes the plan for review. Your original policies are not changed.</p>
+<p>1</p>
+<p>Select policies with a common intentEntra ID, Conditional Access, Policies, then Get started on the migration banner. Start with a small related group.</p>
+<p>2</p>
+<p>Review shared conditions and proposed rulesSettings the policies have in common become shared conditions. Every generated rule starts in the Off state.</p>
+<p>3</p>
+<p>Set rules to Report-onlyCompare rule results in sign-in logs against the original policies. Learn expects them to be equivalent.</p>
+<p>4</p>
+<p>Turn rules On, then turn the originals OffLearn says to disable the original policies only once you are confident the plan covers your intended posture. Delete after the validation period.</p>
+<blockquote><p>🛑 <strong>Double enforcement:</strong> Existing policies and plan rules accumulate independently, and every applicable one must be satisfied. Between step 4 and the original policies going Off, a user faces both. If you add a stricter rule than the original, the stricter one wins in practice. Plan that overlap window deliberately.</p></blockquote>
+<p>Section 06</p>
+<h2>Four Dates Before the End of February</h2>
+<p>Source: <a href="https://deltapulse.app/item/MC1506733">MC1506733</a> · <a href="https://deltapulse.app/item/MC1519855">MC1519855</a> · <a href="https://deltapulse.app/item/MC1450134">MC1450134</a> · <a href="https://deltapulse.app/item/MC1528000">MC1528000</a></p>
+<img src="../../images/conditional-access/catech-policy-plans-october-2026/catech-policy-plans-october-2026-component-03.png" alt="Table: Date, Event, Your action">
+<p>Start the audit with every policy and authentication strength that accepts SMS or voice as a method, and decide what replaces it before February.</p>
+<p>Open questions</p>
+<h2>The Plan Documentation Is Silent on Scale, and That Is the Question to Test</h2>
+<p>Source: <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policy-plans">What are Conditional Access policy plans? (preview)</a> · <a href="https://learn.microsoft.com/entra/identity/conditional-access/how-to-migrate-conditional-access-policy-plan">Migrate policies to a policy plan (preview)</a></p>
+<p>The plans pages do not say whether each rule counts against the per-tenant Conditional Access policy limit. Learn's limit figures also disagree between cached and live versions, so I am not quoting a number here. If rules count individually, a plan with sixty rules is sixty policies for limit purposes, and consolidation buys you tidiness but no headroom.</p>
+<p>I am testing policy plans now and will present my own opinion on them in a deeper dive due later in November. The scale question is first on the list, along with how rules show up in sign-in logs. If you get to a lab tenant before I publish, add rules until something stops you and send me what you find.</p>
+</body></html>
