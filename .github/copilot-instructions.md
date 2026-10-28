@@ -144,11 +144,23 @@ Every section in `articles.html` has **two** numbers that must always match. Whe
 | Section badge | `<span id="count-[series]">N articles</span>` | `7 articles` |
 | Show-more button | `<button ... data-total="N">Show all N articles ↓</button>` | `data-total="7"` |
 
-**Series IDs:** `count-identity` / `count-conditional-access` / `count-governance` / `count-entra` / `count-msp`
+**Series IDs:** `count-identity` / `count-conditional-access` / `count-governance` / `count-entra` / `count-msp` / `count-azure` / `count-reviews`
 
 If the button is missing for a section, add one following the same pattern as the CA section. Never update one without the other.
 
 If anything looks wrong, read the relevant file and re-apply the specific fix.
+
+### 5-visible-by-default rule
+
+Every series section shows at most **5 cards by default**. The moment a section's article count exceeds 5, the 6th card onward must be marked `class="lift art-extra"` (hidden by default via CSS) and a `show-more-btn` must be added right after the grid, even if the section didn't need one before:
+
+```html
+<a class="lift art-extra" href="...">...</a>   <!-- 6th+ card -->
+</div>
+<button class="show-more-btn" data-grid="grid-[series]" data-total="N" aria-expanded="false">Show all N articles ↓</button>
+```
+
+The shared toggle script (bottom of `articles.html`) handles the click behavior generically via `data-grid`/`data-total`, so no JS changes are needed — just mark the extra cards and add the button. When a section is at or under 5 articles, no button is needed at all.
 
 ---
 
