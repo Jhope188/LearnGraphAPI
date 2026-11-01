@@ -14,7 +14,7 @@
         |- Confidential - Third Parties - Encrypted (user-defined recipients), markings
         +- Confidential - Reporting   - Encrypted (org-wide), markings
       Restricted (parent)             - Group container (Groups & Sites scope)
-        |- Restricted - Internal      - Encrypted (admin-only template), markings
+        |- Restricted - Internal      - Encrypted (admin owner + all-internal view/edit, no print/extract), markings
         +- Restricted - Third Parties - Encrypted (user-defined recipients), markings
 
     After running this script, publish labels using:
@@ -283,6 +283,16 @@ function Ensure-Label {
 $orgWideRights = "$($TenantDomain):VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,PRINT,EXTRACT,REPLY,REPLYALL,FORWARD,OBJMODEL"
 $adminRights   = "$($AdminEmail):OWNER"
 
+# Restricted - Internal: admin keeps OWNER (full control); all internal users
+# get view/edit/co-author rights WITHOUT PRINT or EXTRACT. Omitting EXTRACT
+# blocks Microsoft 365 Copilot/Copilot Chat/agents from reading or referencing
+# this content for anyone but the named OWNER (Copilot requires VIEW + EXTRACT
+# - see IAC-Sensitivity-Labels-Documentation.md §4.4.1). Omitting PRINT blocks
+# hardcopy/PDF exfiltration of the highest-sensitivity tier. Do not swap this
+# for a predefined permission level (Editor/Co-Author, Owner/Co-Owner) - both
+# bundle PRINT and EXTRACT together, which would re-enable Copilot access.
+$restrictedInternalRights = "$($adminRights);$($TenantDomain):VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,REPLY,REPLYALL,FORWARD,OBJMODEL"
+
 Write-Host ""
 Write-Host "--- Creating Labels ---" -ForegroundColor Magenta
 Write-Host ""
@@ -383,7 +393,8 @@ $restricted = Ensure-Label `
     -ContentType @("Site", "UnifiedGroup") `
     -IsParentLabel
 
-# 4.1 Restricted / Internal - Template-encrypted to admin/named group only
+# 4.1 Restricted / Internal - Template-encrypted: admin OWNER + all-internal
+#     view/edit (no PRINT, no EXTRACT - blocks Copilot and printing/export)
 Write-Host "  +-- Restricted - Internal" -ForegroundColor Cyan
 $restInternal = Ensure-Label `
     -Name "Inforcer-Restricted-Internal" `
@@ -397,7 +408,7 @@ $restInternal = Ensure-Label `
     -WatermarkText "RESTRICTED" `
     -EncryptionEnabled $true `
     -EncryptionProtectionType "Template" `
-    -EncryptionRightsDefinitions $adminRights
+    -EncryptionRightsDefinitions $restrictedInternalRights
 
 # 4.2 Restricted / Third Parties - User picks recipients
 Write-Host "  +-- Restricted - Third Parties" -ForegroundColor Cyan
