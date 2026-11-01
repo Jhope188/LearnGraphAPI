@@ -42,15 +42,15 @@
     when needed — the group does not need to be reassigned each time.
 
 .PARAMETER TenantDomain
-    Your *.onmicrosoft.com tenant domain (e.g. M365x93722695.onmicrosoft.com).
+    Your *.onmicrosoft.com tenant domain (e.g. conditionalaccess.tech).
     Used to build the group's mail address for Add-AipServiceSuperUserGroup.
 
 .PARAMETER WhatIf
     Run in preview mode — shows what would be created without making any changes.
 
 .EXAMPLE
-    .\New-AIPSuperUserGroup.ps1 -TenantDomain "M365x93722695.onmicrosoft.com"
-    .\New-AIPSuperUserGroup.ps1 -TenantDomain "M365x93722695.onmicrosoft.com" -WhatIf
+    .\New-AIPSuperUserGroup.ps1 -TenantDomain "conditionalaccess.tech"
+    .\New-AIPSuperUserGroup.ps1 -TenantDomain "conditionalaccess.tech" -WhatIf
 
 .NOTES
     Requires:     Microsoft.Graph.Groups, Microsoft.Graph.Users, AIPService

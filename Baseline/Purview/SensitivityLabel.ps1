@@ -18,7 +18,7 @@
         +- Restricted - Third Parties - Encrypted (user-defined recipients), markings
 
     After running this script, publish labels using:
-      .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
+      .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "conditionalaccess.tech"
 
     Reference:
       https://www.thepurviewpractitioner.com/tools/taxonomy
@@ -37,8 +37,8 @@
     If specified, shows what would be created without making changes.
 
 .EXAMPLE
-    .\SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
-    .\SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -DryRun
+    .\SensitivityLabel.ps1 -TenantDomain "conditionalaccess.tech"
+    .\SensitivityLabel.ps1 -TenantDomain "conditionalaccess.tech" -DryRun
 
 .NOTES
     Author: IAC

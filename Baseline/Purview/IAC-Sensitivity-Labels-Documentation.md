@@ -1,8 +1,8 @@
 # IAC Sensitivity Labels — Configuration & Best Practices
 
 > **Author:** IAC  
-> **Date:** 27 February 2026  
-> **Tenant:** acme2m365.onmicrosoft.com  
+> **Date:** 1 November 2026  
+> **Tenant:** conditionalaccess.tech  
 > **Reference:** [Purview Practitioner Taxonomy](https://www.thepurviewpractitioner.com/tools/taxonomy) · [Microsoft Learn — Sensitivity Labels](https://learn.microsoft.com/purview/sensitivity-labels)  
 > **Video:** [Ewelina's Sensitivity Label Deep Dive](https://www.youtube.com/watch?v=6TaVptqv_V8) *(recommended viewing before deployment)*
 
@@ -460,7 +460,7 @@ Wait **24 hours** for propagation.
 #### Step 2: Dry Run Labels
 
 ```powershell
-./SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -DryRun
+./SensitivityLabel.ps1 -TenantDomain "conditionalaccess.tech" -DryRun
 ```
 
 Review the output. Confirm:
@@ -470,7 +470,7 @@ Review the output. Confirm:
 #### Step 3: Create Labels
 
 ```powershell
-./SensitivityLabel.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
+./SensitivityLabel.ps1 -TenantDomain "conditionalaccess.tech"
 ```
 
 After running, verify in the **Purview portal**:
@@ -482,7 +482,7 @@ After running, verify in the **Purview portal**:
 #### Step 4: Dry Run Policies
 
 ```powershell
-./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -DryRun
+./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "conditionalaccess.tech" -DryRun
 ```
 
 Confirm:
@@ -493,7 +493,7 @@ Confirm:
 #### Step 5: Publish Policies
 
 ```powershell
-./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
+./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "conditionalaccess.tech"
 ```
 
 The script creates 3 tiered policies:
@@ -507,9 +507,9 @@ The script creates 3 tiered policies:
 #### Step 5a: Publish with Exclusions (Optional)
 
 ```powershell
-./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com" `
-    -ExcludeFromConfidential @("SG-Contractors@acme2m365.onmicrosoft.com") `
-    -ExcludeFromRestricted @("SG-Contractors@acme2m365.onmicrosoft.com")
+./Publish-SensitivityLabelPolicies.ps1 -TenantDomain "conditionalaccess.tech" `
+    -ExcludeFromConfidential @("SG-Contractors@conditionalaccess.tech") `
+    -ExcludeFromRestricted @("SG-Contractors@conditionalaccess.tech")
 ```
 
 #### Step 6: Wait for Propagation
@@ -629,7 +629,7 @@ Set-LabelPolicy -Identity "IAC - Confidential Label Policy" -AdvancedSettings @{
 Set-LabelPolicy -Identity "IAC - Restricted Label Policy" -AdvancedSettings @{}
 
 # SharePoint: force site-level sync
-Set-SPOSite -Identity "https://acme2m365.sharepoint.com/sites/yoursite" -SensitivityLabel ""
+Set-SPOSite -Identity "https://conditionalaccess.tech.sharepoint.com/sites/yoursite" -SensitivityLabel ""
 ```
 
 ---
@@ -770,7 +770,7 @@ New-Label -Name "Confidential-Financial" `
     -Tooltip "Financial data - encrypted for finance team" `
     -EncryptionEnabled $true `
     -EncryptionProtectionType "Template" `
-    -EncryptionRightsDefinitions "finance-team@acme2m365.onmicrosoft.com:VIEW,EDIT,PRINT" `
+    -EncryptionRightsDefinitions "finance-team@conditionalaccess.tech:VIEW,EDIT,PRINT" `
     -ApplyContentMarkingHeaderEnabled $true `
     -ApplyContentMarkingHeaderText "Confidential - Financial"
 
@@ -795,7 +795,7 @@ Remove-Label -Identity "<ImmutableId>" -Confirm:$false
 ```powershell
 # Example: Give the security team access to Restricted - Internal
 Set-Label -Identity "Restricted - Internal" `
-    -EncryptionRightsDefinitions "securityteam@acme2m365.onmicrosoft.com:OWNER"
+    -EncryptionRightsDefinitions "securityteam@conditionalaccess.tech:OWNER"
 ```
 
 ### 12.5 Modifying Policy Scope (Exclusions)
@@ -803,15 +803,15 @@ Set-Label -Identity "Restricted - Internal" `
 ```powershell
 # Exclude contractors from Confidential labels
 Set-LabelPolicy -Identity "IAC - Confidential Label Policy" `
-    -AddExchangeLocationException "SG-Contractors@acme2m365.onmicrosoft.com"
+    -AddExchangeLocationException "SG-Contractors@conditionalaccess.tech"
 
 # Exclude contractors from Restricted labels
 Set-LabelPolicy -Identity "IAC - Restricted Label Policy" `
-    -AddExchangeLocationException "SG-Contractors@acme2m365.onmicrosoft.com"
+    -AddExchangeLocationException "SG-Contractors@conditionalaccess.tech"
 
 # Remove an exclusion later
 Set-LabelPolicy -Identity "IAC - Confidential Label Policy" `
-    -RemoveExchangeLocationException "SG-Contractors@acme2m365.onmicrosoft.com"
+    -RemoveExchangeLocationException "SG-Contractors@conditionalaccess.tech"
 
 # Verify current exclusions
 Get-LabelPolicy | Format-Table Name, ExchangeLocationException -AutoSize
@@ -939,7 +939,7 @@ Microsoft recommends using a **group** rather than individual users, so that mem
 
 ```powershell
 # Assign a mail-enabled security group
-Add-AipServiceSuperUserGroup -GroupEmailAddress "SG-AIP-SuperUsers@M365x93722695.onmicrosoft.com"
+Add-AipServiceSuperUserGroup -GroupEmailAddress "SG-AIP-SuperUsers@conditionalaccess.tech"
 
 # Verify the assignment
 Get-AipServiceSuperUserGroup
@@ -969,7 +969,7 @@ Enable-AipServiceSuperUserFeature
 
 param(
     [Parameter(Mandatory)]
-    [string]$SuperUserGroupEmail  # e.g. "SG-AIP-SuperUsers@M365x93722695.onmicrosoft.com"
+    [string]$SuperUserGroupEmail  # e.g. "SG-AIP-SuperUsers@conditionalaccess.tech"
 )
 
 Import-Module AIPService -ErrorAction Stop
@@ -994,7 +994,7 @@ Write-Host "Feature disabled. Re-enable with: Enable-AipServiceSuperUserFeature"
 
 #### Scenario A: Recover a Restricted - Internal Document
 
-A Restricted - Internal document was encrypted against `admin@M365x93722695.onmicrosoft.com:OWNER` and that account has been deleted. A Super User member needs to recover it.
+A Restricted - Internal document was encrypted against `admin@conditionalaccess.tech:OWNER` and that account has been deleted. A Super User member needs to recover it.
 
 ```powershell
 # 1. Enable the feature

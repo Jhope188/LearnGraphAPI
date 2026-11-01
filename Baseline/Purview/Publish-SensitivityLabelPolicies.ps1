@@ -38,30 +38,30 @@
       - Downgrade:        If ANY policy requires justification, it's required
 
 .PARAMETER TenantDomain
-    Your tenant's primary domain (e.g., acme2m365.onmicrosoft.com).
+    Your tenant's primary domain (e.g., conditionalaccess.tech).
 
 .PARAMETER ExcludeFromConfidential
     Array of group email addresses to EXCLUDE from the Confidential policy.
-    Example: @("SG-Contractors@acme2m365.onmicrosoft.com")
+    Example: @("SG-Contractors@conditionalaccess.tech")
 
 .PARAMETER ExcludeFromRestricted
     Array of group email addresses to EXCLUDE from the Restricted policy.
-    Example: @("SG-Contractors@acme2m365.onmicrosoft.com","SG-Temps@acme2m365.onmicrosoft.com")
+    Example: @("SG-Contractors@conditionalaccess.tech","SG-Temps@conditionalaccess.tech")
 
 .PARAMETER DryRun
     If specified, shows what would be created without making changes.
 
 .EXAMPLE
     # Publish to all users (no exclusions)
-    .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com"
+    .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "conditionalaccess.tech"
 
     # Exclude contractors from Confidential and Restricted
-    .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com" `
-        -ExcludeFromConfidential @("SG-Contractors@acme2m365.onmicrosoft.com") `
-        -ExcludeFromRestricted @("SG-Contractors@acme2m365.onmicrosoft.com")
+    .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "conditionalaccess.tech" `
+        -ExcludeFromConfidential @("SG-Contractors@conditionalaccess.tech") `
+        -ExcludeFromRestricted @("SG-Contractors@conditionalaccess.tech")
 
     # Dry run first
-    .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "acme2m365.onmicrosoft.com" -DryRun
+    .\Publish-SensitivityLabelPolicies.ps1 -TenantDomain "conditionalaccess.tech" -DryRun
 
 .NOTES
     Author: IAC
