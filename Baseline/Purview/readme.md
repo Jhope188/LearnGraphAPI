@@ -1,7 +1,7 @@
 # IAC Sensitivity Labels — Configuration & Best Practices
 
 > **Author:** IAC  
-> **Date:** 27 February 2026  
+> **Date:** 2 November 2026  
 > **Tenant:** conditionalaccess.tech  
 > **Reference:** [Purview Practitioner Taxonomy](https://www.thepurviewpractitioner.com/tools/taxonomy) · [Microsoft Learn — Sensitivity Labels](https://learn.microsoft.com/purview/sensitivity-labels)  
 > **Video:** [Ewelina's Sensitivity Label Deep Dive](https://www.youtube.com/watch?v=6TaVptqv_V8) *(recommended viewing before deployment)*
@@ -170,7 +170,8 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 │  │   Privacy: Private │ Guests: Blocked                            │
 │  │                                                                  │
 │  ├── Restricted - Internal                                         │
-│  │   Encryption: Template (admin-only Owner rights)                │
+│  │   Encryption: Template (Owner: admin; View/Edit: all users)     │
+│  │   Rights: No PRINT, no EXTRACT - blocks Copilot + printing      │
 │  │   Watermark: "RESTRICTED"                                       │
 │  │   Scope: File, Email                                            │
 │  │                                                                  │
@@ -277,18 +278,20 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 |---------|-------|
 | **Scope** | File, Email, Site, UnifiedGroup |
 | **Container Protection** | Privacy: Private, Guests: Blocked, Full Access: No |
-| **Encryption** | Template — named principals only |
-| **Rights** | `<AdminEmail or Security Group>`: OWNER (full control) |
+| **Encryption** | Template — two rights grants (admin owner + all-internal view/edit) |
+| **Rights** | `<AdminEmail or Security Group>`: `OWNER` (full control) · `<TenantDomain>` (all internal users): `VIEW, VIEWRIGHTSDATA, DOCEDIT, EDIT, REPLY, REPLYALL, FORWARD, OBJMODEL` |
 | **Header** | "RESTRICTED - Internal Only" (10pt, red, centred) |
 | **Footer** | "RESTRICTED - Internal Only" (8pt, red, centred) |
 | **Watermark** | "RESTRICTED" (48pt, diagonal) |
 | **Tooltip** | Encrypted for specific internal recipients only. |
 | **Use Case** | Executive compensation, M&A documents, legal hold materials, security incident reports |
 
+> **🔒 PRINT and EXTRACT are intentionally excluded from the all-internal-users grant.** Internal users can view, edit/co-author, reply, and forward Restricted - Internal content within the protection boundary, but cannot print it or copy/extract its contents. The `EXTRACT` usage right ("Copy and extract content") also governs whether Microsoft 365 Copilot, Copilot Chat, and agents can read protected content: Copilot can only summarize or reference content for which the user holds both `VIEW` and `EXTRACT`. Withholding `EXTRACT` therefore blocks Copilot from reading or referencing Restricted - Internal documents for every principal except the named admin owner (whose `OWNER`/Full Control right always includes `EXTRACT`). Do not add `PRINT` or `EXTRACT` to the all-internal-users entry, and do not replace it with a predefined permission level such as Editor/Co-Author or Owner/Co-Owner — both bundle `PRINT` and `EXTRACT` together, which would re-enable Copilot access. Use **Custom** permissions only.
+
 > **⚠️ Operational risk — use a security group, not a single admin account:** The `SensitivityLabel.ps1` script defaults `$adminRights` to the signed-in admin's UPN (e.g., `admin@domain.com:OWNER`). This creates a **single point of failure**: if that account is deleted, disabled, or its UPN changes, every document encrypted with this label becomes inaccessible — including M&A files, legal hold materials, and executive compensation records. Before production deployment, replace the individual admin UPN with a **role-based mail-enabled security group** (e.g., `SG-Restricted-Owners@domain.com`) containing the appropriate privileged users. Set a formal access review for group membership. The encryption rights string to use in the script would be:
 >
 > ```powershell
-> $adminRights = "SG-Restricted-Owners@yourdomain.com:OWNER"
+> $adminRights = "SG-Restricted-Owners@yourdomain.com:OWNER;$($TenantDomain):VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,REPLY,REPLYALL,FORWARD,OBJMODEL"
 > ```
 >
 > The security group membership should be reviewed quarterly and ownership assigned to a named role (e.g., CISO or Legal Counsel), not an individual.
@@ -893,7 +896,7 @@ Without a configured Super User group, the following scenarios create **permanen
 | **Broken encryption template** | An encryption template deleted or corrupted in Entra ID (via the AIP/RMS service) leaves documents encrypted against a non-existent template — only a Super User can recover them |
 | **HR investigation** | HR needs to read encrypted files on a device being reviewed — the file owner may not be cooperative |
 
-> **For this taxonomy specifically:** The `Restricted - Internal` label encrypts content using `$adminRights = "<AdminEmail>:OWNER"`. If that admin account is ever deleted or its UPN changes, every document ever encrypted under Restricted - Internal becomes permanently inaccessible — unless a Super User group is configured. This is the single most important operational risk in this entire label deployment.
+> **For this taxonomy specifically:** The `Restricted - Internal` label's `encrypt` action grants `$adminRights = "<AdminEmail>:OWNER"` to a single admin account, alongside a separate all-internal-users grant (`VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,REPLY,REPLYALL,FORWARD,OBJMODEL` — no `PRINT`/`EXTRACT`, see §4.4.1). If the admin account is ever deleted or its UPN changes, every document ever encrypted under Restricted - Internal becomes permanently inaccessible to that OWNER identity — unless a Super User group is configured. This is the single most important operational risk in this entire label deployment.
 
 ---
 
@@ -1099,7 +1102,7 @@ Search-UnifiedAuditLog -StartDate (Get-Date).AddDays(-7) -EndDate (Get-Date) `
 | 6 | Confidential - Third Parties | 5 | File, Email, Site, UnifiedGroup | UserDefined + DNF | Confidential |
 | 7 | Restricted | 6 | Groups & Sites (container) | None | — |
 | 8 | Restricted - Third Parties | 7 | File, Email, Site, UnifiedGroup | UserDefined + DNF | Restricted |
-| 9 | Restricted - Internal | 8 | File, Email, Site, UnifiedGroup | Template (admin-only) | Restricted |
+| 9 | Restricted - Internal | 8 | File, Email, Site, UnifiedGroup | Template (admin-owner + all-internal view/edit, no print/extract) | Restricted |
 
 **Tiered Policies:**
 

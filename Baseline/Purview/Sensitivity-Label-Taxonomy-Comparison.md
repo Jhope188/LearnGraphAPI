@@ -1,8 +1,10 @@
 # Sensitivity Label Taxonomy: IAC vs Microsoft Default
 
 > **Author:** IAC / Jhope
-> **Date:** May 2026  
+> **Date:** 2 November 2026 (updated — see note below)  
 > **Reference:** [Microsoft Default Sensitivity Labels & Policies](https://learn.microsoft.com/en-us/purview/default-sensitivity-labels-policies) · [Get Started with Sensitivity Labels](https://learn.microsoft.com/en-us/purview/get-started-with-sensitivity-labels)
+
+> **Update (2 November 2026):** Confirmed against the live `conditionalaccess.tech` tenant that Restricted - Internal's `encrypt` action now grants **two** principals, not one: the named admin (`OWNER`, full control) plus a separate all-internal-users grant (`VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,REPLY,REPLYALL,FORWARD,OBJMODEL` — deliberately missing `PRINT`/`EXTRACT` so Microsoft 365 Copilot can't read it and users can't print it). Concern 1 below has been revised to reflect this; the admin-account single-point-of-failure risk for the `OWNER` grant specifically is unchanged and still open. See `IAC-Sensitivity-Labels-Documentation.md` §4.4.1 for the full rationale.
 
 ---
 
@@ -66,13 +68,15 @@
 
 ## Specific Technical Concerns in IAC
 
-### Concern 1: Restricted - Internal uses admin-only Owner rights — operational risk
+### Concern 1: Restricted - Internal's admin OWNER grant is still a single point of failure
 
 ```
-"Rights" | "<AdminEmail>": OWNER (full control)
+"Rights" | "<AdminEmail>": OWNER (full control) ; "<TenantDomain>": VIEW,VIEWRIGHTSDATA,DOCEDIT,EDIT,REPLY,REPLYALL,FORWARD,OBJMODEL
 ```
 
-If the admin account's email changes, the account is disabled, or the account doesn't exist when someone tries to access an encrypted file, those files become inaccessible. This is a classic "super-user trap" in RMS deployments. Microsoft's "Highly Confidential \ All Employees" uses org-wide Co-Author rights, which is resilient. The IAC approach should either use a security group (so membership can be managed) or a super-user/RMS administrator account, not a single named admin mailbox. At minimum, the `-EncryptionRightsDefinitions` should reference a mail-enabled security group, not a personal admin UPN.
+As of the 2 November 2026 reconciliation, the live label actually grants **two** principals, not one: the named admin (`OWNER`) and a separate all-internal-users custom grant. This is a deliberate design choice, not an oversight — the all-internal grant intentionally omits `PRINT` and `EXTRACT` so Microsoft 365 Copilot cannot read Restricted - Internal content and so users cannot print it, while still letting every internal user view, co-author, reply, and forward within the protection boundary. That part of the original critique (no resilience for ordinary users) is resolved.
+
+The single point of failure that remains is narrower than originally described: it's scoped to the **admin `OWNER` identity specifically**. If that one admin account is deleted, disabled, or its UPN changes, nobody retains `OWNER`/Full Control (and therefore `EXTRACT`) over previously-encrypted Restricted - Internal content — recovery then depends entirely on a configured Super User group (see `IAC-Sensitivity-Labels-Documentation.md` §13). Microsoft's "Highly Confidential \ All Employees" avoids this because it has no separate admin-owner grant at all. The IAC approach should still replace the individual admin UPN with a mail-enabled security group for the `OWNER` grant specifically — the all-internal custom grant should **not** be touched or upgraded to a predefined permission level (Editor/Co-Author or Owner/Co-Owner both bundle `PRINT` and `EXTRACT` together, which would silently re-enable Copilot access on the highest-sensitivity tier).
 
 ### Concern 2: Confidential - Reporting is architecturally redundant
 
@@ -128,13 +132,13 @@ The standard that formally uses "Restricted" as the highest commercial label tie
 | Classification depth | **Microsoft** | 3-tier model aligns with NIST/ISO; IAC misses General audience distinction |
 | Auto-labeling | **Microsoft** | IAC has nothing configured |
 | External sharing flexibility | **Microsoft** | Encrypt-Only vs. DNF; General - Anyone label |
-| Highest-tier encryption resilience | **Microsoft** | Org-wide vs. admin-only single account |
+| Highest-tier encryption resilience | **Mixed** | IAC's all-internal grant now matches Microsoft's org-wide resilience for ordinary users; the admin `OWNER` identity is still a single point of failure |
 | Policy granularity | **IAC** | Tiered policies beat a single unified policy |
 | Meetings coverage | **Microsoft** | IAC has none |
 | Personal/non-business data | **Microsoft** | IAC has no Personal label |
 | Visual marking strategy | **Mixed** | IAC watermarks all Restricted (good); red on General (problematic) |
 
-IAC's taxonomy is architecturally more sophisticated than Microsoft's defaults in container protection and policy design — those are genuine strengths. However, IAC has three real gaps that should be addressed: the missing Personal label, the absence of auto-labeling, and the admin-only encryption on Restricted - Internal. The Confidential - Reporting sublabel and General red markings are worth reconsidering. The parent label migration risk needs to be confirmed before any changes are made.
+IAC's taxonomy is architecturally more sophisticated than Microsoft's defaults in container protection and policy design — those are genuine strengths. However, IAC has three real gaps that should be addressed: the missing Personal label, the absence of auto-labeling, and the admin `OWNER` single point of failure on Restricted - Internal (narrower than originally scoped — see Concern 1). The Confidential - Reporting sublabel and General red markings are worth reconsidering. The parent label migration risk needs to be confirmed before any changes are made.
 
 ---
 
@@ -160,7 +164,7 @@ Highly Confidential  (parent/group — container: Private, guests BLOCKED)
 ## Recommended Immediate Actions
 
 1. Verify whether the tenant uses the modern label scheme (label groups) or traditional parent labels — this determines whether container protection is functioning as documented
-2. Replace `<AdminEmail>: OWNER` encryption on Restricted - Internal with a mail-enabled security group
+2. Replace the `<AdminEmail>: OWNER` admin grant on Restricted - Internal with a mail-enabled security group (the separate all-internal custom grant added 2 November 2026 is correct as-is — do not modify it)
 3. Add a Personal label scoped to File and Email with no protection
 4. Add a General - Anyone sublabel for approved external sharing scenarios
 5. Configure at least one auto-labeling policy — start with the Microsoft default credit card SIT configuration as a baseline
