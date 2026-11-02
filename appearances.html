@@ -15,6 +15,29 @@
     .featured-video-grid { grid-template-columns: 1fr !important; }
     .featured-video-embed { padding-bottom: 56.25% !important; min-height: 200px !important; }
   }
+  .ignite-img-wrap {
+    flex: 1 1 220px;
+    max-width: 280px;
+    min-height: 260px;
+    position: relative;
+    background: #06041f;
+  }
+  .ignite-img-wrap-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  @media (max-width: 700px) {
+    .ignite-img-wrap {
+      flex-basis: 100%;
+      max-width: 100%;
+      min-height: 0;
+      aspect-ratio: 768 / 809;
+    }
+  }
   .li-scroll {
     display: flex;
     gap: 14px;
@@ -125,8 +148,8 @@
           </div>
           <div style="font-size:0.82rem;color:#b8c4d6;">San Francisco, Moscone Center &middot; Nov 17&ndash;20, 2026</div>
         </div>
-        <div style="flex:1 1 220px;max-width:280px;min-height:260px;position:relative;background:#06041f;">
-          <img src="assets/conditionalaccess-ignite-2026-mvp.jpg" alt="Jon Hope, Microsoft MVP, pointing to his Microsoft Ignite 2026 MVP badge outside the Moscone Center, wearing an Inforcer t-shirt" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
+        <div class="ignite-img-wrap">
+          <img src="assets/conditionalaccess-ignite-2026-mvp.jpg" alt="Jon Hope, Microsoft MVP, pointing to his Microsoft Ignite 2026 MVP badge outside the Moscone Center, wearing an Inforcer t-shirt" class="ignite-img-wrap-media">
           <div style="position:absolute;inset:0;background:linear-gradient(90deg, rgba(10,5,53,0.55) 0%, transparent 18%);"></div>
         </div>
       </a>
