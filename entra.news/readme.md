@@ -4,9 +4,9 @@ Author: Jon Hope | M365 Solutions Architect at Inforcer
 Medium: [medium.com/@jhope188](https://medium.com/@jhope188)  
 Blog: [conditionalaccess.tech](https://conditionalaccess.tech/)  
 Followers: 103  
-Last Updated: October 26, 2026
+Last Updated: November 2, 2026
 
-> Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #171 (published October 18, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
+> Current Entra News archive snapshot: the latest weekly issue visible in the public archive is Entra News #173 (published November 1, 2026). This page reflects that latest weekly release in the site metadata and archive notes.
 
 ---
 
@@ -14,17 +14,17 @@ Last Updated: October 26, 2026
 
 | | |
 |---|---|
-| Total Articles | 56 (all published) |
-| Entra News Features | 30 (across 27 issues) |
+| Total Articles | 57 (all published) |
+| Entra News Features | 31 (across 28 issues) |
 | 🥇 #1 Most Popular Post | 1 (Issue #141) |
 | 🥈 #2 Most Popular Post | 1 (Issue #143) |
 | 🥉 #3 Most Popular Post | 1 (Issue #147) |
 | Double-Feature Issues | 3 (Issues #141 & #142, and #168 — two articles each) |
 | Featured in Back-to-Back Issues | 3 articles (Issues #140/#141, #142/#143, and #146/#147) |
-| Unique Articles Featured | 27 of 56 published (48%) |
+| Unique Articles Featured | 28 of 57 published (49%) |
 | Publication Period | September 2025 — October 2026 |
 
-> Current public archive snapshot: Entra News #171 (October 18, 2026). The feature timeline above already includes the Jon Hope features from issues #153, #154, #157, #160, #165, the double-feature in #168 (SMS and Voice Retirement, Part 1 and Part 2), and the #171 feature (App Registrations and Enterprise Apps: What the Entra Object Model Actually Looks Like). The current public weekly issue is now #171.
+> Current public archive snapshot: Entra News #173 (November 1, 2026). The feature timeline above already includes the Jon Hope features from issues #153, #154, #157, #160, #165, the double-feature in #168 (SMS and Voice Retirement, Part 1 and Part 2), the #171 feature (App Registrations and Enterprise Apps: What the Entra Object Model Actually Looks Like), and the #173 feature (Policy Plans Change How You Organize Conditional Access). The current public weekly issue is now #173.
 
 ---
 
@@ -55,10 +55,11 @@ Last Updated: October 26, 2026
 
 ## 📝 Complete Article Catalogue
 
-### 2026 (37 articles)
+### 2026 (38 articles)
 
 | # | Title | Published | Responses | Saves | Entra News |
 |---|-------|-----------|-----------|-------|------------|
+| 57 | Policy Plans Change How You Organize Conditional Access | Oct 28 | — | — | ✅ #173 |
 | 56 | App Registrations and Enterprise Apps: What the Entra Object Model Actually Looks Like | Oct 17 | — | — | ✅ #171 |
 | 55 | SMS and Voice Retirement, Part 2 | Sep 26 | — | — | ✅ #168 |
 | 54 | SMS and Voice Retirement, Part 1 | Sep 26 | — | — | ✅ #168 |
