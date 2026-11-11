@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 11 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Passkey Migration: A Practical Rollout Plan</title>
+      <link>https://conditionalaccess.tech/articles/entra/Passkey/conditionalaccess-passkey-migration-guide.html</link>
+      <description>A practical plan for migrating Microsoft Entra ID users to passkeys, from profile design and pilot waves to Conditional Access and account recovery.</description>
+      <pubDate>Wed, 11 Nov 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/entra/Passkey/conditionalaccess-passkey-migration-guide.html</guid>
+      <category>Entra</category>
+    </item>
+
     <item>
       <title>Policy Plans Change How You Organize Conditional Access</title>
       <link>https://conditionalaccess.tech/articles/conditional-access/catech-policy-plans-october-2026.html</link>
