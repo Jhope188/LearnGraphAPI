@@ -87,6 +87,9 @@ h3{font-size:1.04rem;font-weight:600;color:var(--color-text-primary);margin:28px
 p{margin:0 0 16px;max-width:724px}
 strong{color:var(--color-text-primary);font-weight:600}
 .mono{font-family:var(--mono);font-size:0.78rem;color:var(--color-teal);background:rgba(0,184,176,0.08);padding:2px 6px;border-radius:3px;word-break:break-word}
+.source-list{margin:12px 0 24px}
+.source-list dt{font-weight:600;margin-top:14px;overflow-wrap:anywhere}
+.source-list dd{margin:2px 0 0;font-size:.9rem}
 
 /* Cards */
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0 24px}
@@ -654,36 +657,70 @@ SigninLogs
 
 <section id="sources">
   <div class="eyebrow">11 · References</div>
-  <h2>Sources</h2>
-  <div class="tbl"><table>
-    <thead><tr><th>Source</th><th>Used for</th></tr></thead>
-    <tbody>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-enable-passkey-fido2" target="_blank">Enable passkeys (FIDO2)</a></td><td>Profiles, attestation, synced providers, version floors, known issues</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-support-authenticator-passkey" target="_blank">Support passkeys in Authenticator</a></td><td>AAGUIDs, CA loops, MAM, Credential Registration resource</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-temporary-access-pass" target="_blank">Temporary Access Pass</a></td><td>TAP settings and limits</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-account-recovery-overview" target="_blank">Account recovery overview</a></td><td>IDV, Verified ID, Evaluation mode</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-plan-prerequisites-phishing-resistant-passwordless-authentication" target="_blank">Plan phishing-resistant passwordless</a></td><td>Privileged-first, licensing, stakeholders</td></tr>
-      <tr><td><a href="https://microsoft.com/en-us/security/blog/2026/07/13/microsoft-entra-id-security-updates-passkeys-are-the-default-authentication-method-in-entra-id/" target="_blank">Microsoft Security Blog, 13 Jul 2026</a></td><td>Passkeys default, SMS/voice retirement</td></tr>
-      <tr><td><a href="https://mc.merill.net/message/MC1221452" target="_blank">MC1221452</a> · <a href="https://entradiff.merill.net/message-center/MC1450133/" target="_blank">MC1450133</a> · <a href="https://mc.merill.net/message/MC1459133" target="_blank">MC1459133</a></td><td>Profile GA and migration dates, first sign-in method, B2B guest passkeys</td></tr>
-      <tr><td><a href="https://janbakker.tech/you-shall-not-passkey-updated/" target="_blank">Jan Bakker: You shall not pass(key)!</a></td><td>CA split, bootstrap strength, test matrix</td></tr>
-      <tr><td><a href="https://passkey.janbakker.tech/index.html" target="_blank" rel="noopener noreferrer">Jan Bakker: Microsoft 365 Passkey Guide</a></td><td>Device-bound and synced passkey storage options</td></tr>
-      <tr><td><a href="https://natehutchinson.co.uk/post/phishing-resistant-mfa-planning-your-passkey-rollout-in-microsoft-365/" target="_blank" rel="noopener noreferrer">Nate Hutchinson: Planning your passkey rollout in Microsoft 365</a></td><td>Device-bound-first alternative, app protection exclusions, downgrade risk and RADIUS discovery</td></tr>
-      <tr><td><a href="https://github.com/nathanmcnulty/research-passkeys/tree/main/samples/notifications" target="_blank" rel="noopener noreferrer">Nathan McNulty: MFA registration notifications</a></td><td>Registration monitoring, user notifications and audit event coverage</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-system-preferred-authentication" target="_blank" rel="noopener noreferrer">System-preferred authentication</a></td><td>Preferred prompts, method choice and Conditional Access</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-plan-rdp-phishing-resistant-passwordless-authentication" target="_blank" rel="noopener noreferrer">Remote Desktop phishing-resistant support</a> · <a href="https://learn.microsoft.com/en-us/windows-app/compare-platforms-features#redirection" target="_blank" rel="noopener noreferrer">Windows App feature comparison</a> · <a href="https://learn.microsoft.com/en-us/azure/virtual-desktop/redirection-configure-webauthn" target="_blank" rel="noopener noreferrer">WebAuthn redirection</a></td><td>RDP session initiation, in-session preview support and redirection policy</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-windows" target="_blank" rel="noopener noreferrer">Entra sign-in to Azure Windows VMs</a></td><td>VM Conditional Access, passwordless session hosts and remote lock behavior</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/deploy/" target="_blank" rel="noopener noreferrer">Plan Windows Hello for Business</a> · <a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/deploy/hybrid-cloud-kerberos-trust" target="_blank" rel="noopener noreferrer">Cloud Kerberos trust</a> · <a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/how-it-works-provisioning" target="_blank" rel="noopener noreferrer">Provisioning</a></td><td>Separate policy, hybrid trust options and new-device enrollment</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings" target="_blank" rel="noopener noreferrer">PIM role settings</a> · <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-registration-mfa-sspr-combined" target="_blank" rel="noopener noreferrer">Combined registration</a></td><td>PIM reauthentication and interrupt-mode limitations</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey-authenticator" target="_blank" rel="noopener noreferrer">Sign in with Authenticator passkeys</a> · <a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/rdp-sign-in" target="_blank" rel="noopener noreferrer">Windows Hello for Business RDP sign-in</a></td><td>Phone proximity and certificate-based RDP options</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/howto-mfa-nps-extension" target="_blank" rel="noopener noreferrer">NPS extension for Entra MFA</a></td><td>RADIUS authentication flow and supported second factors</td></tr>
-      <tr><td><a href="https://janbakker.tech/things-you-should-know-before-rolling-out-device-bound-passkeys-in-microsoft-authenticator-app/" target="_blank">Jan Bakker: before rolling out Authenticator passkeys</a></td><td>Android, compliance and MAM gotchas</td></tr>
-      <tr><td><a href="https://tminus365.com/microsoft-365-passkeys-not-working/" target="_blank">T-Minus365: passkeys not working</a></td><td>Failure modes, recovery steps</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-faq" target="_blank">Passkey FAQ</a></td><td>Device-bound for admins, synced for non-admins</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows" target="_blank">Entra passkey on Windows</a></td><td>Windows Hello container, attestation limit, AAGUIDs</td></tr>
-      <tr><td><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strengths" target="_blank">Authentication strengths</a> · <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strength-external-users" target="_blank">external users</a></td><td>What satisfies Phishing-resistant MFA, TAP, guest trust</td></tr>
-      <tr><td><a href="https://mc.merill.net/message/MC1540327" target="_blank">MC1540327</a> · <a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-account-recovery-enable" target="_blank">Enable account recovery</a></td><td>Phased SMS and voice dates, recovery licensing</td></tr>
-    </tbody>
-  </table></div>
+  <h2>Sources and further reading</h2>
+  <p>Microsoft Learn is the starting point for current requirements. The community articles, videos and tools add rollout experience and useful ways to explore passkeys.</p>
+
+  <h3>Microsoft Learn</h3>
+  <dl class="source-list">
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-enable-passkey-fido2" target="_blank" rel="noopener noreferrer">Enable passkeys (FIDO2)</a></dt><dd>Configure passkey profiles, attestation and allowed providers; check requirements and known issues.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-support-authenticator-passkey" target="_blank" rel="noopener noreferrer">Support passkeys in Authenticator</a></dt><dd>Plan Authenticator passkeys, including AAGUIDs and Conditional Access and app protection considerations.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/howto-authentication-temporary-access-pass" target="_blank" rel="noopener noreferrer">Temporary Access Pass</a></dt><dd>Configure TAP for onboarding and recovery, and review its restrictions, including registration interrupt mode.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-account-recovery-overview" target="_blank" rel="noopener noreferrer">Account recovery overview</a></dt><dd>Understand identity verification, Verified ID and evaluation mode for account recovery.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-account-recovery-enable" target="_blank" rel="noopener noreferrer">Enable account recovery</a></dt><dd>Review licensing and configuration requirements for Microsoft Entra account recovery.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-plan-prerequisites-phishing-resistant-passwordless-authentication" target="_blank" rel="noopener noreferrer">Plan phishing-resistant passwordless</a></dt><dd>Work through deployment prerequisites, licensing and stakeholder planning.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-system-preferred-authentication" target="_blank" rel="noopener noreferrer">System-preferred authentication</a></dt><dd>Review how Entra selects preferred sign-in methods and how the setting interacts with Conditional Access.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strengths" target="_blank" rel="noopener noreferrer">Authentication strengths</a></dt><dd>See which methods satisfy each built-in strength and how to create custom strengths.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-authentication-strength-external-users" target="_blank" rel="noopener noreferrer">Authentication strengths for external users</a></dt><dd>Review authentication strengths and cross-tenant trust for guest access.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/passkey-faq" target="_blank" rel="noopener noreferrer">Passkey FAQ</a></dt><dd>Answers to common questions about passkey types, requirements and supported scenarios.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-entra-passkeys-on-windows" target="_blank" rel="noopener noreferrer">Entra passkeys on Windows</a></dt><dd>Windows passkey storage, AAGUIDs and attestation limitations.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-sign-in-passkey-authenticator" target="_blank" rel="noopener noreferrer">Sign in with Authenticator passkeys</a></dt><dd>Walk through same-device and cross-device sign-in using an Authenticator passkey.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-plan-rdp-phishing-resistant-passwordless-authentication" target="_blank" rel="noopener noreferrer">Remote Desktop phishing-resistant support</a></dt><dd>Check supported Remote Desktop clients and hosts for session sign-in and in-session authentication.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/windows-app/compare-platforms-features#redirection" target="_blank" rel="noopener noreferrer">Windows App feature comparison</a></dt><dd>Compare redirection support, including WebAuthn, across Windows App platforms.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/azure/virtual-desktop/redirection-configure-webauthn" target="_blank" rel="noopener noreferrer">Configure WebAuthn redirection</a></dt><dd>Configure WebAuthn redirection for supported Azure Virtual Desktop sessions.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-windows" target="_blank" rel="noopener noreferrer">Entra sign-in to Azure Windows VMs</a></dt><dd>Review VM sign-in requirements, Conditional Access and remote-session limitations.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/deploy/" target="_blank" rel="noopener noreferrer">Plan Windows Hello for Business</a></dt><dd>Plan a separate Windows Hello for Business deployment and select a trust model.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/deploy/hybrid-cloud-kerberos-trust" target="_blank" rel="noopener noreferrer">Cloud Kerberos trust</a></dt><dd>Configure hybrid access to on-premises resources using Windows Hello for Business cloud Kerberos trust.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/how-it-works-provisioning" target="_blank" rel="noopener noreferrer">Windows Hello for Business provisioning</a></dt><dd>Understand the credentials and steps involved in provisioning Windows Hello for Business.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/rdp-sign-in" target="_blank" rel="noopener noreferrer">Windows Hello for Business RDP sign-in</a></dt><dd>Review certificate trust and smart-card redirection requirements for RDP.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings" target="_blank" rel="noopener noreferrer">PIM role settings</a></dt><dd>Configure role activation requirements, including authentication context and reauthentication.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/concept-registration-mfa-sspr-combined" target="_blank" rel="noopener noreferrer">Combined registration</a></dt><dd>Review the combined security information registration experience and available methods.</dd>
+    <dt><a href="https://learn.microsoft.com/en-us/entra/identity/authentication/howto-mfa-nps-extension" target="_blank" rel="noopener noreferrer">NPS extension for Entra MFA</a></dt><dd>Understand the RADIUS authentication flow and supported second factors.</dd>
+  </dl>
+
+  <h3>Microsoft updates</h3>
+  <dl class="source-list">
+    <dt><a href="https://microsoft.com/en-us/security/blog/2026/07/13/microsoft-entra-id-security-updates-passkeys-are-the-default-authentication-method-in-entra-id/" target="_blank" rel="noopener noreferrer">Microsoft Security Blog: Passkeys are the default authentication method</a></dt><dd>Microsoft's announcement on passkeys and the planned retirement of SMS and voice methods.</dd>
+    <dt><a href="https://mc.merill.net/message/MC1221452" target="_blank" rel="noopener noreferrer">MC1221452: Passkey profiles</a></dt><dd>Message Center update on passkey profile availability and migration.</dd>
+    <dt><a href="https://entradiff.merill.net/message-center/MC1450133/" target="_blank" rel="noopener noreferrer">MC1450133: Passkeys as a first MFA method</a></dt><dd>Message Center update on registering a passkey as a user's first MFA method.</dd>
+    <dt><a href="https://mc.merill.net/message/MC1459133" target="_blank" rel="noopener noreferrer">MC1459133: B2B guest passkeys</a></dt><dd>Message Center update on passkey registration for guest users.</dd>
+    <dt><a href="https://mc.merill.net/message/MC1540327" target="_blank" rel="noopener noreferrer">MC1540327: SMS and voice</a></dt><dd>Message Center update on the phased retirement of SMS and voice authentication.</dd>
+  </dl>
+
+  <h3>Community</h3>
+  <dl class="source-list">
+    <dt><a href="https://www.corbado.com/blog/enterprise-passkey-deployment-challenges" target="_blank" rel="noopener noreferrer">Corbado: Enterprise passkey deployment challenges and solutions</a></dt><dd>Looks at Entra passkey enrollment, device-bound versus synced credentials, recovery and rollout challenges.</dd>
+    <dt><a href="https://www.corbado.com/blog/webauthn-vs-ctap-vs-fido2" target="_blank" rel="noopener noreferrer">Corbado: WebAuthn vs. CTAP vs. FIDO2</a></dt><dd>Explains the roles of the WebAuthn API, CTAP and FIDO2 in passkey authentication.</dd>
+    <dt><a href="https://janbakker.tech/things-you-should-know-before-rolling-out-device-bound-passkeys-in-microsoft-authenticator-app/" target="_blank" rel="noopener noreferrer">Jan Bakker: Before rolling out Authenticator passkeys</a></dt><dd>Practical registration issues involving Android, compliant devices and app protection policies.</dd>
+    <dt><a href="https://janbakker.tech/you-shall-not-passkey-updated/" target="_blank" rel="noopener noreferrer">Jan Bakker: You shall not pass(key)!</a></dt><dd>A Conditional Access design with a bootstrap strength and a rollout test matrix.</dd>
+    <dt><a href="https://natehutchinson.co.uk/post/phishing-resistant-mfa-planning-your-passkey-rollout-in-microsoft-365/" target="_blank" rel="noopener noreferrer">Nate Hutchinson: Planning your passkey rollout in Microsoft 365</a></dt><dd>A device-bound-first rollout with app protection exclusions, downgrade risks and RADIUS discovery.</dd>
+    <dt><a href="https://tminus365.com/microsoft-365-passkeys-not-working/" target="_blank" rel="noopener noreferrer">T-Minus365: Microsoft 365 passkeys not working</a></dt><dd>Passkey failure scenarios and recovery steps to help with troubleshooting.</dd>
+  </dl>
+
+  <h3>YouTube</h3>
+  <dl class="source-list">
+    <dt><a href="https://www.youtube.com/watch?v=4DdflBwnlv4&amp;list=PLUFlkXa1hSjI" target="_blank" rel="noopener noreferrer">Tim Cappalli: Passkey Mythbusters</a></dt><dd>Short takes on common passkey misunderstandings from Authenticate 2025.</dd>
+    <dt><a href="https://www.youtube.com/watch?v=5-iHASoBWFY&amp;list=PLUFlkXa1hSjI&amp;index=5" target="_blank" rel="noopener noreferrer">Identity Roundtable: Passkeys, Pitfalls &amp; Tenants Gone Wild</a></dt><dd>A discussion about passkeys and identity challenges in Microsoft Entra tenants.</dd>
+    <dt><a href="https://youtu.be/O6sOceugWU4?si=hhzuG6PrWm-yntm0" target="_blank" rel="noopener noreferrer">Threatscape: Rolling Out Passkeys in Entra</a></dt><dd>A discussion of rolling out passkeys in Microsoft Entra without disrupting users.</dd>
+    <dt><a href="https://youtu.be/HJ78T5WOpW4?si=PH7NSz3gPm95S0OX" target="_blank" rel="noopener noreferrer">John Savill: Where are the keys in passkeys?</a></dt><dd>An explanation of the keys behind passkey authentication and where they reside.</dd>
+    <dt><a href="https://youtube.com/shorts/pN68ayK9ksg" target="_blank" rel="noopener noreferrer">Jon Hope: Phone-to-phone passkey registration</a></dt><dd>A walkthrough of using an existing phone to authenticate while registering a passkey on a new phone.</dd>
+  </dl>
+
+  <h3>Tools and samples</h3>
+  <dl class="source-list">
+    <dt><a href="https://passkeys.directory/" target="_blank" rel="noopener noreferrer">Passkeys.directory</a></dt><dd>A community-driven directory of websites, apps and services that support passkey sign-in.</dd>
+    <dt><a href="https://passkey.janbakker.tech/index.html" target="_blank" rel="noopener noreferrer">Jan Bakker: Microsoft 365 Passkey Guide</a></dt><dd>Compare storage options and explore AAGUIDs and registration campaigns.</dd>
+    <dt><a href="https://github.com/nathanmcnulty/research-passkeys/tree/main/samples/notifications" target="_blank" rel="noopener noreferrer">Nathan McNulty: MFA registration notifications</a></dt><dd>Sample notifications for monitoring authentication method registrations and informing users.</dd>
+  </dl>
 </section>
 
 </main>
