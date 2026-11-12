@@ -95,7 +95,7 @@ If you need to ensure the checkbox appears checked in the portal, open the label
 
 | File | Purpose |
 |------|---------|
-| `Enable-SensitivityLabelsPrerequisites.ps1` | Enables MIP labels in Entra ID, SharePoint, and runs AzureADLabelSync. **Run first.** |
+| `Enable-SensitivityLabelsPrerequisites.ps1` | Enables MIP labels in Entra ID and SharePoint, turns on labeling for PDF, OneNote and MP4 video files, and runs AzureADLabelSync. **Run first.** |
 | `SensitivityLabel.ps1` | Creates all 9 labels (does NOT publish). **Run second.** |
 | `Publish-SensitivityLabelPolicies.ps1` | Publishes labels via 3 tiered policies. **Run third.** |
 | `IAC-Sensitivity-Labels-Documentation.md` | This document |
@@ -104,14 +104,17 @@ If you need to ensure the checkbox appears checked in the portal, open the label
 
 ## 2. Prerequisites
 
-Before creating labels, the following prerequisites must be enabled. The `Enable-SensitivityLabelsPrerequisites.ps1` script handles all three:
+Before creating labels, the following prerequisites must be enabled. The `Enable-SensitivityLabelsPrerequisites.ps1` script handles items 1 to 6. Item 7 is a manual Purview portal setting.
 
 | # | Prerequisite | What It Does | How to Verify |
 |---|-------------|--------------|---------------|
 | 1 | **EnableMIPLabels = True** | Allows sensitivity labels to be applied to M365 Groups | `Invoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/v1.0/groupSettings'` → check `EnableMIPLabels` value |
-| 2 | **isSensitivityLabelsEnabled = True** | Enables sensitivity labels in SharePoint Online | `Invoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/beta/admin/sharepoint/settings'` → check `isSensitivityLabelsEnabled` |
+| 2 | **EnableAIPIntegration = True** | Enables sensitivity labels for Office files in SharePoint and OneDrive | Read it from the SharePoint admin center (see [2.1](#21-sharepoint-labeling-for-pdf-onenote-and-mp4-video)). Graph can't verify it: Microsoft's `sharepointSettings` resource has no sensitivity label property, and the `isSensitivityLabelsEnabled` property earlier versions of this script checked doesn't exist |
 | 3 | **Execute-AzureADLabelSync** | Syncs Purview labels to Entra ID so they appear in Teams/SharePoint admin | Run via Connect-IPPSSession |
-| 4 | **Co-authoring for encrypted files** | Enables real-time co-authoring on Office files protected by sensitivity label encryption. Without this, two users cannot simultaneously edit an encrypted document — the second user receives a read-only lock. | Purview portal → **Settings** → **Co-authoring for files with sensitivity labels** → toggle **On** |
+| 4 | **EnableSensitivityLabelForPDF = True** | Lets users label PDF files in SharePoint and OneDrive, and lets those services process label-encrypted PDFs | See [2.1](#21-sharepoint-labeling-for-pdf-onenote-and-mp4-video) |
+| 5 | **EnableSensitivityLabelForOneNote = True** | Lets users label OneNote sections | See [2.1](#21-sharepoint-labeling-for-pdf-onenote-and-mp4-video) |
+| 6 | **EnableSensitivityLabelForVideoFiles = True** | Lets users label MP4 video files and Clipchamp projects | See [2.1](#21-sharepoint-labeling-for-pdf-onenote-and-mp4-video) |
+| 7 | **Co-authoring for encrypted files** | Enables real-time co-authoring on Office files protected by sensitivity label encryption. Without this, two users cannot simultaneously edit an encrypted document — the second user receives a read-only lock. | Purview portal → **Settings** → **Co-authoring for files with sensitivity labels** → toggle **On** |
 
 > **Co-authoring note:** Co-authoring requires Microsoft 365 Apps version 2107 or later and applies only to files stored in SharePoint Online or OneDrive for Business. On-premises file shares and non-Microsoft storage do not support co-authoring with label encryption. Enable this setting before deploying encrypted labels to end users to avoid unexpected edit conflicts.
 
@@ -125,8 +128,71 @@ Before creating labels, the following prerequisites must be enabled. The `Enable
 
 - `ExchangeOnlineManagement` v3+ (REST-based)
 - `Microsoft.Graph.Authentication`
+- Steps 2 and 3 (the SharePoint settings) need one of: `Microsoft.Online.SharePoint.PowerShell` on Windows, or `PnP.PowerShell` on any OS, including macOS (see [2.1](#21-sharepoint-labeling-for-pdf-onenote-and-mp4-video))
 
 **Propagation Warning:** After running prerequisites, allow **up to 24 hours** for the "Groups & Sites" scope checkbox to appear in the Purview label editor.
+
+### 2.1 SharePoint labeling for PDF, OneNote and MP4 video
+
+Turning on sensitivity labels for SharePoint and OneDrive (`EnableAIPIntegration`) covers Office files and Loop. PDF files, OneNote sections and MP4 video are controlled by three separate SharePoint tenant settings, so a tenant can have labels working in Word and still show nothing on a PDF or a recording.
+
+| Setting | Covers | Minimum SharePoint Online Management Shell | Behaviour to plan for |
+|---|---|---|---|
+| `EnableSensitivityLabelForPDF` | PDF files in SharePoint and OneDrive | 16.0.24211.12000 | Existing auto-labeling policies can start labeling PDFs, so file volumes can jump (Microsoft's ceiling is 500,000 auto-labeled files per tenant per day). Signed PDFs are not supported |
+| `EnableSensitivityLabelForOneNote` | OneNote, at the section level | 16.0.26914.12004 | Run it after `EnableAIPIntegration` |
+| `EnableSensitivityLabelForVideoFiles` | MP4 files and Clipchamp projects | None listed | Manual labeling only: MP4 can't be auto-labeled or labeled by default, though it can inherit a label from a Teams meeting. A label that encrypts blocks downloads. Labels that encrypt must use **Assign permissions now**, not user-defined permissions |
+
+All three take about 15 minutes to take effect. With Microsoft 365 Multi-Geo, connect to each geo location and run the setting separately.
+
+**Current status in this tenant** (read from the SharePoint admin tenant on 12 November 2026, after running `Enable-SensitivityLabelsPrerequisites.ps1` from macOS with PnP):
+
+| Setting | Value | How it got there |
+|---|---|---|
+| `EnableAIPIntegration` (Office files, Loop) | ✅ True | Already on |
+| `EnableSensitivityLabelForPDF` | ✅ True | Already on |
+| `EnableSensitivityLabelForOneNote` | ✅ True | Set by the script, confirmed by read-back |
+| `EnableSensitivityLabelForVideoFiles` | ✅ True | Set by the script, confirmed by read-back |
+
+OneNote and video were off until that run. Allow about 15 minutes before users see the Sensitivity option on those file types.
+
+**Check the values**
+
+Windows, SharePoint Online Management Shell:
+
+```powershell
+Connect-SPOService -Url https://<tenant>-admin.sharepoint.com
+Get-SPOTenant | Select-Object EnableAIPIntegration, EnableSensitivityLabelForPDF, EnableSensitivityLabelForOneNote, EnableSensitivityLabelForVideoFiles
+```
+
+macOS and Linux, PnP.PowerShell. The SharePoint Online Management Shell is Windows-only, and PnP 3.1.0 exposes only `EnableAIPIntegration` and `EnableSensitivityLabelForPDF` on `Get-PnPTenant` and `Set-PnPTenant`:
+
+```powershell
+Connect-PnPOnline -Url https://<tenant>-admin.sharepoint.com -Interactive -ClientId '<app-client-id>' -Tenant <tenant>.onmicrosoft.com
+Get-PnPTenant | Select-Object EnableAIPIntegration, EnableSensitivityLabelForPDF
+```
+
+The prerequisites script reads and sets the OneNote and video values on macOS too, by calling the same SharePoint admin CSOM endpoint that `Set-SPOTenant` uses (`ProcessQuery` on the admin tenant object). Reading that way is how the status table above was produced. Invalid property names are rejected by the service, and the script checks the value again after each change.
+
+**Turn them on**
+
+```powershell
+Set-SPOTenant -EnableSensitivityLabelForPDF $true
+Set-SPOTenant -EnableSensitivityLabelForOneNote $true
+Set-SPOTenant -EnableSensitivityLabelForVideoFiles $true
+```
+
+`Enable-SensitivityLabelsPrerequisites.ps1` does this in steps 2 and 3 and skips settings that are already on. It uses the SharePoint Online Management Shell when it runs on Windows. Elsewhere it signs in with PnP.PowerShell and asks for the app (client) ID if you didn't pass `-PnPClientId`: it uses `Set-PnPTenant` where PnP has the parameter (`EnableAIPIntegration`, PDF) and the CSOM call for OneNote and video. After each change it reads the value back, so a ✅ means the setting reads True. Use `-SkipFileTypeLabels` to leave step 3 out.
+
+Example step 3 output when OneNote and video were off:
+
+```text
+[3/4] Sensitivity label support for PDF, OneNote and MP4 video...
+  ✅ EnableSensitivityLabelForPDF already True (PDF files)
+  ✅ EnableSensitivityLabelForOneNote set to True (OneNote sections)
+  ✅ EnableSensitivityLabelForVideoFiles set to True (MP4 video files and Clipchamp projects)
+```
+
+If the script can't connect, step 2 says why (no client ID, PnP.PowerShell not installed, or a sign-in error) and step 3 is skipped with those settings reported as not checked.
 
 ---
 
@@ -455,6 +521,10 @@ cd ~/Desktop/BaslineSetup/Purview
 pwsh ./Enable-SensitivityLabelsPrerequisites.ps1 -TenantId "<your-tenant-id>"
 ```
 
+On macOS or Linux, add `-PnPClientId "<app-client-id>"` so steps 2 and 3 can sign in to SharePoint with PnP.PowerShell. If you leave it off, the script prompts for the ID at step 2; press Enter to skip, and those steps then report the SharePoint settings as not checked and carry on. Add `-SkipFileTypeLabels` to leave step 3 out.
+
+The prerequisites script also uses `Invoke-MgGraphRequest` for the tenant domain lookup rather than `Get-MgDomain`. Having two versions of `Microsoft.Graph.Authentication` installed can make `Get-MgDomain` fail with "Assembly with same name is already loaded".
+
 Wait **24 hours** for propagation.
 
 #### Step 2: Dry Run Labels
@@ -610,6 +680,7 @@ $label.LabelActions  # Should show protectgroup + protectsite JSON
 |-------|-------|-----|
 | Labels don't appear in Office apps | Policy not yet propagated | Wait 24 hours. Check policy scope with `Get-LabelPolicy` |
 | "Groups & Sites" checkbox greyed out in Purview portal | Prerequisites not run | Run `Enable-SensitivityLabelsPrerequisites.ps1` and wait 24 hours |
+| No Sensitivity button or label on a PDF, OneNote section or MP4 | The file type setting is off | Check `EnableSensitivityLabelForPDF`, `EnableSensitivityLabelForOneNote` and `EnableSensitivityLabelForVideoFiles` (see [2.1](#21-sharepoint-labeling-for-pdf-onenote-and-mp4-video)), turn on the one you need and wait about 15 minutes |
 | User can't see Restricted labels | Not in scope of the Restricted policy | Check `Get-LabelPolicy` → verify user is in `ExchangeLocation` |
 | Mandatory labelling not enforced | Policy settings not propagated | Verify `Settings` in `Get-LabelPolicy` contains `mandatory=true` |
 | Encrypted email can't be opened by recipient | Recipient not in encryption rights | For Template-encrypted labels, only org domain has rights. Use "Third Parties" labels for external sharing |
