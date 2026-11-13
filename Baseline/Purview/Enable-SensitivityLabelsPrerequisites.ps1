@@ -35,7 +35,7 @@ param(
     [Parameter(HelpMessage = "SharePoint admin center URL, e.g. https://contoso-admin.sharepoint.com. Derived from the tenant's onmicrosoft.com domain if omitted.")]
     [string]$SharePointAdminUrl,
 
-    [Parameter(HelpMessage = "Client ID of an Entra app registered for PnP.PowerShell interactive sign-in. Used when the SharePoint Online Management Shell is unavailable (macOS, Linux).")]
+    [Parameter(HelpMessage = "Client ID of an Entra app registered for PnP.PowerShell interactive sign-in. Used on macOS and Linux only; Windows uses the SharePoint Online Management Shell and ignores it. Prompted for if omitted.")]
     [string]$PnPClientId,
 
     [Parameter(HelpMessage = "Skip the PDF, OneNote and MP4 video sensitivity label settings (step 3).")]
@@ -76,50 +76,53 @@ function Connect-SharePointAdmin {
     $adminUrl = if ($SharePointAdminUrl) { $SharePointAdminUrl } else { "https://$($initialDomain -replace '\.onmicrosoft\.com$', '')-admin.sharepoint.com" }
     $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or $IsWindows
 
-    if ($onWindows -and (Get-Module -ListAvailable -Name Microsoft.Online.SharePoint.PowerShell)) {
+    if ($onWindows) {
+        # Windows: SharePoint Online Management Shell only
+        if (-not (Get-Module -ListAvailable -Name Microsoft.Online.SharePoint.PowerShell)) {
+            Write-Host "  ⚠️  Could not connect to the SharePoint admin center ($adminUrl). These settings are not checked." -ForegroundColor Yellow
+            Write-Host "     The SharePoint Online Management Shell is not installed. Run: Install-Module Microsoft.Online.SharePoint.PowerShell -Scope CurrentUser" -ForegroundColor Yellow
+            return $null
+        }
         try {
             Import-Module Microsoft.Online.SharePoint.PowerShell -DisableNameChecking -ErrorAction Stop
             Connect-SPOService -Url $adminUrl -ErrorAction Stop
             $script:spoMethod = 'SPO'
         }
         catch {
-            Write-Host "  SharePoint Online Management Shell not usable: $($_.Exception.Message)" -ForegroundColor Gray
+            Write-Host "  ⚠️  Could not connect to the SharePoint admin center ($adminUrl). These settings are not checked." -ForegroundColor Yellow
+            Write-Host "     SharePoint Online Management Shell sign-in failed: $($_.Exception.Message)" -ForegroundColor Yellow
+            return $null
         }
     }
-
-    if (-not $script:spoMethod -and -not $PnPClientId -and [Environment]::UserInteractive) {
-        $PnPClientId = Read-Host "  PnP app (client) ID for the SharePoint sign-in (press Enter to skip)"
-    }
-
-    if (-not $script:spoMethod -and $PnPClientId -and (Get-Module -ListAvailable -Name PnP.PowerShell)) {
+    else {
+        # macOS and Linux: PnP.PowerShell only, because the SharePoint Online Management Shell does not run here
+        if (-not (Get-Module -ListAvailable -Name PnP.PowerShell)) {
+            Write-Host "  ⚠️  Could not connect to the SharePoint admin center ($adminUrl). These settings are not checked." -ForegroundColor Yellow
+            Write-Host "     PnP.PowerShell is not installed for this PowerShell. Run: Install-Module PnP.PowerShell -Scope CurrentUser" -ForegroundColor Yellow
+            return $null
+        }
+        $clientId = $PnPClientId
+        if (-not $clientId -and [Environment]::UserInteractive) {
+            $clientId = Read-Host "  PnP app (client) ID for the SharePoint sign-in (press Enter to skip)"
+        }
+        if (-not $clientId) {
+            Write-Host "  ⚠️  Could not connect to the SharePoint admin center ($adminUrl). These settings are not checked." -ForegroundColor Yellow
+            Write-Host "     -PnPClientId was not provided. On macOS and Linux the script needs it to sign in with PnP.PowerShell." -ForegroundColor Yellow
+            return $null
+        }
         try {
             Import-Module PnP.PowerShell -ErrorAction Stop
-            Connect-PnPOnline -Url $adminUrl -Interactive -ClientId $PnPClientId -Tenant $initialDomain -ErrorAction Stop
+            Connect-PnPOnline -Url $adminUrl -Interactive -ClientId $clientId -Tenant $initialDomain -ErrorAction Stop
             $script:spoMethod = 'PnP'
         }
         catch {
-            Write-Host "  PnP.PowerShell sign-in failed: $($_.Exception.Message)" -ForegroundColor Gray
+            Write-Host "  ⚠️  Could not connect to the SharePoint admin center ($adminUrl). These settings are not checked." -ForegroundColor Yellow
+            Write-Host "     PnP.PowerShell sign-in failed: $($_.Exception.Message)" -ForegroundColor Yellow
+            return $null
         }
     }
 
-    if ($script:spoMethod) {
-        Write-Host "  Connected to $adminUrl using $($script:spoMethod)" -ForegroundColor Gray
-    }
-    else {
-        Write-Host "  ⚠️  Could not connect to the SharePoint admin center ($adminUrl). These settings are not checked." -ForegroundColor Yellow
-        if (-not $onWindows -and -not $PnPClientId) {
-            Write-Host "     -PnPClientId was not provided. On macOS and Linux the script needs it to sign in with PnP.PowerShell." -ForegroundColor Yellow
-        }
-        elseif ($PnPClientId -and -not (Get-Module -ListAvailable -Name PnP.PowerShell)) {
-            Write-Host "     PnP.PowerShell is not installed for this PowerShell. Run: Install-Module PnP.PowerShell -Scope CurrentUser" -ForegroundColor Yellow
-        }
-        elseif ($onWindows -and -not $PnPClientId) {
-            Write-Host "     The SharePoint Online Management Shell did not connect and no -PnPClientId was provided." -ForegroundColor Yellow
-        }
-        else {
-            Write-Host "     See the sign-in error above." -ForegroundColor Yellow
-        }
-    }
+    Write-Host "  Connected to $adminUrl using $($script:spoMethod)" -ForegroundColor Gray
     return $script:spoMethod
 }
 

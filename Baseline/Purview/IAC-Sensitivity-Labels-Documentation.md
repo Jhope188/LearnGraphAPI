@@ -1,9 +1,9 @@
 # IAC Sensitivity Labels — Configuration & Best Practices
 
 > **Author:** IAC  
-> **Date:** 1 November 2026  
+> **Date:** 12 November 2026  
 > **Tenant:** conditionalaccess.tech  
-> **Reference:** [Purview Practitioner Taxonomy](https://www.thepurviewpractitioner.com/tools/taxonomy) · [Microsoft Learn — Sensitivity Labels](https://learn.microsoft.com/purview/sensitivity-labels)  
+> **Reference:** [Purview Practitioner Taxonomy](https://www.thepurviewpractitioner.com/tools/taxonomy) · [Microsoft Learn — Sensitivity Labels](https://learn.microsoft.com/purview/sensitivity-labels) · [You found Microsoft Purview. Congratulations. Now make it work.](https://agderinthe.cloud/2026/10/19/you-found-microsoft-purview-congratulations-now-make-it-work/) *(Agder in the cloud: tenant settings, labels and DLP priorities to get right first)*  
 > **Video:** [Ewelina's Sensitivity Label Deep Dive](https://www.youtube.com/watch?v=6TaVptqv_V8) *(recommended viewing before deployment)*
 
 ---
@@ -181,7 +181,7 @@ Set-SPOTenant -EnableSensitivityLabelForOneNote $true
 Set-SPOTenant -EnableSensitivityLabelForVideoFiles $true
 ```
 
-`Enable-SensitivityLabelsPrerequisites.ps1` does this in steps 2 and 3 and skips settings that are already on. It uses the SharePoint Online Management Shell when it runs on Windows. Elsewhere it signs in with PnP.PowerShell and asks for the app (client) ID if you didn't pass `-PnPClientId`: it uses `Set-PnPTenant` where PnP has the parameter (`EnableAIPIntegration`, PDF) and the CSOM call for OneNote and video. After each change it reads the value back, so a ✅ means the setting reads True. Use `-SkipFileTypeLabels` to leave step 3 out.
+`Enable-SensitivityLabelsPrerequisites.ps1` does this in steps 2 and 3 and skips settings that are already on. On Windows it uses only the SharePoint Online Management Shell, and `-PnPClientId` is ignored. On macOS and Linux it uses only PnP.PowerShell and asks for the app (client) ID if you didn't pass `-PnPClientId`. On those platforms: it uses `Set-PnPTenant` where PnP has the parameter (`EnableAIPIntegration`, PDF) and the CSOM call for OneNote and video. After each change it reads the value back, so a ✅ means the setting reads True. Use `-SkipFileTypeLabels` to leave step 3 out.
 
 Example step 3 output when OneNote and video were off:
 
@@ -192,7 +192,7 @@ Example step 3 output when OneNote and video were off:
   ✅ EnableSensitivityLabelForVideoFiles set to True (MP4 video files and Clipchamp projects)
 ```
 
-If the script can't connect, step 2 says why (no client ID, PnP.PowerShell not installed, or a sign-in error) and step 3 is skipped with those settings reported as not checked.
+If the script can't connect, step 2 says why (the platform's module isn't installed, no client ID on macOS or Linux, or a sign-in error) and step 3 is skipped with those settings reported as not checked.
 
 ---
 
