@@ -6,6 +6,12 @@
     Implements the Purview Practitioner 4-group taxonomy (Public, General, Confidential, Restricted)
     with best-practice encryption, content markings, and container scoping.
 
+    Idempotent and self-healing: every label's markings and encryption rights (including which
+    label does and does not get PRINT/EXTRACT - "copy and extract content") are rebuilt from this
+    script's definitions on every run. If a label already exists in Purview, its configuration is
+    reconciled with Set-Label to match this script, so the documented rights end up on the correct
+    label even if the label was previously created incorrectly or has drifted.
+
     Labels:
       Public                          - No protection, external-safe
       General                         - Default label, header/footer only
@@ -152,14 +158,101 @@ function Ensure-Label {
         return $null
     }
 
+    # ------------------------------------------------------------------
+    # Build the label's configuration (markings + encryption) once. This
+    # is used both to CREATE a brand-new label and to RECONCILE an
+    # already-existing one back to this exact definition, so that the
+    # documented rights (e.g. PRINT/EXTRACT removed from Restricted -
+    # Internal's all-internal-users grant) always end up on the correct
+    # label - whether this is the very first run or a later re-run
+    # against labels that already exist in Purview.
+    # ------------------------------------------------------------------
+    $configParams = @{
+        DisplayName = $DisplayName
+        Tooltip     = $Tooltip
+    }
+
+    if ($Comment)     { $configParams["Comment"] = $Comment }
+    if ($ContentType) { $configParams["ContentType"] = $ContentType }
+    if ($ParentImmutableId) {
+        if ([string]::IsNullOrWhiteSpace($ParentImmutableId)) {
+            Write-Error "ParentImmutableId is empty for $DisplayName. Parent label may have failed."
+            return $null
+        }
+        $configParams["ParentId"] = $ParentImmutableId
+    }
+
+    # Content markings
+    if ($HeaderText) {
+        $configParams["ApplyContentMarkingHeaderEnabled"]   = $true
+        $configParams["ApplyContentMarkingHeaderText"]      = $HeaderText
+        $configParams["ApplyContentMarkingHeaderFontSize"]  = 10
+        $configParams["ApplyContentMarkingHeaderFontColor"] = "#FF0000"
+        $configParams["ApplyContentMarkingHeaderAlignment"] = "Center"
+    }
+    if ($FooterText) {
+        $configParams["ApplyContentMarkingFooterEnabled"]   = $true
+        $configParams["ApplyContentMarkingFooterText"]      = $FooterText
+        $configParams["ApplyContentMarkingFooterFontSize"]  = 8
+        $configParams["ApplyContentMarkingFooterFontColor"] = "#FF0000"
+        $configParams["ApplyContentMarkingFooterAlignment"] = "Center"
+    }
+    if ($WatermarkText) {
+        $configParams["ApplyWaterMarkingEnabled"]  = $true
+        $configParams["ApplyWaterMarkingText"]     = $WatermarkText
+        $configParams["ApplyWaterMarkingFontSize"] = 48
+        $configParams["ApplyWaterMarkingLayout"]   = "Diagonal"
+    }
+
+    # Encryption - this is the block that determines which label gets
+    # PRINT/EXTRACT ("copy and extract content") rights and which label
+    # has them withheld. Always rebuilt from this function's parameters
+    # (never inherited from whatever is already configured in Purview).
+    if ($EncryptionEnabled) {
+        $configParams["EncryptionEnabled"] = $true
+        if ($EncryptionProtectionType) {
+            $configParams["EncryptionProtectionType"] = $EncryptionProtectionType
+        }
+        if ($EncryptionProtectionType -eq "UserDefined") {
+            $configParams["EncryptionPromptUser"] = [bool]$EncryptionPromptUser
+        }
+        if ($EncryptionProtectionType -eq "Template" -and $EncryptionRightsDefinitions) {
+            $configParams["EncryptionRightsDefinitions"] = $EncryptionRightsDefinitions
+        }
+        if ($EncryptionEncryptOnly)  { $configParams["EncryptionEncryptOnly"]  = $true }
+        if ($EncryptionDoNotForward) { $configParams["EncryptionDoNotForward"] = $true }
+    }
+
     $existing = Get-LabelByDisplayName -DisplayName $DisplayName
     if ($existing) {
         if ($IsParentLabel -and -not $existing.IsLabelGroup) {
             Write-Host "  [ERROR] '$DisplayName' exists but is NOT a label group. Cannot create sub-labels under it." -ForegroundColor Red
             Write-Host "  [ERROR] Delete this label and re-run, or create it as a Label Group via the Purview portal." -ForegroundColor Red
             return $null
-        } else {
+        }
+
+        if ($IsParentLabel) {
+            # Parent/group labels are containers only - no encryption or
+            # markings of their own, so there is nothing to reconcile.
             Write-Host "  [EXISTS] $DisplayName" -ForegroundColor Gray
+            return $existing
+        }
+
+        if ($DryRun) {
+            Write-Host "  [DRY RUN] Would reconcile existing label to documented config: $DisplayName" -ForegroundColor Yellow
+            return $existing
+        }
+
+        Write-Host "  [RECONCILING] $DisplayName (enforcing documented rights/markings)" -ForegroundColor Yellow
+        try {
+            $result = Set-Label -Identity $existing.ImmutableId @configParams -Confirm:$false
+            $script:LabelCache = @($script:LabelCache | Where-Object { $_.ImmutableId -ne $existing.ImmutableId })
+            $script:LabelCache += $result
+            Write-Host "  [OK] '$DisplayName' rights/markings match the documented configuration" -ForegroundColor Green
+            return $result
+        } catch {
+            Write-Host "  [ERROR] Failed to reconcile '$DisplayName': $_" -ForegroundColor Red
+            Write-Host "  [WARN] Continuing with the existing, un-reconciled label - verify its rights manually" -ForegroundColor Yellow
             return $existing
         }
     }
@@ -169,60 +262,8 @@ function Ensure-Label {
         return @{ ImmutableId = "DRYRUN-$Name"; DisplayName = $DisplayName }
     }
 
-    $params = @{
-        Name        = $Name
-        DisplayName = $DisplayName
-        Tooltip     = $Tooltip
-    }
-
-    if ($Comment)     { $params["Comment"] = $Comment }
-    if ($ContentType) { $params["ContentType"] = $ContentType }
-    if ($ParentImmutableId) {
-        if ([string]::IsNullOrWhiteSpace($ParentImmutableId)) {
-            Write-Error "ParentImmutableId is empty for $DisplayName. Parent label may have failed."
-            return $null
-        }
-        $params["ParentId"] = $ParentImmutableId
-    }
-
-    # Content markings
-    if ($HeaderText) {
-        $params["ApplyContentMarkingHeaderEnabled"]   = $true
-        $params["ApplyContentMarkingHeaderText"]      = $HeaderText
-        $params["ApplyContentMarkingHeaderFontSize"]  = 10
-        $params["ApplyContentMarkingHeaderFontColor"] = "#FF0000"
-        $params["ApplyContentMarkingHeaderAlignment"] = "Center"
-    }
-    if ($FooterText) {
-        $params["ApplyContentMarkingFooterEnabled"]   = $true
-        $params["ApplyContentMarkingFooterText"]      = $FooterText
-        $params["ApplyContentMarkingFooterFontSize"]  = 8
-        $params["ApplyContentMarkingFooterFontColor"] = "#FF0000"
-        $params["ApplyContentMarkingFooterAlignment"] = "Center"
-    }
-    if ($WatermarkText) {
-        $params["ApplyWaterMarkingEnabled"]  = $true
-        $params["ApplyWaterMarkingText"]     = $WatermarkText
-        $params["ApplyWaterMarkingFontSize"] = 48
-        $params["ApplyWaterMarkingLayout"]   = "Diagonal"
-    }
-
-
-    # Encryption
-    if ($EncryptionEnabled) {
-        $params["EncryptionEnabled"] = $true
-        if ($EncryptionProtectionType) {
-            $params["EncryptionProtectionType"] = $EncryptionProtectionType
-        }
-        if ($EncryptionProtectionType -eq "UserDefined") {
-            $params["EncryptionPromptUser"] = [bool]$EncryptionPromptUser
-        }
-        if ($EncryptionProtectionType -eq "Template" -and $EncryptionRightsDefinitions) {
-            $params["EncryptionRightsDefinitions"] = $EncryptionRightsDefinitions
-        }
-        if ($EncryptionEncryptOnly)  { $params["EncryptionEncryptOnly"]  = $true }
-        if ($EncryptionDoNotForward) { $params["EncryptionDoNotForward"] = $true }
-    }
+    $params = $configParams.Clone()
+    $params["Name"] = $Name
 
     Write-Host "  [CREATING] $DisplayName" -ForegroundColor Green
     try {

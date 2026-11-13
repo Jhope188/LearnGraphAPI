@@ -634,8 +634,10 @@ Publish-SensitivityLabelPolicies.ps1  (Policy Publishing)
 Both scripts are **safe to re-run**.
 
 **SensitivityLabel.ps1** — For each label:
-- If the label **exists** → skips it (`[EXISTS]`)
-- If the label **doesn't exist** → creates it (`[CREATING]`)
+- Parent/group labels (`Confidential`, `Restricted`) → if they **exist** → skips (`[EXISTS]`); containers carry no encryption/markings, so there's nothing to reconcile
+- Leaf labels (`Public`, `General`, and all sub-labels) →
+  - If the label **doesn't exist** → creates it (`[CREATING]`) with the markings and encryption rights defined in the script
+  - If the label **already exists** → reconciles it (`[RECONCILING]`) via `Set-Label`, re-applying this script's markings and encryption rights (including which label does/doesn't get `PRINT`/`EXTRACT`) so the label always matches the documented configuration, even if it was previously created incorrectly or has drifted
 
 **Publish-SensitivityLabelPolicies.ps1** — For each policy:
 - If the policy **exists** → skips it (`[EXISTS]`)
@@ -645,7 +647,7 @@ Both scripts are **safe to re-run**.
 ### 7.3 What the Scripts Do NOT Do
 
 - **SensitivityLabel.ps1 does not publish** — use `Publish-SensitivityLabelPolicies.ps1` separately
-- **Does not modify existing labels** — if you need to change encryption or markings on an existing label, use `Set-Label` manually
+- **Does not reconcile parent/group label properties** — the `Confidential`/`Restricted` containers themselves (privacy, guest access) must be adjusted via `Set-Label` or the Purview portal if they need to change
 - **Does not delete labels** — label deletion must be done manually via `Remove-Label`
 - **Does not handle the duplicate Restricted label** — that was a one-time cleanup (see Section 9.2)
 - **Does not run prerequisites** — run `Enable-SensitivityLabelsPrerequisites.ps1` first
@@ -863,11 +865,20 @@ Remove-Label -Identity "<ImmutableId>" -Confirm:$false
 
 ### 12.4 Changing Encryption Rights on an Existing Label
 
+For a **permanent taxonomy change**, edit the relevant `$...Rights` variable or `Ensure-Label` call
+in `SensitivityLabel.ps1` and re-run the script — it reconciles existing labels via `Set-Label`, so
+the new rights are applied automatically (see §7.2).
+
+For a **one-off manual change** without touching the script:
+
 ```powershell
 # Example: Give the security team access to Restricted - Internal
 Set-Label -Identity "Restricted - Internal" `
     -EncryptionRightsDefinitions "securityteam@conditionalaccess.tech:OWNER"
 ```
+
+> **Note:** A manual change like this will be overwritten the next time `SensitivityLabel.ps1` runs,
+> unless the script's own rights definitions are updated to match.
 
 ### 12.5 Modifying Policy Scope (Exclusions)
 
