@@ -6,7 +6,16 @@
     <description>Practical thinking on Microsoft Entra ID, M365 Governance, and Conditional Access — by Jon Hope, Microsoft MVP. No fluff, no vendor spin.</description>
     <language>en-gb</language>
     <atom:link href="https://conditionalaccess.tech/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 11 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 23 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Microsoft's Focus Is Clear. AI, Agents and E7 Are the Future</title>
+      <link>https://conditionalaccess.tech/articles/Ignite/2026/microsofts-focus-is-clear-ai-agents-e7.html</link>
+      <description>A first-hand MVP recap of Microsoft Ignite 2026: why AI, Agents and the new E7 license dominated the keynote, and the Entra, Intune, Purview and Edge foundations MSPs still need to get right first.</description>
+      <pubDate>Mon, 23 Nov 2026 00:00:00 +0000</pubDate>
+      <guid isPermaLink="true">https://conditionalaccess.tech/articles/Ignite/2026/microsofts-focus-is-clear-ai-agents-e7.html</guid>
+      <category>Ignite</category>
+    </item>
+
     <item>
       <title>Passkey Migration: A Practical Rollout Plan</title>
       <link>https://conditionalaccess.tech/articles/entra/Passkey/conditionalaccess-passkey-migration-guide.html</link>

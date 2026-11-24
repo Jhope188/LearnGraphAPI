@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="A first-hand MVP recap of Microsoft Ignite 2026: why AI, Agents and the new E7 license dominated the keynote, and the Entra, Intune, Purview and Edge foundations MSPs still need to get right first.">
+<link rel="canonical" href="https://conditionalaccess.tech/articles/Ignite/2026/microsofts-focus-is-clear-ai-agents-e7.html">
+<link rel="alternate" type="application/rss+xml" title="conditionalaccess.tech" href="/feed.xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Microsoft's Focus Is Clear. AI, Agents and E7 Are the Future">
+<meta property="og:description" content="A first-hand MVP recap of Microsoft Ignite 2026: why AI, Agents and the new E7 license dominated the keynote, and the Entra, Intune, Purview and Edge foundations MSPs still need to get right first.">
+<meta property="og:url" content="https://conditionalaccess.tech/articles/Ignite/2026/microsofts-focus-is-clear-ai-agents-e7.html">
+<meta property="og:image" content="https://conditionalaccess.tech/assets/og/microsofts-focus-is-clear-ai-agents-e7.png">
+<meta property="og:site_name" content="conditionalaccess.tech">
+<meta property="article:published_time" content="2026-11-23">
+<meta property="article:author" content="Jon Hope">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Microsoft's Focus Is Clear. AI, Agents and E7 Are the Future">
+<meta name="twitter:description" content="A first-hand MVP recap of Microsoft Ignite 2026: why AI, Agents and the new E7 license dominated the keynote, and the Entra, Intune, Purview and Edge foundations MSPs still need to get right first.">
+<meta name="twitter:image" content="https://conditionalaccess.tech/assets/og/microsofts-focus-is-clear-ai-agents-e7.png">
+<title>Microsoft's Focus Is Clear. AI, Agents and E7 Are the Future — conditionalaccess.tech</title>
+<style>
+:root {
+  --color-base:          #0a1628;
+  --color-surface:       #0d2137;
+  --color-surface-alt:   #112840;
+  --color-border:        rgba(0,184,176,0.12);
+  --color-teal:          #00b8b0;
+  --color-teal-dim:      #1a7f7a;
+  --color-ms-blue:       #0078d4;
+  --color-text-primary:  #e8f0f8;
+  --color-text-secondary:#7a9bb5;
+  --color-text-dim:      #4a6a80;
+  --color-warn:          #f5c842;
+  --color-danger:        #e05533;
+  --sidebar-w:           260px;
+  --topbar-h:            52px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--color-base);
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  font-size: 1rem;
+}
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--topbar-h);
+  background: rgba(10,22,40,0.92);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px;
+  padding: 0 20px;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; flex: 1; }
+.topbar-left img { width: 34px; height: 34px; border-radius: 4px; display: block; object-fit: contain; flex-shrink: 0; }
+.topbar-site { font-size: 0.82rem; font-weight: 600; letter-spacing: 0.04em; color: var(--color-text-secondary); flex-shrink: 0; }
+.topbar-divider { width: 1px; height: 20px; background: var(--color-border); flex-shrink: 0; }
+.topbar-article { font-size: 0.8rem; color: var(--color-text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
+.topbar-right { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; color: var(--color-text-dim); text-decoration: none; flex-shrink: 0; transition: color 0.15s; }
+.topbar-right:hover { color: var(--color-teal); }
+.layout { display: flex; flex-direction: row; min-height: calc(100vh - var(--topbar-h)); max-width: 1080px; margin: 0 auto; }
+.hero {
+  background:
+    radial-gradient(ellipse 55% 55% at 65% 20%, rgba(26,127,122,0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 55% at 15% 80%, rgba(0,184,176,0.08) 0%, transparent 60%),
+    #0a1628;
+  padding: calc(var(--topbar-h) + 72px) 24px 60px;
+  margin-top: 0;
+  text-align: center;
+  animation: fadeUp 0.55s ease forwards;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.hero .eyebrow { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-teal); margin-bottom: 14px; display: block; }
+.hero h1 { font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; color: var(--color-text-primary); max-width: 820px; margin: 0 auto 18px; }
+.hero .subtitle { font-size: 1rem; color: var(--color-text-secondary); max-width: 620px; margin: 0 auto 28px; line-height: 1.65; }
+.hero-meta { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; font-size: 0.75rem; color: var(--color-text-dim); }
+.tag { display: inline-block; background: rgba(0,184,176,0.08); border: 1px solid rgba(0,184,176,0.2); border-radius: 3px; padding: 2px 8px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.08em; color: var(--color-teal); text-transform: uppercase; }
+.sidebar {
+  width: var(--sidebar-w); flex-shrink: 0; position: sticky; top: var(--topbar-h);
+  height: calc(100vh - var(--topbar-h)); overflow-y: auto;
+  border-right: 1px solid var(--color-border); background: var(--color-surface);
+  padding: 28px 0 40px; scrollbar-width: thin; scrollbar-color: rgba(0,184,176,0.2) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(0,184,176,0.2); border-radius: 2px; }
+.sidebar-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-teal); padding: 0 20px; margin-bottom: 10px; display: block; }
+.sidebar-nav { list-style: none; }
+.sidebar-item { display: block; padding: 7px 20px 7px 18px; border-left: 2px solid transparent; text-decoration: none; font-size: 0.8rem; color: var(--color-text-dim); line-height: 1.4; transition: color 0.15s, border-color 0.15s, background 0.15s; }
+.sidebar-item:hover { color: var(--color-text-secondary); background: rgba(0,184,176,0.04); border-left-color: rgba(0,184,176,0.3); }
+.sidebar-item.active { color: var(--color-teal); border-left-color: var(--color-teal); background: rgba(0,184,176,0.06); font-weight: 600; }
+.sidebar-num { font-family: 'Cascadia Code', monospace; font-size: 0.62rem; color: var(--color-teal); opacity: 0.6; margin-right: 6px; }
+.sidebar-sub { padding-left: 32px; font-size: 0.75rem; color: var(--color-text-dim); opacity: 0.8; }
+.sidebar-sub:hover { opacity: 1; }
+.sidebar-divider { border: none; border-top: 1px solid var(--color-border); margin: 12px 20px; }
+.content { flex: 1; min-width: 0; width: 820px; max-width: 820px; padding: 48px 48px 80px; }
+.prose { max-width: 724px; }
+.eyebrow { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-teal); margin-bottom: 8px; display: block; }
+h2 { font-size: 1.3rem; font-weight: 600; color: var(--color-text-primary); letter-spacing: 0.01em; line-height: 1.3; margin-bottom: 14px; }
+h3 { font-size: 1rem; font-weight: 600; color: var(--color-text-primary); margin-bottom: 10px; margin-top: 22px; }
+p { margin-bottom: 16px; }
+section { margin-bottom: 60px; scroll-margin-top: calc(var(--topbar-h) + 16px); }
+.table-wrap { overflow-x: auto; margin-top: 8px; margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 580px; }
+thead tr { background: var(--color-surface-alt); border-bottom: 1px solid rgba(0,184,176,0.2); }
+thead th { padding: 10px 14px; text-align: left; font-size: 0.63rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-teal); }
+tbody tr { border-bottom: 1px solid rgba(0,184,176,0.07); transition: background 0.12s ease; }
+tbody tr:hover { background: rgba(0,184,176,0.03); }
+td { padding: 10px 14px; vertical-align: top; color: var(--color-text-secondary); }
+td:first-child { color: var(--color-text-primary); font-weight: 600; white-space: nowrap; }
+table.wrap td:first-child { white-space: normal; }
+.mono { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.76rem; color: var(--color-teal); background: rgba(0,184,176,0.08); padding: 2px 6px; border-radius: 3px; }
+.callout { background: var(--color-surface); border: 1px solid rgba(0,184,176,0.15); border-left: 3px solid var(--color-teal); border-radius: 0 6px 6px 0; padding: 14px 18px; margin: 20px 0; font-size: 0.9rem; }
+.callout.warn { border-left-color: #f5c842; }
+.callout.danger { border-left-color: var(--color-danger); }
+.callout p:last-child { margin-bottom: 0; }
+.callout-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; display: block; color: var(--color-teal); }
+.callout.warn .callout-label { color: #f5c842; }
+.callout.danger .callout-label { color: var(--color-danger); }
+.badge { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; display: inline-block; white-space: nowrap; }
+.badge-ok { background: rgba(0,184,176,0.12); color: var(--color-teal); }
+.badge-warn { background: rgba(245,200,66,0.10); color: #f5c842; }
+.badge-danger { background: rgba(224,85,51,0.12); color: var(--color-danger); }
+.badge-dim { background: rgba(122,155,181,0.12); color: var(--color-text-secondary); }
+.lic { font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 3px; display: inline-block; white-space: nowrap; }
+.lic-e7 { background: rgba(0,120,212,0.16); color: #5cb3f2; border: 1px solid rgba(0,120,212,0.5); }
+.lic-e7only { background: var(--color-ms-blue); color: #ffffff; border: 1px solid var(--color-ms-blue); }
+.lic-none { background: transparent; color: var(--color-text-dim); border: 1px solid rgba(122,155,181,0.25); }
+.legend { display: flex; flex-direction: column; gap: 10px; margin: 18px 0 22px; padding: 16px 18px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; font-size: 0.88rem; }
+.legend div { display: flex; gap: 12px; align-items: baseline; }
+.legend .lic { flex-shrink: 0; min-width: 118px; text-align: center; }
+.flow { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 22px 26px; margin: 20px 0; }
+.flow-steps { display: flex; flex-direction: column; }
+.flow-step { display: flex; gap: 14px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(0,184,176,0.07); }
+.flow-step:last-child { border-bottom: none; }
+.step-num { min-width: 26px; height: 26px; background: rgba(0,184,176,0.12); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--color-teal); flex-shrink: 0; margin-top: 2px; }
+.step-content { flex: 1; }
+.step-label { font-size: 0.8rem; font-weight: 600; color: var(--color-text-primary); display: block; margin-bottom: 2px; }
+.step-desc { font-size: 0.84rem; }
+.source-chip { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 5px; background: rgba(0,184,176,0.05); border: 1px solid rgba(0,184,176,0.12); border-radius: 4px; padding: 5px 10px; font-size: 0.7rem; color: var(--color-text-dim); margin-bottom: 20px; margin-top: -4px; line-height: 1.7; }
+.source-chip span { color: var(--color-teal); font-weight: 600; margin-right: 2px; }
+.source-chip a { color: var(--color-text-secondary); text-decoration: none; }
+.source-chip a:hover { color: var(--color-teal); text-decoration: underline; }
+.source-chip .sep { color: var(--color-text-dim); margin: 0 1px; }
+.pull-quote { border-left: 3px solid var(--color-teal); padding: 8px 0 8px 18px; margin: 28px 0; font-size: 1rem; color: var(--color-text-primary); font-weight: 500; line-height: 1.55; max-width: 724px; }
+pre.code { background: var(--color-surface-alt, #112840); border: 1px solid var(--color-border); border-radius: 6px; padding: 12px 16px; margin: 10px 0 4px; overflow-x: auto; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.76rem; line-height: 1.6; color: var(--color-teal); white-space: pre; }
+
+.scroll-table { max-height: 470px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: 6px; scrollbar-width: thin; scrollbar-color: rgba(0,184,176,0.3) transparent; }
+.scroll-table thead th { position: sticky; top: 0; z-index: 1; background: var(--color-surface-alt); }
+.scroll-hint { font-size: 0.7rem; color: var(--color-text-dim); margin-top: 6px; display: block; }
+.slider { margin: 22px 0 8px; position: relative; }
+.slider-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 14px; scrollbar-width: thin; scrollbar-color: rgba(0,184,176,0.3) transparent; padding-bottom: 6px; }
+.slider-track figure { flex: 0 0 100%; margin: 0; scroll-snap-align: start; }
+.slider-bar { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 0.72rem; color: var(--color-text-dim); }
+.slider-bar button { background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-teal); border-radius: 4px; width: 32px; height: 28px; cursor: pointer; font-size: 0.9rem; }
+.slider-bar button:hover { border-color: var(--color-teal); }
+.slider-count { font-family: 'Cascadia Code', Consolas, monospace; }
+.slider-title { color: var(--color-text-primary); font-weight: 600; font-size: 0.8rem; margin-bottom: 4px; display: block; }
+.fig-row { display: grid; grid-template-columns: 1fr 1.7fr; gap: 14px; align-items: center; margin: 22px 0 8px; }
+.fig-row figure { margin: 0; }
+@media (max-width: 700px) { .fig-row { grid-template-columns: 1fr; } }
+.watch-card { display: flex; align-items: center; gap: 16px; margin: 22px 0 24px; padding: 16px 20px; background: var(--color-surface); border: 1px solid var(--color-border); border-left: 3px solid var(--color-teal); border-radius: 0 6px 6px 0; text-decoration: none; transition: border-color 0.15s, background 0.15s; }
+.watch-card:hover { background: var(--color-surface-alt); border-color: rgba(0,184,176,0.35); }
+.watch-play { flex: 0 0 40px; height: 40px; border-radius: 50%; background: rgba(0,184,176,0.14); color: var(--color-teal); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; padding-left: 3px; }
+.watch-text { display: flex; flex-direction: column; gap: 2px; }
+.watch-text strong { color: var(--color-text-primary); font-size: 0.95rem; font-weight: 600; }
+.watch-text span { color: var(--color-text-dim); font-size: 0.78rem; }
+.session-poster { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; min-height: 230px; margin: 22px 0 8px; padding: 28px 32px; border: 1px solid var(--color-border); border-radius: 6px; text-decoration: none; overflow: hidden; background: radial-gradient(ellipse 60% 70% at 85% 25%, rgba(26,127,122,0.30) 0%, transparent 65%), linear-gradient(135deg, #0d2137 0%, #0a1628 100%); }
+.session-poster:hover { border-color: rgba(0,184,176,0.4); }
+.sp-meta { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-teal); }
+.sp-title { font-size: 1.45rem; font-weight: 600; line-height: 1.25; color: var(--color-text-primary); max-width: 520px; }
+.sp-speakers { font-size: 0.85rem; color: var(--color-text-secondary); }
+.sp-cta { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-dim); }
+.sp-play { position: absolute; right: 36px; top: 50%; width: 72px; height: 72px; margin-top: -36px; border-radius: 50%; background: rgba(10,22,40,0.78); border: 2px solid var(--color-teal); color: var(--color-teal); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; padding-left: 5px; transition: background 0.15s; }
+.session-poster:hover .sp-play { background: rgba(0,184,176,0.25); }
+@media (max-width: 700px) { .sp-play { display: none; } .sp-title { font-size: 1.2rem; } }
+.preview-link { position: relative; display: block; margin: 22px 0 8px; border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; }
+.preview-link img { width: 100%; height: auto; display: block; }
+.preview-play { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(10,22,40,0.78); border: 2px solid var(--color-teal); color: var(--color-teal); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; padding-left: 4px; transition: background 0.15s; }
+.preview-link:hover .preview-play { background: rgba(0,184,176,0.25); }
+.video-wrap { position: relative; aspect-ratio: 16 / 9; margin: 22px 0 8px; border: 1px solid var(--color-border); border-radius: 6px; overflow: hidden; background: #000; }
+.video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.venue-scroll { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 12px; margin: 22px 0 6px; scrollbar-width: thin; scrollbar-color: rgba(0,184,176,0.3) transparent; }
+.venue-scroll figure { flex: 0 0 320px; margin: 0; scroll-snap-align: start; }
+.venue-scroll img { width: 320px; height: 240px; object-fit: cover; }
+.people-scroll { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 12px; margin: 22px 0 6px; scrollbar-width: thin; scrollbar-color: rgba(0,184,176,0.3) transparent; }
+.people-scroll figure { flex: 0 0 230px; margin: 0; scroll-snap-align: start; }
+.people-scroll img { width: 230px; height: 290px; object-fit: cover; }
+.people-hint { font-size: 0.7rem; color: var(--color-text-dim); letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 -10px; }
+figure { margin: 22px 0; }
+figure img { width: 100%; height: auto; display: block; border: 1px solid var(--color-border); border-radius: 6px; }
+figcaption { font-size: 0.76rem; color: var(--color-text-dim); margin-top: 8px; line-height: 1.55; }
+footer { border-top: 1px solid var(--color-border); padding: 28px 48px 28px calc(var(--sidebar-w) + 48px); font-size: 0.78rem; color: var(--color-text-dim); max-width: 1080px; margin: 0 auto; }
+footer a { color: var(--color-teal); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+footer p { margin-bottom: 8px; }
+@media (max-width: 900px) {
+  :root { --sidebar-w: 220px; }
+  .layout { flex-direction: column; }
+  .sidebar {
+    width: 100%; position: sticky; top: var(--topbar-h); height: auto; max-height: none;
+    overflow-y: visible; border-right: none; border-bottom: 1px solid var(--color-border);
+    padding: 0; z-index: 40;
+  }
+  .sidebar-label { display: none; }
+  .sidebar-nav { display: flex; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 10px 14px; gap: 6px; scrollbar-width: none; list-style: none; }
+  .sidebar-nav::-webkit-scrollbar { display: none; }
+  .sidebar-nav li { flex-shrink: 0; list-style: none; }
+  .sidebar-divider { display: none; }
+  .sidebar-item { white-space: nowrap; padding: 7px 12px; border-left: none; border-radius: 100px; background: rgba(0,184,176,0.05); }
+  .sidebar-item.active { background: rgba(0,184,176,0.12); border-left: none; }
+  .sidebar-item.sidebar-sub { padding-left: 12px; }
+  .content { width: 100%; max-width: 100%; padding: 32px 28px 60px; }
+  section { scroll-margin-top: calc(var(--topbar-h) + 56px); }
+  footer { padding: 24px 28px; }
+}
+@media (max-width: 700px) {
+  .hero { padding: calc(var(--topbar-h) + 40px) 16px 36px; }
+  .content { padding: 28px 16px 48px; max-width: 100%; }
+  footer { padding: 24px 16px; }
+  .legend div { flex-direction: column; gap: 4px; }
+}
+@media (max-width: 900px) and (orientation: landscape) {
+  figure img, .fig-row img { max-width: 100%; width: auto; height: auto; max-height: calc(100vh - 52px - 56px); object-fit: contain; display: block; margin-left: auto; margin-right: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="https://conditionalaccess.tech" class="topbar-left">
+    <img src="https://conditionalaccess.tech/assets/NewConditionalaccess.tech.png" alt="" />
+    <span class="topbar-site">conditionalaccess.tech</span>
+    <span class="topbar-divider"></span>
+    <span class="topbar-article">AI, Agents and E7 are the future</span>
+  </a>
+  <a href="https://conditionalaccess.tech/articles.html" class="topbar-right">← All Articles</a>
+</header>
+
+<div class="hero">
+  <span class="eyebrow">Ignite 2026 · MVP Recap</span>
+  <h1>Microsoft's focus is clear. AI, Agents and E7 are the future</h1>
+  <p class="subtitle">My first Ignite as an MVP was a blast. AI, agents and E7 took the spotlight, but the foundations underneath them still decide how secure a tenant is: identity, device management, data classification and the browser. Those are what MSPs need to understand and configure first, and that is where Inforcer helps across tenants.</p>
+  <div class="hero-meta">
+    <span class="tag">Opinion</span>
+    <span class="tag">Entra</span>
+    <span class="tag">Intune</span>
+    <span class="tag">Purview</span>
+    <span class="tag">Edge</span>
+    <span class="dot">·</span>
+    <span>Microsoft MVP · Security: Identity &amp; Access</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <nav class="sidebar" aria-label="Article sections">
+    <span class="sidebar-label">In this article</span>
+    <ul class="sidebar-nav">
+      <li><a href="#s01" class="sidebar-item"><span class="sidebar-num">01</span>First-hand review</a></li>
+      <li><a href="#s02" class="sidebar-item"><span class="sidebar-num">02</span>Identity foundation</a></li>
+      <li><a href="#s02-brk343" class="sidebar-item sidebar-sub">BRK343</a></li>
+      <li><a href="#s02-thr1803" class="sidebar-item sidebar-sub">THR1803</a></li>
+      <li><a href="#s02-post" class="sidebar-item sidebar-sub">Ignite Book of News Entra announcements</a></li>
+      <li><a href="#s02-mcp" class="sidebar-item sidebar-sub">The Entra MCP</a></li>
+      <li><a href="#s03" class="sidebar-item"><span class="sidebar-num">03</span>E7 and SMB cost</a></li>
+      <li><a href="#s04" class="sidebar-item"><span class="sidebar-num">04</span>Purview</a></li>
+      <li><a href="#s05" class="sidebar-item"><span class="sidebar-num">05</span>Tenant Governance</a></li>
+      <li><a href="#s06" class="sidebar-item"><span class="sidebar-num">06</span>Intune</a></li>
+      <li><a href="#s07" class="sidebar-item"><span class="sidebar-num">07</span>Edge for Business</a></li>
+      <hr class="sidebar-divider">
+      <li><a href="#closing" class="sidebar-item"><span class="sidebar-num" style="opacity:0.4">↓</span>The people</a></li>
+    </ul>
+  </nav>
+
+  <main class="content">
+
+    <section id="s01">
+      <span class="eyebrow">Section 01</span>
+      <h2>My First Ignite as an MVP</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        First-hand account
+        <span class="sep">·</span>
+        <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456" target="_blank">Entra Ignite post</a>
+      </div>
+
+      <p class="prose">This was one of the more special events I've been to. I came from an MSP background, and this was my first Ignite with Inforcer as a Principal Identity Security Architect, and my first as a Microsoft MVP in Identity. I had backstage access to most of the event and got to sit down with product managers and attendees to talk through real-world issues. I attended the conference as an MVP and an expert discussing identity in the Microsoft Hub area.</p>
+
+      <p class="prose">For me, Ignite wasn't only about what AI looks like next year in a world filled with agents, Copilot and E7. It was about taking in the experience and building new relationships. It's hard not to get excited about my first year as an MVP, and a picture of the wall was an absolute must.</p>
+
+      <div class="fig-row">
+        <figure>
+          <img src="images/ignite-2026-recap-01.jpg" alt="The MVP thank-you wall at Ignite with the name Jonathan Hope highlighted" />
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-02.jpg" alt="The Microsoft MVPs and Regional Directors thank-you wall at Ignite" />
+        </figure>
+      </div>
+      <p class="caption-row" style="font-size:0.76rem;color:var(--color-text-dim);margin:0 0 20px;line-height:1.55">My name on the MVP and Regional Director thank-you wall at Ignite.</p>
+
+      <p class="prose">While Ignite was filled with automation and ways AI connects people, the genuine conversations and the knowledge I'm taking home are the biggest win for me. I had a blast meeting <a href="https://www.linkedin.com/in/aruneshc/" target="_blank" style="color:var(--color-teal)">Arunesh</a> and <a href="https://www.linkedin.com/in/jillian-vemula/" target="_blank" style="color:var(--color-teal)">Jillian</a> from the Edge team, and there are so many exciting things in the works there. Meeting Merill felt like a dream come true. He is an awesome guy and an Identity wizard, and meeting him in person was at the top of my to-do list.</p>
+
+      <p class="prose">I sat in the front row to listen to John Savill walk through the new items coming to Entra, then talked with the entire Entra product team afterward. That was an experience I won't forget.</p>
+
+      <figure class="fig">
+        <img src="images/ignite-2026-recap-03.jpg" alt="Attendees in the front rows of the Entra session at Ignite, giving thumbs up and waving at the camera" />
+        <figcaption>Front row for John Savill's Entra session, thumbs up all around.</figcaption>
+      </figure>
+
+      <p class="people-hint">People I met · scroll</p>
+      <div class="people-scroll">
+        <figure>
+          <img src="images/ignite-2026-recap-04.jpg" alt="Jon Hope with Merill Fernando at Ignite" />
+          <figcaption>Merill Fernando</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-05.jpg" alt="Jon Hope in a selfie with Sami Lamppu at Ignite" />
+          <figcaption>Catching up with <a href="https://www.linkedin.com/in/sami-lamppu/" target="_blank" style="color:var(--color-teal)">Sami Lamppu</a> at Ignite</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-06.jpg" alt="Presenter on stage beside a Microsoft podium at the Entra session" />
+          <figcaption>The Entra session from the front row</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-07.jpg" alt="Chairs with signs reading Reserved for Microsoft MVP" />
+          <figcaption>Seats reserved for MVPs</figcaption>
+        </figure>
+      </div>
+
+      <p class="prose">I can't leave out the Inforcer crew either. We explored all weekend, and Lewis and the rest of the team made it a blast, from our MSP Mixer to the GTA 6 giveaway at the Hub on the last day. We got out every day, rain or shine. Mostly rain.</p>
+
+      <figure class="fig">
+        <img src="images/ignite-2026-recap-08.jpg" alt="The Inforcer crew posing with thumbs up in front of the San Francisco skyline at night" />
+        <figcaption>The Inforcer crew, thumbs up, with the city lit up behind us.</figcaption>
+      </figure>
+
+      <figure class="fig">
+        <img src="images/ignite-2026-recap-09.jpg" alt="Two Inforcer teammates in matching blue Microsoft jackets at a restaurant" />
+        <figcaption>Matching jackets, because Ignite does that to you.</figcaption>
+      </figure>
+
+      <p class="prose">The keynote and the sessions that followed all pointed the same way: AI, agents and Copilot. I get it. I use AI and Copilot every day and they save me a lot of time. I hate HTML editing, and this entire article is AI-rendered HTML that took a few minutes. Autopilot, the Entra MCP, GitHub Copilot Fusion, Workspaces, the new agent controls and FinOps were all highlights for me.</p>
+
+      <p class="prose">The catch is the price tag. A lot of the new AI and agent controls come with an enterprise license and a price tag to match (E7), and for most of the SMBs and MSPs I talk to, that is a hard pill to swallow. What still holds is that every one of those features sits on top of something MSPs already manage: Conditional Access in Entra, patching and compliance in Intune, classification in Purview and policy in the browser. Getting those right does not need E7. Identity is where I spend my days, so that is where I start.</p>
+    </section>
+
+    <section id="s02">
+      <span class="eyebrow">Section 02</span>
+      <h2>Identity Foundation: What I Saw and What Entra Announced</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456" target="_blank">Entra Ignite 2026 announcements</a>
+        <span class="sep">·</span>
+        <a href="https://ignite.cloudsecurityinsider.com/sessions/brk343/" target="_blank">BRK343 session page</a>
+        <span class="sep">·</span>
+        <a href="https://ignite.cloudsecurityinsider.com/sessions/thr1803/" target="_blank">THR1803 session page</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/verified-id/high-assurance" target="_blank">High assurance overview</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/concept-conditional-access-policy-plans" target="_blank">CA policy plans</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/id-governance/guest-lifecycle-policies" target="_blank">Guest lifecycle policies</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/global-secure-access/concept-secure-enterprise-browser" target="_blank">Secure enterprise browser</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/id-governance/privileged-identity-management/pim-resource-roles-activate-your-roles?pivots=my-access" target="_blank">PIM role activation</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/agent-id" target="_blank">Conditional Access for agents</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/en-us/entra/id-governance/dynamic-permissions-overview" target="_blank">Dynamic permissions</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/graph/mcp-server/overview" target="_blank">Microsoft MCP Server overview</a>
+      </div>
+
+      <p class="prose">Two Entra sessions stood out for me. BRK343 was my favorite, with John Savill, Yina Arenas and Nichole Peterson walking through the Entra announcements. THR1803 with Martina Grom came right behind it. If you only watch one session from Ignite, make it BRK343. Anytime John Savill is talking Conditional Access, I'm already in heaven. Strip away the agent branding and most of what they covered is the identity foundation we already know: phishing-resistant credentials, Conditional Access, just-in-time privilege and a lifecycle for every identity, now extended to agents.</p>
+
+      <h3 id="s02-brk343">BRK343: AI is changing access</h3>
+
+      <figure>
+        <a class="preview-link" style="margin:0" href="https://medius.microsoft.com/Embed/video-nc/d7d68869-9d41-4cdd-9817-2434bfba4fbb" target="_blank"><img src="images/ignite-2026-recap-10.jpg" alt="BRK343 title slide: AI is changing access, See how Microsoft Entra helps you stay ahead, with speakers Yina Arenas, Nichole Peterson and John Savill. Select to play the BRK343 recording." /><span class="preview-play">&#9654;</span></a>
+        <figcaption>BRK343 with Yina Arenas, Nichole Peterson and John Savill, Wednesday, November 18. <a href="https://medius.microsoft.com/Embed/video-nc/d7d68869-9d41-4cdd-9817-2434bfba4fbb" target="_blank" style="color:var(--color-teal)">Watch the recording</a> or open the <a href="https://ignite.cloudsecurityinsider.com/sessions/brk343/" target="_blank" style="color:var(--color-teal)">session page on the Ignite hub</a>.</figcaption>
+      </figure>
+
+      <p class="prose">The session worked through essentially every item in the <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456" target="_blank" style="color:var(--color-teal)">Entra Ignite post</a>, 31 announcements in all. Five are marked generally available and the rest are in preview. The recording runs 46 minutes, and the chapters below follow the order it came in.</p>
+
+      <div class="flow">
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <span class="step-label">Passkeys and high assurance credentials (3:40) <span class="badge badge-warn">Preview</span></span>
+              <span class="step-desc">They opened the announcements with phishing-resistant credentials and trusted identity verification. A new passkey registered through an identity-verified journey is classed as High assurance, and an existing passkey used alongside verification is Medium. During preview the classification applies only to passkeys.</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <span class="step-label">High assurance in Teams meetings (6:01)</span>
+              <span class="step-desc">Then they demoed high-assurance credentials and Verified ID for secure Teams meeting access.</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <span class="step-label">Conditional Access policy plans (9:50) <span class="badge badge-warn">Preview</span></span>
+              <span class="step-desc">Plans group related rules under shared targeting and exclusions, so you define your emergency access exclusions once instead of repeating them in every policy.</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <span class="step-label">PIM enhancements and secure VM access (14:26) <span class="badge badge-warn">Preview</span></span>
+              <span class="step-desc">Just-in-time access now reaches more users, resources and agents. Agents can receive and activate eligible Azure resource role assignments, the same model we already use for people, and each agent or agent identity needs an E7 license to do it. For people, PIM adds least-privilege role activation and scoped activation.</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <span class="step-label">Cross-tenant governance, backup recovery and resilience (15:58) <span class="badge badge-warn">Preview</span></span>
+              <span class="step-desc">Tenant Governance for configuration across tenants, Entra Backup and Recovery, and hard deletion protection for objects such as Agent IDs. The Tenant Governance section below covers these.</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+              <span class="step-label">Securing AI agents (18:04)</span>
+              <span class="step-desc">The longest stretch of the session, about 14 minutes. Agent ID for discovered local agents and digital teammates is in preview, automated lifecycle management of agent identities is GA, and dynamic permissions for permission remediation is in preview.</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">7</div>
+            <div class="step-content">
+              <span class="step-label">Agent risk, Conditional Access for agents and the MCP firewall (32:21) <span class="badge badge-warn">Preview</span></span>
+              <span class="step-desc">Dynamic Agent Risk scores each agent continuously and is in preview with Agent 365. Conditional Access for assistive agents can block a high-risk agent while the employee keeps working. The MCP firewall enforces policies on agent-to-MCP traffic across servers, tools and methods.</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="step-num">8</div>
+            <div class="step-content">
+              <span class="step-label">AI-powered administration with the MCP server for IT admins (41:06) <span class="badge badge-ok">GA</span></span>
+              <span class="step-desc">The closing chapter covers the Microsoft MCP Server for IT Admins, which is generally available and gets its own section below, and Perception security.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="s02-thr1803">THR1803: Agents are the new service principals</h3>
+
+      <figure>
+        <a class="preview-link" style="margin:0" href="https://medius.microsoft.com/Embed/video-nc/b93c3a0e-f0a9-4148-83fa-e159a7680e8f" target="_blank"><img src="images/ignite-2026-recap-11.jpg" alt="Martina Grom presenting THR1803 on stage in Theater F at Ignite. Select to play the THR1803 recording." /><span class="preview-play">&#9654;</span></a>
+        <figcaption>THR1803, "Agents Are the New Service Principals. Only More Dangerous," with Martina Grom. <a href="https://ignite.cloudsecurityinsider.com/sessions/thr1803/" target="_blank" style="color:var(--color-teal)">Session page on the Ignite hub</a> or the <a href="https://medius.microsoft.com/Embed/video-nc/b93c3a0e-f0a9-4148-83fa-e159a7680e8f" target="_blank" style="color:var(--color-teal)">recording</a>.</figcaption>
+      </figure>
+
+      <p class="prose">Martina Grom, an MVP for Foundry and M365, took a governance angle on agents. Her question was simple: you would not approve a service principal with no owner, unknown permissions and no retirement process, so why accept that for agents? An agent identity shares the service principal object model, but it holds no credentials of its own because the blueprint does, and one blueprint can sit behind many agent identities. Her advice is an owner on every agent alongside the required sponsor.</p>
+
+      <figure>
+        <img src="images/ignite-2026-recap-12.jpg" alt="Slide from THR1803 titled Same plumbing. Different animal., comparing a service principal with an agent identity" />
+        <figcaption>The THR1803 slide that compares a service principal with an agent identity: what each represents, its credentials, template, accountable human, behavior, reach and evidence.</figcaption>
+      </figure>
+
+      <p class="prose">The demo made the point. Her Foundry agent had no permissions, and its blueprint had only a federated credential, so it looked locked down. Still, a prompt for HR data came back with results, because the Foundry project's managed identity had been granted access to the whole storage account. Each piece checked out on its own, but nobody had checked the combination. Review the blueprints as well as the agents, and look for managed identities that can still reach data the agent should not.</p>
+
+      <p class="prose">She closed with containment. Disabling an agent, disabling its blueprint, blocking it with Conditional Access and blocking it in Agent 365 each do different things, and none of them retires an agent. Her checklist before you approve one is identity, authority and reach, with a sponsor and an owner and a plan for retirement.</p>
+
+      <h3 id="s02-post">Ignite Book of News Entra announcements</h3>
+
+      <p class="prose">The <a href="https://news.microsoft.com/events/ignite/2026/book-of-news/" target="_blank" style="color:var(--color-teal)">Ignite 2026 Book of News</a> covers the headline Entra items, and the <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456" target="_blank" style="color:var(--color-teal)">Entra Ignite post, AI is changing access</a>, lists the full set. These are its 31 announcements, with the status Microsoft gave each one.</p>
+
+      <div class="table-wrap scroll-table">
+        <table class="wrap">
+          <thead><tr><th>Feature</th><th>Status</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3" style="color:var(--color-teal);font-size:0.66rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--color-surface-alt)">Strengthen your identity foundation</td></tr>
+            <tr><td style="white-space:normal">High assurance credentials</td><td><span class="badge badge-warn">Preview</span></td><td>Combines passkeys with identity verification from partners such as AU10TIX, IDEMIA and CLEAR at onboarding, before sensitive access or meetings, and during account recovery.</td></tr>
+            <tr><td style="white-space:normal">Secure enterprise browser for BYOD with Edge for Business and Global Secure Access</td><td><span class="badge badge-warn">Preview</span></td><td>Lets users reach private apps from a work profile in Edge on personal devices, with the Secure Web and AI gateway protecting browsing.</td></tr>
+            <tr><td style="white-space:normal">Expanded privileged access controls in PIM</td><td><span class="badge badge-warn">Preview</span></td><td>Extends just-in-time access to more users, resources and AI agents, with session monitoring, AI-based least-privilege role recommendations, PIM-only mode and bulk management.</td></tr>
+            <tr><td style="white-space:normal">Conditional Access policy plans</td><td><span class="badge badge-warn">Preview</span></td><td>Define shared policy intent once at the plan level and enforce it across identities, with templates that include ones for AI agents.</td></tr>
+            <tr><td style="white-space:normal">Advanced dynamic membership groups</td><td><span class="badge badge-warn">Preview</span></td><td>Adds MemberOf Next and Transitive Reports To to keep groups aligned with existing memberships and reporting hierarchies.</td></tr>
+            <tr><td style="white-space:normal">ID Governance guest lifecycle policies</td><td><span class="badge badge-ok">GA</span></td><td>Automates guest account reviews based on sponsorship, inactivity and invitation status, with reporting and sponsor actions.</td></tr>
+            <tr><td style="white-space:normal">Tenant Governance cross-tenant configuration management and resource policy</td><td><span class="badge badge-warn">Preview</span></td><td>Deploy, monitor and enforce resource configurations and detect drift across all tenants from one view.</td></tr>
+            <tr><td style="white-space:normal">Multitenant management for Agent 365 and Copilot</td><td><span class="badge badge-warn">Preview</span></td><td>Extends Tenant Governance to Agent 365 and Copilot so agents and AI settings stay consistent across tenants.</td></tr>
+            <tr><td style="white-space:normal">Entra Backup and Recovery</td><td><span class="badge badge-dim">Not stated</span></td><td>Automatically backs up critical identity data, including agent identities and Conditional Access policies, so they can be restored to a known good state.</td></tr>
+            <tr><td style="white-space:normal">Entra Backup and Recovery Premium</td><td><span class="badge badge-warn">Preview</span></td><td>Extends retention to 30 days and integrates with Microsoft 365 Backup.</td></tr>
+            <tr><td style="white-space:normal">Hard deletion protection</td><td><span class="badge badge-warn">Preview</span></td><td>Protects critical tenant objects, such as Agent IDs, from permanent deletion.</td></tr>
+            <tr><td style="white-space:normal">Microsoft MCP Server for IT Admins</td><td><span class="badge badge-ok">GA</span></td><td>Connects AI tools and agents to data in Entra, Purview and Intune for queries and administrative tasks.</td></tr>
+            <tr><td colspan="3" style="color:var(--color-teal);font-size:0.66rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--color-surface-alt)">Secure agent access</td></tr>
+            <tr><td style="white-space:normal">Agent ID for discovered local agents</td><td><span class="badge badge-warn">Preview</span></td><td>With Defender and Global Secure Access, discovers 60 local agent types, including Claude Code and GitHub Copilot CLI, and assigns each an Agent ID.</td></tr>
+            <tr><td style="white-space:normal">Agent ID for digital teammates</td><td><span class="badge badge-warn">Preview</span></td><td>Gives digital teammates their own agent user account and ID, so Conditional Access, ID Protection and governance apply separately from the human user.</td></tr>
+            <tr><td style="white-space:normal">Dynamic permissions for permission remediation</td><td><span class="badge badge-warn">Preview</span></td><td>Finds agent identities with excessive privileges in connected business apps and supports investigation and remediation.</td></tr>
+            <tr><td style="white-space:normal">Automated lifecycle management of agent identities</td><td><span class="badge badge-ok">GA</span></td><td>Lifecycle policies check for a sponsor, continued need and recent activity, then notify and disable or delete agents. A default inactivity policy that needs no license notifies sponsors and owners after 60 days of inactivity, disables the agent at 90 days and deletes it at 455.</td></tr>
+            <tr><td style="white-space:normal">Access packages for digital teammates</td><td><span class="badge badge-warn">Preview</span></td><td>Assign access packages to digital teammates with approval and time-limit policies.</td></tr>
+            <tr><td style="white-space:normal">Dynamic Agent Risk</td><td><span class="badge badge-warn">Agent 365 Preview</span></td><td>Continuously scores each agent's risk using signals from identity, data, endpoints, runtime and the agent's own activity, drawing on Entra, Defender and Purview.</td></tr>
+            <tr><td style="white-space:normal">Conditional Access policies for assistive agents</td><td><span class="badge badge-warn">Preview</span></td><td>Distinguishes local agents from the people they act for, so a high-risk agent can be blocked while the employee keeps working. Adds an actions and destinations option to restrict sensitive operations.</td></tr>
+            <tr><td style="white-space:normal">Conditional Access support for Windows 365 for Agents</td><td><span class="badge badge-ok">GA</span></td><td>Extends Conditional Access to the Cloud PCs that agents use.</td></tr>
+            <tr><td style="white-space:normal">Agentic traffic acquisition in Global Secure Access</td><td><span class="badge badge-warn">Preview</span></td><td>Visibility and network controls specific to agents while keeping an existing SASE solution in place.</td></tr>
+            <tr><td style="white-space:normal">Agent type-aware network controls for local agents</td><td><span class="badge badge-warn">Preview</span></td><td>Applies network policies to specific local agents on employee devices to control their access to resources and destinations.</td></tr>
+            <tr><td style="white-space:normal">MCP firewall</td><td><span class="badge badge-warn">Preview</span></td><td>Enforces granular policies on agent-to-MCP traffic across servers, tools, resources, methods, protocol versions and connection security.</td></tr>
+            <tr><td style="white-space:normal">Data security over the network with Purview and Global Secure Access</td><td><span class="badge badge-ok">GA</span></td><td>Applies DLP policies at the network layer to human and on-behalf-of agent traffic, including unsanctioned AI apps.</td></tr>
+            <tr><td colspan="3" style="color:var(--color-teal);font-size:0.66rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--color-surface-alt)">Customer identity (External ID)</td></tr>
+            <tr><td style="white-space:normal">Customization with HTML templates and JavaScript</td><td><span class="badge badge-warn">Preview</span></td><td>Build branded sign-up and sign-in pages with custom HTML and JavaScript. Full availability is slated for December 7.</td></tr>
+            <tr><td style="white-space:normal">Bring your own UX authentication</td><td><span class="badge badge-warn">Preview</span></td><td>Host fully customized authentication pages while External ID enforces access controls and manages SSO.</td></tr>
+            <tr><td style="white-space:normal">Sign-in with multiple first-factor methods</td><td><span class="badge badge-warn">Preview</span></td><td>Customers sign in with a passkey, one-time passcode, or email and password.</td></tr>
+            <tr><td style="white-space:normal">Native Authentication API version 2 and SDKs</td><td><span class="badge badge-warn">Preview</span></td><td>Simplifies embedding authentication in mobile and single-page apps and supports new External ID features as they arrive.</td></tr>
+            <tr><td style="white-space:normal">External ID AI agent toolkit</td><td><span class="badge badge-warn">Preview</span></td><td>Skills that onboard existing apps to External ID by analyzing code, or migrate native apps from Native Authentication API v1 to v2.</td></tr>
+            <tr><td style="white-space:normal">Self-service credential management APIs</td><td><span class="badge badge-warn">Preview</span></td><td>Lets customer-facing apps offer passkey registration and password updates through low-privilege delegated permissions. Email and phone management are coming soon.</td></tr>
+            <tr><td style="white-space:normal">Time-based one-time passcodes for external users</td><td><span class="badge badge-warn">Preview</span></td><td>Adds a standards-based second factor for external tenants using Microsoft Authenticator or a supported third-party app.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <span class="scroll-hint">Scroll the table for all 31 announcements.</span>
+
+      <h3 id="s02-mcp">The Entra MCP: free, and easy to overlook</h3>
+
+      <p class="prose">One identity announcement barely got airtime on stage: the Microsoft MCP Server for Enterprise, which the <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456" target="_blank" style="color:var(--color-teal)">Entra Ignite post</a> lists as the Microsoft MCP Server for IT Admins and generally available. It is also free. Learn lists <a href="https://learn.microsoft.com/graph/mcp-server/overview" target="_blank" style="color:var(--color-teal)">no additional license</a> for it. If you have been using Lokka, you can see where this is heading. An Entra MCP that can read your policy and tenant configuration is a huge help to MSPs, because it takes a lot of the pain out of managing M365 across tenants. It is also the clearest example I saw of what Microsoft is doing with AI and automation for admins, and I think it is the most exciting item in my book.</p>
+
+      <div class="callout warn">
+        <span class="callout-label">Update since Ignite</span>
+        <p>Microsoft has already renamed this to the <strong>Microsoft MCP Server for IT Admins</strong> and moved it to a new <span class="mono">https://mcp.svc.cloud.microsoft/admin</span> endpoint. The <span class="mono">/enterprise</span> endpoint below still works during a migration window, but new setups should follow the <a href="https://github.com/mcp/microsoft/EnterpriseMCP#migrate-from-microsoft-mcp-server-for-enterprise" target="_blank" style="color:var(--color-teal)">current IT Admins migration guide</a>, which also changes how clients like VS Code get registered (every client now needs its own app registration — Microsoft's <a href="https://learn.microsoft.com/graph/mcp-server/get-started" target="_blank" style="color:var(--color-teal)">Learn get-started guide</a> still describes the older /enterprise flow as of this writing).</p>
+      </div>
+
+      <p class="prose">It installs easily in VS Code with GitHub Copilot. It takes a little more effort to set up in ChatGPT or Claude, but it is worth every minute. Here is the <a href="https://github.com/mcp/microsoft/EnterpriseMCP" target="_blank" style="color:var(--color-teal)">Microsoft MCP Server for IT Admins</a> connected to Claude as a custom connector, pointed at the current <span class="mono">/admin</span> endpoint.</p>
+
+      <figure>
+        <img src="images/ignite-2026-recap-13.png" alt="Claude custom connector page showing Microsoft MCP Server for IT Admins, connected to the mcp.svc.cloud.microsoft/admin endpoint, with read-only and write/delete Microsoft Graph tools listed" />
+        <figcaption>Microsoft MCP Server for IT Admins connected to Claude as a custom connector, pointed at the <span class="mono">/admin</span> endpoint with read-only and write/delete tools listed.</figcaption>
+      </figure>
+
+      <h3 id="s02-mcp-start">Getting started with the Entra MCP</h3>
+      <p class="prose">Microsoft's <a href="https://learn.microsoft.com/graph/mcp-server/get-started" target="_blank" style="color:var(--color-teal)">Get started guide</a> covers the setup. Once it is connected, here is what a real question looks like: every Conditional Access policy that excludes my break-glass group, with the policy names in a table.</p>
+
+      <figure>
+        <img src="images/ignite-2026-recap-14.gif" alt="Screen recording of Claude using the Entra MCP to list Conditional Access policies that exclude a break-glass group" />
+        <figcaption>Asking Claude, through the Entra MCP, for the Conditional Access policies that exclude the break-glass group.</figcaption>
+      </figure>
+    </section>
+
+    <section id="s03">
+      <span class="eyebrow">Section 03</span>
+      <h2>E7 Is Where Microsoft Is Headed, and Most SMBs Are Still Maximizing Business Premium</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://www.microsoft.com/microsoft-agent-365#plans-and-pricing" target="_blank">Agent 365 and E7 pricing</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/microsoft-365/admin/security-and-compliance/add-defender-suite-business-premium" target="_blank">Defender Suite for Business Premium</a>
+        <span class="sep">·</span>
+        <a href="https://www.microsoft.com/en-us/security/pricing/small-medium-business/security-add-on-plans" target="_blank">Security add-on plans for Business Premium</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/fundamentals/licensing" target="_blank">Microsoft Entra licensing</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/identity/conditional-access/agent-id" target="_blank">Conditional Access for agents</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/en-us/entra/id-governance/dynamic-permissions-overview" target="_blank">Dynamic permissions</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/id-governance/agent-id-governance-overview" target="_blank">Governing agent identities</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/id-governance/agent-default-inactivity-policy" target="_blank">Default agent inactivity policy</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/purview/dlp-network-data-security-learn" target="_blank">Network data security licensing</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/id-governance/microsoft-entra-id-governance-licensing-for-guest-users" target="_blank">ID Governance guest licensing</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/id-governance/tenant-governance/licensing" target="_blank">Tenant Governance licensing</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/office365/servicedescriptions/microsoft-agent-365/microsoft-agent-365#feature-availability" target="_blank">Agent 365 service description</a>
+      </div>
+
+      <p class="prose">Microsoft is all in on E7, and after a week at Ignite I understand why. The price tag is easy to miss in all the excitement, though. I have seen forward-leaning MSPs ramp up E5 and E7 for their clients, and that is great to see. Most of the MSPs I speak with at Inforcer, though, are still working to get the full value out of Business Premium, and the goal at Inforcer is to make that simpler at scale.</p>
+
+      <p class="prose">The licensing question came up once the agent identity lifecycle discussion ended. E7. Almost every agent feature needed it, or an Agent 365 license on top of Entra P1 or Microsoft 365 E3. An enterprise can plan for that. For most SMBs it is a big step up. Microsoft is asking everyone to limit and control agents because agents are the next identity threat, and an SMB without E7 has fewer tools to do that with. There is one free starting point. Every tenant gets a default agent inactivity policy with no license required. It notifies sponsors and owners after 60 days of inactivity, disables the agent at 90 days and deletes it at 455. It allows only limited customization, so custom rules for sponsors and reconfirmation still need E7 or Agent 365, but it is worth turning on in every tenant you manage today.</p>
+
+      <p class="prose">I talked with people new to the field who genuinely wanted to know how to set up Intune and make Autopilot work, how to fix identity mistakes, and where to begin with data governance and Purview. The roadmap was packed, and the foundation and the basics got less airtime next to E7, agents and AI. Those are all good things to build. I would love to see more of "we see you, SMBs, and here is what's coming to Business Premium for you." That gap is where Inforcer can help.</p>
+
+      <div class="pull-quote">I left Ignite with a clearer mission: help smaller multi-tenant environments get more out of what Microsoft is building.</div>
+
+
+      <p class="prose">I still think Business Premium is the end-all for any SMB. If security and data governance are top of mind, I'd add the Defender and Purview add-ons on top of it. That's already a stretch for a lot of smaller budgets, but for anyone taking security seriously I see it as the new middle ground. Past that, the price jumps. Microsoft lists E7 at $99 per user per month and Agent 365 by itself at $15 per user per month, both on an annual commitment.</p>
+
+      <p class="prose">The <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456" target="_blank" style="color:var(--color-teal)">Entra Ignite post</a> doesn't say which license any of these features need, so I went to Learn. The pattern holds up. To extend an Entra security control to agents, you need Microsoft 365 E7, or an Agent 365 license on top of at least Entra P1 or Microsoft 365 E3. Business Premium already includes Entra ID P1, and Learn lists it among the plans you can add Agent 365 to. So for an SMB, Conditional Access for agents is a per-user add-on, not a leap to E7. Dynamic permissions is the exception, since E7 is the only plan Learn lists for it. That's why the table below uses two tags instead of lumping everything under "E7."</p>
+
+      <div class="legend">
+        <div><span class="lic lic-e7">E7 / AGENT 365</span><span>Two routes qualify: Microsoft 365 E7, or Agent 365 on top of Entra P1 or Microsoft 365 E3.</span></div>
+        <div><span class="lic lic-e7only">E7 ONLY</span><span>Learn lists Microsoft 365 E7 and no other plan.</span></div>
+        <div><span class="lic lic-none">NO E7 GATE</span><span>Licensed through something other than Agent 365, so it can be bought without E7. E7 covers it through the Entra Suite.</span></div>
+        <div><span class="lic lic-none">NOT LISTED</span><span>No license has been published for this feature yet.</span></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="wrap">
+          <thead><tr><th>Feature</th><th>Status</th><th>License</th><th>What Learn says</th></tr></thead>
+          <tbody>
+            <tr><td>Dynamic permissions</td><td><span class="badge badge-warn">Preview</span></td><td><span class="lic lic-e7only">E7 ONLY</span></td><td>Licensing is not yet announced. During preview, Microsoft 365 E7 is the only plan listed.</td></tr>
+            <tr><td>Conditional Access for agents</td><td><span class="badge badge-warn">Preview</span> assistive agents<br><span class="badge badge-ok">GA</span> Windows 365 for Agents</td><td><span class="lic lic-e7">E7 / AGENT 365</span></td><td>Applies to policies that target agents through Entra Agent ID.</td></tr>
+            <tr><td>Agent identity lifecycle policies</td><td><span class="badge badge-ok">GA</span> at Ignite<br><span class="badge badge-warn">Preview</span> on some Learn pages</td><td><span class="lic lic-e7">E7 / AGENT 365</span></td><td>Custom lifecycle policies follow the same two routes. The default inactivity policy is the exception: it is available to every tenant with no license required.</td></tr>
+            <tr><td>Access packages for agents</td><td><span class="badge badge-warn">Preview</span> digital teammates</td><td><span class="lic lic-e7">E7 / AGENT 365</span></td><td>Listed under license requirements for assigning agents to access packages.</td></tr>
+            <tr><td>ID Protection for agents</td><td><span class="badge badge-dim">Not stated</span></td><td><span class="lic lic-e7">E7 / AGENT 365</span></td><td>Learn says it will require an Agent 365 license "starting soon."</td></tr>
+            <tr><td>Network controls for agents</td><td><span class="badge badge-warn">Preview</span></td><td><span class="lic lic-e7">E7 / AGENT 365</span></td><td>The Agent 365 service description gates agent network traffic monitoring and blocking, and marks it unavailable in GCC.</td></tr>
+            <tr><td>Dynamic Agent Risk</td><td><span class="badge badge-warn">Preview</span></td><td><span class="lic lic-e7">AGENT 365</span></td><td>Announced as an Agent 365 feature.</td></tr>
+            <tr><td>Agent ID for discovered local agents</td><td><span class="badge badge-warn">Preview</span></td><td><span class="lic lic-none">NOT LISTED</span></td><td>With Defender and Global Secure Access, finds 60 local agent types, including Claude Code, OpenAI Codex and GitHub Copilot CLI, and gives each an Agent ID. Agent ID itself is available to all Entra customers.</td></tr>
+            <tr><td>Agent ID for digital teammates</td><td><span class="badge badge-warn">Preview</span></td><td><span class="lic lic-none">NOT LISTED</span></td><td>A separate agent user account and ID, apart from the human they work for. Conditional Access and governance on that account fall under the E7 / Agent 365 rows.</td></tr>
+            <tr><td>Network data security with Purview</td><td><span class="badge badge-ok">GA</span></td><td><span class="lic lic-e7">E7 OR PURVIEW E5 + INTERNET ACCESS</span></td><td>DLP at the network layer for human and on-behalf-of agent traffic, including unsanctioned AI apps. Through Global Secure Access it needs Microsoft 365 E7, or Purview E5 (or equivalent) plus Entra Internet Access (or equivalent) per user. With a non-Microsoft SASE or secure browser it needs Purview E5 plus Purview pay-as-you-go billing.</td></tr>
+            <tr><td>Guest lifecycle policies</td><td><span class="badge badge-ok">GA</span></td><td><span class="lic lic-none">NO E7 GATE</span></td><td>Needs at least one Entra ID Governance or Entra Suite license in the tenant, plus a connected Azure subscription. Governed guests are billed monthly per active guest with no free tier. Business Premium and E5 do not include ID Governance, so this is an add-on.</td></tr>
+            <tr><td>Tenant Governance</td><td>Mixed</td><td><span class="lic lic-none">NO E7 GATE</span></td><td>Entra P1, which Business Premium includes, covers single-tenant drift monitoring (up to 800 configuration resources per day) and governance relationships with cross-tenant GDAP. Related tenants discovery, custom multitenant app provisioning and most resource policy operations need ID Governance.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="prose">E7 includes all ID Governance features through the Entra Suite and Agent 365, so the untagged rows are covered if you own E7. They are just not the reason to buy it.</p>
+
+      <p class="prose">The Defender Suite for Business Premium adds Entra ID P2, Defender for Identity, Defender for Endpoint Plan 2, Defender for Office 365 Plan 2 and Defender for Cloud Apps. The Purview Suite covers the data side, and it includes Endpoint DLP, which I treat as necessary for protecting the endpoint because it monitors and protects sensitive data on the device itself. That is a real step up for an SMB, and it is why I'd put both suites on top of Business Premium. The agent controls in the table are still licensed separately through Agent 365, so you don't get full agent lifecycle and security, and you miss the Global Secure Access AI controls at the network level. The MCP firewall and agent traffic controls are in preview, and the Agent 365 service description gates agent network monitoring behind E7 or Agent 365.</p>
+    </section>
+
+    <section id="s04">
+      <span class="eyebrow">Section 04</span>
+      <h2>Purview: Classification Is Still the Foundation, and It Is Getting Faster</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://news.microsoft.com/events/ignite/2026/book-of-news/" target="_blank">Ignite 2026 Book of News</a>
+        <span class="sep">·</span>
+        <a href="https://ignite.cloudsecurityinsider.com/sessions/brk348/" target="_blank">BRK348 session page</a>
+        <span class="sep">·</span>
+        <a href="https://ignite.microsoft.com/en-US/sessions/1787856626014001EdXu-1791814914336001CbgA?source=sessions" target="_blank">Session page, From understanding sensitive data to protecting it</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/office365/servicedescriptions/microsoft-agent-365/microsoft-agent-365#feature-availability" target="_blank">Agent 365 service description</a>
+      </div>
+
+      <p class="prose">I caught BRK348, Microsoft Purview: From understanding sensitive data to protecting it, with Aashish Ramdas and Chui Yeung. The <a href="https://ignite.cloudsecurityinsider.com/sessions/brk348/" target="_blank" style="color:var(--color-teal)">session page on the Ignite hub</a> has the details, and the recording is linked from the slide below.</p>
+
+      <p class="prose">The Book of News Purview section covers three items, all in preview: faster time to protection through automatic classification and labeling, DLP for Copilot that blocks references to sensitive files even when they are unlabeled, and data security for AI agents on Windows. The classification and SIT work is the part of this list I'm most excited about. DLP, sensitivity labels and Copilot protections only work as well as the classification underneath them, and for most SMB tenants classification is the step that never got finished.</p>
+
+      <figure>
+        <a class="preview-link" style="margin:0" href="https://medius.microsoft.com/Embed/video-nc/3f66b6ba-91fe-4bda-a3fe-3a04b97ce0d2" target="_blank"><img src="images/ignite-2026-recap-15.jpg" alt="Ignite slide BRK348, New in Purview: coverage and freshness, quality and efficiency, scale protection. Select to play the BRK348 recording." /><span class="preview-play">&#9654;</span></a>
+        <figcaption>BRK348 with Aashish Ramdas and Chui Yeung. <a href="https://medius.microsoft.com/Embed/video-nc/3f66b6ba-91fe-4bda-a3fe-3a04b97ce0d2" target="_blank" style="color:var(--color-teal)">Watch the recording</a>.</figcaption>
+      </figure>
+
+      <p class="prose">The slides below are the ones I photographed in the room. They walk through the three challenges the session set out and the new Purview work that answers each one.</p>
+
+      <div class="slider" id="brk348-slider">
+        <div class="slider-track">
+        <figure>
+          <img src="images/ignite-2026-recap-16.jpg" alt="Slide: Three challenges, three ways forward" />
+          <figcaption><span class="slider-title">Three challenges, three ways forward</span>Coverage and freshness: older content goes unclassified and results go stale, answered by on-demand classification and recurring classification refresh. Quality and efficiency: classification quality has always been hard to measure and improve, answered by enhanced built-in SITs and unified classification management. Scale protection: data volume and Copilot grounding keep growing, answered by auto-labeling scalability and SIT-based DLP for Copilot grounding.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-17.jpg" alt="Slide: New in Purview, recurring classification refresh" />
+          <figcaption><span class="slider-title">Recurring classification refresh</span>Public preview in January 2027. A baseline scan classifies unclassified files, including files no one has opened in years. Recurring classification refresh then re-evaluates content automatically, up to twice a year, as classifiers and definitions change. The slide marks both as included in E5.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-18.jpg" alt="Slide: New in Purview, enhanced built-in sensitive information types" />
+          <figcaption><span class="slider-title">Enhanced built-in sensitive information types</span>Available starting January 2027. Microsoft is enhancing 400+ built-in SITs, starting with the 100+ most popular classifiers, for precise detection out of the box, less manual tuning and customization, and better results that flow into your policies automatically.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-19.jpg" alt="Slide: New in Purview, auto-labeling scalability improvements" />
+          <figcaption><span class="slider-title">Auto-labeling scalability improvements</span>Public preview overall, with most of it already generally available. The daily SharePoint auto-labeling limit goes to 500K files, up from 100K. Simulation scale goes to 20,000,000 matched items, up from 4M. Adaptive scopes target sites by attribute instead of selecting them manually. Default library labels are in public preview and label data at rest in SharePoint libraries without user action.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-20.jpg" alt="Slide: Every verdict is one of four outcomes" />
+          <figcaption><span class="slider-title">Every verdict is one of four outcomes</span>How classification quality gets measured. A true positive is sensitive data found, and a true negative is ordinary data left alone. A false negative is sensitive data missed, which risks a leak, and a false positive is ordinary data flagged, which carries an operational cost.</figcaption>
+        </figure>
+        </div>
+        <div class="slider-bar">
+          <button type="button" data-dir="-1" aria-label="Previous slide">&#8249;</button>
+          <button type="button" data-dir="1" aria-label="Next slide">&#8250;</button>
+          <span class="slider-count">1 / 5</span>
+          <span>BRK348 slides</span>
+        </div>
+      </div>
+
+      
+
+      <div class="callout warn">
+        <span class="callout-label">Timing and licensing</span>
+        <p>The Book of News lists this work as preview. Recurring classification refresh reaches public preview in January 2027, and the enhanced built-in SITs start rolling out in January 2027. Most of the auto-labeling scale work is already generally available. The baseline scan and recurring refresh were presented in the session as included in E5.</p>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Agent licensing</span>
+        <p>The Agent 365 service description lists these Purview controls for agents as requiring E7 or Agent 365: audit and eDiscovery of agent interactions, Data Lifecycle Management, Compliance Manager, DSPM with AI observability, Insider Risk Management, sensitivity label inheritance and DLP. None are available in GCC. <span class="lic lic-e7">E7 / AGENT 365</span></p>
+      </div>
+
+      <p class="prose">Two demos are worth jumping to in the recording. At 10:49 a DLP policy keeps a sensitive contract out of Copilot responses, and at 26:42 the session shows DLP for Copilot based on sensitive information types. The session hub also lists a unified classification page as available in public preview.</p>
+    </section>
+
+    <section id="s05">
+      <span class="eyebrow">Section 05</span>
+      <h2>Resource Policy Blocks Changes. Configuration Management Reports Drift</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://learn.microsoft.com/en-us/entra/id-governance/tenant-governance/resource-policy-overview" target="_blank">Resource policy overview</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/en-us/entra/id-governance/tenant-governance/configuration-management" target="_blank">Configuration management</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/entra/fundamentals/licensing#microsoft-entra-tenant-governance" target="_blank">Tenant Governance licensing</a>
+      </div>
+
+      <p class="prose">Tenant Governance is the other piece I wanted to cover, because it speaks directly to multi-tenant management. Knowing what a tenant's configuration should be, and catching it when it drifts, is the most basic job an MSP has. The Entra post bundles "cross-tenant configuration management and resource policy" as one Preview line. Learn splits them. Configuration management detects drift from a baseline. Resource policy evaluates supported Microsoft Graph requests before the change happens and can block it.</p>
+
+      <div class="table-wrap">
+        <table class="wrap">
+          <thead><tr><th>Piece</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Tenant Configuration Management APIs</td><td><span class="badge badge-ok">GA</span></td><td>Snapshots, baselines, monitors and drift detection. Snapshots are kept for 7 days.</td></tr>
+            <tr><td>Configuration baseline templates</td><td><span class="badge badge-warn">Preview</span></td><td>Reusable baseline definitions across monitors and deployments.</td></tr>
+            <tr><td>Configuration deployments</td><td><span class="badge badge-warn">Preview</span></td><td>Apply baseline settings to the home tenant or governed tenants.</td></tr>
+            <tr><td>Cross-tenant monitors</td><td><span class="badge badge-warn">Preview</span></td><td>Needs an active governance relationship plus delegated permissions and workload access. The relationship alone does not grant every workload permission.</td></tr>
+            <tr><td>Resource policy</td><td><span class="badge badge-warn">Preview</span></td><td>Custom policies are written in Rego. Built-in policies take parameters only. Most operations need an ID Governance plan during preview.</td></tr>
+            <tr><td>Multitenant management for Agent 365 and Copilot</td><td><span class="badge badge-warn">Preview</span></td><td>Keeps agents and AI settings consistent across tenants.</td></tr>
+            <tr><td>Backup and Recovery</td><td><span class="badge badge-dim">Not stated</span></td><td>Automatically backs up critical identity data, including agent identities and Conditional Access policies, so they can be restored to a known good state.</td></tr>
+            <tr><td>Backup and Recovery Premium</td><td><span class="badge badge-warn">Preview</span></td><td>30-day retention, integrated with Microsoft 365 Backup.</td></tr>
+            <tr><td>Hard deletion protection</td><td><span class="badge badge-warn">Preview</span></td><td>Protects objects such as Agent IDs from permanent deletion.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="prose">Cross-tenant configuration management is included in Tenant Governance Basic, and Premium licenses add monitoring and snapshot capacity. Governance relationships with cross-tenant GDAP work with P1, P2 or ID Governance. Resource policy is the licensing outlier and needs ID Governance in preview. For an MSP that split matters: cross-tenant drift reporting sits in Tenant Governance Basic, while enforcement needs ID Governance on top.</p>
+
+      <div class="callout">
+        <span class="callout-label">How resource policy behaves</span>
+        <p>Each assignment runs in <span class="mono">doNotEnforce</span> or <span class="mono">enforce</span> mode. An enforce assignment can block a request even when another assignment on the same request is in doNotEnforce. It only evaluates new requests, so it never scans or fixes existing resources, and the preview gives you audit events with no aggregated impact report. Learn recommends simulated evaluation first, then doNotEnforce with the audit-log API, then enforce.</p>
+      </div>
+    </section>
+
+    <section id="s06">
+      <span class="eyebrow">Section 06</span>
+      <h2>Intune: Patching and Compliance Are the Foundation, and Speed Is the New Bar</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://news.microsoft.com/events/ignite/2026/book-of-news/" target="_blank">Ignite 2026 Book of News</a>
+        <span class="sep">·</span>
+        <a href="https://techcommunity.microsoft.com/blog/microsoftintuneblog/what%E2%80%99s-new-in-microsoft-intune-at-microsoft-ignite/4570003" target="_blank">What's new in Intune at Ignite</a>
+        <span class="sep">·</span>
+        <a href="https://learn.microsoft.com/office365/servicedescriptions/microsoft-agent-365/microsoft-agent-365#feature-availability" target="_blank">Agent 365 service description</a>
+        <span class="sep">·</span>
+        <a href="https://ignite.cloudsecurityinsider.com/sessions/brk404/" target="_blank">BRK404 session page</a>
+        <span class="sep">·</span>
+        <a href="https://ignite.cloudsecurityinsider.com/sessions/brk328/" target="_blank">BRK328 session page</a>
+      </div>
+
+      <p class="prose">For Intune I followed BRK404, What's New in Intune: Secure, Patch, and Scale, with Eugenie Burrage and Jason Roszak. The recording is below, and the <a href="https://ignite.cloudsecurityinsider.com/sessions/brk404/" target="_blank" style="color:var(--color-teal)">session page on the Ignite hub</a> has the details. The first portal walkthrough starts at 5:16.</p>
+
+      <figure>
+        <a class="preview-link" style="margin:0" href="https://medius.microsoft.com/Embed/video-nc/54fd9e2f-a4e8-49ef-8d1d-0c1e77d3c58b" target="_blank"><img src="images/ignite-2026-recap-21.jpg" alt="Ignite slide: The new bar for being ready, 3 days to patch vulnerabilities, 3 hours to mitigate the exploit path. Select to play the BRK404 recording." /><span class="preview-play">&#9654;</span></a>
+        <figcaption>BRK404 with Eugenie Burrage and Jason Roszak. The new bar for being ready: 3 days to patch vulnerabilities, 3 hours to mitigate the exploit path when you cannot patch, and real time response plans for emerging threats. Routine patching is the 90% and emergency response is the 10%. <a href="https://medius.microsoft.com/Embed/video-nc/54fd9e2f-a4e8-49ef-8d1d-0c1e77d3c58b" target="_blank" style="color:var(--color-teal)">Watch the recording</a>.</figcaption>
+      </figure>
+
+      <p class="prose">The theme of the session was how AI is changing the device landscape. Supporting servers was crucial, but the speed of AI is now shifting the endpoint too, and the Intune team is working to make speed Intune's middle name. They showed improvements to app compliance, updates and patching, and how much faster compliance check-ins and enrollment have become. The question running through it was how fast you can maintain device health, with AI to troubleshoot faster through Copilot for Windows and Project Perception to help teams automate more of what they do. None of that replaces the basics. Patch rings, compliance policies and enrollment still have to be set up correctly in every tenant before AI can speed anything up.</p>
+
+      <p class="prose">The slides below walk through the landscape the session described, from the size of the estate to the patching numbers.</p>
+
+      <div class="slider" id="brk404-slider">
+        <div class="slider-track">
+        <figure>
+          <img src="images/ignite-2026-recap-22.jpg" alt="Ignite slide: the full estate Intune now covers" />
+          <figcaption><span class="slider-title">Your full estate</span>Servers, PCs and Macs, mobile, Cloud PCs, apps, agents and containers, across managed devices, BYOD and frontline workers. The session opened by widening what "the device" means.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-23.jpg" alt="Ignite slide: AI is amplifying exposure" />
+          <figcaption><span class="slider-title">AI is amplifying exposure</span>The slide puts the vulnerability window at negative 10 hours between disclosure and active exploitation, from Microsoft funded research. It also cites 2026 CVE volumes on track to roughly double, with nearly 40,000 published in the first half, and under 24 hours from a vulnerability being found in the wild to being weaponized (Microsoft Digital Defense Report 2026).</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-24.jpg" alt="Ignite slide: 82 percent, negative 10 days, 43 days" />
+          <figcaption><span class="slider-title">82%, negative 10 days, 43 days</span>82% of organizations found AI agents they did not know were running. The median time to exploit is negative 10 days, so attackers move before patches ship, while the median time to fully fix a known exploited vulnerability is 43 days.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-25.jpg" alt="Ignite slide: IT in exposure reduction" />
+          <figcaption><span class="slider-title">IT in exposure reduction</span>Prevent by securing from the start, maintain at 90% with routine operations, respond at 10% with reactive operations. The earlier you act, the fewer emergencies you have.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-26.jpg" alt="Ignite slide: Windows update adoption velocity" />
+          <figcaption><span class="slider-title">Windows update adoption velocity</span>October 2026 data, measured in days from Patch Tuesday. At day 7 the fastest 10% of customers had reached 67% and the fastest 25% had reached 43%, while all customers sat at 16%. By day 28 those figures were 94%, 92% and 75%.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-27.jpg" alt="Ignite slide: accelerate routine patching" />
+          <figcaption><span class="slider-title">Accelerate routine patching</span>Three groups: go faster (Hotpatch by default, on by default in Autopatch, EAM auto-updates and app in-use detection, both private preview), stay in control (deployment plans and filters, approvals and maintenance windows, in-product rollback) and keep devices healthy (OS reliability reporting, the Autopatch overview report, and Perception, listed as private preview on the slide).</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-28.jpg" alt="Ignite slide: Windows hotpatch updates" />
+          <figcaption><span class="slider-title">Windows Hotpatch updates</span>Days to reach 90% patch compliance for four anonymized customers, May 2026 release. Customer A (30K devices) took 17 days on standard updates and 8 on hotpatch. B (50K) went from 23 to 8, C (70K) from 25 to 11 and D (90K) from 27 to 18. Hotpatch is now the default patching option in Autopatch.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-29.jpg" alt="Ignite slide: Enterprise Application Management auto-update and in-use detection" />
+          <figcaption><span class="slider-title">Enterprise App Management</span>EAM now brings in WinGet apps and auto-updates them regardless of source, whether IT deployed them or users installed them, with one configuration. In-use detection reports or closes apps that block an update.</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-30.jpg" alt="Ignite slide: P90 results after product improvements" />
+          <figcaption><span class="slider-title">P90 results after product improvements</span>Under 15 minutes to productivity during enrollment, under 30 minutes to fully roll out a policy change, and under 5 minutes to mark a device non-compliant after a state change. The slide points to BRK328 for more.</figcaption>
+        </figure>
+        </div>
+        <div class="slider-bar">
+          <button type="button" data-dir="-1" aria-label="Previous slide">&#8249;</button>
+          <button type="button" data-dir="1" aria-label="Next slide">&#8250;</button>
+          <span class="slider-count">1 / 9</span>
+          <span>BRK404 slides</span>
+        </div>
+      </div>
+
+      <p class="prose">BRK404 also covered finer patch rings, Device Health reporting, an agent that prioritizes vulnerabilities and prepares remediation for admin approval, and shielding for devices that cannot be patched yet. It showed software compliance policies flagging unapproved local AI agents, which is in preview.</p>
+
+      <p class="prose">BRK328, What's New in Intune: Trusted device and app foundation for AI, with Sangeetha Visweswaran and Kevin Odom, is where the BRK404 slide sends you for the speed numbers. Its core message is that AI is only as trustworthy as the device, identity and app foundation beneath it. It brings Windows Servers into the endpoint management model in Intune, with client-like server scenarios, cloud management and consistent administration. Windows Server management is Insider preview only. The server enrollment demo starts at 6:06 and event-driven app inventory updates at 16:20. The session also covers the vulnerability remediation agent. Both sessions are worth a look for Intune advancements, and the <a href="https://ignite.cloudsecurityinsider.com/sessions/brk328/" target="_blank" style="color:var(--color-teal)">BRK328 page on the Ignite hub</a> has the rest.</p>
+
+      <figure>
+        <a class="preview-link" style="margin:0" href="https://medius.microsoft.com/Embed/video-nc/bc7b7fee-70fc-4162-8d7c-32ad6e2db994" target="_blank"><img src="images/ignite-2026-recap-31.jpg" alt="Ignite slide: Bring Windows Servers into the endpoint management model in Intune. Select to play the BRK328 recording." /><span class="preview-play">&#9654;</span></a>
+        <figcaption>BRK328 with Sangeetha Visweswaran and Kevin Odom. <a href="https://medius.microsoft.com/Embed/video-nc/bc7b7fee-70fc-4162-8d7c-32ad6e2db994" target="_blank" style="color:var(--color-teal)">Watch the recording</a>.</figcaption>
+      </figure>
+
+
+
+      <p class="prose">The <a href="https://news.microsoft.com/events/ignite/2026/book-of-news/" target="_blank" style="color:var(--color-teal)">Ignite Book of News</a> lists local AI agents governance in Intune as available in preview, and points to the <a href="https://techcommunity.microsoft.com/blog/microsoftintuneblog/what%E2%80%99s-new-in-microsoft-intune-at-microsoft-ignite/4570003" target="_blank" style="color:var(--color-teal)">Intune Ignite post</a> for the rest. These are the Intune items from that post.</p>
+
+      <div class="table-wrap">
+        <table class="wrap">
+          <thead><tr><th>Feature</th><th>Status</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Software compliance policy</td><td><span class="badge badge-warn">Public Preview</span></td><td>Marks Windows devices running specified unsanctioned agents noncompliant, so Conditional Access can block access. Restricted apps are identified by MSI product code.</td></tr>
+            <tr><td>App protection for AI apps</td><td><span class="badge badge-dim">Not stated</span></td><td>Microsoft Copilot, GitHub Copilot, Anthropic Claude and OpenAI ChatGPT have integrated the Intune SDK.</td></tr>
+            <tr><td>Microsoft Execution Containers policies</td><td><span class="badge badge-dim">Rolling out</span></td><td>Administrator-defined file and network guardrails for supported agents.</td></tr>
+            <tr><td>Vulnerability Remediation Agent</td><td><span class="badge badge-warn">Limited Public Preview</span></td><td>Builds and runs remediation playbooks from Defender intelligence and Intune context, including automated app and OS patching.</td></tr>
+            <tr><td>Windows Server management</td><td><span class="badge badge-warn">Insider Preview</span></td><td>Edge, branch and persistent virtual desktop session servers managed through Intune, with Autopatch handling updates.</td></tr>
+            <tr><td>Device-level app inventory</td><td><span class="badge badge-warn">Public Preview</span></td><td>Richer application details and reporting.</td></tr>
+            <tr><td>Enterprise App Management automatic updates</td><td><span class="badge badge-dim">Private Preview</span></td><td>Automatic updates for eligible verified Windows apps, including apps IT did not deploy.</td></tr>
+            <tr><td>App in-use detection</td><td><span class="badge badge-dim">Private Preview</span></td><td>Finds running apps that could block an install, with options to close the process.</td></tr>
+            <tr><td>CIS benchmark auditing</td><td><span class="badge badge-warn">Public Preview</span> November</td><td>Added to Advanced Analytics next to DISA STIG auditing. Assess device groups and track alignment without changing device settings.</td></tr>
+            <tr><td>AI-powered Perception experience</td><td><span class="badge badge-warn">Limited Public Preview</span></td><td>Plain-language questions become multi-step investigations with reviewable queries. Custom Reports go to customers onboarded to Perception.</td></tr>
+            <tr><td>Autopilot device preparation</td><td><span class="badge badge-warn">Limited Public Preview</span></td><td>Company Portal opens after OOBE and shows compliance and app install status, without blocking.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      </section>
+
+    <section id="s07">
+      <span class="eyebrow">Section 07</span>
+      <h2>Edge for Business Is Now the Agent Browser. Check Extension Controls First</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        <a href="https://news.microsoft.com/events/ignite/2026/book-of-news/" target="_blank">Ignite 2026 Book of News</a>
+        <span class="sep">·</span>
+        <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456" target="_blank">Entra Ignite post</a>
+        <span class="sep">·</span>
+        <a href="https://ignite.cloudsecurityinsider.com/sessions/thr931/" target="_blank">THR931 session page</a>
+      </div>
+
+      <p class="prose">THR931, Edge for Business: Multi-tenant browser management for MSPs, was a fun one to watch. Jillian Kong Vemula, a Senior Product Manager, flew through a demo of multi-tenant management for Edge for Business in Inforcer and showed how simple it can be to standardize browser settings across MSP clients. The session was originally set to run Wednesday, but severe rain and flooding pushed it to later on Thursday, which hurt attendance. I hope everyone goes and watches the recording to see just how good this session was.</p>
+
+      <figure>
+        <a class="preview-link" style="margin:0" href="https://medius.microsoft.com/Embed/video-nc/b1b03355-cbf8-41fc-a1f8-587bafb8109c" target="_blank"><img src="images/ignite-2026-recap-32.jpg" alt="Ignite slide: Introducing Recommended browser security blueprint, Edge for Business and Inforcer. Select to play the THR931 recording." /><span class="preview-play">&#9654;</span></a>
+        <figcaption>THR931 with Jillian Kong Vemula. The slide introduces a recommended browser security blueprint from Edge for Business and Inforcer, with Intune in each client tenant, Windows and macOS, and policy support varying by platform. <a href="https://medius.microsoft.com/Embed/video-nc/b1b03355-cbf8-41fc-a1f8-587bafb8109c" target="_blank" style="color:var(--color-teal)">Watch the recording</a> or open the <a href="https://ignite.cloudsecurityinsider.com/sessions/thr931/" target="_blank" style="color:var(--color-teal)">session page on the Ignite hub</a>.</figcaption>
+      </figure>
+
+      <div class="callout">
+        <span class="callout-label">Disclosure</span>
+        <p>I work at Inforcer, so I'm 100% biased in calling this one of the best sessions of the week.</p>
+      </div>
+
+      <p class="prose">Edge for Business is now the browser for agents. The browser is also where most users do their work, so browser policy belongs in the same baseline as Conditional Access and device compliance. Most of what Microsoft announced is in preview, with one GA item you can use today.</p>
+
+      <div class="table-wrap">
+        <table class="wrap">
+          <thead><tr><th>Feature</th><th>Status</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td>Extension safety</td><td><span class="badge badge-ok">GA</span></td><td>Org-wide extension inventory with Akamai and Spin.AI risk scores by extension and version, to support allow and block decisions.</td></tr>
+            <tr><td>Extension leak control</td><td><span class="badge badge-warn">Preview</span></td><td>Stops selected org-installed extensions from reading content on protected pages.</td></tr>
+            <tr><td>Managed agent browsing</td><td><span class="badge badge-warn">Preview</span></td><td>IT can require Microsoft and third-party agents to use Edge for Business. Each agent gets a dedicated window and its own Entra agent identity.</td></tr>
+            <tr><td>Skills recorder</td><td><span class="badge badge-warn">Preview</span> with Cowork</td><td>Record a workflow and save it as a reusable skill for Copilot Cowork. IT controls when it is enabled.</td></tr>
+            <tr><td>Microsoft Sentinel connector</td><td><span class="badge badge-warn">Preview</span></td><td>Browser security events and audit logs into Sentinel.</td></tr>
+            <tr><td>Global Secure Access in Edge for Business</td><td><span class="badge badge-warn">Preview</span></td><td>Private web apps from the signed-in work profile on Windows PCs, with no VPN client or extension. The Entra post pitches it for BYOD.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="closing">
+      <span class="eyebrow">Closing</span>
+      <h2>The Best Part Was the People</h2>
+      <div class="source-chip">
+        <span>Source:</span>
+        First-hand account
+      </div>
+
+      <p class="prose">Thank you to Microsoft for the continued investment and trust in me and for putting on an absolute great event. The product managers and the MVP community made it easy to build a real connection and dive into some all-out nerdy technical conversations, and that is what I'll remember most. Catching up with <a href="https://www.linkedin.com/in/inrodz/" target="_blank" style="color:var(--color-teal)">Ingrid</a> about Endpoint DLP, and how often Purview and data governance end up an afterthought until something forces the issue, is exactly the kind of conversation I came for.</p>
+
+      <p class="prose">It is ironic that in a world getting more disconnected and automated, the best value I got out of Ignite was community and the human connections I made. I met people like Merill and John, whom I've looked up to for a long time, along with other amazing MVPs and IT enthusiasts. I had great conversations about Intune, Purview and plenty of identity.</p>
+
+      <p class="prose">The next thing I'm watching is how smaller companies, and the MSPs that serve them, afford what Microsoft just showed off. That's the challenge Inforcer is built around, and I'm looking forward to digging into it.</p>
+    
+            <p class="people-hint" style="margin-top:28px">Around the venue · scroll</p>
+      <div class="venue-scroll">
+        <figure>
+          <img src="images/ignite-2026-recap-33.jpg" alt="Microsoft IQ over the Hub" />
+          <figcaption>Microsoft IQ over the Hub</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-34.jpg" alt="The expo hall before the doors opened" />
+          <figcaption>The expo hall before the doors opened</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-35.jpg" alt="The Microsoft Security area" />
+          <figcaption>The Microsoft Security area</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-36.jpg" alt="Microsoft Agent 365 in the Hub" />
+          <figcaption>Microsoft Agent 365 in the Hub</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-37.jpg" alt="The Anthropic stage" />
+          <figcaption>The Anthropic stage</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-38.jpg" alt="Agent 365, FinOps for AI and Frontier Accelerate for Security" />
+          <figcaption>Agent 365, FinOps for AI and Frontier Accelerate for Security</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ignite-2026-recap-39.jpg" alt="A packed crowd at the Inforcer booth" />
+          <figcaption>A packed crowd at the Inforcer booth</figcaption>
+        </figure>
+      </div>
+
+      <figure>
+        <img src="images/ignite-2026-recap-40.jpg" alt="The Microsoft logo hanging above colored banners at Ignite, with a second logo glowing on the floor below" />
+        <figcaption>Until next year, Microsoft.</figcaption>
+      </figure>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p>Sourced from Microsoft Learn, the Microsoft Tech Community blogs and the Ignite 2026 Book of News. Verified November 20, 2026. Most items are Preview and can change.</p>
+  <p>
+    <a href="https://techcommunity.microsoft.com/blog/microsoft-entra-blog/ai-is-changing-access-see-how-microsoft-entra-helps-you-stay-ahead-/4556456">Entra post</a> ·
+    <a href="https://techcommunity.microsoft.com/blog/microsoftintuneblog/what%E2%80%99s-new-in-microsoft-intune-at-microsoft-ignite/4570003">Intune post</a> ·
+    <a href="https://news.microsoft.com/events/ignite/2026/book-of-news/">Book of News</a> ·
+    <a href="https://learn.microsoft.com/en-us/entra/id-governance/tenant-governance/resource-policy-overview">Resource policy</a>
+  </p>
+  <p style="margin-top:16px;">
+    conditionalaccess<span style="color:var(--color-teal)">.tech</span>
+    · Microsoft MVP · Security: Identity &amp; Access
+  </p>
+</footer>
+
+<script>
+(function(){
+  const items = document.querySelectorAll('.sidebar-item');
+  const sections = [];
+  items.forEach(a => {
+    const id = a.getAttribute('href').replace('#','');
+    const el = document.getElementById(id);
+    if(el) sections.push({ id, el, a });
+  });
+  if(!sections.length) return;
+  const topbarH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--topbar-h')) || 56;
+  function onScroll(){
+    const scrollY = window.scrollY + topbarH + 24;
+    let current = sections[0];
+    for(const s of sections){
+      if(s.el.offsetTop <= scrollY) current = s;
+    }
+    items.forEach(a => a.classList.remove('active'));
+    if(current) current.a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+<script>
+(function(){
+  document.querySelectorAll('.slider').forEach(function(s){
+    var t=s.querySelector('.slider-track'), c=s.querySelector('.slider-count');
+    var n=t.children.length;
+    function idx(){ return Math.round(t.scrollLeft/(t.clientWidth+14)); }
+    function upd(){ c.textContent=(Math.min(idx(),n-1)+1)+' / '+n; }
+    s.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        var i=Math.max(0,Math.min(n-1,idx()+parseInt(b.dataset.dir,10)));
+        t.scrollTo({left:i*(t.clientWidth+14),behavior:'smooth'});
+      });
+    });
+    t.addEventListener('scroll',upd,{passive:true});
+  });
+})();
+</script>
+</body>
+</html>
